@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: {{ .Chart.Name }}
+    deploymentconfig: postgresql-{{ .Chart.Name }}
+  name: postgresql-{{ template "fullname" . }}-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${POSTGRESQL_PERSISTENT_VOLUME_CLAIM_SIZE}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: {{ .Chart.Name }}
+    weight: 100
+  wildcardPolicy: None
