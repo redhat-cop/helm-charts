@@ -1,0 +1,23 @@
+{{- if .Values.services }}
+{{- range $key := .Values.services }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- if .annotations }}
+  annotations:
+    service.alpha.openshift.io/dependencies: '[{"name": "jenkins-jnlp", "namespace":"", "kind": "Service"}]' {{ end }}
+  name: {{ .name }}
+spec:
+  ports:
+    - name: {{ .port_name }}
+      nodePort: 0
+      port: {{ .port }}
+      protocol: TCP
+      targetPort: {{ .target_port }}
+  selector:
+    name: {{ .selector }}
+  sessionAffinity: None
+  type: ClusterIP
+{{ end }}
+{{ end }}
