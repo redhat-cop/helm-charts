@@ -1,0 +1,17 @@
+{{- if .Values.route }}
+---
+apiVersion: v1
+kind: Route
+metadata:
+  annotations:
+    haproxy.router.openshift.io/timeout: 4m
+    template.openshift.io/expose-uri: http://{.spec.host}{.spec.path}
+  name: {{ .Values.appName }}
+spec:
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: {{ .Values.appName }}
+{{ end }}

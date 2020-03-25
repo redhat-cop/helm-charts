@@ -1,0 +1,13 @@
+{{- if .Values.persistence.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: {{ .Values.appName }}
+spec:
+    accessModes:
+    - {{ .Values.persistence.accessModes }}
+    resources:
+    requests:
+        storage: {{ .Values.persistence.volumeSize }}
+{{ end }}
