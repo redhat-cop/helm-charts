@@ -16,7 +16,7 @@ spec:
     type: Recreate 
     {{ else }}
     type: Rolling 
-    {{ end }}
+    {{- end }}
   template:
     metadata:
       labels:
@@ -28,7 +28,8 @@ spec:
         - name: OPENSHIFT_ENABLE_OAUTH
           value: "true"
         - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
-          value: "true" {{ end }}
+          value: "true" 
+          {{- end }}
         - name: KUBERNETES_MASTER
           value: https://kubernetes.default:443
         - name: KUBERNETES_TRUST_CERTIFICATES
@@ -39,7 +40,8 @@ spec:
           value: {{ .Values.appName }}-jnlp
         {{- range $key := .Values.deployment.env_vars }}
         - name: {{ .name }}
-          value: {{ .value | quote }} {{ end }}
+          value: {{ .value | quote }} 
+        {{- end }}
         image: ' '
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -78,7 +80,8 @@ spec:
       volumes:
       - name: {{ .Values.appName }}-data
         persistentVolumeClaim:
-        claimName: {{ .Values.appName }}{{ end }}
+        claimName: {{ .Values.appName }}
+      {{- end }}
   triggers:
   - imageChangeParams:
       automatic: true
