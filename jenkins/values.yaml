@@ -25,25 +25,25 @@ deployment:
     - name: JENKINS_OPTS
       value: "--sessionTimeout=0"
     - name: SLACK_BASE_URL
-      value: !!str ""
+      value: ""
     - name: SLACK_ROOM
-      value: !!str ""
+      value: ""
     - name: SLACK_TOKEN_CREDENTIAL_ID
-      value: !!str ""
+      value: ""
     - name: SLACK_TEAM
-      value: !!str ""
+      value: ""
     - name: SHARED_LIB_REPO
-      value: !!str ""
+      value: ""
     - name: SHARED_LIB_NAME
-      value: !!str ""
+      value: ""
     - name: SHARED_LIB_REF
-      value: !!str ""
+      value: ""
     - name: SHARED_LIB_SECRET
-      value: !!str ""
+      value: ""
     - name: GITLAB_HOST
-      value: !!str ""
+      value: ""
     - name: GITLAB_TOKEN
-      value: !!str ""
+      value: ""
     - name: GITLAB_GROUP_NAME
       value: rht-labs
 
