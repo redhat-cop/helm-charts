@@ -18,9 +18,9 @@ deployment:
     - name: JVM_ARCH
       value: "x86_64"
     - name: DISABLE_ADMINISTRATIVE_MONITORS
-      value: false
+      value: "false"
     - name: ENABLE_FATAL_ERROR_LOG_FILE
-      value: false
+      value: "false"
     - name: JENKINS_OPTS
       value: "--sessionTimeout=0"
     - name: SLACK_BASE_URL

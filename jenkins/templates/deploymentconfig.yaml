@@ -1,7 +1,7 @@
 {{- if .Values.deployment }}
 ---
 apiVersion: apps.openshift.io/v1 
-Kind: DeploymentConfig
+kind: DeploymentConfig
 metadata:
   annotations:
   template.alpha.openshift.io/wait-for-ready: "true"
@@ -11,7 +11,7 @@ labels:
 spec:
   replicas: 1
   selector:
-  name: {{ .Values.appName }}
+    name: {{ .Values.appName }}
   strategy: {{- if .Values.persistence.enabled }}
     type: Recreate 
     {{ else }}
@@ -19,13 +19,14 @@ spec:
     {{ end }}
   template:
     metadata:
-      name: {{ .Values.appName }}
+      labels:
+        name: {{ .Values.appName }}
     spec:
       containers:
       - name: {{ .Values.appName }}
         env: {{ if .Values.deployment.openshiftauth }}
         - name: OPENSHIFT_ENABLE_OAUTH
-          value: ${ENABLE_OAUTH}
+          value: "true"
         - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
           value: "true" {{ end }}
         - name: KUBERNETES_MASTER
@@ -38,7 +39,7 @@ spec:
           value: {{ .Values.appName }}-jnlp
         {{- range $key := .Values.deployment.env_vars }}
         - name: {{ .name }}
-          value: {{ .value }} {{ end }}
+          value: {{ .value | quote }} {{ end }}
         image: ' '
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -82,12 +83,12 @@ spec:
   - imageChangeParams:
       automatic: true
       containerNames:
-          - {{ .Values.appName }}
+      - {{ .Values.appName }}
       from:
-          kind: ImageStreamTag
-          name: {{ .Values.deployment.imagestream.name}}:{{ .Values.deployment.imagestream.tag}}
-          namespace: {{ .Values.deployment.imagestream.namespace}}
+        kind: ImageStreamTag
+        name: {{ .Values.deployment.imagestream.name}}:{{ .Values.deployment.imagestream.tag}}
+        namespace: {{ .Values.deployment.imagestream.namespace}}
       lastTriggeredImage: ""
-      type: ImageChange
+    type: ImageChange
   - type: ConfigChange
 {{ end }}

@@ -8,6 +8,6 @@ spec:
     accessModes:
     - {{ .Values.persistence.accessModes }}
     resources:
-    requests:
+      requests:
         storage: {{ .Values.persistence.volumeSize }}
 {{ end }}
