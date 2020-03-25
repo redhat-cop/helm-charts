@@ -5,8 +5,8 @@ kind: DeploymentConfig
 metadata:
   annotations:
   name: {{ .Values.appName }}
-labels:
-  app: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
 spec:
   replicas: 1
   selector:
