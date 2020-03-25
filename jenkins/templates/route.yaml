@@ -8,6 +8,7 @@ metadata:
     template.openshift.io/expose-uri: http://{.spec.host}{.spec.path}
   name: {{ .Values.appName }}
 spec:
+  host: {{ .Values.appHostName }}
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge

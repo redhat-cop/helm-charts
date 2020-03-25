@@ -1,5 +1,6 @@
 ---
 appName: &name jenkins
+appHostName: jenkins.apps.hivec.sandbox509.opentlc.com
 
 route: true
 
