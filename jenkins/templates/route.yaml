@@ -14,4 +14,6 @@ spec:
   to:
     kind: Service
     name: {{ .Values.appName }}
+status:
+  ingress: []
 {{ end }}
