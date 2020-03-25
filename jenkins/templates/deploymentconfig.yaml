@@ -4,7 +4,6 @@ apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   annotations:
-  template.alpha.openshift.io/wait-for-ready: "true"
   name: {{ .Values.appName }}
 labels:
   app: {{ .Values.appName }}
@@ -80,7 +79,7 @@ spec:
       volumes:
       - name: {{ .Values.appName }}-data
         persistentVolumeClaim:
-        claimName: {{ .Values.appName }}
+          claimName: {{ .Values.appName }}
       {{- end }}
   triggers:
   - imageChangeParams:
