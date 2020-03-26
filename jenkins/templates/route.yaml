@@ -5,10 +5,10 @@ kind: Route
 metadata:
   annotations:
     haproxy.router.openshift.io/timeout: 4m
-    template.openshift.io/expose-uri: http://{.spec.host}{.spec.path}
+    openshift.io/host.generated: "true"
   name: {{ .Values.appName }}
 spec:
-  host: {{ .Values.appHostName }}
+  host: null
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
