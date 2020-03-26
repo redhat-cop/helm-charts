@@ -1,56 +1,56 @@
 apiVersion: v1
 kind: DeploymentConfig
 metadata:
-    labels:
-    app: pact-broker
-    deploymentconfig: postgresql-pact-broker
-    name: postgresql-pact-broker
+  labels:
+    app: {{ .Chart.Name }}
+    deploymentconfig: postgresql-{{ .Chart.Name }}
+  name: postgresql-{{ .Chart.Name }}
 spec:
-    replicas: 1
-    selector:
-    app: pact-broker
-    deploymentconfig: postgresql-pact-broker
-    strategy:
+  replicas: 1
+  selector:
+    app: {{ .Chart.Name }}
+    deploymentconfig: postgresql-{{ .Chart.Name }}
+  strategy:
     recreateParams:
-        timeoutSeconds: 600
+      timeoutSeconds: 600
     resources: {}
     type: Recreate
-    template:
+  template:
     metadata:
-        labels:
-        app: pact-broker
-        deploymentconfig: postgresql-pact-broker
+      labels:
+        app: {{ .Chart.Name }}
+        deploymentconfig: postgresql-{{ .Chart.Name }}
     spec:
-        containers:
+      containers:
         - name: postgresql
-            env:
+          env:
             - name: POSTGRESQL_USER
-                valueFrom:
+              valueFrom:
                 secretKeyRef:
-                    key: username
-                    name: pact-broker-secrets
+                  key: username
+                  name: {{ .Chart.Name }}-secrets
             - name: POSTGRESQL_PASSWORD
-                valueFrom:
+              valueFrom:
                 secretKeyRef:
-                    key: password
-                    name: pact-broker-secrets
+                  key: password
+                  name: pact-broker-secrets
             - name: POSTGRESQL_DATABASE
-                value: pact_broker
-            imagePullPolicy: Always
-            livenessProbe:
+              value: pact_broker
+          imagePullPolicy: Always
+          livenessProbe:
             failureThreshold: 3
             initialDelaySeconds: 30
             periodSeconds: 10
             successThreshold: 1
             tcpSocket:
-                port: 5432
+              port: 5432
             timeoutSeconds: 1
-            ports:
+          ports:
             - containerPort: 5432
-                protocol: TCP
-            readinessProbe:
+              protocol: TCP
+          readinessProbe:
             exec:
-                command:
+              command:
                 - /bin/sh
                 - -i
                 - -c
@@ -60,28 +60,28 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
-            securityContext:
+          securityContext:
             capabilities: {}
             privileged: false
-            terminationMessagePath: /dev/termination-log
-            volumeMounts:
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
             - mountPath: /var/lib/pgsql/data
-                name: postgresql-pact-broker-data
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        securityContext: {}
-        terminationGracePeriodSeconds: 30
-        volumes:
-        - name: postgresql-pact-broker-data
-            persistentVolumeClaim:
-            claimName: postgresql-pact-broker-data
-    triggers:
+              name: postgresql-pact-broker-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: postgresql-{{ .Chart.Name }}-data
+          persistentVolumeClaim:
+            claimName: postgresql-{{ .Chart.Name }}-data
+  triggers:
     - imageChangeParams:
         automatic: true
         containerNames:
-            - postgresql
+          - postgresql
         from:
-            kind: ImageStreamTag
-            name: postgresql:9.5
-            namespace: openshift
-        type: ImageChange
+          kind: ImageStreamTag
+          name: postgresql:9.5
+          namespace: openshift
+      type: ImageChange
