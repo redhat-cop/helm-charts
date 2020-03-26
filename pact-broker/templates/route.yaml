@@ -6,7 +6,7 @@ metadata:
     app: {{ .Chart.Name }}
 spec:
   port:
-    targetPort: 8080-tcp
+    targetPort: {{ .Values.route.targetPort | default "8080" }}-tcp
   to:
     kind: Service
     name: {{ .Chart.Name }}

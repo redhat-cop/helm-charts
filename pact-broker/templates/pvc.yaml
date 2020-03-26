@@ -4,10 +4,10 @@ metadata:
   labels:
     app: {{ .Chart.Name }}
     deploymentconfig: postgresql-{{ .Chart.Name }}
-  name: postgresql-{{ template "fullname" . }}-data
+  name: postgresql-{{ .Chart.Name }}-data
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: ${POSTGRESQL_PERSISTENT_VOLUME_CLAIM_SIZE}
+      storage: {{ .Values.postgresql.persistent.volume.size | default " 5Gi" }}

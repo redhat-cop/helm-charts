@@ -1,0 +1,43 @@
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8080
+  
+secrets:
+  keys:
+    username: "username" # default
+    password: "password" # default
+  values:
+    pactBrokerBasicAuthUsername: 
+    pactBrokerBasicAuthPassword: 
+    pactBrokerBasicAuthReadOnlyUsername: 
+    pactBrokerBasicAuthReadOnlyPassword:
+
+deployment:
+  intervalSeconds: 1
+  maxSurge: 25
+  maxUnavailable: "25%"
+  timeoutSeconds: 600
+  updatePeriodSeconds: 1
+
+persistence:
+  enabled: true
+
+postgresql:
+  service:
+    port: 5432 # default
+    database: "pack-broker"
+    type: ClusterIP
+  image:
+    tag: "9.5"
+  persistent:
+    volume: 
+      size: "5gi"
+  secrets:
+    keys:
+      username: "username" # default
+      password: "password" # default
+    values:
+      username: username
+      password: change-me

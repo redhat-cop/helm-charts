@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "fullname" . }}
+  name: postgresql-{{ .Chart.Name }}
   labels:
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     app: {{ .Chart.Name }}
 spec:
   ports:
-    - name: 8080-tcp
-      port: 8080
+    - name: postgresql
+      port: {{ .Values.postgresql.service.port | default "5432" }}
       protocol: TCP
-      targetPort: 8080
+      targetPort: {{ .Values.postgresql.service.port | default "5432" }}
   selector:
     app: {{ .Chart.Name }}
+    deploymentconfig: postgresql-{{ .Chart.Name }}
   sessionAffinity: None
-  type: ClusterIP
+  type: {{ .Values.postgresql.service.type | default "ClusterIP" }}
