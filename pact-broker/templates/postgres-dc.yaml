@@ -33,9 +33,9 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: password
-                  name: pact-broker-secrets
+                  name: {{ .Chart.Name }}-secrets
             - name: POSTGRESQL_DATABASE
-              value: pact_broker
+              value: {{ .Values.postgresql.database }}
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
