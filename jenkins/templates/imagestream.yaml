@@ -5,15 +5,5 @@ apiVersion: image.openshift.io/v1
 metadata:
   name: {{ .Values.imagestream.name }}
   annotations:
-    description: Tracks the Red Hat Jenkins base image, since openshift may not ship with the tag we need. Importing the image allows normal users to run the playbook.
-spec:
-  tags:
-  - annotations: null
-    from:
-      kind: DockerImage
-      name: {{ .Values.imagestream.builder_registry }}/{{ .Values.imagestream.builder_repo }}/{{ .Values.imagestream.builder_image }}:{{ .Values.imagestream.builder_imagetag }}
-    importPolicy: {}
-    name: {{ .Values.imagestream.builder_imagetag }}
-    referencePolicy:
-      type: Source
+    description: Keeps track of changes in the application image
 {{- end}}

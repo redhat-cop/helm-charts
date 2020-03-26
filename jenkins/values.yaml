@@ -3,12 +3,19 @@ appName: &name jenkins
 
 route: true
 
+# ovs this is not a real password in use.... or is it?
+# ¯\_(ツ)_/¯
+source_secret:
+  name: git-auth
+  username: idm-sa
+  password: thisisdefinitelymypassword
+
 deployment:
   openshiftauth: true
   imagestream:
     name: jenkins
     tag: latest
-    namespace: openshift
+    namespace: labs-ci-cd
   limits:
     memory_request: 2Gi
     memory_limit: 6Gi
@@ -16,33 +23,33 @@ deployment:
     cpu_limit: 1
   env_vars:
     - name: JVM_ARCH
-      value: "x86_64"
+      value: 'x86_64'
     - name: DISABLE_ADMINISTRATIVE_MONITORS
-      value: "false"
+      value: 'false'
     - name: ENABLE_FATAL_ERROR_LOG_FILE
-      value: "false"
+      value: 'false'
     - name: JENKINS_OPTS
-      value: "--sessionTimeout=0"
+      value: '--sessionTimeout=0'
     - name: SLACK_BASE_URL
-      value: ""
+      value: ''
     - name: SLACK_ROOM
-      value: ""
+      value: ''
     - name: SLACK_TOKEN_CREDENTIAL_ID
-      value: ""
+      value: ''
     - name: SLACK_TEAM
-      value: ""
+      value: ''
     - name: SHARED_LIB_REPO
-      value: ""
+      value: ''
     - name: SHARED_LIB_NAME
-      value: ""
+      value: ''
     - name: SHARED_LIB_REF
-      value: ""
+      value: ''
     - name: SHARED_LIB_SECRET
-      value: ""
+      value: ''
     - name: GITLAB_HOST
-      value: ""
+      value: ''
     - name: GITLAB_TOKEN
-      value: ""
+      value: ''
     - name: GITLAB_GROUP_NAME
       value: rht-labs
 
@@ -67,19 +74,22 @@ services:
 imagestream:
   enabled: true
   name: *name
-  builder_registry: quay.io
+  external:
+    enabled: false
+    builder_registry: quay.io
+    builder_repo: openshift
+    builder_image: origin-jenkins
+    builder_imagetag: latest
   builder_repo: openshift
-  builder_image: origin-jenkins
-  builder_imagetag: "4.1.0"
+  builder_image: jenkins
+  builder_imagetag: '2'
 
 buildconfig:
   enabled: true
   name: *name
-  build_secret: "🕵️shhhhhhh-this-is-my-super-duper-secret123-shhhhhhh🕵️"
-  source_secret: "git-auth"
-  pull_secret: "biscuits-123"
-  source_type: GitLab,GitHub,Bitbucket,Generic
+  build_secret: '🔥shhhhhhh-this-is-my-super-duper-secret123-shhhhhhh🔥'
+  source_secret: 'git-auth'
+  pull_secret: 'biscuits-123'
   source_repo_url: https://github.com/rht-labs/s2i-config-jenkins.git
   source_repo_ref: v1.6
-  source_repo_context: ""
-
+  source_repo_context: ''

@@ -9,21 +9,20 @@ metadata:
     type: image
 spec:
   triggers:
-    triggers:
-    - type: GitHub
-      github:
-        secret: {{ .Values.buildconfig.build_secret | quote }}
-    - type: GitLab
-      gitlab:
-        secret: {{ .Values.buildconfig.build_secret | quote }}
-    - type: BitBucket
-      bitbucket:
-        secret: {{ .Values.buildconfig.build_secret | quote }}
-    - type: Generic
-      generic:
-        secret: {{ .Values.buildconfig.build_secret | quote }}
-        allowEnv: true
-    - type: ConfigChange
+  - type: GitHub
+    github:
+      secret: {{ .Values.buildconfig.build_secret | quote }}
+  - type: GitLab
+    gitlab:
+      secret: {{ .Values.buildconfig.build_secret | quote }}
+  - type: BitBucket
+    bitbucket:
+      secret: {{ .Values.buildconfig.build_secret | quote }}
+  - type: Generic
+    generic:
+      secret: {{ .Values.buildconfig.build_secret | quote }}
+      allowEnv: true
+  - type: ConfigChange
   runPolicy: Serial
   source:
     type: Git
