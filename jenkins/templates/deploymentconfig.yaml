@@ -11,7 +11,7 @@ spec:
   replicas: 1
   selector:
     name: {{ .Values.appName }}
-  strategy: {{- if .Values.persistence.enabled }}
+  strategy: {{- if .Values.persistence }}
     type: Recreate 
     {{ else }}
     type: Rolling 
@@ -70,14 +70,14 @@ spec:
           capabilities: {}
           privileged: false
         terminationMessagePath: /dev/termination-log
-        {{- if .Values.persistence.enabled }}
+        {{- if .Values.persistence }}
         volumeMounts:
         - mountPath: /var/lib/jenkins
           name: {{ .Values.appName }}-data {{ end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       serviceAccountName: {{ .Values.appName }}
-      {{- if .Values.persistence.enabled }}
+      {{- if .Values.persistence }}
       volumes:
       - name: {{ .Values.appName }}-data
         persistentVolumeClaim:

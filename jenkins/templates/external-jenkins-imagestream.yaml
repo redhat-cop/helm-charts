@@ -1,4 +1,4 @@
-{{- if .Values.imagestream.external.enabled }}
+{{- if .Values.imagestream.external }}
 ---
 kind: ImageStream
 apiVersion: image.openshift.io/v1

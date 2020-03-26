@@ -1,4 +1,4 @@
-{{- if .Values.buildconfig.enabled }}
+{{- if .Values.buildconfig }}
 ---
 kind: BuildConfig
 apiVersion: build.openshift.io/v1

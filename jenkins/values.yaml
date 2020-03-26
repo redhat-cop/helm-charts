@@ -13,7 +13,7 @@ source_secret:
 deployment:
   openshiftauth: true
   imagestream:
-    name: jenkins
+    name: *name
     tag: latest
     namespace: labs-ci-cd
   limits:
@@ -54,7 +54,6 @@ deployment:
       value: rht-labs
 
 persistence:
-  enabled: true
   accessModes: ReadWriteOnce
   volumeSize: 20Gi
 
@@ -72,10 +71,8 @@ services:
     selector: *name
 
 imagestream:
-  enabled: true
   name: *name
   external:
-    enabled: false
     builder_registry: quay.io
     builder_repo: openshift
     builder_image: origin-jenkins
@@ -85,7 +82,6 @@ imagestream:
   builder_imagetag: '2'
 
 buildconfig:
-  enabled: true
   name: *name
   build_secret: '🔥shhhhhhh-this-is-my-super-duper-secret123-shhhhhhh🔥'
   source_secret: 'git-auth'
