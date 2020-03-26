@@ -56,10 +56,3 @@ postgresql:
   persistent:
     volume: 
       size: "5Gi"
-  secrets:
-    keys:
-      username: username
-      password: password
-    values:
-      username: CHANGE-ME
-      password: CHANGE-ME
