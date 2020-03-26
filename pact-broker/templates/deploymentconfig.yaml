@@ -34,12 +34,12 @@ spec:
             - name: PACT_BROKER_DATABASE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  key: {{ .Values.secrets.keys.pactBrokerDatabaseUsername | default "username" }}
+                  key: {{ .Values.secrets.keys.pactBrokerDatabaseUsername | default "pact_broker_database_username" }}
                   name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
             - name: PACT_BROKER_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: {{ .Values.secrets.keys.pactBrokerDatabasePassword | default "password" }}
+                  key: {{ .Values.secrets.keys.pactBrokerDatabasePassword | default "pact_broker_database_password" }}
                   name: {{ .Values.secrets.name | default "{{ .Values.appName }}}-secrets" }}
             - name: PACT_BROKER_BASIC_AUTH_USERNAME
               valueFrom:
