@@ -3,9 +3,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ .Values.appName }}
   labels:
-    chart: "{{ .Chart.Name }} - {{ .Chart.Version }}"
+    app: {{ .Values.appName }}
 spec:
   ports:
     - name: {{ .Values.service.port | default "8080" }}-tcp
@@ -13,7 +13,7 @@ spec:
       protocol: TCP
       targetPort: {{ .Values.service.port | default "8080" }}
   selector:
-    app: {{ .Chart.Name }}
+    app: {{ .Values.appName }}
   sessionAffinity: None
   type: {{ .Values.service.type | default "ClusterIP" }}
 {{ end }}

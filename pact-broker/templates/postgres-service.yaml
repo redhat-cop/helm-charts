@@ -1,11 +1,10 @@
-{{- if .Values.postgresql }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgresql-{{ .Chart.Name }}
+  name: postgresql-{{ .Values.appName }}
   labels:
-    app: {{ .Chart.Name }}
+    app: {{ .Values.appName }}
 spec:
   ports:
     - name: postgresql
@@ -13,8 +12,7 @@ spec:
       protocol: TCP
       targetPort: {{ .Values.postgresql.service.port | default "5432" }}
   selector:
-    app: {{ .Chart.Name }}
-    deploymentconfig: postgresql-{{ .Chart.Name }}
+    app: {{ .Values.appName }}
+    deploymentconfig: postgresql-{{ .Values.appName }}
   sessionAffinity: None
   type: {{ .Values.postgresql.service.type | default "ClusterIP" }}
-{{ end }}

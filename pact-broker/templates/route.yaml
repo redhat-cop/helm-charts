@@ -1,17 +1,27 @@
 {{- if .Values.route }}
 ---
-apiVersion: v1
+apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ .Values.appName }}
   labels:
-    app: {{ .Chart.Name }}
+    app: {{ .Values.appName }}
 spec:
+  host: "teste.com"
   port:
     targetPort: {{ .Values.route.targetPort | default "8080" }}-tcp
   to:
     kind: Service
-    name: {{ .Chart.Name }}
+    name: {{ .Values.appName }}
     weight: 100
-  wildcardPolicy: None
+status:
+  ingress:
+    - conditions:
+      - lastTransitionTime: "2019-12-06T03:24:58Z"
+        status: ""
+        type: "" 
+      host: ""
+      routerCanonicalHostname: ""
+      routerName: default
+      wildcardPolicy: None
 {{ end }}

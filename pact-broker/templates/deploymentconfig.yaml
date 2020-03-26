@@ -1,17 +1,16 @@
-{{- if .Values.deployment }}
 ---
-apiVersion: v1
+apiVersion: apps.openshift.io/v1 
 kind: DeploymentConfig
 metadata:
   annotations:
-  template.alpha.openshift.io/wait-for-ready: "true"
-  name: {{ .Chart.Name }}
-labels:
-  app: {{ .Chart.Name }}
+    template.alpha.openshift.io/wait-for-ready: "true"
+  name: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
 spec:
   replicas: {{ .Values.deployment.replicaCount | default "1"  }}
   selector:
-    name: {{ .Chart.Name }}
+    name: {{ .Values.appName }}
   strategy: {{- if .Values.persistence.enabled }}
     type: Recreate 
     {{ else }}
@@ -27,62 +26,62 @@ spec:
   template:
     metadata:
       labels:
-        name: {{ .Chart.Name }}
+        name: {{ .Values.appName }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: Always
+        - name: {{ .Values.appName }}
           env:
             - name: PACT_BROKER_DATABASE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  key: {{ .Values.postgresql.secrets.keys.username | default "username" }}
-                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
+                  key: {{ .Values.secrets.keys.pactBrokerDatabaseUsername | default "username" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
             - name: PACT_BROKER_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: {{ .Values.postgresql.secrets.keys.password | default "password" }}
-                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}}-secrets" }}
+                  key: {{ .Values.secrets.keys.pactBrokerDatabasepPassword | default "password" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}}-secrets" }}
             - name: PACT_BROKER_BASIC_AUTH_USERNAME
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.secrets.keys.pactBrokerBasicAuthUsername | default "pact_broker_admin" }}
-                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
             - name: PACT_BROKER_BASIC_AUTH_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.secrets.keys.pactBrokerBasicAuthPassword | default "pact_broker_admin_password" }}
-                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
             - name: PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.secrets.keys.pactBrokerBasicAuthReadOnlyUsername | default "pact_broker_user" }}
-                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
             - name: PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.secrets.keys.pactBrokerBasicAuthReadOnlyPassword | default "pact_broker_user_password" }}
-                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
             - name: PACT_BROKER_DATABASE_HOST
               value: {{ .Values.deployment.pactBrokerDatabaseHost | default "postgresql-pact-broker" }}
             - name: PACT_BROKER_DATABASE_NAME
-              value: {{ .Values.postgresql.database | default "pack-broker" }}
+              value: {{ .Values.postgresql.database | default "pact-broker" }}
             - name: PACT_BROKER_PORT
               value: {{ .Values.service.port | default "8080" | quote }}
             - name: PACT_BROKER_PUBLIC_HEARTBEAT
               value: {{ .Values.deployment.pactBrokerPublicHeartbeat | default "true" | quote }}
+          image: "{{ .Values.deployment.image.name}}:{{ .Values.deployment.image.tag}}"
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold | default "3" }}
             httpGet:
               path: {{ .Values.deployment.livenessProbe.path | default "/diagnostic/status/heartbeat" }}
-              port: {{ .Values.service.port | default "8080" | quote }}
+              port: {{ .Values.service.port | default "8080" }}
               scheme: {{ .Values.deployment.livenessProbe.scheme | default "HTTP" }} 
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
           ports:
-            - containerPort: {{ .Values.service.port | default "8080" | quote }}
+            - containerPort: {{ .Values.service.port | default "8080" }}
               protocol: TCP
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
@@ -90,5 +89,3 @@ spec:
       restartPolicy: Always
       schedulerName: default-scheduler
       terminationGracePeriodSeconds: 30
-
-{{ end }}

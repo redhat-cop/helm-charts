@@ -1,17 +1,16 @@
-{{- if .Values.postgresql }}
 ---
-apiVersion: v1
+apiVersion: apps.openshift.io/v1 
 kind: DeploymentConfig
 metadata:
   labels:
-    app: {{ .Chart.Name }}
-    deploymentconfig: postgresql-{{ .Chart.Name }}
-  name: postgresql-{{ .Chart.Name }}
+    app: {{ .Values.appName }}
+    deploymentconfig: postgresql-{{ .Values.appName }}
+  name: postgresql-{{ .Values.appName }}
 spec:
   replicas: 1
   selector:
-    app: {{ .Chart.Name }}
-    deploymentconfig: postgresql-{{ .Chart.Name }}
+    app: {{ .Values.appName }}
+    deploymentconfig: postgresql-{{ .Values.appName }}
   strategy:
     recreateParams:
       timeoutSeconds: 600
@@ -20,8 +19,8 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
-        deploymentconfig: postgresql-{{ .Chart.Name }}
+        app: {{ .Values.appName }}
+        deploymentconfig: postgresql-{{ .Values.appName }}
     spec:
       containers:
         - name: postgresql
@@ -29,15 +28,15 @@ spec:
             - name: POSTGRESQL_USER
               valueFrom:
                 secretKeyRef:
-                  key: {{ .Values.postgresql.secrets.keys.username | default "username" }}
-                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
+                  key: {{ .Values.secrets.keys.pactBrokerDatabaseUsername | default "username" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: {{ .Values.postgresql.secrets.keys.password | default "password" }}
-                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
+                  key: {{ .Values.secrets.keys.pactBrokerDatabasePassword | default "password" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
             - name: POSTGRESQL_DATABASE
-              value: {{ .Values.postgresql.database | default "pack-broker" }}
+              value: {{ .Values.postgresql.database | default "pact-broker" }}
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -68,15 +67,15 @@ spec:
           terminationMessagePath: /dev/termination-log
           volumeMounts:
             - mountPath: /var/lib/pgsql/data
-              name: postgresql-{{ .Chart.Name }}-data
+              name: postgresql-{{ .Values.appName }}-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
-        - name: postgresql-{{ .Chart.Name }}-data
+        - name: postgresql-{{ .Values.appName }}-data
           persistentVolumeClaim:
-            claimName: postgresql-{{ .Chart.Name }}-data
+            claimName: postgresql-{{ .Values.appName }}-data
   triggers:
     - imageChangeParams:
         automatic: true
@@ -87,4 +86,3 @@ spec:
           name: postgresql:{{ .Values.postgresql.image.tag | default "9.5" }}
           namespace: openshift
       type: ImageChange
-{{ end }}
