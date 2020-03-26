@@ -1,0 +1,53 @@
+{{- if .Values.buildconfig.enabled }}
+---
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: {{ .Values.buildconfig.name }}
+  labels:
+    build: {{ .Values.buildconfig.name }}
+    type: image
+spec:
+  triggers:
+    triggers:
+    - type: GitHub
+      github:
+        secret: {{ .Values.buildconfig.build_secret | quote }}
+    - type: GitLab
+      gitlab:
+        secret: {{ .Values.buildconfig.build_secret | quote }}
+    - type: BitBucket
+      bitbucket:
+        secret: {{ .Values.buildconfig.build_secret | quote }}
+    - type: Generic
+      generic:
+        secret: {{ .Values.buildconfig.build_secret | quote }}
+        allowEnv: true
+    - type: ConfigChange
+  runPolicy: Serial
+  source:
+    type: Git
+    {{- if .Values.buildconfig.source_secret }}
+    sourceSecret:
+      name: {{ .Values.buildconfig.source_secret }}
+    {{- end }}
+    git:
+      uri: {{ .Values.buildconfig.source_repo_url | quote }}
+      ref: {{ .Values.buildconfig.source_repo_ref | default "master" | quote }}
+    contextDir: {{ .Values.buildconfig.source_repo_context | quote }}
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: "{{ .Values.imagestream.name }}:{{ .Values.imagestream.builder_imagetag }}"
+        namespace: {{ .Values.imagestream.builder_repo }}
+    {{- if .Values.buildconfig.pull_secret }}
+      pullSecret:
+        name: {{ .Values.buildconfig.pull_secret | quote}}
+    {{- end }}
+  output:
+    to:
+      kind: ImageStreamTag
+      name: "{{ .Values.imagestream.name }}:latest"
+{{- end}}

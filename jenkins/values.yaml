@@ -63,3 +63,23 @@ services:
     port: 50000
     target_port: 5000
     selector: *name
+
+imagestream:
+  enabled: true
+  name: *name
+  builder_registry: quay.io
+  builder_repo: openshift
+  builder_image: origin-jenkins
+  builder_imagetag: "4.1.0"
+
+buildconfig:
+  enabled: true
+  name: *name
+  build_secret: "🕵️shhhhhhh-this-is-my-super-duper-secret123-shhhhhhh🕵️"
+  source_secret: "git-auth"
+  pull_secret: "biscuits-123"
+  source_type: GitLab,GitHub,Bitbucket,Generic
+  source_repo_url: https://github.com/rht-labs/s2i-config-jenkins.git
+  source_repo_ref: v1.6
+  source_repo_context: ""
+
