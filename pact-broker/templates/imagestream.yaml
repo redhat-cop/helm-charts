@@ -3,4 +3,4 @@ kind: ImageStream
 metadata:
   labels:
     app: {{ .Chart.Name }}
-  name: {{ template "fullname" . }}
+  name: {{ .Chart.Name }}

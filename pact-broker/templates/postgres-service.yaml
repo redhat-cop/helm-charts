@@ -1,3 +1,5 @@
+{{- if .Values.postgresql }}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -15,3 +17,4 @@ spec:
     deploymentconfig: postgresql-{{ .Chart.Name }}
   sessionAffinity: None
   type: {{ .Values.postgresql.service.type | default "ClusterIP" }}
+{{ end }}

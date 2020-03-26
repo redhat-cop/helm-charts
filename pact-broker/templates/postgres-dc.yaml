@@ -1,3 +1,5 @@
+{{- if .Values.postgresql }}
+---
 apiVersion: v1
 kind: DeploymentConfig
 metadata:
@@ -28,12 +30,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.postgresql.secrets.keys.username | default "username" }}
-                  name: {{ .Values.secret.name | default "{{ .Chart.Name }}-secrets" }}
+                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.postgresql.secrets.keys.password | default "password" }}
-                  name: {{ .Values.secret.name | default "{{ .Chart.Name }}-secrets" }}
+                  name: {{ .Values.secrets.name | default "{{ .Chart.Name }}-secrets" }}
             - name: POSTGRESQL_DATABASE
               value: {{ .Values.postgresql.database | default "pack-broker" }}
           imagePullPolicy: Always
@@ -85,3 +87,4 @@ spec:
           name: postgresql:{{ .Values.postgresql.image.tag | default "9.5" }}
           namespace: openshift
       type: ImageChange
+{{ end }}

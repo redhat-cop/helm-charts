@@ -1,25 +1,39 @@
-replicaCount: 1
-
 service:
   type: ClusterIP
   port: 8080
-  
+
+image: 
+  repository: "pactfoundation/pact-broker"
+  tag: "latest"
+
+route:
+  targetPort: 8080
+
 secrets:
+  name: "pack-broker"
   keys:
-    username: "username" # default
-    password: "password" # default
+    pactBrokerBasicAuthUsername: pact_broker_admin
+    pactBrokerDatabaseHost: postgresql-pact-broker
+    username: username
+    password: password
   values:
-    pactBrokerBasicAuthUsername: 
-    pactBrokerBasicAuthPassword: 
-    pactBrokerBasicAuthReadOnlyUsername: 
-    pactBrokerBasicAuthReadOnlyPassword:
+    pactBrokerBasicAuthUsername: postgresql-pack-broker
+    pactBrokerBasicAuthPassword: pack_broker_admin_password
+    pactBrokerBasicAuthReadOnlyUsername: pact_broker_user
+    pactBrokerBasicAuthReadOnlyPassword: pact_broker_user_password
 
 deployment:
+  replicaCount: 1
   intervalSeconds: 1
   maxSurge: 25
   maxUnavailable: "25%"
   timeoutSeconds: 600
   updatePeriodSeconds: 1
+  livenessProbe:
+    path: /diagnostic/status/heartbeat
+    failureThreshold: 3
+    scheme: HTTP
+  pactBrokerPublicHeartbeat: true
 
 persistence:
   enabled: true
@@ -36,8 +50,8 @@ postgresql:
       size: "5gi"
   secrets:
     keys:
-      username: "username" # default
-      password: "password" # default
-    values:
       username: username
-      password: change-me
+      password: password
+    values:
+      username: CHANGE-ME
+      password: CHANGE-ME

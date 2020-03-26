@@ -1,7 +1,9 @@
+{{- if .Values.route }}
+---
 apiVersion: v1
 kind: Route
 metadata:
-  name: {{ template "fullname" . }}
+  name: {{ .Chart.Name }}
   labels:
     app: {{ .Chart.Name }}
 spec:
@@ -12,3 +14,4 @@ spec:
     name: {{ .Chart.Name }}
     weight: 100
   wildcardPolicy: None
+{{ end }}
