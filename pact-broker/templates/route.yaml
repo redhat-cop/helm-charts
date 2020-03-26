@@ -7,7 +7,7 @@ metadata:
   labels:
     app: {{ .Values.appName }}
 spec:
-  host: null
+  host: {{ .Values.route.host | quote }}
   port:
     targetPort: {{ .Values.route.targetPort | default "8080" }}-tcp
   to:
@@ -17,11 +17,6 @@ spec:
 status:
   ingress:
     - conditions:
-      - lastTransitionTime: ""
-        status: ""
-        type: "" 
-      host: ""
-      routerCanonicalHostname: ""
-      routerName: default
-      wildcardPolicy: None
+        - status: 'True'
+          type: Admitted
 {{ end }}
