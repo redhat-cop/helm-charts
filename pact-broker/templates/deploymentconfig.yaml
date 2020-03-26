@@ -7,6 +7,7 @@ metadata:
   name: {{ .Values.appName }}
   labels:
     app: {{ .Values.appName }}
+    deploymentconfig: {{ .Values.appName }}
 spec:
   replicas: {{ .Values.deployment.replicaCount | default "1"  }}
   selector:
@@ -27,6 +28,7 @@ spec:
     metadata:
       labels:
         name: {{ .Values.appName }}
+        deploymentconfig: {{ .Values.appName }}
     spec:
       containers:
         - name: {{ .Values.appName }}

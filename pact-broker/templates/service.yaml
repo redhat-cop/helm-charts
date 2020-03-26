@@ -13,7 +13,7 @@ spec:
       protocol: TCP
       targetPort: {{ .Values.service.port | default "8080" }}
   selector:
-    app: {{ .Values.appName }}
+    deploymentconfig: {{ .Values.appName }}
   sessionAffinity: None
   type: {{ .Values.service.type | default "ClusterIP" }}
 {{ end }}
