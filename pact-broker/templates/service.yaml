@@ -1,0 +1,19 @@
+{{- if .Values.service }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
+spec:
+  ports:
+    - name: {{ .Values.service.port | default "8080" }}-tcp
+      port: {{ .Values.service.port | default "8080" }}
+      protocol: TCP
+      targetPort: {{ .Values.service.port | default "8080" }}
+  selector:
+    deploymentconfig: {{ .Values.appName }}
+  sessionAffinity: None
+  type: {{ .Values.service.type | default "ClusterIP" }}
+{{ end }}

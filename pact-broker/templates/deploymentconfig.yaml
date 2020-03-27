@@ -1,0 +1,93 @@
+---
+apiVersion: apps.openshift.io/v1 
+kind: DeploymentConfig
+metadata:
+  annotations:
+    template.alpha.openshift.io/wait-for-ready: "true"
+  name: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
+    deploymentconfig: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.deployment.replicaCount | default "1"  }}
+  selector:
+    name: {{ .Values.appName }}
+  strategy: {{- if .Values.persistence.enabled }}
+    type: Recreate 
+    {{ else }}
+    rollingParams:
+      intervalSeconds: {{ .Values.deployment.rollingParams.intervalSeconds | default "1" }}
+      maxSurge: {{ .Values.deployment.rollingParams.maxSurge | default "25%" }}
+      maxUnavailable: {{ .Values.deployment.rollingParams.maxUnavailable | default "25%" }}
+      timeoutSeconds: {{ .Values.deployment.rollingParams.timeoutSeconds | default "600" }}
+      updatePeriodSeconds: {{ .Values.deployment.rollingParams.updatePeriodSeconds | default "1" }}
+    type: Rolling 
+    {{- end }}
+    activeDeadlineSeconds: {{ .Values.deployment.activeDeadlineSeconds | default "21600" }}
+  template:
+    metadata:
+      labels:
+        name: {{ .Values.appName }}
+        deploymentconfig: {{ .Values.appName }}
+    spec:
+      containers:
+        - name: {{ .Values.appName }}
+          env:
+            - name: PACT_BROKER_DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.secrets.keys.pactBrokerDatabaseUsername | default "pact_broker_database_username" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
+            - name: PACT_BROKER_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.secrets.keys.pactBrokerDatabasePassword | default "pact_broker_database_password" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}}-secrets" }}
+            - name: PACT_BROKER_BASIC_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.secrets.keys.pactBrokerBasicAuthUsername | default "pact_broker_admin" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
+            - name: PACT_BROKER_BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.secrets.keys.pactBrokerBasicAuthPassword | default "pact_broker_admin_password" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
+            - name: PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.secrets.keys.pactBrokerBasicAuthReadOnlyUsername | default "pact_broker_user" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
+            - name: PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.secrets.keys.pactBrokerBasicAuthReadOnlyPassword | default "pact_broker_user_password" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
+            - name: PACT_BROKER_DATABASE_HOST
+              value: {{ .Values.deployment.pactBrokerDatabaseHost | default "postgresql-pact-broker" }}
+            - name: PACT_BROKER_DATABASE_NAME
+              value: {{ .Values.postgresql.database | default "pact-broker" }}
+            - name: PACT_BROKER_PORT
+              value: {{ .Values.service.port | default "8080" | quote }}
+            - name: PACT_BROKER_PUBLIC_HEARTBEAT
+              value: {{ .Values.deployment.pactBrokerPublicHeartbeat | default "true" | quote }}
+          image: "{{ .Values.deployment.image.name}}:{{ .Values.deployment.image.tag}}"
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold | default "3" }}
+            httpGet:
+              path: {{ .Values.deployment.livenessProbe.path | default "/diagnostic/status/heartbeat" }}
+              port: {{ .Values.service.port | default "8080" }}
+              scheme: {{ .Values.deployment.livenessProbe.scheme | default "HTTP" }} 
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          ports:
+            - containerPort: {{ .Values.service.port | default "8080" }}
+              protocol: TCP
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
