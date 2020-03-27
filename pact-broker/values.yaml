@@ -6,7 +6,7 @@ service:
   port: 8080
 
 route:
-  host: ""
+  host: null
   targetPort: 8080
 
 secrets:
