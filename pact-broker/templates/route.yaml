@@ -9,7 +9,7 @@ metadata:
   labels:
     app: {{ .Values.appName }}
 spec:
-  host: {{ .Values.route.host | default null | quote }}
+  host: {{ .Values.route.host | default 'null' | quote }}
   port:
     targetPort: {{ .Values.route.targetPort | default "8080" }}-tcp
   to:
