@@ -91,7 +91,6 @@ spec:
       from:
         kind: ImageStreamTag
         name: {{ .Values.deployment.imagestream.name}}:{{ .Values.deployment.imagestream.tag}}
-        namespace: {{ .Values.deployment.imagestream.namespace}}
       lastTriggeredImage: ""
     type: ImageChange
   - type: ConfigChange

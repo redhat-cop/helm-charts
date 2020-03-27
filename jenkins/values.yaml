@@ -15,7 +15,6 @@ deployment:
   imagestream:
     name: *name
     tag: latest
-    namespace: labs-ci-cd
   limits:
     memory_request: 2Gi
     memory_limit: 6Gi
@@ -85,7 +84,7 @@ buildconfig:
   name: *name
   build_secret: '🔥shhhhhhh-this-is-my-super-duper-secret123-shhhhhhh🔥'
   source_secret: 'git-auth'
-  pull_secret: 'biscuits-123'
+  pull_secret: ''
   source_repo_url: https://github.com/rht-labs/s2i-config-jenkins.git
   source_repo_ref: v1.6
   source_repo_context: ''
