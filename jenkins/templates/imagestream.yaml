@@ -1,0 +1,7 @@
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: {{ .Values.imagestream.name }}
+  annotations:
+    description: Keeps track of changes in the application image

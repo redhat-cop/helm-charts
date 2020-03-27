@@ -1,4 +1,3 @@
-{{- if .Values.services }}
 {{- range $key := .Values.services }}
 ---
 apiVersion: v1
@@ -19,5 +18,4 @@ spec:
     name: {{ .selector }}
   sessionAffinity: None
   type: ClusterIP
-{{ end }}
 {{ end }}

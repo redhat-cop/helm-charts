@@ -5,7 +5,7 @@ metadata:
   name: {{ .Values.appName }}_edit
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
+  kind: ClusterRole
   name: edit
 subjects:
   - kind: ServiceAccount

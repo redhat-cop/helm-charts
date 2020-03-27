@@ -11,7 +11,7 @@ spec:
   replicas: 1
   selector:
     name: {{ .Values.appName }}
-  strategy: {{- if .Values.persistence.enabled }}
+  strategy: {{- if .Values.persistence }}
     type: Recreate 
     {{ else }}
     type: Rolling 
@@ -38,8 +38,10 @@ spec:
         - name: JNLP_SERVICE_NAME
           value: {{ .Values.appName }}-jnlp
         {{- range $key := .Values.deployment.env_vars }}
+        {{- if .value }}
         - name: {{ .name }}
           value: {{ .value | default "" | quote }}
+        {{- end }}
         {{- end }}
         image: ' '
         imagePullPolicy: IfNotPresent
@@ -68,14 +70,14 @@ spec:
           capabilities: {}
           privileged: false
         terminationMessagePath: /dev/termination-log
-        {{- if .Values.persistence.enabled }}
+        {{- if .Values.persistence }}
         volumeMounts:
         - mountPath: /var/lib/jenkins
           name: {{ .Values.appName }}-data {{ end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       serviceAccountName: {{ .Values.appName }}
-      {{- if .Values.persistence.enabled }}
+      {{- if .Values.persistence }}
       volumes:
       - name: {{ .Values.appName }}-data
         persistentVolumeClaim:
@@ -89,7 +91,6 @@ spec:
       from:
         kind: ImageStreamTag
         name: {{ .Values.deployment.imagestream.name}}:{{ .Values.deployment.imagestream.tag}}
-        namespace: {{ .Values.deployment.imagestream.namespace}}
       lastTriggeredImage: ""
     type: ImageChange
   - type: ConfigChange

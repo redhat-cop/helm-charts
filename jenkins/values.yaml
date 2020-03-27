@@ -3,12 +3,18 @@ appName: &name jenkins
 
 route: true
 
+# ovs this is not a real password in use.... or is it?
+# ¯\_(ツ)_/¯
+source_secret:
+  name: git-auth
+  username: idm-sa
+  password: thisisdefinitelymypassword
+
 deployment:
   openshiftauth: true
   imagestream:
-    name: jenkins
+    name: *name
     tag: latest
-    namespace: openshift
   limits:
     memory_request: 2Gi
     memory_limit: 6Gi
@@ -16,38 +22,37 @@ deployment:
     cpu_limit: 1
   env_vars:
     - name: JVM_ARCH
-      value: "x86_64"
+      value: 'x86_64'
     - name: DISABLE_ADMINISTRATIVE_MONITORS
-      value: "false"
+      value: 'false'
     - name: ENABLE_FATAL_ERROR_LOG_FILE
-      value: "false"
+      value: 'false'
     - name: JENKINS_OPTS
-      value: "--sessionTimeout=0"
+      value: '--sessionTimeout=0'
     - name: SLACK_BASE_URL
-      value: ""
+      value: ''
     - name: SLACK_ROOM
-      value: ""
+      value: ''
     - name: SLACK_TOKEN_CREDENTIAL_ID
-      value: ""
+      value: ''
     - name: SLACK_TEAM
-      value: ""
+      value: ''
     - name: SHARED_LIB_REPO
-      value: ""
+      value: ''
     - name: SHARED_LIB_NAME
-      value: ""
+      value: ''
     - name: SHARED_LIB_REF
-      value: ""
+      value: ''
     - name: SHARED_LIB_SECRET
-      value: ""
+      value: ''
     - name: GITLAB_HOST
-      value: ""
+      value: ''
     - name: GITLAB_TOKEN
-      value: ""
+      value: ''
     - name: GITLAB_GROUP_NAME
       value: rht-labs
 
 persistence:
-  enabled: true
   accessModes: ReadWriteOnce
   volumeSize: 20Gi
 
@@ -63,3 +68,23 @@ services:
     port: 50000
     target_port: 5000
     selector: *name
+
+imagestream:
+  name: *name
+  external:
+    builder_registry: quay.io
+    builder_repo: openshift
+    builder_image: origin-jenkins
+    builder_imagetag: latest
+  builder_repo: openshift
+  builder_image: jenkins
+  builder_imagetag: '2'
+
+buildconfig:
+  name: *name
+  build_secret: '🔥shhhhhhh-this-is-my-super-duper-secret123-shhhhhhh🔥'
+  source_secret: 'git-auth'
+  pull_secret: ''
+  source_repo_url: https://github.com/rht-labs/s2i-config-jenkins.git
+  source_repo_ref: v1.6
+  source_repo_context: ''
