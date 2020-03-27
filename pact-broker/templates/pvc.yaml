@@ -1,0 +1,16 @@
+{{- if .Values.postgresql }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: {{ .Values.appName }}
+    deploymentconfig: postgresql-{{ .Values.appName }}
+  name: postgresql-{{ .Values.appName }}-data
+spec:
+  accessModes:
+    - {{ .Values.postgresql.persistent.accessMode | default " ReadWriteOnce" }}
+  resources:
+    requests:
+      storage: {{ .Values.postgresql.persistent.volume.size | default " 5Gi" }}
+{{ end }}

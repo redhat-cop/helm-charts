@@ -1,0 +1,22 @@
+{{- if .Values.route }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
+spec:
+  host: {{ .Values.route.host | quote }}
+  port:
+    targetPort: {{ .Values.route.targetPort | default "8080" }}-tcp
+  to:
+    kind: Service
+    name: {{ .Values.appName }}
+    weight: 100
+status:
+  ingress:
+    - conditions:
+        - status: 'True'
+          type: Admitted
+{{ end }}

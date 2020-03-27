@@ -1,0 +1,88 @@
+---
+apiVersion: apps.openshift.io/v1 
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: {{ .Values.appName }}
+    deploymentconfig: postgresql-{{ .Values.appName }}
+  name: postgresql-{{ .Values.appName }}
+spec:
+  replicas: 1
+  selector:
+    app: {{ .Values.appName }}
+    deploymentconfig: postgresql-{{ .Values.appName }}
+  strategy:
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        deploymentconfig: postgresql-{{ .Values.appName }}
+    spec:
+      containers:
+        - name: postgresql
+          env:
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.secrets.keys.pactBrokerDatabaseUsername | default "username" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.secrets.keys.pactBrokerDatabasePassword | default "password" }}
+                  name: {{ .Values.secrets.name | default "{{ .Values.appName }}-secrets" }}
+            - name: POSTGRESQL_DATABASE
+              value: {{ .Values.postgresql.database | default "pact-broker" }}
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: {{ .Values.postgresql.service.port | default "5432" }}
+            timeoutSeconds: 1
+          ports:
+            - containerPort: {{ .Values.postgresql.service.port  | default "5432" }}
+              protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -i
+                - -c
+                - psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          securityContext:
+            capabilities: {}
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+            - mountPath: /var/lib/pgsql/data
+              name: postgresql-{{ .Values.appName }}-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: postgresql-{{ .Values.appName }}-data
+          persistentVolumeClaim:
+            claimName: postgresql-{{ .Values.appName }}-data
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - postgresql
+        from:
+          kind: ImageStreamTag
+          name: postgresql:{{ .Values.postgresql.image.tag | default "9.6" }}
+          namespace: openshift
+      type: ImageChange
