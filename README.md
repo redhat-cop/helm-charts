@@ -8,3 +8,5 @@ To deploy just jenkins (using it's default config)
 ```
 helm template ds -f jenkins/values.yaml jenkins | oc apply -n labs-ci-cd -f -
 ```
+
+#
