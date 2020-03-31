@@ -82,7 +82,7 @@ imagestream:
 
 buildconfig:
   name: *name
-  build_secret: 'shhhhh-this-is-my-super-duper-secret123-shhhhhhh🔥'
+  build_secret: 'shhhhh-this-is-my-super-duper-secret123-shhhhh'
   source_secret: 'git-auth'
   pull_secret: ''
   source_repo_url: https://github.com/rht-labs/s2i-config-jenkins.git
