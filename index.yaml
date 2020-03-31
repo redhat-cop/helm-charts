@@ -1,0 +1,42 @@
+apiVersion: v1
+entries:
+  jenkins:
+  - apiVersion: v1
+    appVersion: v0.0.1
+    created: "2020-03-31T15:00:43.683320357Z"
+    description: A Helm chart for deploying Jenkins on OpenShift
+    digest: c0574318a3632bac5a97437099f5858b76378da22d376c32387ad6b2ee13cc73
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: jenkins
+    urls:
+    - https://github.com/rht-labs/charts/releases/download/jenkins-0.0.1/jenkins-0.0.1.tgz
+    version: 0.0.1
+  operatorhub:
+  - apiVersion: v1
+    appVersion: 0.0.1
+    created: "2020-03-31T15:00:43.779016061Z"
+    description: A Helm chart to create OperatorHub subscriptions
+    digest: 6bf44df7e33af62175a0cfc40dbc316416e7103ae7f3035cd6f16ddce98bd4ff
+    name: operatorhub
+    type: application
+    urls:
+    - https://github.com/rht-labs/charts/releases/download/operatorhub-0.0.1/operatorhub-0.0.1.tgz
+    version: 0.0.1
+  pact-broker:
+  - apiVersion: v1
+    appVersion: v0.0.1
+    created: "2020-03-31T15:00:43.906799699Z"
+    description: A Helm chart for deploying Pact Broker on OpenShift
+    digest: 07048ff3b1e54fc86e12f3b838f0dbd3dbe5584058a06785c4c4d2620a6932ba
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: mvmaestri
+    - name: gsampaio
+    name: pact-broker
+    urls:
+    - https://github.com/rht-labs/charts/releases/download/pact-broker-0.0.1/pact-broker-0.0.1.tgz
+    version: 0.0.1
+generated: "2020-03-31T15:00:43.554648618Z"
