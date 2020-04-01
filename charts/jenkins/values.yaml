@@ -87,4 +87,4 @@ buildconfig:
   pull_secret: ''
   source_repo_url: https://github.com/rht-labs/s2i-config-jenkins.git
   source_repo_ref: v1.6
-  source_repo_context: ''
+  source_repo_context: '/'
