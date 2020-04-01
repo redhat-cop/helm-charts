@@ -92,4 +92,23 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/pact-broker-0.0.1/pact-broker-0.0.1.tgz
     version: 0.0.1
+  sonarqube:
+  - apiVersion: v1
+    appVersion: 8.2-community
+    created: "2020-04-01T17:33:45.409007447Z"
+    description: SonarQube is an open sourced code quality scanning tool
+    digest: eb5ac73e5c67fb9d57a275028a5b6be47d2026a956baeae0c5502246c5b48a65
+    home: https://github.com/eformat/charts
+    icon: https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    maintainers:
+    - name: eformat
+    name: sonarqube
+    urls:
+    - https://github.com/rht-labs/charts/releases/download/sonarqube-0.0.4/sonarqube-0.0.4.tgz
+    version: 0.0.4
 generated: "2020-03-31T15:00:43.554648618Z"
