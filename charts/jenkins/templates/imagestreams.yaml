@@ -1,0 +1,26 @@
+{{- range $key := .Values.imagestreams }}
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+{{- if .name | regexFind ".*slave"  }}
+labels:
+  build: {{ .name }}
+  role: jenkins-slave
+{{- end }}
+metadata:
+  name: {{ .name }}
+  annotations:
+    description: Keeps track of changes in the application image
+{{- if .external }}
+spec:
+  tags:
+  - name: {{ .external.builder_imagetag | quote }}
+    annotations: null
+    from:
+      kind: DockerImage
+      name: {{ .external.builder_registry }}/{{ .external.builder_repo }}/{{ .external.builder_image }}:{{ .external.builder_imagetag }}
+    importPolicy: {}
+    referencePolicy:
+      type: Source
+{{- end }}
+{{- end }}
