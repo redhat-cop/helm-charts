@@ -2,13 +2,13 @@
 ---
 kind: ImageStream
 apiVersion: image.openshift.io/v1
-{{- if .name | regexFind ".*slave"  }}
-labels:
-  build: {{ .name }}
-  role: jenkins-slave
-{{- end }}
 metadata:
   name: {{ .name }}
+  {{- if .name | regexFind ".*slave"  }}
+  labels:
+    build: {{ .name }}
+    role: jenkins-slave
+  {{- end }}
   annotations:
     description: Keeps track of changes in the application image
 {{- if .external }}
