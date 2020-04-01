@@ -1,0 +1,24 @@
+{{- if .Values.route.enabled -}}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    openshift.io/host.generated: "true"
+  name: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
+spec:
+  host: {{ .Values.route.host | quote }}
+  port:
+    targetPort: {{ .Values.route.targetPort | default "8080-tcp" }}
+  to:
+    kind: Service
+    name: {{ template "postgresql.fullname" .}}
+    weight: 100
+status:
+  ingress:
+    - conditions:
+        - status: 'True'
+          type: Admitted
+{{ end }}
