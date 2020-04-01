@@ -7,7 +7,7 @@ test_namespace: &test "test"
 namespaces:
   - name: *ci_cd
     bindings:
-      # this labs devs is the GROUP NAME in IDM
+      # this labs-devs is the GROUP NAME in IDM
       - name: labs-devs
         kind: Group
         role: edit
