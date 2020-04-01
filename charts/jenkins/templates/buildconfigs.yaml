@@ -1,0 +1,66 @@
+{{- if .Values.buildconfigs }}
+{{- range $key := .Values.buildconfigs }}
+---
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: {{ .name }}
+  labels:
+    build: {{ .name }}
+    type: image
+spec:
+  triggers:
+  - type: "ConfigChange"
+{{- if .build_trigger_secret }}
+  - type: GitHub
+    github:
+      secret: {{ .build_trigger_secret | quote }}
+  - type: GitLab
+    gitlab:
+      secret: {{ .build_trigger_secret | quote }}
+  - type: BitBucket
+    bitbucket:
+      secret: {{ .build_trigger_secret | quote }}
+  - type: Generic
+    generic:
+      secret: {{ .build_trigger_secret | quote }}
+      allowEnv: true
+  {{- end}}
+  runPolicy: Serial
+  source:
+    type: Git
+    {{- if .source_secret }}
+    sourceSecret:
+      name: {{ .source_secret }}
+    {{- end }}
+    git:
+      uri: {{ .source_repo | quote }}
+      ref: {{ .source_repo_ref | default "master" | quote }}
+    contextDir: {{ .source_context_dir | quote }}
+  strategy:
+    type: {{ .strategy_type }}
+{{- if eq .strategy_type "Docker" }}
+    dockerStrategy:
+      dockerfilePath: {{ .dockerfilePath | default "Dockerfile" | quote }}
+      from:
+        kind: DockerImage
+        name: "{{ .builder_image_name }}:{{ .builder_image_tag }}"
+        imagePullPolicy: Always
+{{- end }}
+{{- if eq .strategy_type "Source" }}
+    sourceStrategy:
+      from:
+        kind: "ImageStreamTag"
+        name:  "{{ .builder_image_name }}:{{ .builder_image_tag }}"
+        namespace: {{ .builder_image_namespace | default "openshift" | quote }}
+{{- end }}
+    {{- if .pull_secret }}
+      pullSecret:
+        name: {{ .pull_secret | quote}}
+    {{- end }}
+  output:
+    to:
+      kind: ImageStreamTag
+      name: "{{ .name }}:latest"
+{{- end}}
+{{- end}}
