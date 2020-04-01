@@ -82,7 +82,6 @@ imagestreams:
   - name: jenkins-slave-argocd
   - name: jenkins-slave-helm
 
-  
 buildconfigs:
   - name: *name
     build_trigger_secret: 'shhhhh-this-is-my-super-duper-secret123-shhhhh'
@@ -115,4 +114,3 @@ buildconfigs:
     source_repo_ref: "v1.20"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
-
