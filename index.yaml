@@ -17,6 +17,19 @@ entries:
   jenkins:
   - apiVersion: v1
     appVersion: v0.0.1
+    created: "2020-04-01T15:12:11.66054854Z"
+    description: A Helm chart for deploying Jenkins on OpenShift
+    digest: 06bd6d34d3e9f6f4dc066ba2f67c5767acaf3df540bbc86ff581e963f00c6f0f
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: jenkins
+    urls:
+    - https://github.com/rht-labs/charts/releases/download/jenkins-0.0.3/jenkins-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v1
+    appVersion: v0.0.1
     created: "2020-04-01T10:51:22.668810054Z"
     description: A Helm chart for deploying Jenkins on OpenShift
     digest: 23d211f4e140cfaddbc7172ee5c6bf6fe976675d4bb99d3784d65b8ac15e1f44
