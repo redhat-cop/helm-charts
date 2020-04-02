@@ -45,7 +45,6 @@ spec:
       from:
         kind: DockerImage
         name: "{{ .builder_image_name }}:{{ .builder_image_tag }}"
-        imagePullPolicy: Always
 {{- end }}
 {{- if eq .strategy_type "Source" }}
     sourceStrategy:
