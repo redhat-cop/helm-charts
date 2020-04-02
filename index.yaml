@@ -3,6 +3,19 @@ entries:
   bootstrap-project:
   - apiVersion: v1
     appVersion: v0.0.1
+    created: "2020-04-02T10:11:19.439002072Z"
+    description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
+    digest: 8501ed5fe2c1a6d0ad701550675e0e746cc89a871f55e3b230b28e44eaf500b4
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: bootstrap-project
+    urls:
+    - https://github.com/rht-labs/charts/releases/download/bootstrap-project-0.0.2/bootstrap-project-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v1
+    appVersion: v0.0.1
     created: "2020-04-01T13:11:18.898146994Z"
     description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
     digest: 86be1213a59ac1309fe48786c92a6e67ccc2147c53da534fa722a84664f9cc43
@@ -15,6 +28,19 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/bootstrap-project-0.0.1/bootstrap-project-0.0.1.tgz
     version: 0.0.1
   jenkins:
+  - apiVersion: v1
+    appVersion: v0.0.1
+    created: "2020-04-02T10:11:19.52003453Z"
+    description: A Helm chart for deploying Jenkins on OpenShift
+    digest: 549c170c82a7de3348bb33276e88ed5b1608d2423292187c96649f7f7040079b
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: jenkins
+    urls:
+    - https://github.com/rht-labs/charts/releases/download/jenkins-0.0.6/jenkins-0.0.6.tgz
+    version: 0.0.6
   - apiVersion: v1
     appVersion: v0.0.1
     created: "2020-04-01T15:45:39.049234432Z"
