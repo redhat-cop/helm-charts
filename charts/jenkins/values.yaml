@@ -83,7 +83,6 @@ imagestreams:
   - name: jenkins-slave-helm
   - name: jenkins-slave-ansible
   - name: jenkins-slave-arachni
-  - name: jenkins-slave-erlang
   - name: jenkins-slave-golang
   - name: jenkins-slave-gradle
   - name: jenkins-slave-image-mgmt
@@ -128,13 +127,6 @@ buildconfigs:
   - name: "jenkins-slave-arachni"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-arachni"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
-  - name: "jenkins-slave-erlang"
-    strategy_type: "Docker"
-    source_context_dir: "jenkins-slaves/jenkins-slave-erlang"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
     source_repo_ref: "v1.20"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
