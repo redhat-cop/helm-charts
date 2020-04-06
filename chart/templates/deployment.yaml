@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-site-{{ .Release.Name }}
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: static-site
+      site: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: static-site
+        site: {{ .Release.Name }}
+        git_revision: {{ .Values.repo.revision }}
+    spec:
+      initContainers:
+        - name: git
+          image: jijiechen/alpine-curl-git:v2.24.1
+          workingDir: /website
+          command: ["git"]
+          args: ["clone", "--single-branch", "--branch", "{{ .Values.repo.branch }}", "{{ .Values.repo.location }}", "."]
+          volumeMounts:
+            - name: website
+              mountPath: /website
+          resources:
+            limits:
+              cpu: 200m
+              memory: "256Mi"
+            requests:
+              cpu: 20m
+              memory: "64Mi"
+      containers:
+        - name: nginx
+          image: nginx:1.17.9-alpine
+          command: ["/bin/sh"]
+          args: ["-c", "sed -i 's:location / {:absolute_redirect off;\\nlocation / {:' /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            limits:
+              cpu: 200m
+              memory: "256Mi"
+            requests:
+              cpu: 20m
+              memory: "64Mi"
+          volumeMounts:
+            - name: website
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: website
+          emptyDir: {}
+

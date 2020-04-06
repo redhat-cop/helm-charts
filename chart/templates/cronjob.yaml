@@ -1,0 +1,110 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: static-site-poller-{{ .Release.Name }}
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          restartPolicy: Never
+          serviceAccountName: {{ .Release.Name }}-redeployer
+          volumes:
+            - name: poller-script
+              configMap:
+                name: static-site-poller-script-{{ .Release.Name }}
+                defaultMode: 0777
+          containers:
+            - name: poller
+              image: jijiechen/alpine-curl-git:v2.24.1
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+                - mountPath: /var/poller/
+                  name: poller-script
+              command: ["/bin/sh"]
+              args:
+                - /var/poller/poll.sh
+              env:
+                - name: REPO_URL
+                  value: {{ .Values.repo.location }}
+                - name: BRANCH
+                  value: {{ .Values.repo.branch }}
+              resources:
+                limits:
+                  cpu: 200m
+                  memory: "256Mi"
+                requests:
+                  cpu: 20m
+                  memory: "64Mi"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: static-site-poller-script-{{ .Release.Name }}
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+data:
+  poll.sh: |-
+    #!/bin/sh
+
+    set -e
+
+    if [ -z "$REPO_URL" ]; then
+      exit 0
+    fi
+
+    K8S_URL=https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT_HTTPS
+    NAMESPACE=$(cat /run/secrets/kubernetes.io/serviceaccount/namespace)
+    TOKEN=$(cat /run/secrets/kubernetes.io/serviceaccount/token)
+
+    CURRENT=$(curl --insecure -H "Authorization: Bearer $TOKEN" $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/deployments/static-site-{{ .Release.Name }} 2>/dev/null | grep git_revision | tail -n 1 | cut -f 4 -d '"')
+    LATEST=$(git ls-remote $REPO_URL | grep refs/heads/$BRANCH | awk '{print $1}')
+
+    if [ "$LATEST" != "$CURRENT" ] ; then
+        echo "Redeploying static-site-{{ .Release.Name }}: the current deployment $CURRENT is expired, as the latest revision is $LATEST"
+        PATCH="{\"spec\": {\"template\": {\"metadata\": { \"labels\": {  \"git_revision\": \"$LATEST\"}}}}}"
+        
+        curl --insecure -X PATCH -H "Authorization: Bearer $TOKEN" \
+          -H 'Content-Type: application/strategic-merge-patch+json' --data "$PATCH" \
+          $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/deployments/static-site-{{ .Release.Name }}
+    else
+      echo "No change: static-site-{{ .Release.Name }} stayed the same as current deployment $CURRENT"
+    fi
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-redeployer
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}_redeployer_edit
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: edit
+subjects:
+  - kind: ServiceAccount
+    namespace: {{ .Release.Namespace }}
+    name: {{ .Release.Name }}-redeployer
+
