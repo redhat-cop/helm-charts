@@ -13,12 +13,8 @@ To install the chart:
 
 ```bash
 $ helm repo add rht-labs-charts https://rht-labs.github.io/charts
-$ helm install rht-labs-charts/sonarqube
+$ helm install rht-labs-charts/operatorhub
 ```
-
-The above command deploys Sonarqube on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
-
-The default login is admin/admin.
 
 ## Uninstalling the chart
 
@@ -30,7 +26,7 @@ $ helm delete <name of chart>
 
 ## Configuration
 
-The following table lists the configurable parameters of the Sonarqube chart and their default values.
+The following table lists the configurable parameters of the OperatorHub chart and their default values.
 
 | Parameter                             | Description                                                                  | Default                                        |
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -148,5 +144,5 @@ This will run `sysctl -w vm.max_map_count=262144` on the worker where the sonarq
 To disable worker node configuration, set `elasticsearch.configureNode` to `false`.  Note that if node configuration is not enabled, then you will likely need to also disable the Elasticsearch bootstrap checks.  These can be explicitly disabled by setting `elasticsearch.bootstrapChecks` to `false`.
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI1NTkwNjg3XX0=
+eyJoaXN0b3J5IjpbLTE1MDY0MjMzMjhdfQ==
 -->
