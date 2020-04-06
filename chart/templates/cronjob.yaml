@@ -1,3 +1,5 @@
+{{- if .Values.autoUpdate }}
+
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -108,3 +110,4 @@ subjects:
     namespace: {{ .Release.Namespace }}
     name: {{ .Release.Name }}-redeployer
 
+{{- end }}
