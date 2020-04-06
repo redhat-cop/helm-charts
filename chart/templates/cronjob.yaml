@@ -1,4 +1,4 @@
-{{- if .Values.autoUpdate }}
+{{- if .Values.autoUpdateCron }}
 
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -8,7 +8,7 @@ metadata:
     app: static-site
     site: {{ .Release.Name }}
 spec:
-  schedule: "* * * * *"
+  schedule: "{{ .Values.autoUpdateCron }}"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1

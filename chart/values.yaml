@@ -1,5 +1,5 @@
 
-autoUpdate: true
+autoUpdateCron: '* * * * *'
 replicas: 2
 repo:
   location: ''
