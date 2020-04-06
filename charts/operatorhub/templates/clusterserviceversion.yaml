@@ -1,7 +1,5 @@
 {{- if .Values.operators }}
 {{- range $op := .Values.operators }}
-{{- if $op.operatorgroup }}
-{{- $og := $op.operatorgroup }}
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
@@ -11,6 +9,5 @@ metadata:
   annotations:
     "helm.sh/hook": "post-delete"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-{{- end }}
 {{- end }}
 {{- end }}
