@@ -1,17 +1,17 @@
 
-## 在 Kubernetes 上部署的可自动更新的静态网站
+## Static Site with Automatic Updating on Kubernetes
 
-此项目包含一个 helm chart，它支持向 Kubernetes 部署一个静态网站，并根据 Git 仓库中的最新变更，自动更新网站。
+This is a helm chart supporting deploying a static website onto Kubernetes and enable auto-polling to its Git repository.
 
-*在本地启动部署时，要求本地安装有 Git 和 Helm。*
+*It depends on Git and Helm to be installed when triggering the deployment from your local environment.*
 
-### 用法
+### Usage
 
 ```sh
 ./deploy.sh <git_repo_url> <branch>
 ```
 
-### 直接用 Helm 来调用
+### Usage with Helm
 
 ```sh
 REPO=https://git-location-of-your-static-site
