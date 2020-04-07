@@ -65,7 +65,7 @@ The following table lists the configurable parameters of the OperatorHub chart a
 | `subscription.channel`                        | Operator's subscription channel which is specific for the operator                                                 |                                        |
 | `subscription.approval`                        | Subscription's install plan approval                                                | `Automatic`                                          |
 | `subscription.operatorName`                        | Name of the operator                                                  |                                           |
-| `subscription.sourceName`                        | Name of the Subscription                                                  | `redhat-operators`                                          |
+| `subscription.sourceName`                        | Operator's source which the operator will get from                                                 | `redhat-operators`                                          |
 | `subscription.sourceNamespace`                        | Name of the Subscription                                                  | `openshift-marketplace`                                          |
 | `subscription.csv`                        | ClusterServiceVersion's name which will be created regarding to the operator                                                  |                                         |
 | `operatorgroup.create`                        | An OperatorGroup will be created with the same name of the Subscription if the value is `true`                                                  | `true`                                          |
@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the OperatorHub chart a
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTA2OTUzNjIsLTIwMzI3MjU4MDMsMTc1OD
-kwNzIyMiwtMzQ2NjM4ODk4LC0xMjg4MzEzNjczLDM0MzMzNzY4
-N119
+eyJoaXN0b3J5IjpbNjMzNDY1MDQxLC0yMDMyNzI1ODAzLDE3NT
+g5MDcyMjIsLTM0NjYzODg5OCwtMTI4ODMxMzY3MywzNDMzMzc2
+ODddfQ==
 -->
