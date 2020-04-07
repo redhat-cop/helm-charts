@@ -22,16 +22,16 @@ After installing the chart, create a YAML file to specify the overrides in the f
 ```yaml
 operators:
   - name: subscription-name
-	namespace: operator-namespace
-	subscription:
-		channel: operator-channel
-		approval: approval-type
-		operatorName: operator-name
-		sourceName: catalog-source
-		sourceNamespace: catalog-source-namespace
-		csv: optional-catalog-source-version
-	operatorgroup:
-		create: true
+    namespace: operator-namespace
+    subscription:
+      channel: operator-channel
+      approval: approval-type
+      operatorName: operator-name
+      sourceName: catalog-source
+      sourceNamespace: catalog-source-namespace
+      csv: optional-catalog-source-version
+    operatorgroup:
+      create: true
 ```
 
 Change the values regarding to the operator you want to use. See the [Configuration](#configuration) section
@@ -60,6 +60,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc1ODkwNzIyMiwtMzQ2NjM4ODk4LC0xMj
-g4MzEzNjczLDM0MzMzNzY4N119
+eyJoaXN0b3J5IjpbLTE1NjI0NTkxNzAsMTc1ODkwNzIyMiwtMz
+Q2NjM4ODk4LC0xMjg4MzEzNjczLDM0MzMzNzY4N119
 -->
