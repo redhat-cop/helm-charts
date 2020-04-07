@@ -42,7 +42,7 @@ $ helm install -f custom-values.yaml rht-labs-charts/operatorhub
 Or you can just pass custom the parameters without creating a YAML file:
 
 ```bash
-$ helm install rht-labs-charts/operatorhub --set operators[0].name=OPERATOR_NAME,operators[0].namespace=OPERATOR_NAMESPACE ...
+$ helm install rht-labs-charts/operatorhub --set operators[0].name=OPERATOR_NAME,operators[0].namespace=OPERATOR_NAMESPACE ... (set all the mandatory variables)
 ```
 For more info about overriding variables see: [Customizing the chart](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing)
 
