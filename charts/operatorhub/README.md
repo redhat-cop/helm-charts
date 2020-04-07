@@ -65,15 +65,15 @@ The following table lists the configurable parameters of the OperatorHub chart a
 | `subscription.channel`                        | Operator's subscription channel which is specific for the operator                                                 |                                        |
 | `subscription.approval`                        | Subscription's install plan approval                                                | `Automatic`                                          |
 | `subscription.operatorName`                        | Name of the operator                                                  |                                           |
-| `subscription.sourceName`                        | Operator's source which the operator will get from                                                 | `redhat-operators`                                          |
-| `subscription.sourceNamespace`                        | Name of the Subscription                                                  | `openshift-marketplace`                                          |
+| `subscription.sourceName`                        | Operator's source which the operator belongs to                                                | `redhat-operators`                                          |
+| `subscription.sourceNamespace`                        | Operator's namespace which the operator will be pulled from                                                  | `openshift-marketplace`                                          |
 | `subscription.csv`                        | ClusterServiceVersion's name which will be created regarding to the operator                                                  |                                         |
 | `operatorgroup.create`                        | An OperatorGroup will be created with the same name of the Subscription if the value is `true`                                                  | `true`                                          |
 ...
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjMzNDY1MDQxLC0yMDMyNzI1ODAzLDE3NT
-g5MDcyMjIsLTM0NjYzODg5OCwtMTI4ODMxMzY3MywzNDMzMzc2
-ODddfQ==
+eyJoaXN0b3J5IjpbMTEwMTA5MDAxOCwtMjAzMjcyNTgwMywxNz
+U4OTA3MjIyLC0zNDY2Mzg4OTgsLTEyODgzMTM2NzMsMzQzMzM3
+Njg3XX0=
 -->
