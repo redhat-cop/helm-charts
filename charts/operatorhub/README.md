@@ -61,7 +61,7 @@ The following table lists the configurable parameters of the OperatorHub chart a
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
 | `name`                        | Name of the Subscription                                                  | `subscription-name`                                          |
 | `namespace`                        | The namespace the Subscription will be created in                                                 | `operator-namespace`                                          |
-| `subscription.channel`                        | Subscription channel for the operator                                                 | `operator-channel`                                          |
+| `subscription.channel`                        | Operator's subscription channel which is specific for the operator                                                 | `operator-channel`                                          |
 | `subscription.approval`                        | Name of the Subscription                                                  | `approval-type`                                          |
 | `subscription.operatorName`                        | Name of the Subscription                                                  | `operator-name`                                          |
 | `subscription.sourceName`                        | Name of the Subscription                                                  | `catalog-source`                                          |
@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExMDYyMTU0NTEsLTIwMzI3MjU4MDMsMT
-c1ODkwNzIyMiwtMzQ2NjM4ODk4LC0xMjg4MzEzNjczLDM0MzMz
-NzY4N119
+eyJoaXN0b3J5IjpbMTQ5NDcyOTQ3OCwtMjAzMjcyNTgwMywxNz
+U4OTA3MjIyLC0zNDY2Mzg4OTgsLTEyODgzMTM2NzMsMzQzMzM3
+Njg3XX0=
 -->
