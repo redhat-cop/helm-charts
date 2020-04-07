@@ -69,11 +69,3 @@ The following table lists the configurable parameters of the OperatorHub chart a
 | `subscription.sourceNamespace`                        | Operator's namespace where the operator will be pulled from                                                  | `openshift-marketplace`                                          |
 | `subscription.csv`                        | ClusterServiceVersion's name which will be created regarding to the operator                                                  |                                         |
 | `operatorgroup.create`                        | An OperatorGroup will be created with the same name of the Subscription if the value is `true`                                                  | `true`                                          |
-...
-
-
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQyNjM0MjM4OSwyMjU5NjY1MjMsMTkzMj
-M2NDE5MiwtMjAzMjcyNTgwMywxNzU4OTA3MjIyLC0zNDY2Mzg4
-OTgsLTEyODgzMTM2NzMsMzQzMzM3Njg3XX0=
--->
