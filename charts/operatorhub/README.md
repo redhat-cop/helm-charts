@@ -48,7 +48,9 @@ To uninstall/delete the deployment:
 $ helm uninstall <name of chart>
 ```
 
-## Configuration
+## 
+<a name="pookie"></a>
+```Configuration
 
 The following table lists the configurable parameters of the OperatorHub chart and their default values.
 
@@ -60,6 +62,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwMTg5NzcyMTAsLTM0NjYzODg5OCwtMT
-I4ODMxMzY3MywzNDMzMzc2ODddfQ==
+eyJoaXN0b3J5IjpbNjQ0MzEwOTA2LC0zNDY2Mzg4OTgsLTEyOD
+gzMTM2NzMsMzQzMzM3Njg3XX0=
 -->
