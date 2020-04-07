@@ -44,7 +44,7 @@ Or you can just pass custom the parameters without creating a YAML file:
 ```bash
 $ helm install rht-labs-charts/operatorhub --set operators[0].name=OPERATOR_NAME,operators[0].namespace=OPERATOR_NAMESPACE ...
 ```
-For more info about overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
+For more info about overriding variables see: [Customizing the chart](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing)
 
 ## Uninstalling the chart
 
@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the OperatorHub chart a
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjI1OTY2NTIzLDE5MzIzNjQxOTIsLTIwMz
-I3MjU4MDMsMTc1ODkwNzIyMiwtMzQ2NjM4ODk4LC0xMjg4MzEz
-NjczLDM0MzMzNzY4N119
+eyJoaXN0b3J5IjpbLTQyNjM0MjM4OSwyMjU5NjY1MjMsMTkzMj
+M2NDE5MiwtMjAzMjcyNTgwMywxNzU4OTA3MjIyLC0zNDY2Mzg4
+OTgsLTEyODgzMTM2NzMsMzQzMzM3Njg3XX0=
 -->
