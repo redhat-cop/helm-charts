@@ -1,6 +1,8 @@
 
 autoUpdateCron: '* * * * *'
 replicas: 2
+site:
+  enableDirectoryListing: false
 repo:
   location: ''
   branch: ''
