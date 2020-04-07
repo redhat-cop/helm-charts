@@ -39,6 +39,11 @@ Change the values regarding to the operator you want to use. See the [Configurat
 ```bash
 $ helm install -f custom-values.yaml rht-labs-charts/operatorhub
 ```
+or you can just pass custom the parameters without creating a YAML file:
+
+```bash
+$ helm install -f custom-values.yaml rht-labs-charts/operatorhub
+```
 
 ## Uninstalling the chart
 
@@ -60,6 +65,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTYxOTcxODc3OSwxNzU4OTA3MjIyLC0zND
+eyJoaXN0b3J5IjpbLTM4NzM3NTUxMSwxNzU4OTA3MjIyLC0zND
 Y2Mzg4OTgsLTEyODgzMTM2NzMsMzQzMzM3Njg3XX0=
 -->
