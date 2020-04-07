@@ -17,7 +17,11 @@ To install the chart:
 ```bash
 $ helm repo add rht-labs-charts https://rht-labs.github.io/charts
 ```
-After installing the chart, create a values file or 
+After installing the chart, create a YAML file to specify the overrides in the following structure:
+
+```yaml
+$ helm repo add rht-labs-charts https://rht-labs.github.io/charts
+```
 
 ```bash
 $ helm install rht-labs-charts/operatorhub
@@ -43,6 +47,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU3NDcyOTIyMiwtMzQ2NjM4ODk4LC0xMj
+eyJoaXN0b3J5IjpbLTI2NDQ1MTk1MiwtMzQ2NjM4ODk4LC0xMj
 g4MzEzNjczLDM0MzMzNzY4N119
 -->
