@@ -58,7 +58,7 @@ $ helm uninstall <name of chart>
 
 The following table lists the configurable parameters of the OperatorHub chart and their default values.
 
-| Parameter (For each operator)                             | Description                                                                  | Default                                        |
+| Parameter (For each `operator`)                             | Description                                                                  | Default                                        |
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
 | `name`                        | Name of the Subscription                                                  |                                          |
 | `namespace`                        | The namespace the Subscription will be created in                                                 |                                        |
@@ -66,14 +66,14 @@ The following table lists the configurable parameters of the OperatorHub chart a
 | `subscription.approval`                        | Subscription's install plan approval                                                | `Automatic`                                          |
 | `subscription.operatorName`                        | Name of the operator                                                  |                                           |
 | `subscription.sourceName`                        | Operator's source which the operator belongs to                                                | `redhat-operators`                                          |
-| `subscription.sourceNamespace`                        | Operator's namespace which the operator will be pulled from                                                  | `openshift-marketplace`                                          |
+| `subscription.sourceNamespace`                        | Operator's namespace where the operator will be pulled from                                                  | `openshift-marketplace`                                          |
 | `subscription.csv`                        | ClusterServiceVersion's name which will be created regarding to the operator                                                  |                                         |
 | `operatorgroup.create`                        | An OperatorGroup will be created with the same name of the Subscription if the value is `true`                                                  | `true`                                          |
 ...
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEwMTA5MDAxOCwtMjAzMjcyNTgwMywxNz
+eyJoaXN0b3J5IjpbMTkzMjM2NDE5MiwtMjAzMjcyNTgwMywxNz
 U4OTA3MjIyLC0zNDY2Mzg4OTgsLTEyODgzMTM2NzMsMzQzMzM3
 Njg3XX0=
 -->
