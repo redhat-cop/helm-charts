@@ -7,7 +7,7 @@ The OperatorHub and OLM are available via the OpenShift Container Platform web c
 
 ## Introduction
 
-This chart enables specific operators as it creates a subscription for the specific operator. For this, it creates a Subscription resource instance and a OperatorGroup for the relevant operator's subscription. A ClusterServiceVersion (CSV) is created automatically since the value of CSV is set in the Subscription. 
+This chart enables specific operators as it creates a subscription for the specific operator. For this, it creates a Subscription resource instance and a OperatorGroup for the relevant operator's subscription. A ClusterServiceVersion (CSV) is created automatically since the value of CSV is set in the Subscription, so all of the custom resources relevant to the operator are created.
 
 
 ## Installing the chart
@@ -39,6 +39,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY1NTE3MzM3OCwtMTI4ODMxMzY3MywzND
-MzMzc2ODddfQ==
+eyJoaXN0b3J5IjpbLTIwNTc1Njc5NTYsLTEyODgzMTM2NzMsMz
+QzMzM3Njg3XX0=
 -->
