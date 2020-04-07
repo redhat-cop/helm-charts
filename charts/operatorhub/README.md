@@ -59,12 +59,12 @@ The following table lists the configurable parameters of the OperatorHub chart a
 
 | Parameter                             | Description                                                                  | Default                                        |
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
-| `replicaCount`                        | Number of replicas deployed                                                  | `1`                                            |
+| `operators.name`                        | Name of the Subscription                                                  | `1`                                            |
 ...
 
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjA3MjQzMTM5LDE3NTg5MDcyMjIsLTM0Nj
-YzODg5OCwtMTI4ODMxMzY3MywzNDMzMzc2ODddfQ==
+eyJoaXN0b3J5IjpbLTIwMzI3MjU4MDMsMTc1ODkwNzIyMiwtMz
+Q2NjM4ODk4LC0xMjg4MzEzNjczLDM0MzMzNzY4N119
 -->
