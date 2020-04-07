@@ -34,7 +34,7 @@ operators:
 		create: true
 ```
 
-Change the values regarding to the operator you want to use. See the [Configuration](##Configuration) section
+Change the values regarding to the operator you want to use. See the [Configuration](#configuration) section
 
 ```bash
 $ helm install rht-labs-charts/operatorhub
@@ -48,9 +48,7 @@ To uninstall/delete the deployment:
 $ helm uninstall <name of chart>
 ```
 
-## 
-<a name="pookie"></a>
-```Configuration
+## <a name="configuration"></a>Configuration
 
 The following table lists the configurable parameters of the OperatorHub chart and their default values.
 
@@ -62,6 +60,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjQ0MzEwOTA2LC0zNDY2Mzg4OTgsLTEyOD
-gzMTM2NzMsMzQzMzM3Njg3XX0=
+eyJoaXN0b3J5IjpbMTc1ODkwNzIyMiwtMzQ2NjM4ODk4LC0xMj
+g4MzEzNjczLDM0MzMzNzY4N119
 -->
