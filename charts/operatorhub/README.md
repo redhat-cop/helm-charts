@@ -3,7 +3,7 @@
 
 [OperatorHub](https://operatorhub.io/) is a central location to find the wide array of great Operators that have been built by the community. Packaging of the Operators indexed in OperatorHub.io relies on the  [Operator Lifecycle Manager](https://github.com/operator-framework/operator-lifecycle-manager) (OLM) to install, manage and update Operators consistently on any Kubernetes cluster.
 
-The OperatorHub and OLM are available via the OpenShift Container Platform web console as well and is the interface that cluster administrators use to discover and install Operators.
+The OperatorHub and OLM are [available](https://docs.openshift.com/container-platform/4.3/operators/olm-understanding-operatorhub.html) via the OpenShift Container Platform web console as well and is the interface that cluster administrators use to discover and install Operators.
 
 ## Introduction
 
@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the OperatorHub chart a
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkzMjM2NDE5MiwtMjAzMjcyNTgwMywxNz
-U4OTA3MjIyLC0zNDY2Mzg4OTgsLTEyODgzMTM2NzMsMzQzMzM3
-Njg3XX0=
+eyJoaXN0b3J5IjpbMjI1OTY2NTIzLDE5MzIzNjQxOTIsLTIwMz
+I3MjU4MDMsMTc1ODkwNzIyMiwtMzQ2NjM4ODk4LC0xMjg4MzEz
+NjczLDM0MzMzNzY4N119
 -->
