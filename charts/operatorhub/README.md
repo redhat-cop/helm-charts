@@ -59,10 +59,10 @@ The following table lists the configurable parameters of the OperatorHub chart a
 
 | Parameter (For each operator)                             | Description                                                                  | Default                                        |
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
-| `name`                        | Name of the Subscription                                                  | `subscription-name`                                          |
-| `namespace`                        | The namespace the Subscription will be created in                                                 | `operator-namespace`                                          |
-| `subscription.channel`                        | Operator's subscription channel which is specific for the operator                                                 | `operator-channel`                                          |
-| `subscription.approval`                        | Name of the Subscription                                                  | `approval-type`                                          |
+| `name`                        | Name of the Subscription                                                  |                                          |
+| `namespace`                        | The namespace the Subscription will be created in                                                 |                                        |
+| `subscription.channel`                        | Operator's subscription channel which is specific for the operator                                                 |                                        |
+| `subscription.approval`                        | Name of the Subscription                                                  | `Automatic`                                          |
 | `subscription.operatorName`                        | Name of the Subscription                                                  | `operator-name`                                          |
 | `subscription.sourceName`                        | Name of the Subscription                                                  | `catalog-source`                                          |
 | `subscription.sourceNamespace`                        | Name of the Subscription                                                  | `catalog-source-namespace`                                          |
@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQ5NDcyOTQ3OCwtMjAzMjcyNTgwMywxNz
+eyJoaXN0b3J5IjpbLTgxNjUyMzQ5MCwtMjAzMjcyNTgwMywxNz
 U4OTA3MjIyLC0zNDY2Mzg4OTgsLTEyODgzMTM2NzMsMzQzMzM3
 Njg3XX0=
 -->
