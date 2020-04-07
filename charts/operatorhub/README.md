@@ -20,7 +20,18 @@ $ helm repo add rht-labs-charts https://rht-labs.github.io/charts
 After installing the chart, create a YAML file to specify the overrides in the following structure:
 
 ```yaml
-$ helm repo add rht-labs-charts https://rht-labs.github.io/charts
+operators:
+  - name: subscription-name
+	namespace: operator-namespace
+	subscription:
+		channel: operator-channel
+		approval: approval-type
+		operatorName: operator-name
+		sourceName: catalog-source
+		sourceNamespace: catalog-source-namespace
+		csv: optional-catalog-source-version
+	operatorgroup:
+		create: true
 ```
 
 ```bash
@@ -47,6 +58,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTI2NDQ1MTk1MiwtMzQ2NjM4ODk4LC0xMj
+eyJoaXN0b3J5IjpbMjA2MjgwNDI2NCwtMzQ2NjM4ODk4LC0xMj
 g4MzEzNjczLDM0MzMzNzY4N119
 -->
