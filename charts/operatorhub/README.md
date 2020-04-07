@@ -1,6 +1,9 @@
+
 # OperatorHub
 
-[OperatorHub](https://www.sonarqube.org/) is ....
+[OperatorHub](https://operatorhub.io/) is a central location to find the wide array of great Operators that have been built by the community. Packaging of the Operators indexed in OperatorHub.io relies on the  [Operator Lifecycle Manager](https://github.com/operator-framework/operator-lifecycle-manager) (OLM) to install, manage and update Operators consistently on any Kubernetes cluster.
+
+The OperatorHub and OLM are available via the OpenShift Container Platform web console as well and is the interface that cluster administrators use to discover and install Operators.
 
 ## Introduction
 
@@ -36,5 +39,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyODgzMTM2NzMsMzQzMzM3Njg3XX0=
+eyJoaXN0b3J5IjpbMTQ0MzI1NTgzNywtMTI4ODMxMzY3MywzND
+MzMzc2ODddfQ==
 -->
