@@ -57,14 +57,15 @@ $ helm uninstall <name of chart>
 
 The following table lists the configurable parameters of the OperatorHub chart and their default values.
 
-| Parameter                             | Description                                                                  | Default                                        |
+| Parameter (For each operator)                             | Description                                                                  | Default                                        |
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
-| `operators.name`                        | Name of the Subscription                                                  | `1`                                            |
+| `name`                        | Name of the Subscription                                                  | `subscription-name`                                            |
 ...
 
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwMzI3MjU4MDMsMTc1ODkwNzIyMiwtMz
-Q2NjM4ODk4LC0xMjg4MzEzNjczLDM0MzMzNzY4N119
+eyJoaXN0b3J5IjpbLTE4MDc0NjU0NTUsLTIwMzI3MjU4MDMsMT
+c1ODkwNzIyMiwtMzQ2NjM4ODk4LC0xMjg4MzEzNjczLDM0MzMz
+NzY4N119
 -->
