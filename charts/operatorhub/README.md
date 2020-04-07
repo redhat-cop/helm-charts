@@ -34,7 +34,7 @@ operators:
       create: true
 ```
 
-Change the values regarding to the operator you want to use. See the [Configuration](#configuration) section for the overrides' descriptions.
+Change the values regarding to the operator you want to use. (See the [Configuration](#configuration) section for the overrides' descriptions.)
 
 ```bash
 $ helm install -f custom-values.yaml rht-labs-charts/operatorhub
