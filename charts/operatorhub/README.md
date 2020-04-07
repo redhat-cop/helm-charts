@@ -59,13 +59,19 @@ The following table lists the configurable parameters of the OperatorHub chart a
 
 | Parameter (For each operator)                             | Description                                                                  | Default                                        |
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
-| `name`                        | Name of the Subscription                                                  | `subscription-name`                                            |
+| `name`                        | Name of the Subscription                                                  | `subscription-name`                                          |
+| `namespace`                        | Name of the Subscription                                                  | `operator-namespace`                                          |
+| `subscription.channel`                        | Name of the Subscription                                                  | `operator-namespace`                                          |
+| `namespace`                        | Name of the Subscription                                                  | `operator-namespace`                                          |
+| `namespace`                        | Name of the Subscription                                                  | `operator-namespace`                                          |
+| `namespace`                        | Name of the Subscription                                                  | `operator-namespace`                                          |
+| `namespace`                        | Name of the Subscription                                                  | `operator-namespace`                                          |
 ...
 
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4MDc0NjU0NTUsLTIwMzI3MjU4MDMsMT
-c1ODkwNzIyMiwtMzQ2NjM4ODk4LC0xMjg4MzEzNjczLDM0MzMz
-NzY4N119
+eyJoaXN0b3J5IjpbMjUwNzY5MTYwLC0yMDMyNzI1ODAzLDE3NT
+g5MDcyMjIsLTM0NjYzODg5OCwtMTI4ODMxMzY3MywzNDMzMzc2
+ODddfQ==
 -->
