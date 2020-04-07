@@ -95,19 +95,29 @@ metadata:
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: Role
 metadata:
-  name: {{ .Release.Name }}_redeployer_edit
+  name: {{ .Release.Name }}-static-site-updater
+rules:
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments"]
+  verbs: ["get", "patch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}_redeployer
   labels:
     app: static-site
     site: {{ .Release.Name }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: edit
+  kind: Role
+  name: {{ .Release.Name }}-static-site-updater
 subjects:
   - kind: ServiceAccount
-    namespace: {{ .Release.Namespace }}
     name: {{ .Release.Name }}-redeployer
 
 {{- end }}
