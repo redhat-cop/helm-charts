@@ -67,13 +67,13 @@ The following table lists the configurable parameters of the OperatorHub chart a
 | `subscription.sourceName`                        | Name of the Subscription                                                  | `redhat-operators`                                          |
 | `subscription.sourceNamespace`                        | Name of the Subscription                                                  | `openshift-marketplace`                                          |
 | `subscription.csv`                        | ClusterServiceVersion's name which will be created regarding to the operator                                                  |                                         |
-| `operatorgroup.create`                        | An OperatorGroup will be created if true                                                  | `true`                                          |
+| `operatorgroup.create`                        | An OperatorGroup will be created with the same name of the Subscription if the value is `true`                                                  | `true`                                          |
 ...
 
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMzk2NDQ5MywtMjAzMjcyNTgwMywxNz
-U4OTA3MjIyLC0zNDY2Mzg4OTgsLTEyODgzMTM2NzMsMzQzMzM3
-Njg3XX0=
+eyJoaXN0b3J5IjpbMTYxMTI5NzIwLC0yMDMyNzI1ODAzLDE3NT
+g5MDcyMjIsLTM0NjYzODg5OCwtMTI4ODMxMzY3MywzNDMzMzc2
+ODddfQ==
 -->
