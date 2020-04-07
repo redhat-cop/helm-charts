@@ -7,7 +7,7 @@ The OperatorHub and OLM are available via the OpenShift Container Platform web c
 
 ## Introduction
 
-This chart bootstraps ....
+This chart enables specific operators as it creates the re
 
 
 ## Installing the chart
@@ -39,6 +39,6 @@ The following table lists the configurable parameters of the OperatorHub chart a
 For overriding variables see: [Customizing the chart](https://docs.helm.sh/using_helm/#customizing-the-chart-before-installing)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQ0MzI1NTgzNywtMTI4ODMxMzY3MywzND
+eyJoaXN0b3J5IjpbMTg4ODI5NjgwMywtMTI4ODMxMzY3MywzND
 MzMzc2ODddfQ==
 -->
