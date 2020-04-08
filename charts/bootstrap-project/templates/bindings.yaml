@@ -1,4 +1,4 @@
-{{- if .Values.global.namespaces }}
+{{- if .Values.namespaces }}
 ---
 apiVersion: v1
 kind: List

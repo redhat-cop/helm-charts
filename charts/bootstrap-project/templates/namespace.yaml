@@ -1,5 +1,5 @@
-{{- if .Values.global.namespaces }}
-{{- range $key := .Values.global.namespaces }}
+{{- if .Values.namespaces }}
+{{- range $key := .Values.namespaces }}
 {{ $ns:= printf "%s" .name}}
 ---
 apiVersion: v1
