@@ -1,49 +1,46 @@
-prefix: "labs"
-
-ci_cd_namespace: &ci_cd "ci-cd"
-dev_namespace: &dev "dev"
-test_namespace: &test "test"
-
+ci_cd_namespace: &ci_cd "labs-ci-cd"
+dev_namespace: &dev "labs-dev"
+test_namespace: &test "labs-test"
 namespaces:
-  - name: *ci_cd
-    bindings:
-      # this labs-devs is the GROUP NAME in IDM
-      - name: labs-devs
-        kind: Group
-        role: edit
-      # this labs-admins is the GROUP NAME in IDM
-      - name: labs-admins
-        kind: Group
-        role: admin
-      - name: dummy-sa
-        kind: ServiceAccount
-        role: admin
-        namespace: *ci_cd
-  - name: *dev
-    bindings:
-      - name: labs-devs
-        kind: Group
-        role: edit
-      - name: labs-admins
-        kind: Group
-        role: admin
-      - name: dummy-sa
-        kind: ServiceAccount
-        role: admin
-        namespace: *ci_cd
-  - name: *test
-    bindings:
-      - name: labs-devs
-        kind: Group
-        role: edit
-      - name: labs-admins
-        kind: Group
-        role: admin
-      - name: dummy-sa
-        kind: ServiceAccount
-        role: admin
-        namespace: *ci_cd
+- name: *ci_cd
+  bindings:
+  # this labs-devs is the GROUP NAME in IDM
+  - name: labs-devs
+    kind: Group
+    role: edit
+  # this labs-admins is the GROUP NAME in IDM
+  - name: labs-admins
+    kind: Group
+    role: admin
+  - name: dummy-sa
+    kind: ServiceAccount
+    role: admin
+  namespace: *ci_cd
+- name: *dev
+  bindings:
+  - name: labs-devs
+    kind: Group
+    role: edit
+  - name: labs-admins
+    kind: Group
+    role: admin
+  - name: dummy-sa
+    kind: ServiceAccount
+    role: admin
+  namespace: *ci_cd
+- name: *test
+  bindings:
+  - name: labs-devs
+    kind: Group
+    role: edit
+  - name: labs-admins
+    kind: Group
+    role: admin
+  - name: dummy-sa
+    kind: ServiceAccount
+    role: admin
+  namespace: *ci_cd
 
 serviceaccounts:
-  - name: dummy-sa
-    namespace: *ci_cd
+- name: dummy-sa
+  namespace: *ci_cd
