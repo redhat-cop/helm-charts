@@ -1,6 +1,6 @@
-{{- if .Values.namespaces }}
-{{- range $key := .Values.namespaces }}
-{{ $ns:= printf "%s-%s" $.Values.prefix .name}}
+{{- if .Values.global.namespaces }}
+{{- range $key := .Values.global.namespaces }}
+{{ $ns:= printf "%s" .name}}
 ---
 apiVersion: v1
 kind: Namespace
