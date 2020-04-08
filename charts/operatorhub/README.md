@@ -12,12 +12,12 @@ This chart enables specific operators as it creates a subscription for the speci
 
 ## Installing the chart
 
-To install the chart:
+To add the chart repo:
 
 ```bash
 $ helm repo add rht-labs-charts https://rht-labs.github.io/charts
 ```
-After installing the chart, create a YAML file to specify the overrides in the following structure:
+After adding the chart repo, create a YAML file to specify the overrides in the following structure:
 
 ```yaml
 operators:
