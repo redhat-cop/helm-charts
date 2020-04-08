@@ -3,6 +3,19 @@ entries:
   bootstrap-project:
   - apiVersion: v1
     appVersion: v0.0.1
+    created: "2020-04-08T14:20:05.703017659Z"
+    description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
+    digest: 110561da5283dc5ac08d7b9d8e3004fd325208f06428aebe0ed43384999372d5
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: bootstrap-project
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/bootstrap-project-0.0.4/bootstrap-project-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v1
+    appVersion: v0.0.1
     created: "2020-04-08T13:33:13.338352481Z"
     description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
     digest: d8bd5d1ba1832e3d1889af5b5c5b3c8af161c42413c929bc709d3fd65063f7ca
