@@ -15,7 +15,7 @@ This chart enables specific operators as it creates a subscription for the speci
 To add the chart repo:
 
 ```bash
-$ helm repo add rht-labs-charts https://rht-labs.github.io/charts
+$ helm repo add rht-labs https://rht-labs.github.io/rht-labs
 ```
 After adding the chart repo, create a YAML file to specify the overrides in the following structure:
 
@@ -39,12 +39,12 @@ Change the values regarding to the operator you want to use. (See the [Configura
 To install the chart:
 
 ```bash
-$ helm install -f custom-values.yaml rht-labs-charts/operatorhub
+$ helm install -f custom-values.yaml rht-labs/operatorhub
 ```
 Or you can just pass custom parameters without creating a YAML file:
 
 ```bash
-$ helm install rht-labs-charts/operatorhub --set operators[0].name=OPERATOR_NAME,operators[0].namespace=OPERATOR_NAMESPACE ... (set all the mandatory variables)
+$ helm install rht-labs/operatorhub --set operators[0].name=OPERATOR_NAME,operators[0].namespace=OPERATOR_NAMESPACE ... (set all the mandatory variables)
 ```
 For more info about overriding variables see: [Customizing the chart](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing)
 
