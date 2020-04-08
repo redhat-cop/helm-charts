@@ -5,3 +5,7 @@ type: application
 version: 0.0.2
 appVersion: 0.0.2
 home: https://github.com/rht-labs/helm-charts
+maintainers:
+  - name: tylerauerbeck
+  - name: ckavili
+  - name: mabulgu
