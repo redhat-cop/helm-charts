@@ -36,6 +36,8 @@ operators:
 
 Change the values regarding to the operator you want to use. (See the [Configuration](#configuration) section for the overrides' descriptions.)
 
+To install the chart:
+
 ```bash
 $ helm install -f custom-values.yaml rht-labs-charts/operatorhub
 ```
