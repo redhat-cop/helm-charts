@@ -34,7 +34,7 @@ operators:
       create: true
 ```
 
-Change the values regarding to the operator you want to use. (See the [Configuration](#configuration) section for the overrides' descriptions.)
+Change the values regarding to the operator you want to use. (See the [Configuration](#Configuration) section for the overrides' descriptions.)
 
 To install the chart:
 
@@ -56,7 +56,7 @@ To uninstall/delete the deployment:
 $ helm uninstall <name of chart>
 ```
 
-## <a name="configuration"></a>Configuration
+## Configuration
 
 The following table lists the configurable parameters of the OperatorHub chart and their default values.
 
