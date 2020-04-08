@@ -31,8 +31,8 @@ helm install my-jenkins -f my-values.yaml rht-labs/jenkins
 
 ## 👩‍🏫 Chart README Files
 For more info on each chart checkout these!
-* [jenkins](tree/master/charts/jenkins)
-* [sonarqube](tree/master/charts/sonarqube)
-* [bootstrap-project](tree/master/charts/bootstrap-project)
-* [operatorhub](tree/master/charts/operatorhub)
-* [pact-broker](tree/master/charts/pact-broker)
+* [jenkins](/charts/jenkins)
+* [sonarqube](/charts/sonarqube)
+* [bootstrap-project](/charts/bootstrap-project)
+* [operatorhub](/charts/operatorhub)
+* [pact-broker](/charts/pact-broker)
