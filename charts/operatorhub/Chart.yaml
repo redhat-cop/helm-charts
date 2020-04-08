@@ -3,4 +3,5 @@ name: operatorhub
 description: A Helm chart to create OperatorHub subscriptions 
 type: application
 version: 0.0.2
-appVersion: 0.0.2 
+appVersion: 0.0.2
+home: https://github.com/rht-labs/helm-charts
