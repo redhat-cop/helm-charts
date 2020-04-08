@@ -3,6 +3,19 @@ entries:
   bootstrap-project:
   - apiVersion: v1
     appVersion: v0.0.1
+    created: "2020-04-08T13:33:13.338352481Z"
+    description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
+    digest: d8bd5d1ba1832e3d1889af5b5c5b3c8af161c42413c929bc709d3fd65063f7ca
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: bootstrap-project
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/bootstrap-project-0.0.3/bootstrap-project-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v1
+    appVersion: v0.0.1
     created: "2020-04-02T10:11:19.439002072Z"
     description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
     digest: 8501ed5fe2c1a6d0ad701550675e0e746cc89a871f55e3b230b28e44eaf500b4
@@ -28,6 +41,19 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/bootstrap-project-0.0.1/bootstrap-project-0.0.1.tgz
     version: 0.0.1
   jenkins:
+  - apiVersion: v1
+    appVersion: v0.0.1
+    created: "2020-04-08T13:33:13.41300416Z"
+    description: A Helm chart for deploying Jenkins on OpenShift
+    digest: 0726c6bfcd538e98754cbd48073c124edc2b57ba93b82ed7446ecf6790e27d58
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: jenkins
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/jenkins-0.0.9/jenkins-0.0.9.tgz
+    version: 0.0.9
   - apiVersion: v1
     appVersion: v0.0.1
     created: "2020-04-03T11:07:02.664984144Z"
@@ -120,6 +146,21 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/jenkins-0.0.1/jenkins-0.0.1.tgz
     version: 0.0.1
   operatorhub:
+  - apiVersion: v1
+    appVersion: 0.0.2
+    created: "2020-04-08T13:33:13.500532536Z"
+    description: A Helm chart to create OperatorHub subscriptions
+    digest: 3e43e5b283f52be83982093220316ec1157d62ec8f9960c3b8d4d8e9b3ff63f1
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: tylerauerbeck
+    - name: ckavili
+    - name: mabulgu
+    name: operatorhub
+    type: application
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/operatorhub-0.0.3/operatorhub-0.0.3.tgz
+    version: 0.0.3
   - apiVersion: v1
     appVersion: 0.0.1
     created: "2020-03-31T15:00:43.779016061Z"
