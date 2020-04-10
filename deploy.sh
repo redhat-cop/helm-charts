@@ -89,6 +89,11 @@ if [ ! -z "$EXISTING" ]; then
     CMD=upgrade
 fi
 
+SETTINGS_STR=
+if [ ! -z "$SETTINGS" ]; then
+    SETTINGS_STR=',***'
+fi
+
 echo 'Executing helm command: '
-echo "    helm $CMD $NAME ./chart --set 'repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$SETTINGS'"
+echo "    helm $CMD $NAME ./chart --set 'repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$SETTINGS_STR'"
 helm $CMD $NAME ./chart --set "repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$SETTINGS"
