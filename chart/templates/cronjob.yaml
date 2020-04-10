@@ -3,7 +3,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: static-site-poller-{{ .Release.Name }}
+  name: static-site-{{ .Release.Name }}-poller
   labels:
     app: static-site
     site: {{ .Release.Name }}
@@ -22,7 +22,7 @@ spec:
           volumes:
             - name: poller-script
               configMap:
-                name: static-site-poller-script-{{ .Release.Name }}
+                name: static-site-{{ .Release.Name }}-poller-script
                 defaultMode: 0777
           containers:
             - name: poller
@@ -51,7 +51,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: static-site-poller-script-{{ .Release.Name }}
+  name: static-site-{{ .Release.Name }}-poller-script
   labels:
     app: static-site
     site: {{ .Release.Name }}

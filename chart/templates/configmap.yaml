@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: static-site-config-{{ .Release.Name }}
+  name: static-site-{{ .Release.Name }}-config
   labels:
     app: static-site
     site: {{ .Release.Name }}
@@ -94,3 +94,22 @@ data:
         #    deny  all;
         #}
     }
+
+  clone.sh: |
+    #!/bin/sh
+
+    set -e
+
+    REPO_URL='{{ .Values.repo.location }}'
+
+    {{- if and .Values.repo.credential.username .Values.repo.credential.password }}
+    echo 'exec echo $GIT_PASSWORD' > /tmp/git-askpass.sh
+    chmod +x /tmp/git-askpass.sh
+    export GIT_ASKPASS=/tmp/git-askpass.sh
+    
+    if [ ! -z "${REPO##*@*}" ] ; then
+      REPO_URL=$(echo $REPO | sed 's;//;//{{ .Values.repo.credential.username }}@;')
+    fi
+    {{- end }}
+
+    git clone --single-branch --branch {{ .Values.repo.branch }} $REPO_URL .

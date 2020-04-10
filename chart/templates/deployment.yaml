@@ -24,11 +24,22 @@ spec:
         - name: git
           image: jijiechen/alpine-curl-git:v2.24.1
           workingDir: /website
-          command: ["git"]
-          args: ["clone", "--single-branch", "--branch", "{{ .Values.repo.branch }}", "{{ .Values.repo.location }}", "."]
+          command: ["/bin/sh"]
+          args: ["/git/clone.sh"]
           volumeMounts:
             - name: website
               mountPath: /website
+            - name: config
+              subPath: clone.sh
+              mountPath: /git/clone.sh
+          {{- if and .Values.repo.credential.username .Values.repo.credential.password }}
+          env:
+            - name: GIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: static-site-credential-{{ .Release.Name }}
+                  key: gitPassword
+          {{- end }}
       containers:
         - name: nginx
           image: nginx:1.17.9-alpine
@@ -68,4 +79,20 @@ spec:
           emptyDir: {}
         - name: config
           configMap:
-            name: static-site-config-{{ .Release.Name }}
+            name: static-site-{{ .Release.Name }}-config
+
+{{- if and .Values.repo.credential.username .Values.repo.credential.password }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: static-site-credential-{{ .Release.Name }}
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+type: Opaque
+data:
+  username: {{ .Values.repo.credential.username | b64enc | quote }}
+  gitPassword: {{ .Values.repo.credential.password | b64enc | quote }}
+
+{{- end }}

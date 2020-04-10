@@ -7,3 +7,6 @@ repo:
   location: ''
   branch: ''
   revision: ''
+  credential:
+    username: ''
+    password: ''
