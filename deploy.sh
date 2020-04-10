@@ -13,13 +13,13 @@ function usage() {
     echo "OPTIONS:"
     echo "   --repo       HTTP(s) based URL of your git repository"
     echo "   --branch     Name of branch that should be deployed"
-    echo "   --args       Additional arguments you want to pass to the helm commands"
+    echo "   --settings       Additional settings you want to pass to the helm chart"
     echo
 }
 
 REPO=
 BRANCH=master
-ARGS=
+SETTINGS=
 
 
 while :; do
@@ -44,9 +44,9 @@ while :; do
                 exit 255
             fi
             ;;
-        --args)
+        --settings)
             if [ -n "$2" ]; then
-                ARGS=",$2"
+                SETTINGS=",$2"
                 shift
             fi
             ;;
@@ -90,5 +90,5 @@ if [ ! -z "$EXISTING" ]; then
 fi
 
 echo 'Executing helm command: '
-echo "    helm $CMD $NAME ./chart --set 'repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$ARGS'"
-helm $CMD $NAME ./chart --set "repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$ARGS"
+echo "    helm $CMD $NAME ./chart --set 'repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$SETTINGS'"
+helm $CMD $NAME ./chart --set "repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$SETTINGS"

@@ -5,7 +5,7 @@ site:
   enableDirectoryListing: false
 repo:
   location: ''
-  branch: ''
+  branch: 'master'
   revision: ''
   credential:
     username: ''
