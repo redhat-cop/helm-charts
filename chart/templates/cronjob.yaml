@@ -68,15 +68,16 @@ data:
     K8S_URL=https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT_HTTPS
     NAMESPACE=$(cat /run/secrets/kubernetes.io/serviceaccount/namespace)
     TOKEN=$(cat /run/secrets/kubernetes.io/serviceaccount/token)
+    CACERT=/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
-    CURRENT=$(curl --insecure -H "Authorization: Bearer $TOKEN" $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/deployments/static-site-{{ .Release.Name }} 2>/dev/null | grep git_revision | tail -n 1 | cut -f 4 -d '"')
+    CURRENT=$(curl --cacert $CACERT -H "Authorization: Bearer $TOKEN" $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/deployments/static-site-{{ .Release.Name }} 2>/dev/null | grep git_revision | tail -n 1 | cut -f 4 -d '"')
     LATEST=$(git ls-remote $REPO_URL | grep refs/heads/$BRANCH | awk '{print $1}')
 
     if [ "$LATEST" != "$CURRENT" ] ; then
-        echo "Redeploying static-site-{{ .Release.Name }}: the current deployment $CURRENT is expired, as the latest revision is $LATEST"
+        echo "Redeploying static-site-{{ .Release.Name }}: the current deployment $CURRENT has expired, as the latest revision is $LATEST"
         PATCH="{\"spec\": {\"template\": {\"metadata\": { \"labels\": {  \"git_revision\": \"$LATEST\"}}}}}"
         
-        curl --insecure -X PATCH -H "Authorization: Bearer $TOKEN" \
+        curl --cacert $CACERT -X PATCH -H "Authorization: Bearer $TOKEN" \
           -H 'Content-Type: application/strategic-merge-patch+json' --data "$PATCH" \
           $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/deployments/static-site-{{ .Release.Name }}
     else
