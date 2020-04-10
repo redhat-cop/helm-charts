@@ -23,12 +23,14 @@ spec:
       initContainers:
         - name: git
           image: jijiechen/alpine-curl-git:v2.24.1
-          workingDir: /website
+          workingDir: /source
           command: ["/bin/sh"]
           args: ["/git/clone.sh"]
           volumeMounts:
             - name: website
               mountPath: /website
+            - name: source
+              mountPath: /source
             - name: config
               subPath: clone.sh
               mountPath: /git/clone.sh
@@ -75,11 +77,14 @@ spec:
               mountPath: /etc/nginx/conf.d/default.conf
               subPath: default.conf
       volumes:
+        - name: source
+          emptyDir: {}
         - name: website
           emptyDir: {}
         - name: config
           configMap:
             name: static-site-{{ .Release.Name }}-config
+
 
 {{- if and .Values.repo.credential.username .Values.repo.credential.password }}
 ---

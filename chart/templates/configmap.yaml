@@ -113,3 +113,7 @@ data:
     {{- end }}
 
     git clone --single-branch --branch {{ .Values.repo.branch }} $REPO_URL .
+    
+    # Running at /source
+    cp -R ./ /website
+    rm -rf /website/.git
