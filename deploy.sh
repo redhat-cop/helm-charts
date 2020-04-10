@@ -1,11 +1,79 @@
 #!/bin/bash
 
-REPO=$1
-BRANCH=$2
+
+function usage() {
+    echo
+    echo "Usage:"
+    echo " $0 [options]"
+    echo " $0 --help"
+    echo
+    echo "Example:"
+    echo " $0 --repo https://your-repo.git"
+    echo
+    echo "OPTIONS:"
+    echo "   --repo       HTTP(s) based URL of your git repository"
+    echo "   --branch     Name of branch that should be deployed"
+    echo "   --args       Additional arguments you want to pass to the helm commands"
+    echo
+}
+
+REPO=
+BRANCH=master
+ARGS=
+
+
+while :; do
+    case $1 in
+        --repo)
+            if [ -n "$2" ]; then
+                REPO=$2
+                shift
+            else
+                printf 'Error: "--repo" requires a non-empty value.\n' >&2
+                usage
+                exit 255
+            fi
+            ;;
+        --branch)
+            if [ -n "$2" ]; then
+                BRANCH=$2
+                shift
+            else
+                printf 'Error: "--branch" requires a non-empty value.\n' >&2
+                usage
+                exit 255
+            fi
+            ;;
+        --args)
+            if [ -n "$2" ]; then
+                ARGS=",$2"
+                shift
+            fi
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -?*)
+            printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+            shift
+            ;;
+        *) # Default case: If no more options then break out of the loop.
+            break
+    esac
+
+    shift
+done
+
+
 
 if [ -z "$REPO" ]; then
-    echo 'Please specify the URL for the git repository to deploy!'
-    exit 10
+    usage
+    exit 255
 fi
 
 if [ -z "$BRANCH" ]; then
@@ -21,5 +89,6 @@ if [ ! -z "$EXISTING" ]; then
     CMD=upgrade
 fi
 
-# echo "deploying with options: helm $CMD $NAME ./chart --set repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION"
-helm $CMD $NAME ./chart --set "repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION"
+echo 'Executing helm command: '
+echo "    helm $CMD $NAME ./chart --set 'repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$ARGS'"
+helm $CMD $NAME ./chart --set "repo.location=$REPO,repo.branch=$BRANCH,repo.revision=$REVISION$ARGS"
