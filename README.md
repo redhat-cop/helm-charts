@@ -1,5 +1,7 @@
 
-## Static Site with Automatic Updating on Kubernetes
+[查看中文说明文档](https://github.com/jijiechen/static-site-on-k8s/blob/master/README-zh.md)
+
+## Static Site Deployment with Automatic Updating on Kubernetes
 
 This is a helm chart supporting deploying a static website onto Kubernetes and enable auto-polling to its Git repository.
 
