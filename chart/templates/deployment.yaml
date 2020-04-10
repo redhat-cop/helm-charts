@@ -39,12 +39,12 @@ spec:
             tcpSocket:
               port: http
             initialDelaySeconds: 5
-            periodSeconds: 10
+            periodSeconds: 3
           livenessProbe:
             tcpSocket:
               port: http
             initialDelaySeconds: 60
-            periodSeconds: 20
+            periodSeconds: 10
           command: ["/bin/sh"]
           args: ["-c", "mkdir -p /tmp/log/nginx/ && exec nginx -g 'daemon off;'"]
           resources:
