@@ -103,17 +103,36 @@ data:
     REPO_URL='{{ .Values.repo.location }}'
 
     {{- if and .Values.repo.credential.username .Values.repo.credential.password }}
-    echo 'exec echo $GIT_PASSWORD' > /tmp/git-askpass.sh
-    chmod +x /tmp/git-askpass.sh
-    export GIT_ASKPASS=/tmp/git-askpass.sh
-    
-    if [ ! -z "${REPO##*@*}" ] ; then
-      REPO_URL=$(echo $REPO | sed 's;//;//{{ .Values.repo.credential.username }}@;')
-    fi
+      echo 'exec echo $GIT_PASSWORD' > /tmp/git-askpass.sh
+      chmod +x /tmp/git-askpass.sh
+      export GIT_ASKPASS=/tmp/git-askpass.sh
+      
+      if [ ! -z "${REPO_URL##*@*}" ] ; then
+        REPO_URL=$(echo $REPO_URL | sed 's;//;//{{ .Values.repo.credential.username }}@;')
+      fi
     {{- end }}
 
-    git clone --single-branch --branch {{ .Values.repo.branch }} $REPO_URL .
-    
+    INSIDE_TREE=$(git rev-parse --is-inside-work-tree 2>/dev/null || true)
+    if [ -z "$INSIDE_TREE" ]; then
+      git init .
+    fi
+
+    git config remote.origin.url $REPO_URL
+
+    BRANCH={{ .Values.repo.branch }}
+    CURRENT=$(git rev-parse --verify HEAD 2>/dev/null || true)
+    if [ "$CURRENT" != "$GIT_REVISION" ]; then
+      git fetch --no-tags --progress -- $REPO_URL +refs/heads/$BRANCH:refs/remotes/origin/$BRANCH
+      
+      git config advice.detachedHead false
+      git checkout -f $GIT_REVISION
+      git branch -D $BRANCH 2>/dev/null || true
+      git checkout -b $BRANCH $GIT_REVISION
+    fi
+
+    git reset --hard
+    git clean -fdx
+
     # Running at /source
     cp -R ./ /website
     rm -rf /website/.git

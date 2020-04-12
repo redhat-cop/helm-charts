@@ -70,18 +70,24 @@ data:
     TOKEN=$(cat /run/secrets/kubernetes.io/serviceaccount/token)
     CACERT=/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
-    CURRENT=$(curl --cacert $CACERT -H "Authorization: Bearer $TOKEN" $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/deployments/static-site-{{ .Release.Name }} 2>/dev/null | grep git_revision | tail -n 1 | cut -f 4 -d '"')
+    {{- if .Values.persistence.enabled }}
+    RES_TYPE=statefulset
+    {{- else }}
+    RES_TYPE=deployment
+    {{- end }}
+
+    CURRENT=$(curl --cacert $CACERT -H "Authorization: Bearer $TOKEN" $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/${RES_TYPE}s/static-site-{{ .Release.Name }} 2>/dev/null | grep '"git_revision"' | tail -n 1 | cut -f 4 -d '"')
     LATEST=$(git ls-remote $REPO_URL | grep refs/heads/$BRANCH | awk '{print $1}')
 
     if [ "$LATEST" != "$CURRENT" ] ; then
-        echo "Redeploying static-site-{{ .Release.Name }}: the current deployment $CURRENT has expired, as the latest revision is $LATEST"
+        echo "Redeploying static-site-{{ .Release.Name }}: the current ${RES_TYPE} $CURRENT has expired, as the latest revision is $LATEST"
         PATCH="{\"spec\": {\"template\": {\"metadata\": { \"labels\": {  \"git_revision\": \"$LATEST\"}}}}}"
         
         curl --cacert $CACERT -X PATCH -H "Authorization: Bearer $TOKEN" \
           -H 'Content-Type: application/strategic-merge-patch+json' --data "$PATCH" \
-          $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/deployments/static-site-{{ .Release.Name }}
+          $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/${RES_TYPE}s/static-site-{{ .Release.Name }}
     else
-      echo "No change: static-site-{{ .Release.Name }} stayed the same as current deployment $CURRENT"
+      echo "No change: static-site-{{ .Release.Name }} stayed the same as current ${RES_TYPE} $CURRENT"
     fi
 ---
 
@@ -101,7 +107,7 @@ metadata:
   name: {{ .Release.Name }}-static-site-updater
 rules:
 - apiGroups: ["extensions", "apps"]
-  resources: ["deployments"]
+  resources: ["deployments", "statefulsets"]
   verbs: ["get", "patch"]
 
 ---
