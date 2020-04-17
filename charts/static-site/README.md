@@ -1,5 +1,5 @@
 
-[查看中文说明文档](https://github.com/jijiechen/static-site-on-k8s/blob/master/README-zh.md)
+[查看中文说明文档](README-zh.md)
 
 ## Static Site Deployment with Automatic Updating on Kubernetes
 
