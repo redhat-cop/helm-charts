@@ -11,7 +11,8 @@ metadata:
     app: static-site
     site: {{ .Release.Name }}
 spec:
-  replicas: {{ .Values.replicas }}
+  # Correct replicas value will be patched later at the first poller (done as a Helm Chart post-install hook)
+  replicas: 0
   {{- if .Values.persistence.enabled }}
   serviceName: static-site-{{ .Release.Name }}
   {{- else }}
@@ -31,7 +32,7 @@ spec:
         site: {{ .Release.Name }}
         git_repo_hash: {{ .Values.repo.location | sha256sum | trunc 32 }}
         git_branch_hash: {{ .Values.repo.branch | sha256sum | trunc 32 }}
-        git_revision: {{ .Values.repo.revision }}
+        git_revision: 'pending-init'
     spec:
       initContainers:
         - name: git
