@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-site-{{ .Release.Name }}
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  selector:
+    app: static-site
+    site: {{ .Release.Name }}
+  ports:
+    - name: http
+      targetPort: 8080
+      port: 80
