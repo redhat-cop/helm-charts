@@ -1,4 +1,3 @@
-
 autoUpdateCron: '* * * * *'
 replicas: 2
 site:
