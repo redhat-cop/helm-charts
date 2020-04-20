@@ -217,4 +217,18 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/sonarqube-0.0.4/sonarqube-0.0.4.tgz
     version: 0.0.4
+  static-site:
+  - apiVersion: v2
+    appVersion: 1.17.9-alpine
+    created: "2020-04-20T10:35:22.893085769Z"
+    description: A Helm chart for deploying a static-site with auto-updating
+    digest: c99522300da791c6a246359d71a415c122a70c897488b8458307dde4b97bb186
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: jijiechen
+    name: static-site
+    type: application
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/static-site-0.0.3/static-site-0.0.3.tgz
+    version: 0.0.3
 generated: "2020-03-31T15:00:43.554648618Z"
