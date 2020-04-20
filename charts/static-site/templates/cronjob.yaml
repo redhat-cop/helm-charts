@@ -1,0 +1,129 @@
+{{- if .Values.autoUpdateCron }}
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: static-site-{{ .Release.Name }}-poller
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+spec:
+  schedule: "{{ .Values.autoUpdateCron }}"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+{{ include "tmpl.pollerPodSpec" . | indent 10 }}
+
+---
+{{- end }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: static-site-{{ .Release.Name }}-poller-script
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+data:
+  poll.sh: |-
+    #!/bin/sh
+
+    set -e
+
+    if [ -z "$REPO_URL" ]; then
+      exit 0
+    fi
+
+    K8S_URL=https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT_HTTPS
+    NAMESPACE=$(cat /run/secrets/kubernetes.io/serviceaccount/namespace)
+    TOKEN=$(cat /run/secrets/kubernetes.io/serviceaccount/token)
+    CACERT=/run/secrets/kubernetes.io/serviceaccount/ca.crt
+
+    {{- if .Values.persistence.enabled }}
+    RES_TYPE=statefulset
+    {{- else }}
+    RES_TYPE=deployment
+    {{- end }}
+
+    CURRENT=$(curl --cacert $CACERT -H "Authorization: Bearer $TOKEN" $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/${RES_TYPE}s/static-site-{{ .Release.Name }} 2>/dev/null | grep '"git_revision"' | tail -n 1 | cut -f 4 -d '"')
+    LATEST=$(git ls-remote $REPO_URL | grep refs/heads/$BRANCH | awk '{print $1}')
+
+    if [ "$LATEST" != "$CURRENT" ] ; then
+        echo "Redeploying static-site-{{ .Release.Name }}: the current ${RES_TYPE} $CURRENT has expired, as the latest revision is $LATEST"
+        PATCH_REPLICA=
+
+        if [ "$CURRENT" = "pending-init" ]; then
+          PATCH_REPLICA='"replicas": {{ .Values.replicas }},'
+        fi
+
+        PATCH="{\"spec\": { $PATCH_REPLICA \"template\": {\"metadata\": { \"labels\": {  \"git_revision\": \"$LATEST\"}}}}}"
+        
+        curl --cacert $CACERT -X PATCH -H "Authorization: Bearer $TOKEN" \
+          -H 'Content-Type: application/strategic-merge-patch+json' --data "$PATCH" \
+          $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/${RES_TYPE}s/static-site-{{ .Release.Name }}
+    else
+      echo "No change: static-site-{{ .Release.Name }} stayed the same as current ${RES_TYPE} $CURRENT"
+    fi
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-redeployer
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-static-site-updater
+rules:
+- apiGroups: ["extensions", "apps"]
+  resources: ["deployments", "statefulsets"]
+  verbs: ["get", "patch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}_redeployer
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ .Release.Name }}-static-site-updater
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-redeployer
+
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: static-site-{{ .Release.Name }}-first-poller
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
+spec:
+  activeDeadlineSeconds: 600
+  completions: 1
+  parallelism: 1
+  template:
+    spec:
+{{ include "tmpl.pollerPodSpec" . | indent 6 }}

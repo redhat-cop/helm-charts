@@ -1,0 +1,21 @@
+autoUpdateCron: '* * * * *'
+replicas: 2
+site:
+  enableDirectoryListing: false
+persistence:
+  enabled: false
+  storage:
+    ## Data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If '' (the default), no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    storageClass: ''
+    size: 1Gi
+repo:
+  location: ''
+  branch: 'master'
+  credential:
+    username: ''
+    password: ''
