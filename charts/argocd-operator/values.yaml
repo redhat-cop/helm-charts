@@ -9,8 +9,8 @@ instancelabel: rht-labs.com/ubiquitous-journey
 # operator manages upgrades etc
 version: v1.5.2
 operator:
-  version: argocd-operator.v0.0.6
-  channel: beta
+  version: argocd-operator.v0.0.8
+  channel: alpha
   name: argocd-operator
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
