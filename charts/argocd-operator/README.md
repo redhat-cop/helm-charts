@@ -17,6 +17,6 @@ The following table lists the configurable parameters of the ArgoCD chart and th
 
 | Parameter                                        | Description                                                  | Default                               |
 | ------------------------------------------------ | -------------------------------------------------------------| ------------------------------------- |
-| `ci_cd_namespace`                                | Project name to deploy DevEx tools                           | `labs-ci-cd`                          |
+| `namespace`                                      | Project name to deploy DevEx tools                           | `labs-ci-cd`                          |
 | `name`                                           | Project name for argocd server                               | `labs-argocd`                         |
 | `instancelabel`                                  | Unique identifier for argocd default label                   | `rht-labs.com/ubiquitous-journey`     |
