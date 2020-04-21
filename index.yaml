@@ -1,5 +1,19 @@
 apiVersion: v1
 entries:
+  argocd-operator:
+  - apiVersion: v2
+    appVersion: v0.0.1
+    created: "2020-04-21T19:10:16.763071257Z"
+    description: A Helm chart for customising the deployment of the ArgoCD Operator
+      ⚓️
+    digest: 6fa3edf76fa99cb35cc2563f255088ba43a4531b479d033eb821b91507c98a22
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: springdo
+    name: argocd-operator
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/argocd-operator-0.0.1/argocd-operator-0.0.1.tgz
+    version: 0.0.1
   bootstrap-project:
   - apiVersion: v1
     appVersion: v0.0.1
@@ -185,6 +199,20 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/operatorhub-0.0.1/operatorhub-0.0.1.tgz
     version: 0.0.1
   pact-broker:
+  - apiVersion: v2
+    appVersion: v0.0.1
+    created: "2020-04-21T19:10:16.854259871Z"
+    description: "A Helm chart for deploying Pact Broker on OpenShift \U0001F517"
+    digest: 54bed6fd1195b54bdb079188a04cbef2b5eef13d59da9da26c5d0d818d9e7d64
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: mvmaestri
+    - name: gsampaio
+    - name: springdo
+    name: pact-broker
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/pact-broker-0.0.2/pact-broker-0.0.2.tgz
+    version: 0.0.2
   - apiVersion: v1
     appVersion: v0.0.1
     created: "2020-03-31T15:00:43.906799699Z"
