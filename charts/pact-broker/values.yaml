@@ -27,7 +27,7 @@ secrets:
     pactBrokerBasicAuthPassword: CHANGE-ME
 
 deployment:
-  image: 
+  image:
     name: "pactfoundation/pact-broker"
     tag: "latest"
   replicaCount: 1
@@ -48,11 +48,11 @@ persistence:
 postgresql:
   accessmode: ReadWriteOnce
   service:
-    port: 5432 # default
+    port: 5432
     database: *name
     type: ClusterIP
   image:
     tag: "9.6"
   persistent:
-    volume: 
+    volume:
       size: "5Gi"

@@ -1,0 +1,34 @@
+---
+# control used by Labs Ubiquitous Journey
+enabled: true
+
+name: labs-argocd
+namespace: labs-ci-cd
+instancelabel: rht-labs.com/ubiquitous-journey
+
+# operator manages upgrades etc
+version: v1.5.2
+operator:
+  version: argocd-operator.v0.0.8
+  channel: alpha
+  name: argocd-operator
+
+# https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
+metrics:
+  enabled: false
+  prometheus:
+    version: prometheusoperator.0.32.0
+    channel: beta
+    name: prometheus-operator
+ha:
+  enabled: false
+
+rbac:
+  defaultPolicy: role:admin
+
+server:
+  route: true
+  autoscale:
+    enabled: false
+  service:
+    type: ClusterIP
