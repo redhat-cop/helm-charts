@@ -5,13 +5,13 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/component: application-controller
-    app.kubernetes.io/name: argocd-application-controller
+    app.kubernetes.io/name: {{ .Values.namespace }}-argocd-application-controller
     app.kubernetes.io/part-of: {{ .Values.namespace }}
-  name: argocd-application-controller
+  name: {{ .Values.namespace }}-argocd-application-controller
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: argocd-application-controller
+  name: {{ .Values.namespace }}-argocd-application-controller
 subjects:
 - kind: ServiceAccount
   name: argocd-application-controller
