@@ -11,9 +11,9 @@ spec:
   applicationInstanceLabelKey: {{ .Values.instancelabel }}
   dex:
     config: ""
-    image: quay.io/ablock/dex
+    image: quay.io/redhat-cop/dex
     openShiftOAuth: true
-    version: "openshift-connector"
+    version: "v2.22.0-openshift"
   ha:
     enabled: {{ .Values.ha.enabled }}
   grafana:
