@@ -1,0 +1,138 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: static-site-{{ .Release.Name }}-config
+  labels:
+    app: static-site
+    site: {{ .Release.Name }}
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+
+    error_log  /tmp/log/nginx/error.log warn;
+    pid        /tmp/nginx.pid;
+
+
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /tmp/log/nginx/access.log  main;
+
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp_path;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
+
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        keepalive_timeout  65;
+
+        gzip  on;
+        include /etc/nginx/conf.d/*.conf;
+    }
+
+  default.conf: |
+    server {
+        listen       8080;
+        server_name  localhost;
+
+        #charset koi8-r;
+        #access_log  /var/log/nginx/host.access.log  main;
+
+        location / {
+            absolute_redirect off;
+            {{- if .Values.site.enableDirectoryListing }}
+            autoindex on;
+            {{- end }}
+
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+    }
+
+  clone.sh: |
+    #!/bin/sh
+
+    set -e
+
+    REPO_URL='{{ .Values.repo.location }}'
+
+    {{- if and .Values.repo.credential.username .Values.repo.credential.password }}
+      echo 'exec echo $GIT_PASSWORD' > /tmp/git-askpass.sh
+      chmod +x /tmp/git-askpass.sh
+      export GIT_ASKPASS=/tmp/git-askpass.sh
+      
+      if [ ! -z "${REPO_URL##*@*}" ] ; then
+        REPO_URL=$(echo $REPO_URL | sed 's;//;//{{ .Values.repo.credential.username }}@;')
+      fi
+    {{- end }}
+
+    INSIDE_TREE=$(git rev-parse --is-inside-work-tree 2>/dev/null || true)
+    if [ -z "$INSIDE_TREE" ]; then
+      git init .
+    fi
+
+    git config remote.origin.url $REPO_URL
+
+    BRANCH={{ .Values.repo.branch }}
+    CURRENT=$(git rev-parse --verify HEAD 2>/dev/null || true)
+    if [ "$CURRENT" != "$GIT_REVISION" ]; then
+      git fetch --no-tags --progress -- $REPO_URL +refs/heads/$BRANCH:refs/remotes/origin/$BRANCH
+      
+      git config advice.detachedHead false
+      git checkout -f $GIT_REVISION
+      git branch -D $BRANCH 2>/dev/null || true
+      git checkout -b $BRANCH $GIT_REVISION
+    fi
+
+    git reset --hard
+    git clean -fdx
+
+    # Running at /source
+    cp -R ./ /website
+    rm -rf /website/.git
