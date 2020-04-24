@@ -32,3 +32,18 @@ server:
     enabled: false
   service:
     type: ClusterIP
+
+# See here for private repos
+# https://argocd-operator.readthedocs.io/en/v0.0.8/reference/argocd/#initial-repositories-example
+initialRepositories:
+  - name: ubiquitous-journey
+    url: https://github.com/rht-labs/ubiquitous-journey.git
+  - name: rht-labs
+    type: helm
+    url: https://rht-labs.github.io/helm-charts
+
+secrets:
+  - name: argocd-privaterepo
+    username: ""
+    password: ""
+    sshPrivateKey: ""
