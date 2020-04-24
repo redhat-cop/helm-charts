@@ -52,10 +52,9 @@ tolerations: []
 affinity: {}
 
 persistence:
-  enabled: false
+  enabled: true
   annotations: {}
   storageClass:
   accessMode: ReadWriteOnce
   size: 1Gi
-  volumes: []
-  mounts: []
+  mountPath: /opt/etherpad-lite/var
