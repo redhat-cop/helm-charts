@@ -1,0 +1,6 @@
+apiVersion: v2
+name: etherpad
+description: A Helm chart for etherpad lite
+type: application
+version: 0.0.1
+appVersion: latest
