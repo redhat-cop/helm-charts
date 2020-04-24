@@ -39,15 +39,10 @@ spec:
             httpGet:
               path: /
               port: http
-              initialDelaySeconds: 120
-              periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: http
-              initialDelaySeconds: 60
-              periodSeconds: 10
-              timeoutSeconds: 60
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
