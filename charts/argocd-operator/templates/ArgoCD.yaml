@@ -36,11 +36,10 @@ spec:
   rbac:
     {{- . | toYaml | trim | nindent 4 }}
   {{- end }}
-  repositories: |
-    - url: https://github.com/rht-labs/ubiquitous-journey.git
-    - type: helm
-      url: https://rht-labs.github.io/helm-charts
-      name: rht-labs
+  {{- with .Values.initialRepositories }}
+  initialRepositories: |
+   {{- . | toYaml | trim | nindent 4 }}
+  {{- end }}
   insecure: false
   {{- with .Values.server }}
   server:
