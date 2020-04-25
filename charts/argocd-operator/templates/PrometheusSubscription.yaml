@@ -1,0 +1,14 @@
+---
+{{- if .Values.metrics.enabled }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: prometheus-operator
+spec:
+  channel: beta
+  installPlanApproval: Automatic
+  name: prometheus
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: {{ .Values.metrics.prometheus.version | quote }}
+{{- end }}
