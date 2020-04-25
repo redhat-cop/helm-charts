@@ -1,5 +1,5 @@
 ---
-{{- if .Values.argocd.metrics.enabled }}
+{{- if .Values.metrics.enabled }}
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -10,5 +10,5 @@ spec:
   name: prometheus
   source: community-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: {{ .Values.argocd.metrics.prometheus.version | quote }}
+  startingCSV: {{ .Values.metrics.prometheus.version | quote }}
 {{- end }}
