@@ -5,10 +5,20 @@ route: true
 
 # ovs this is not a real password in use.... or is it?
 # ¯\_(ツ)_/¯
-source_secret:
-  name: git-auth
-  username: idm-sa
-  password: thisisdefinitelymypassword
+source_secrets: 
+    # secret used to git clone inside of OpenShift when running s2i and possibly in a Jenkins job too
+  - name: git-auth
+    username: idm-sa
+    password: thisisdefinitelymypassword
+    # some token... appears in jenkins env as JSON ie {"token": "aaaaa.bbbbb.ccccc"}
+  - name: my-token
+    type: Opaque
+    token: aaaaa.bbbbb.ccccc
+    # default password for nexus bind for jenkis - this is ovs changed. 
+    # .... probably
+  - name: nexus-password
+    username: admin
+    password: admin123
 
 deployment:
   openshiftauth: true
@@ -107,83 +117,83 @@ buildconfigs:
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-mvn"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "quay.io/openshift/origin-jenkins-agent-maven"
     builder_image_tag: "4.2"
   - name: "jenkins-slave-helm"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-helm"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-argocd"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-argocd"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-arachni"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-arachni"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-golang"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-golang"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-gradle"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-gradle"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-image-mgmt"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-image-mgmt"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-mongodb"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-mongodb"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-npm"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-npm"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
+    source_repo_ref: "v1.22"
+    builder_image_name: "openshift/jenkins-slave-base-centos7:v3.11"
     builder_image_tag: "latest"
   - name: "jenkins-slave-python"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-python"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-ruby"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-ruby"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
   - name: "jenkins-slave-ansible"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-ansible"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.20"
+    source_repo_ref: "v1.22"
     builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
     builder_image_tag: "latest"
