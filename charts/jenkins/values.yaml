@@ -76,7 +76,7 @@ services:
   - name: jenkins-jnlp
     port_name: agent
     port: 50000
-    target_port: 5000
+    target_port: 50000
     selector: *name
 
 imagestreams:
