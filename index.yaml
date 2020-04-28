@@ -141,6 +141,20 @@ entries:
     - https://github.com/rht-labs/helm-charts/releases/download/etherpad-0.0.1/etherpad-0.0.1.tgz
     version: 0.0.1
   jenkins:
+  - apiVersion: v2
+    appVersion: v2.204.1
+    created: "2020-04-28T12:05:08.417138152Z"
+    description: A Helm chart for deploying Jenkins on OpenShift with some additional
+      build agents and plugins
+    digest: d43d7aa9b1e3a74d42bf41f4751ae5178f5e5282ac43f0e946d59b131ff95b53
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: jenkins
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/jenkins-0.0.10/jenkins-0.0.10.tgz
+    version: 0.0.10
   - apiVersion: v1
     appVersion: v0.0.1
     created: "2020-04-08T13:33:13.41300416Z"
