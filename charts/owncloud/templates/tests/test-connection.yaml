@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "owncloud.fullname" . }}-test-connection"
+  labels:
+    {{- include "owncloud.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "owncloud.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
