@@ -1,0 +1,14 @@
+apiVersion: v2
+name: homer
+description: A Helm chart to deploy the Devleloper Experience Dashboard
+type: application
+# HelmChart Version
+version: 0.0.8
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application.
+appVersion: v1.0
+home: https://github.com/rht-labs/helm-charts
+maintainers:
+- name: springdo
+- name: ckavili
+- name: eformat
