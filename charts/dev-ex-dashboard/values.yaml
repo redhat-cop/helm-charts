@@ -20,9 +20,9 @@ config:
 
   # Optional message
   message:
-     url: https://github.com/rht-labs/dev-ex-dashboard     
+     url: https://github.com/rht-labs/dev-ex-dashboard
      title: "Demo !"
-     content: "This is a dummy homepage - please create a configmap."
+     content: 'This is a dummy homepage - please create a configmap <a href="https://github.com/rht-labs/dev-ex-dashboard>configmap</a>'
 
   # Optional navbar
   links:
