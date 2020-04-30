@@ -1,6 +1,6 @@
 apiVersion: v2
 name: homer
-description: A Helm chart to deploy the Devleloper Experience Dashboard
+description: A Helm chart to deploy the Developer Experience Dashboard
 type: application
 # HelmChart Version
 version: 0.0.1
