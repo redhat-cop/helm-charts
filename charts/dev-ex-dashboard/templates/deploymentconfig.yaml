@@ -65,7 +65,7 @@ spec:
       - {{ .Values.app_name }}
       from:
         kind: ImageStreamTag
-        name: {{ .Values.deployment.image.name }}:{{ .Values.deployment.image.tag }}
+        name: {{ .Values.app_name }}:{{ .Values.deployment.image.tag }}
       lastTriggeredImage: ""
     type: ImageChange
   - type: ConfigChange  
