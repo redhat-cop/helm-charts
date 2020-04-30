@@ -1,4 +1,6 @@
 {{- if .Values.enabled }}
+{{- if .Values.operator }}
+{{- if .Values.operator.operatorgroup }}
 ---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
@@ -9,4 +11,6 @@ metadata:
 spec:
   targetNamespaces:
   - {{ .Values.namespace }}
+{{- end }}
+{{- end }}
 {{- end }}
