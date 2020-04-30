@@ -26,7 +26,7 @@ spec:
         deploymentconfig: {{ .Values.app_name }}
     spec:
       containers:
-      - image: "{{ .Values.image_repository }}/{{ .Values.image_namespace }}/{{ .Values.image_name }}:{{ .Values.app_tag }}"
+      - image: ' '
         imagePullPolicy: Always
         name: {{ .Values.app_name }}
         ports:
@@ -59,4 +59,13 @@ spec:
               path: config.yml
   test: false
   triggers:
-  - type: ConfigChange 
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - {{ .Values.app_name }}
+      from:
+        kind: ImageStreamTag
+        name: {{ .Values.deployment.image.name }}:{{ .Values.deployment.image.tag }}
+      lastTriggeredImage: ""
+    type: ImageChange
+  - type: ConfigChange  
