@@ -4,6 +4,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name:  "{{ .Values.app_name }}-environment"
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false  
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
 data: 
   conf: |
     {{- .Values.config | toYaml | nindent 4 }}
