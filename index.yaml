@@ -91,6 +91,19 @@ entries:
   bootstrap-project:
   - apiVersion: v1
     appVersion: v0.0.1
+    created: "2020-05-01T10:18:24.042647851Z"
+    description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
+    digest: b5a73ed3dc57ca5101c4f2bd511d204f67bcfc7f7db8fec8f4a5ff3250ddc0f3
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: bootstrap-project
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/bootstrap-project-0.0.5/bootstrap-project-0.0.5.tgz
+    version: 0.0.5
+  - apiVersion: v1
+    appVersion: v0.0.1
     created: "2020-04-08T14:20:05.703017659Z"
     description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
     digest: 110561da5283dc5ac08d7b9d8e3004fd325208f06428aebe0ed43384999372d5
@@ -140,22 +153,6 @@ entries:
     name: bootstrap-project
     urls:
     - https://github.com/rht-labs/charts/releases/download/bootstrap-project-0.0.1/bootstrap-project-0.0.1.tgz
-    version: 0.0.1
-  dev-ex-dashboard:
-  - apiVersion: v2
-    appVersion: v1.0
-    created: "2020-05-01T10:15:32.844425021Z"
-    description: A Helm chart to deploy the Developer Experience Dashboard
-    digest: 427fd46ec1453eb931503ec8f4ba75844245fbddb0bef3faffc41f7f3311b5cd
-    home: https://github.com/rht-labs/helm-charts
-    maintainers:
-    - name: springdo
-    - name: ckavili
-    - name: eformat
-    name: dev-ex-dashboard
-    type: application
-    urls:
-    - https://github.com/rht-labs/helm-charts/releases/download/dev-ex-dashboard-0.0.1/dev-ex-dashboard-0.0.1.tgz
     version: 0.0.1
   etherpad:
   - apiVersion: v2
