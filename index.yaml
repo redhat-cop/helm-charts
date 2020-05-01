@@ -3,6 +3,21 @@ entries:
   argocd-operator:
   - apiVersion: v2
     appVersion: v1.5.2
+    created: "2020-05-01T10:25:08.597449497Z"
+    description: A Helm chart for customising the deployment of the ArgoCD Operator
+      ⚓️
+    digest: 54d057b073871a8c3fe0916d31be69d9d3d3d963794feb6c82af74f3f93d396b
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: argocd-operator
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/argocd-operator-0.0.7/argocd-operator-0.0.7.tgz
+    version: 0.0.7
+  - apiVersion: v2
+    appVersion: v1.5.2
     created: "2020-04-29T21:57:05.608930288Z"
     description: A Helm chart for customising the deployment of the ArgoCD Operator
       ⚓️
