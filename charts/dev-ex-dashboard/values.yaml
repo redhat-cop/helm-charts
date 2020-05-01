@@ -1,0 +1,41 @@
+app_name: dev-ex-dashboard
+
+# Docker deets
+deployment:
+  image:
+    name: "quay.io/rht-labs/dev-ex-dashboard"
+    tag: "latest"
+
+# OCP route
+route: true
+
+# custom end point injected by config map. These are placeholders and are likely to be changed
+config:
+  title: "🦄 Developer Experience 🔥"
+  subtitle: "Red Hat Open Innovation Labs"
+  # logo: "https://avatars1.githubusercontent.com/u/19174470?s=200&v=4"
+  logo: "https://www.redhat.com/cms/managed-files/RHOIL_LogoBadge_RGB_Default.svg"
+  # icon: "fas fa-skull-crossbones" Optional icon
+  footer: '<p>Created with <span class="has-text-danger">❤️</span> with <a href="https://bulma.io/">bulma</a>, <a href="https://vuejs.org/">vuejs</a> & <a href="https://fontawesome.com/">font awesome</a><i class="fab fa-github-alt"></i></a></p>'  # set false if you want to hide it.
+
+  # Optional message
+  message:
+    url: https://github.com/rht-labs/dev-ex-dashboard
+    title: "Demo !"
+    content: 'This is a dummy homepage - please create a configmap'
+
+  # Optional navbar
+  links:
+    - name: "Ubiquitous Journey"
+      icon: "fab fa-github"
+      url: "https://github.com/rht-labs/ubiquitous-journey"
+      target: '_blank'
+    - name: "Open Management Portal"
+      icon: "fab fa-github"
+      url: "https://github.com/rht-labs/open-management-portal"
+    - name: "Helm Charts"
+      icon: "fab fa-github"
+      url: "https://github.com/rht-labs/helm-charts"
+    - name: "DO500 "
+      icon: "fab fa-github"
+      url: "https://github.com/rht-labs/enablement-docs"
