@@ -1,4 +1,5 @@
 {{- if .Values.enabled }}
+{{- if .Values.operator }}
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -12,4 +13,5 @@ spec:
   source: community-operators
   sourceNamespace: openshift-marketplace
   startingCSV: {{ .Values.operator.version | quote }}
+{{- end }}
 {{- end }}

@@ -12,6 +12,7 @@ operator:
   version: argocd-operator.v0.0.8
   channel: alpha
   name: argocd-operator
+  operatorgroup: true
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 metrics:
