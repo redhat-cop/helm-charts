@@ -1,0 +1,84 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ include "redis.fullname" . }}
+  labels:
+    {{- include "redis.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    {{- include "redis.selectorLabels" . | nindent 4 }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        {{- include "redis.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: {{ .Values.image.redis.image }}
+        imagePullPolicy: {{ .Values.image.redis.pullPolicy }}
+        name: redis
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      - args:
+        - 'trap : TERM INT; sleep infinity & wait'
+        command:
+        - /bin/bash
+        - -c
+        image: {{ .Values.image.redis.healthimage }}
+        imagePullPolicy: {{ .Values.image.redis.pullPolicy }}
+        livenessProbe:
+          exec:
+            command:
+            - /usr/local/bin/docker-healthcheck
+          failureThreshold: 30
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: healthcheck
+        readinessProbe:
+          exec:
+            command:
+            - /usr/local/bin/docker-healthcheck
+          failureThreshold: 30
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      hostname: redis
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ include "redis.fullname" . }}
+  test: false
+  triggers:
+  - type: ConfigChange

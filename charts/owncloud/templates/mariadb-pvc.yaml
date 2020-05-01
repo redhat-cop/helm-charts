@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "mariadb.fullname" . }}
+  labels:
+    {{- include "mariadb.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistent.mariadb.accessMode | default " ReadWriteOnce" }}
+  resources:
+    requests:
+      storage: {{ .Values.persistent.mariadb.volume.size | default " 10Gi" }}

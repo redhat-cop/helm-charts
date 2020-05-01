@@ -1,0 +1,98 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ include "mariadb.fullname" . }}
+  labels:
+    {{- include "mariadb.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    {{- include "mariadb.selectorLabels" . | nindent 4 }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        {{- include "mariadb.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: owncloud
+        - name: MYSQL_USER
+          value: owncloud
+        - name: MYSQL_PASSWORD
+          value: owncloud
+        - name: MYSQL_DATABASE
+          value: owncloud
+        image: {{ .Values.image.mariadb.image }}
+        imagePullPolicy: {{ .Values.image.mariadb.pullPolicy }}
+        name: mariadb
+        ports:
+        - containerPort: 3306
+          name: mariadb
+          protocol: TCP
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: data
+      - args:
+        - 'trap : TERM INT; sleep infinity & wait'
+        command:
+        - /bin/bash
+        - -c
+        env:
+        - name: MYSQL_USER
+          value: root
+        - name: MYSQL_PASSWORD
+          value: owncloud
+        image: {{ .Values.image.mariadb.healthimage }}
+        imagePullPolicy: {{ .Values.image.mariadb.pullPolicy }}
+        livenessProbe:
+          exec:
+            command:
+            - /usr/local/bin/docker-healthcheck
+          failureThreshold: 30
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: healthcheck
+        readinessProbe:
+          exec:
+            command:
+            - /usr/local/bin/docker-healthcheck
+          failureThreshold: 30
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      hostname: mariadb
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ include "mariadb.fullname" . }}
+  test: false
+  triggers:
+  - type: ConfigChange

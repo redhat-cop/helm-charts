@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,9 +6,9 @@ metadata:
   labels:
     {{- include "owncloud.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.service.owncloud.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.service.owncloud.port }}
       targetPort: http
       protocol: TCP
       name: http

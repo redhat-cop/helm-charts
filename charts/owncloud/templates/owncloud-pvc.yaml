@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "owncloud.fullname" . }}
+  labels:
+    {{- include "owncloud.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistent.owncloud.accessMode | default " ReadWriteOnce" }}
+  resources:
+    requests:
+      storage: {{ .Values.persistent.owncloud.volume.size | default " 100Gi" }}
