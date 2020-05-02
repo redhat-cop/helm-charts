@@ -331,6 +331,21 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/jenkins-0.0.1/jenkins-0.0.1.tgz
     version: 0.0.1
   operatorhub:
+  - apiVersion: v2
+    appVersion: 0.0.2
+    created: "2020-05-02T10:45:42.356320542Z"
+    description: A Helm chart to create OperatorHub subscriptions
+    digest: cf0f9564f29062545a321b4ea6f3f713d31419af221a78ee6385cadc1aef5e3a
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: tylerauerbeck
+    - name: ckavili
+    - name: mabulgu
+    name: operatorhub
+    type: application
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/operatorhub-0.0.4/operatorhub-0.0.4.tgz
+    version: 0.0.4
   - apiVersion: v1
     appVersion: 0.0.2
     created: "2020-04-08T13:33:13.500532536Z"
