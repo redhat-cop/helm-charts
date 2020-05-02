@@ -1,0 +1,17 @@
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  creationTimestamp: null  
+  labels:
+    app: {{ .Values.app_name }}
+  name: {{ .Values.app_name }}
+spec:
+  tags:
+  - annotations:
+      openshift.io/imported-from: rht-labs/dev-ex-dashboard
+    from:
+      kind: DockerImage
+      name: {{ .Values.deployment.image.name }}:{{ .Values.deployment.image.tag }}
+    importPolicy: {}
+    name: latest

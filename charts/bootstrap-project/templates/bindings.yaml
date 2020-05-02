@@ -1,4 +1,7 @@
 {{- if .Values.namespaces }}
+{{- range $k :=.Values.namespaces }}
+{{ $ns:= printf "%s" $k.name}}
+{{- if $k.bindings }}
 ---
 apiVersion: v1
 kind: List
@@ -8,8 +11,6 @@ metadata:
     # job is considered part of the release.
     "helm.sh/hook": post-install
 items:
-{{- range $k :=.Values.namespaces }}
-{{ $ns:= printf "%s" $k.name}}
 {{- range $b := $k.bindings }}
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
@@ -28,6 +29,7 @@ items:
 {{- end }}
 {{- if $b.namespace }}
     namespace: "{{ printf "%s" $b.namespace }}"
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
