@@ -119,7 +119,7 @@ buildconfigs:
     source_repo: "https://github.com/eformat/containers-quickstarts"
     source_repo_ref: "master"
     builder_image_name: "quay.io/openshift/origin-jenkins-agent-maven"
-    builder_image_tag: "4.3"
+    builder_image_tag: "latest"
   - name: "jenkins-slave-helm"
     strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-helm"
