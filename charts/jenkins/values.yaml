@@ -132,7 +132,7 @@ buildconfigs:
     source_context_dir: "jenkins-slaves/jenkins-slave-argocd"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
     source_repo_ref: "v1.22"
-    builder_image_name: "quay.io/openshift/origin-jenkins-agent-base:4.0"
+    builder_image_name: "quay.io/openshift/origin-jenkins-agent-base:4.3"
     builder_image_tag: "latest"
   - name: "jenkins-slave-arachni"
     strategy_type: "Docker"
