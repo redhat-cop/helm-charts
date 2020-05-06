@@ -1,6 +1,7 @@
 {{- if .Values.operators }}
 {{- range $op := .Values.operators }}
 {{- if $op.operatorgroup }}
+{{- if $op.operatorgroup.create }}
 {{- $og := $op.operatorgroup }}
 ---
 apiVersion: operators.coreos.com/v1
@@ -11,6 +12,7 @@ metadata:
 spec:
   targetNamespaces:
   - {{ $op.namespace }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
