@@ -1,9 +1,9 @@
-apiVersion: v1
+apiVersion: v2
 name: operatorhub
-description: A Helm chart to create OperatorHub subscriptions 
+description: A Helm chart to create OperatorHub subscriptions
 type: application
-version: 0.0.3
-appVersion: 0.0.2 
+version: 0.0.4
+appVersion: 0.0.2
 home: https://github.com/rht-labs/helm-charts
 maintainers:
   - name: tylerauerbeck
