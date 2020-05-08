@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: v1.5.2
+appVersion: v1.5.4
 description: A Helm chart for customising the deployment of the ArgoCD Operator ⚓️
 name: argocd-operator
 version: 0.0.8
