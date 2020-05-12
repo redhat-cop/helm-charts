@@ -371,6 +371,20 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/operatorhub-0.0.1/operatorhub-0.0.1.tgz
     version: 0.0.1
+  owncloud:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2020-05-12T13:18:07.611221559Z"
+    description: A Helm chart for Owncloud
+    digest: 1235d1903c5e8be7d8f0eb334bdf4c6b48c32f65217206d24e551d0c16a8567f
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: eformat
+    name: owncloud
+    type: application
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/owncloud-0.0.1/owncloud-0.0.1.tgz
+    version: 0.0.1
   pact-broker:
   - apiVersion: v2
     appVersion: v0.0.1
