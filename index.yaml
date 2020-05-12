@@ -2,6 +2,21 @@ apiVersion: v1
 entries:
   argocd-operator:
   - apiVersion: v2
+    appVersion: v1.5.4
+    created: "2020-05-12T13:18:57.527800987Z"
+    description: A Helm chart for customising the deployment of the ArgoCD Operator
+      ⚓️
+    digest: a0eee9a187474a4bbec364aca270a3174aa1c79473a629910230ab83dc0684e8
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: argocd-operator
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/argocd-operator-0.0.8/argocd-operator-0.0.8.tgz
+    version: 0.0.8
+  - apiVersion: v2
     appVersion: v1.5.2
     created: "2020-05-01T10:25:08.597449497Z"
     description: A Helm chart for customising the deployment of the ArgoCD Operator
@@ -104,6 +119,20 @@ entries:
     - https://github.com/rht-labs/helm-charts/releases/download/argocd-operator-0.0.1/argocd-operator-0.0.1.tgz
     version: 0.0.1
   bootstrap-project:
+  - apiVersion: v1
+    appVersion: v0.0.1
+    created: "2020-05-12T13:18:57.62169428Z"
+    description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
+    digest: 059892b952fe9b1b923fef9029d23b165aa0480a58dd4545dcef209dfd1a9555
+    home: https://github.com/rht-labs/charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: bootstrap-project
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/bootstrap-project-0.0.6/bootstrap-project-0.0.6.tgz
+    version: 0.0.6
   - apiVersion: v1
     appVersion: v0.0.1
     created: "2020-05-01T10:18:24.042647851Z"
