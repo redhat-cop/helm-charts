@@ -1,0 +1,127 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ include "owncloud.fullname" . }}
+  labels:
+    {{- include "owncloud.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount | default "1" }}
+  selector:
+    {{- include "owncloud.selectorLabels" . | nindent 4 }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        {{- include "owncloud.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: OWNCLOUD_DOMAIN
+          value: {{ .Values.hostname | quote }}
+        - name: OWNCLOUD_PROTOCOL
+          value: https
+        - name: OWNCLOUD_CROND_ENABLED
+          value: "false"
+        - name: OWNCLOUD_BACKGROUND_MODE
+          value: webcron
+        - name: OWNCLOUD_DB_TYPE
+          value: mysql
+        - name: OWNCLOUD_DB_HOST
+          value: {{ include "mariadb.fullname" . }}
+        - name: OWNCLOUD_DB_NAME
+          value: owncloud
+        - name: OWNCLOUD_DB_USERNAME
+          value: owncloud
+        - name: OWNCLOUD_DB_PASSWORD
+          value: owncloud
+        - name: OWNCLOUD_REDIS_ENABLED
+          value: "true"
+        - name: OWNCLOUD_REDIS_HOST
+          value: {{ include "redis.fullname" . }}
+        - name: OWNCLOUD_REDIS_PORT
+          value: "6379"
+        - name: OWNCLOUD_VOLUME_ROOT
+          value: /var/lib/owncloud
+        - name: OWNCLOUD_VOLUME_FILES
+          value: /var/lib/owncloud/files
+        - name: OWNCLOUD_VOLUME_CONFIG
+          value: /var/lib/owncloud/config
+        - name: OWNCLOUD_LOG_FILE
+          value: /dev/stdout
+        - name: OWNCLOUD_ADMIN_USERNAME
+          value: admin
+        - name: OWNCLOUD_ADMIN_PASSWORD
+          value: admin
+        - name: OWNCLOUD_SESSION_SAVE_HANDLER
+          value: redis
+        - name: OWNCLOUD_SESSION_SAVE_PATH
+          value: tcp://{{ include "redis.fullname" . }}:6379?database=1
+        - name: OWNCLOUD_SKIP_CHOWN
+          value: "true"
+        - name: OWNCLOUD_TOKEN_AUTH_ENFORCED
+          value: "true"    
+        image: ' '
+        imagePullPolicy: {{ .Values.image.owncloud.pullPolicy }}
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/healthcheck
+          failureThreshold: 30
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: {{ include "owncloud.name" . }}
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/healthcheck
+          failureThreshold: 60
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/owncloud
+          name: data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccountName: {{ include "owncloud.serviceAccountName" . }}
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ include "owncloud.fullname" . }}
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - {{ .Chart.Name }}
+      from:
+        kind: ImageStreamTag
+        name: "{{ include "owncloud.fullname" . }}:{{ .Chart.AppVersion }}"
+      lastTriggeredImage: ""
+    type: ImageChange
+  - type: ConfigChange  

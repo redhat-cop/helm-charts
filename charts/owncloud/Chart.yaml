@@ -1,0 +1,9 @@
+apiVersion: v2
+name: owncloud
+description: A Helm chart for Owncloud
+type: application
+version: 0.0.1
+appVersion: latest
+home: https://github.com/rht-labs/helm-charts
+maintainers:
+- name: eformat

@@ -1,0 +1,16 @@
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ include "owncloud.fullname" . }}
+  labels:
+    {{- include "owncloud.labels" . | nindent 4 }}
+spec:
+  tags:
+  - annotations:
+      openshift.io/imported-from: owncloud
+    from:
+      kind: DockerImage
+      name: {{ .Values.image.owncloud.repository }}:{{ .Chart.AppVersion }}
+    importPolicy: {}
+    name: {{ .Chart.AppVersion }}

@@ -1,0 +1,55 @@
+# Default values for owncloud.
+replicaCount: 1
+
+image:
+  owncloud:
+    repository: quay.io/eformat/owncloud-oauth
+    pullPolicy: IfNotPresent
+  redis:
+    image: docker.io/redis:5.0
+    healthimage: docker.io/healthcheck/redis:latest
+    pullPolicy: Always
+  mariadb:
+    image: docker.io/mariadb:10.4
+    healthimage: docker.io/healthcheck/mysql:latest
+    pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name:
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  owncloud:
+    type: ClusterIP
+    port: 8080
+  redis:
+    type: ClusterIP
+    port: 6379
+  mariadb:
+    type: ClusterIP
+    port: 3306
+
+persistent:
+  owncloud:
+    accessMode: ReadWriteOnce
+    volume:
+      size: 100Gi
+  redis:
+    accessMode: ReadWriteOnce
+    volume:
+      size: 1Gi
+  mariadb:
+    accessMode: ReadWriteOnce
+    volume:
+      size: 10Gi
+
+# OCP route
+route: true
+hostname: owncloud.apps.hivec.sandbox1604.opentlc.com

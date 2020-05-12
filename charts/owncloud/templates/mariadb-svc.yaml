@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mariadb.fullname" . }}
+  labels:
+    {{- include "mariadb.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.mariadb.type }}
+  ports:
+    - port: {{ .Values.service.mariadb.port }}
+      targetPort: mariadb
+      protocol: TCP
+      name: mariadb
+  selector:
+    {{- include "mariadb.selectorLabels" . | nindent 4 }}

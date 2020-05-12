@@ -1,0 +1,593 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "owncloud-persistent",
+        "annotations": {
+            "openshift.io/display-name": "ownCloud (Persistent)",
+            "description": "A deployment for ownCloud with MariaDB and Redis, including persistent storage.",
+            "iconClass": "icon-php",
+            "tags": "instant-app,php,owncloud,mariadb,redis"
+        }
+    },
+    "message": "An ownCloud service including persistent storage has been created in your project.",
+    "objects": [{
+            "apiVersion": "v1",
+            "kind": "ServiceAccount",
+            "metadata": {
+                "name": "owncloud"
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "owncloud"
+            },
+            "spec": {
+                "host": "${OWNCLOUD_PUBLIC_DOMAIN}",
+                "to": {
+                    "kind": "Service",
+                    "name": "owncloud"
+                },
+                "tls": {
+                    "termination": "edge",
+                    "insecureEdgeTerminationPolicy": "Redirect"
+                },
+                "port": {
+                    "targetPort": "http"
+                }
+            }
+        },
+        {
+            "kind": "PersistentVolumeClaim",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "owncloud"
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "${OWNCLOUD_VOLUME_CAPACITY}"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "owncloud"
+            },
+            "spec": {
+                "ports": [{
+                    "name": "http",
+                    "protocol": "TCP",
+                    "port": 8080,
+                    "targetPort": "http"
+                }],
+                "selector": {
+                    "app": "owncloud"
+                }
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "owncloud",
+                "labels": {
+                    "app": "owncloud"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [{
+                    "type": "ConfigChange"
+                }],
+                "replicas": 1,
+                "selector": {
+                    "app": "owncloud"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "owncloud",
+                        "labels": {
+                            "app": "owncloud"
+                        }
+                    },
+                    "spec": {
+                        "hostname": "owncloud",
+                        "serviceAccount": "owncloud",
+                        "containers": [{
+                            "name": "owncloud",
+                            "image": "${OWNCLOUD_IMAGE_NAME}",
+                            "imagePullPolicy": "Always",
+                            "ports": [{
+                                "name": "http",
+                                "protocol": "TCP",
+                                "containerPort": 8080
+                            }],
+                            "readinessProbe": {
+                                "timeoutSeconds": 3,
+                                "initialDelaySeconds": 60,
+                                "failureThreshold": 60,
+                                "exec": {
+                                    "command": [
+                                        serviceaccount / owncloud created
+                                        route.route.openshift.io / owncloud created
+                                        persistentvolumeclaim / owncloud created
+                                        service / owncloud created
+                                        deploymentconfig.apps.openshift.io / owncloud created
+                                        persistentvolumeclaim / mariadb created
+                                        service / mariadb created
+                                        deploymentconfig.apps.openshift.io / mariadb created
+                                        persistentvolumeclaim / redis created
+                                        service / redis created
+                                        deploymentconfig.apps.openshift.io / redis created
+                                        cronjob.batch / webcron created "/usr/bin/healthcheck"
+                                    ]
+                                }
+                            },
+                            "livenessProbe": {
+                                "timeoutSeconds": 3,
+                                "initialDelaySeconds": 60,
+                                "failureThreshold": 30,
+                                "exec": {
+                                    "command": [
+                                        "/usr/bin/healthcheck"
+                                    ]
+                                }
+                            },
+                            "serviceAccount": "owncloud",
+                            "serviceAccountName": "owncloud",
+                            "env": [{
+                                    "name": "OWNCLOUD_DOMAIN",
+                                    "value": "${OWNCLOUD_PUBLIC_DOMAIN}"
+                                },
+                                {
+                                    "name": "OWNCLOUD_PROTOCOL",
+                                    "value": "https"
+                                },
+                                {
+                                    "name": "OWNCLOUD_CROND_ENABLED",
+                                    "value": "false"
+                                },
+                                {
+                                    "name": "OWNCLOUD_BACKGROUND_MODE",
+                                    "value": "webcron"
+                                },
+                                {
+                                    "name": "OWNCLOUD_DB_TYPE",
+                                    "value": "mysql"
+                                },
+                                {
+                                    "name": "OWNCLOUD_DB_HOST",
+                                    "value": "mariadb"
+                                },
+                                {
+                                    "name": "OWNCLOUD_DB_NAME",
+                                    "value": "owncloud"
+                                },
+                                {
+                                    "name": "OWNCLOUD_DB_USERNAME",
+                                    "value": "owncloud"
+                                },
+                                {
+                                    "name": "OWNCLOUD_DB_PASSWORD",
+                                    "value": "owncloud"
+                                },
+                                {
+                                    "name": "OWNCLOUD_REDIS_ENABLED",
+                                    "value": "true"
+                                },
+                                {
+                                    "name": "OWNCLOUD_REDIS_HOST",
+                                    "value": "redis"
+                                },
+                                {
+                                    "name": "OWNCLOUD_REDIS_PORT",
+                                    "value": "6379"
+                                },
+                                {
+                                    "name": "OWNCLOUD_VOLUME_ROOT",
+                                    "value": "/var/lib/owncloud"
+                                },
+                                {
+                                    "name": "OWNCLOUD_VOLUME_FILES",
+                                    "value": "/var/lib/owncloud/files"
+                                },
+                                {
+                                    "name": "OWNCLOUD_VOLUME_CONFIG",
+                                    "value": "/var/lib/owncloud/config"
+                                },
+                                {
+                                    "name": "OWNCLOUD_LOG_FILE",
+                                    "value": "/dev/stdout"
+                                },
+                                {
+                                    "name": "OWNCLOUD_ADMIN_USERNAME",
+                                    "value": "${OWNCLOUD_ADMIN_USERNAME}"
+                                },
+                                {
+                                    "name": "OWNCLOUD_ADMIN_PASSWORD",
+                                    "value": "${OWNCLOUD_ADMIN_PASSWORD}"
+                                },
+                                {
+                                    "name": "OWNCLOUD_SESSION_SAVE_HANDLER",
+                                    "value": "redis"
+                                },
+                                {
+                                    "name": "OWNCLOUD_SESSION_SAVE_PATH",
+                                    "value": "tcp://redis:6379?database=1"
+                                },
+                                {
+                                    "name": "OWNCLOUD_SKIP_CHOWN",
+                                    "value": "true"
+                                },
+                                {
+                                    "name": "OWNCLOUD_TOKEN_AUTH_ENFORCED",
+                                    "value": "true"
+                                }
+                            ],
+                            "volumeMounts": [{
+                                "name": "data",
+                                "mountPath": "/var/lib/owncloud"
+                            }],
+                            "securityContext": {
+                                "allowPrivilegeEscalation": false
+                            }
+                        }],
+                        "volumes": [{
+                            "name": "data",
+                            "persistentVolumeClaim": {
+                                "claimName": "owncloud"
+                            }
+                        }]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "PersistentVolumeClaim",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mariadb"
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "10Gi"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mariadb"
+            },
+            "spec": {
+                "ports": [{
+                    "name": "mariadb",
+                    "protocol": "TCP",
+                    "port": 3306,
+                    "targetPort": "mariadb"
+                }],
+                "selector": {
+                    "app": "mariadb"
+                }
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mariadb"
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [{
+                    "type": "ConfigChange"
+                }],
+                "replicas": 1,
+                "selector": {
+                    "app": "mariadb"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "mariadb",
+                        "labels": {
+                            "app": "mariadb"
+                        }
+                    },
+                    "spec": {
+                        "hostname": "mariadb",
+                        "containers": [{
+                                "name": "mariadb",
+                                "image": "docker.io/mariadb:10.4",
+                                "imagePullPolicy": "Always",
+                                "ports": [{
+                                    "name": "mariadb",
+                                    "protocol": "TCP",
+                                    "containerPort": 3306
+                                }],
+                                "env": [{
+                                        "name": "MYSQL_ROOT_PASSWORD",
+                                        "value": "owncloud"
+                                    },
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "value": "owncloud"
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "value": "owncloud"
+                                    },
+                                    {
+                                        "name": "MYSQL_DATABASE",
+                                        "value": "owncloud"
+                                    }
+                                ],
+                                "volumeMounts": [{
+                                    "name": "data",
+                                    "mountPath": "/var/lib/mysql"
+                                }],
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false
+                                }
+                            },
+                            {
+                                "name": "healthcheck",
+                                "image": "docker.io/healthcheck/mysql:latest",
+                                "imagePullPolicy": "Always",
+                                "command": [
+                                    "/bin/bash",
+                                    "-c"
+                                ],
+                                "args": [
+                                    "trap : TERM INT; sleep infinity & wait"
+                                ],
+                                "env": [{
+                                        "name": "MYSQL_USER",
+                                        "value": "root"
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "value": "owncloud"
+                                    }
+                                ],
+                                "readinessProbe": {
+                                    "timeoutSeconds": 3,
+                                    "initialDelaySeconds": 60,
+                                    "failureThreshold": 30,
+                                    "exec": {
+                                        "command": [
+                                            "/usr/local/bin/docker-healthcheck"
+                                        ]
+                                    }
+                                },
+                                "livenessProbe": {
+                                    "timeoutSeconds": 3,
+                                    "initialDelaySeconds": 60,
+                                    "failureThreshold": 30,
+                                    "exec": {
+                                        "command": [
+                                            "/usr/local/bin/docker-healthcheck"
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        "volumes": [{
+                            "name": "data",
+                            "persistentVolumeClaim": {
+                                "claimName": "mariadb"
+                            }
+                        }]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "PersistentVolumeClaim",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "redis"
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "1Gi"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "redis"
+            },
+            "spec": {
+                "ports": [{
+                    "name": "redis",
+                    "protocol": "TCP",
+                    "port": 6379,
+                    "targetPort": "redis"
+                }],
+                "selector": {
+                    "app": "redis"
+                }
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "redis",
+                "labels": {
+                    "app": "redis"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [{
+                    "type": "ConfigChange"
+                }],
+                "replicas": 1,
+                "selector": {
+                    "app": "redis"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "redis",
+                        "labels": {
+                            "app": "redis"
+                        }
+                    },
+                    "spec": {
+                        "hostname": "redis",
+                        "containers": [{
+                                "name": "redis",
+                                "image": "docker.io/redis:5.0",
+                                "imagePullPolicy": "Always",
+                                "ports": [{
+                                    "name": "redis",
+                                    "protocol": "TCP",
+                                    "containerPort": 6379
+                                }],
+                                "volumeMounts": [{
+                                    "name": "data",
+                                    "mountPath": "/data"
+                                }],
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": false
+                                }
+                            },
+                            {
+                                "name": "healthcheck",
+                                "image": "docker.io/healthcheck/redis:latest",
+                                "imagePullPolicy": "Always",
+                                "command": [
+                                    "/bin/bash",
+                                    "-c"
+                                ],
+                                "args": [
+                                    "trap : TERM INT; sleep infinity & wait"
+                                ],
+                                "readinessProbe": {
+                                    "timeoutSeconds": 3,
+                                    "initialDelaySeconds": 60,
+                                    "failureThreshold": 30,
+                                    "exec": {
+                                        "command": [
+                                            "/usr/local/bin/docker-healthcheck"
+                                        ]
+                                    }
+                                },
+                                "livenessProbe": {
+                                    "timeoutSeconds": 3,
+                                    "initialDelaySeconds": 60,
+                                    "failureThreshold": 30,
+                                    "exec": {
+                                        "command": [
+                                            "/usr/local/bin/docker-healthcheck"
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        "volumes": [{
+                            "name": "data",
+                            "persistentVolumeClaim": {
+                                "claimName": "redis"
+                            }
+                        }]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "CronJob",
+            "apiVersion": "batch/v1beta1",
+            "metadata": {
+                "name": "webcron"
+            },
+            "spec": {
+                "schedule": "*/15 * * * *",
+                "successfulJobsHistoryLimit": 0,
+                "failedJobsHistoryLimit": 5,
+                "jobTemplate": {
+                    "spec": {
+                        "template": {
+                            "spec": {
+                                "restartPolicy": "OnFailure",
+                                "containers": [{
+                                    "name": "webcron",
+                                    "image": "${OWNCLOUD_IMAGE_NAME}",
+                                    "args": [
+                                        "curl",
+                                        "http://owncloud:8080/cron.php"
+                                    ]
+                                }]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "parameters": [{
+            "name": "OWNCLOUD_PUBLIC_DOMAIN",
+            "displayName": "ownCloud Domain",
+            "description": "The domain where you want to reach ownCloud after the deployment.",
+            "value": "",
+            "required": true
+        },
+        {
+            "name": "OWNCLOUD_ADMIN_USERNAME",
+            "displayName": "ownCloud Admin Username",
+            "description": "The username for the initial admin user, can be changed later within ownCloud.",
+            "value": "admin"
+        },
+        {
+            "name": "OWNCLOUD_ADMIN_PASSWORD",
+            "displayName": "ownCloud Admin Password",
+            "description": "The password for the initial admin user, can be changed later within ownCloud.",
+            "value": "admin"
+        },
+        {
+            "name": "OWNCLOUD_IMAGE_NAME",
+            "displayName": "ownCloud Docker Image",
+            "description": "The name of the ownCloud Docker image used within the OpenShift deployment.",
+            "value": "docker.io/owncloud/server:10.1.1"
+        },
+        {
+            "name": "OWNCLOUD_VOLUME_CAPACITY",
+            "displayName": "ownCloud Volume Capacity",
+            "description": "Volume space available for data to store ownCloud assets, e.g. 512Mi, 2Gi.",
+            "value": "100Gi",
+            "required": true
+        }
+    ],
+    "labels": {
+        "template": "owncloud-persistent-template"
+    }
+}

@@ -1,0 +1,26 @@
+{{- if .Values.route }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "owncloud.fullname" . }}
+  labels:
+    {{- include "owncloud.labels" . | nindent 4 }}
+spec:
+  host: {{ .Values.hostname | quote }}
+  port:
+    targetPort: http
+  to:
+    kind: Service
+    name: {{ include "owncloud.fullname" . }}
+    weight: 100
+  wildcardPolicy: None
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+status:
+  ingress:
+    - conditions:
+        - status: 'True'
+          type: Admitted
+{{ end }}
