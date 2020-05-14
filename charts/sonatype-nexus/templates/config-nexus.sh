@@ -1,3 +1,4 @@
+{{- define "config-nexus" }}
 #!/bin/bash
 
 # a standalone script for testing - see setup-nexus-job.yaml for embedded k8s version
@@ -58,3 +59,4 @@ oc -n ${NS} delete pod -lapp=sonatype-nexus
 oc -n ${NS} wait pod -lapp=sonatype-nexus --for=condition=Ready --timeout=300s
 
 echo "Done!"
+{{- end}}
