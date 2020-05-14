@@ -3,7 +3,7 @@
 
 # a standalone script for testing - see setup-nexus-job.yaml for embedded k8s version
 
-NS=$(oc project -q)
+NS=$(cat /run/secrets/kubernetes.io/serviceaccount/namespace)
 NEXUS_USER=admin:admin123
 NEXUS_URL=https://$(oc -n ${NS} get route nexus -o custom-columns=ROUTE:.spec.host --no-headers)
 
