@@ -9,6 +9,9 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   applicationInstanceLabelKey: {{ .Values.instancelabel }}
+  {{- if .Values.accounts }}  
+  {{- .Values.accounts | toYaml | trim | nindent 2 }}
+  {{- end }}   
   dex:
     config: ""
     image: quay.io/dexidp/dex

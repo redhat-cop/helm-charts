@@ -48,3 +48,9 @@ secrets:
     username: ""
     password: ""
     sshPrivateKey: ""
+
+# examples
+accounts:
+  accounts.admin: login, apiKey
+  accounts.alice: apiKey
+  accounts.alice.enabled: "false"
