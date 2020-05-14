@@ -17,7 +17,7 @@ curl -s -k -X POST "${NEXUS_URL}/service/rest/beta/repositories/helm/hosted" \
   --user "${NEXUS_USER}" \
   -H "accept: application/json" \
   -H "Content-Type: application/json" \
-  -d "{ \"name\": \"helm-charts\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true, \"writePolicy\": \"ALLOW_WRITE\" }}"
+  -d "{ \"name\": \"helm-charts\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true, \"writePolicy\": \"ALLOW\" }}"
 
 # npm proxy
 echo "creating labs-npm npm proxy"
