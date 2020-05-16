@@ -7,7 +7,7 @@ namespace: labs-ci-cd
 instancelabel: rht-labs.com/ubiquitous-journey
 
 # operator manages upgrades etc
-version: v1.5.2
+version: v1.5.5
 operator:
   version: argocd-operator.v0.0.8
   channel: alpha
