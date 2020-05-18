@@ -1,0 +1,82 @@
+config:
+  data: null
+  enabled: false
+  mountPath: /sonatype-nexus-conf
+deployment:
+  additionalContainers: null
+  additionalVolumeMounts: null
+  additionalVolumes: null
+  annotations: {}
+  initContainers: null
+  postStart:
+    command: null
+  preStart:
+    command: null
+  terminationGracePeriodSeconds: 120
+deploymentStrategy: {}
+ingress:
+  annotations: {}
+  enabled: false
+  path: /
+  rules: null
+  tls:
+    enabled: true
+    secretName: nexus-tls
+nexus:
+  dockerPort: 5003
+  env:
+  - name: install4jAddVmParams
+    value: -Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:+UnlockExperimentalVMOptions
+      -XX:+UseCGroupMemoryLimitForHeap
+  - name: NEXUS_SECURITY_RANDOMPASSWORD
+    value: "false"
+  hostAliases: []
+  imageName: registry.connect.redhat.com/sonatype/nexus-repository-manager:3.23.0-ubi-1
+  imagePullPolicy: IfNotPresent
+  imagePullSecret: ""
+  livenessProbe:
+    failureThreshold: 6
+    initialDelaySeconds: 30
+    path: /
+    periodSeconds: 30
+  nexusPort: 8081
+  podAnnotations: {}
+  readinessProbe:
+    failureThreshold: 6
+    initialDelaySeconds: 30
+    path: /
+    periodSeconds: 30
+  resources: {}
+  service:
+    type: NodePort
+nexusProxyRoute:
+  annotations: null
+  enabled: false
+  labels: null
+persistence:
+  accessMode: ReadWriteOnce
+  enabled: true
+  storageSize: 8Gi
+replicaCount: 1
+route:
+  annotations: null
+  enabled: true
+  labels: null
+  name: nexus
+  portName: nexus-service
+secret:
+  data: null
+  enabled: false
+  mountPath: /etc/secret-volume
+  readOnly: true
+service:
+  annotations: {}
+  enabled: true
+  labels: {}
+  ports:
+  - name: nexus-service
+    port: 8081
+    targetPort: 8081
+statefulset:
+  enabled: false
+tolerations: []

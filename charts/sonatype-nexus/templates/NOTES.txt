@@ -1,0 +1,38 @@
+The service can be exposed using a custom ingress node or by exposing a
+NodePort:
+
+  kubectl expose deployment --type=NodePort {{ template "nexus.fullname" . }}
+
+You may also need to add a Route or Ingress to the new service
+that was created by the exposed deployment.
+
+If you are using minikube, you can find the url as:
+
+  minikube service --url=true {{ template "nexus.fullname" . }}
+
+Otherwise you can find the exposed port under `NodePort` in:
+
+   kubectl describe services {{ template "nexus.fullname" . }}
+
+Name:                     {{ template "nexus.fullname" . }}
+Namespace:                default
+Labels:                   app=sonatype-nexus
+                          chart=sonatype-nexus-0.2.0
+                          fullname={{ template "nexus.fullname" . }}
+                          heritage=Tiller
+                          release=vocal-lion
+Annotations:              <none>
+Selector:                 app=sonatype-nexus,release={{ .Release.Name }}
+Type:                     NodePort
+IP:                       1.2.3.4
+Port:                     port-1  5003/TCP
+TargetPort:               5003/TCP
+NodePort:                 port-1  30396/TCP
+Endpoints:                172.17.0.6:5003
+Port:                     port-2  8081/TCP
+TargetPort:               8081/TCP
+NodePort:                 port-2  31341/TCP
+Endpoints:                172.17.0.6:8081
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
