@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: "v2.204.1"
 description: A Helm chart for deploying Jenkins on OpenShift with some additional build agents and plugins
 name: jenkins
-version: 0.0.13
+version: 0.0.14
 home: https://github.com/rht-labs/helm-charts
 maintainers:
   - name: springdo
