@@ -230,6 +230,21 @@ entries:
   jenkins:
   - apiVersion: v2
     appVersion: v2.204.1
+    created: "2020-06-02T09:52:09.21217206Z"
+    description: A Helm chart for deploying Jenkins on OpenShift with some additional
+      build agents and plugins
+    digest: bc687fcff480f02af592201b7a3ee5af81b3715afb4b5235d3eb7a7950d9a60c
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: jenkins
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/jenkins-0.0.14/jenkins-0.0.14.tgz
+    version: 0.0.14
+  - apiVersion: v2
+    appVersion: v2.204.1
     created: "2020-05-12T13:23:39.513185363Z"
     description: A Helm chart for deploying Jenkins on OpenShift with some additional
       build agents and plugins
