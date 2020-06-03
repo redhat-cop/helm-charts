@@ -49,9 +49,8 @@ spec:
 {{- if eq .strategy_type "Source" }}
     sourceStrategy:
       from:
-        kind: "ImageStreamTag"
+        kind: {{ .builder_image_kind | default "ImageStreamTag" }}
         name:  "{{ .builder_image_name }}:{{ .builder_image_tag }}"
-        namespace: {{ .builder_image_namespace | default "openshift" | quote }}
 {{- end }}
     {{- if .pull_secret }}
       pullSecret:
