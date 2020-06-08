@@ -8,7 +8,7 @@ NEXUS_USER=admin:admin123
 NEXUS_URL=https://$(oc -n ${NS} get route nexus -o custom-columns=ROUTE:.spec.host --no-headers)
 
 echo "waiting for nexus pod ready..."
-oc -n ${NS} wait pod -lapp=sonatype-nexus --for=condition=Ready --timeout=300s
+oc -n ${NS} wait pod -lapp=sonatype-nexus --for=condition=Ready --timeout=600s || exit $?
 sleep 2
 
 # helm hosted via rest
@@ -36,7 +36,7 @@ oc -n ${NS} exec $(oc -n ${NS} get pods -o custom-columns=NAME:.metadata.name --
 # restart pod
 echo "restarting nexus..."
 oc -n ${NS} delete pod -lapp=sonatype-nexus
-oc -n ${NS} wait pod -lapp=sonatype-nexus --for=condition=Ready --timeout=300s
+oc -n ${NS} wait pod -lapp=sonatype-nexus --for=condition=Ready --timeout=300s || exit $?
 sleep 2
 
 # raw hosted not available on new beta rest api

@@ -5,6 +5,6 @@ home: https://github.com/rht-labs/helm-charts
 name: sonatype-nexus
 sources:
 - https://github.com/sonatype/nexus-public
-version: 0.0.1
+version: 0.0.2
 maintainers:
   - name: eformat
