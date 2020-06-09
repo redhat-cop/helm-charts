@@ -29,6 +29,15 @@ eg:
 helm install my-jenkins -f my-values.yaml rht-labs/jenkins
 ```
 
+## 🏃‍♂️💨 Chart linting
+
+Before adding a chart to this repo, make sure there is no linting issues, otherwise the PR actions will fail. 
+We use both the integrated [`helm lint`](https://helm.sh/docs/helm/helm_lint/) command and the [`chart testing`](https://github.com/helm/chart-testing/blob/master/doc/ct_lint.md) tool.
+```bash
+helm lint charts/jenkins
+ct lint charts/jenkins
+```
+
 ## 👩‍🏫 Chart README Files
 For more info on each chart checkout these!
 * [jenkins](/charts/jenkins)
@@ -36,3 +45,4 @@ For more info on each chart checkout these!
 * [bootstrap-project](/charts/bootstrap-project)
 * [operatorhub](/charts/operatorhub)
 * [pact-broker](/charts/pact-broker)
+* [sealed-secrets](/charts/sealed-secrets)
