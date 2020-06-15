@@ -502,6 +502,23 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/pact-broker-0.0.1/pact-broker-0.0.1.tgz
     version: 0.0.1
+  sealed-secrets:
+  - apiVersion: v1
+    appVersion: 0.12.1
+    created: "2020-06-15T06:56:51.150104618Z"
+    description: A Helm chart for Sealed Secrets
+    digest: e7fd91cec60429eac8cb307064d4ade3fd6f1817fd1627a868e845d041aba2ff
+    home: https://github.com/bitnami-labs/sealed-secrets
+    kubeVersion: '>=1.9.0-0'
+    maintainers:
+    - email: stefan.prodan@gmail.com
+      name: stefanprodan
+    - email: olib963@gmail.com
+      name: olib963
+    name: sealed-secrets
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/sealed-secrets-1.10.2/sealed-secrets-1.10.2.tgz
+    version: 1.10.2
   sonarqube:
   - apiVersion: v1
     appVersion: 8.2-community
