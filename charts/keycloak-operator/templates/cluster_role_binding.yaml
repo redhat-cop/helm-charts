@@ -1,0 +1,19 @@
+{{- if .Values.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: keycloak-operator
+  labels:
+    app.kubernetes.io/component: keycloak-operator
+    app.kubernetes.io/name: {{ .Values.namespace }}-keycloak-operator
+    app.kubernetes.io/part-of: {{ .Values.namespace }}
+roleRef:
+  name: keycloak-operator
+  kind: ClusterRole
+  apiGroup: ""
+subjects:
+  - kind: ServiceAccount
+    name: keycloak-operator
+    namespace: {{ .Values.namespace }}
+{{- end }}

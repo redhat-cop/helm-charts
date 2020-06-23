@@ -1,0 +1,8 @@
+apiVersion: v2
+appVersion: v10.0.0
+description: A Helm chart for customising the deployment of the Keycloak Operator and a Keycloak instance ⚓️
+name: keycloak-operator
+version: 0.0.1
+home: https://github.com/rht-labs/helm-charts
+maintainers:
+- name: jtudelag
