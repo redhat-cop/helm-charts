@@ -82,11 +82,12 @@ services:
 imagestreams:
   # Jenkins Imagestream for custom build or external
   - name: *name
-    external:
-      builder_registry: quay.io
-      builder_repo: openshift
-      builder_image: origin-jenkins
-      builder_imagetag: latest
+  # To use a pre built upstream image, uncomment the following
+  # external:
+  #   builder_registry: quay.io
+  #   builder_repo: openshift
+  #   builder_image: origin-jenkins
+  #   builder_imagetag: latest
   # Jenkins agents image streams
   - name: jenkins-slave-mvn
   - name: jenkins-slave-argocd
