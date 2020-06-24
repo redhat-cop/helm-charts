@@ -106,7 +106,7 @@ buildconfigs:
   # Jenkins S2I from Red Hat Labs
   - name: *name
     build_trigger_secret: 'shhhhh-this-is-my-super-duper-secret123-shhhhh'
-    strategy_type: "Source" # defaults to Docker 
+    strategy_type: "Source"
     source_secret: 'git-auth'
     pull_secret: ''
     source_repo: https://github.com/rht-labs/s2i-config-jenkins.git
