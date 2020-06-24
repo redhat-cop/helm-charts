@@ -115,7 +115,7 @@ buildconfigs:
     builder_image_kind: "DockerImage"
     builder_image_name: quay.io/openshift/origin-jenkins
     builder_image_tag: "latest"
-    # Jenkins agents 
+  # Jenkins agents for running builds etc
   - name: "jenkins-slave-mvn"
     source_context_dir: "jenkins-slaves/jenkins-slave-mvn"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
