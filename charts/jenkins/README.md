@@ -24,9 +24,12 @@ The following table lists the configurable parameters of the Jenkins chart and t
 | ------------------------------------------------ | --------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `appName`                                        | Name of the application                                                     | `jenkins`                                            |
 | `route`                                          | Enable openshift route                                                     | `true`                                               |
-| `source secret.name`                             | Name of the secret object                                                   | `git-auth`                                           |
-| `source secret.username`                         | Username of the git account                                                 | `idm-sa`                                             |
-| `source secret.password`                         | Password of the git account                                                 | `thisisdefinitelymypassword`                         |
+| `source_secret.name`                             | Name of the secret object                                                   | `git-auth`                                           |
+| `source_secret.username`                         | Username of the git account                                                 | `idm-sa`                                             |
+| `source_secret.password`                         | Password of the git account                                                 | `thisisdefinitelymypassword`                         |
+| `sealed_secret.name`                             | Name of the secret object                                                   | `nexus-password`                                           |
+| `sealed_secret.username`                         | Encrypted username data                                                   | `AgBd8kR+KbG+FiOpYP4SlR80npiNiZI...`                                             |
+| `sealed_secret.password`                         | Encrypted password data                                                   | `AgBd8kR+KbG+FiOpYP4SlR80npiNiZI...`                         |
 | `deployment.openshiftauth`                       | Enable Openshift OAuth for Jenkins master                                   | `true`                                               |
 | `deployment.imagestream.name`                    | Imagestream name for Jenkins master                                         | `jenkins`                                            |
 | `deployment.imagestream.tag`                     | Imagestream tag for Jenkins master                                          | `latest`                                             |
