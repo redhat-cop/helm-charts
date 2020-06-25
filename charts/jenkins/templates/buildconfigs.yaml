@@ -38,19 +38,21 @@ spec:
       ref: {{ .source_repo_ref | default "master" | quote }}
     contextDir: {{ .source_context_dir | quote }}
   strategy:
+{{- if .strategy_type }}
     type: {{ .strategy_type }}
-{{- if eq .strategy_type "Docker" }}
-    dockerStrategy:
-      dockerfilePath: {{ .dockerfilePath | default "Dockerfile" | quote }}
-      from:
-        kind: DockerImage
-        name: "{{ .builder_image_name }}:{{ .builder_image_tag }}"
-{{- end }}
-{{- if eq .strategy_type "Source" }}
     sourceStrategy:
       from:
         kind: {{ .builder_image_kind | default "ImageStreamTag" }}
         name:  "{{ .builder_image_name }}:{{ .builder_image_tag }}"
+{{- else }}
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: {{ .dockerfilePath | default "Dockerfile" | quote }}
+      {{- if .builder_image_name }}
+      from:
+        kind: DockerImage
+        name: "{{ .builder_image_name }}:{{ .builder_image_tag }}"
+      {{- end }}
 {{- end }}
     {{- if .pull_secret }}
       pullSecret:

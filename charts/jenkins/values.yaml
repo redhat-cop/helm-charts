@@ -82,11 +82,12 @@ services:
 imagestreams:
   # Jenkins Imagestream for custom build or external
   - name: *name
-    external:
-      builder_registry: quay.io
-      builder_repo: openshift
-      builder_image: origin-jenkins
-      builder_imagetag: latest
+  # To use a pre built upstream image, uncomment the following
+  # external:
+  #   builder_registry: quay.io
+  #   builder_repo: openshift
+  #   builder_image: origin-jenkins
+  #   builder_imagetag: latest
   # Jenkins agents image streams
   - name: jenkins-slave-mvn
   - name: jenkins-slave-argocd
@@ -100,9 +101,10 @@ imagestreams:
   - name: jenkins-slave-npm
   - name: jenkins-slave-python
   - name: jenkins-slave-ruby
-  - name: jenkins-slave-zap
+  - name: jenkins-slave-conftest
 
 buildconfigs:
+  # Jenkins S2I from Red Hat Labs
   - name: *name
     build_trigger_secret: 'shhhhh-this-is-my-super-duper-secret123-shhhhh'
     strategy_type: "Source"
@@ -114,87 +116,58 @@ buildconfigs:
     builder_image_kind: "DockerImage"
     builder_image_name: quay.io/openshift/origin-jenkins
     builder_image_tag: "latest"
+  # Jenkins agents for running builds etc
   - name: "jenkins-slave-mvn"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-mvn"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
+    source_repo_ref: "v1.26"
     builder_image_name: "quay.io/eformat/origin-jenkins-agent-maven"
     builder_image_tag: "latest"
   - name: "jenkins-slave-helm"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-helm"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-argocd"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-argocd"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "quay.io/openshift/origin-jenkins-agent-base"
-    builder_image_tag: "4.3"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-arachni"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-arachni"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-golang"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-golang"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-gradle"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-gradle"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-image-mgmt"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-image-mgmt"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-mongodb"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-mongodb"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-npm"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-npm"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "openshift/jenkins-slave-base-centos7"
-    builder_image_tag: "v3.11"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-python"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-python"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-ruby"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-ruby"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
   - name: "jenkins-slave-ansible"
-    strategy_type: "Docker"
     source_context_dir: "jenkins-slaves/jenkins-slave-ansible"
     source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "v1.22"
-    builder_image_name: "registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7"
-    builder_image_tag: "latest"
+    source_repo_ref: "v1.26"
+  - name: "jenkins-slave-conftest"
+    source_context_dir: "jenkins-slaves/jenkins-slave-conftest"
+    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
+    source_repo_ref: "v1.26"
