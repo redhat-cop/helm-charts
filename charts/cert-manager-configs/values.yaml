@@ -53,6 +53,7 @@ certificates: {}
   #     - '*.apps.example.com'
 
 # Enable along with apiServer and ingressController certificates for automated Openshift SSL certificates
+# The Let's Encrypt CA is available at https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem.txt
 cluster: {}
   # apiServer:
   #   enabled: true
@@ -61,3 +62,7 @@ cluster: {}
 
   # ingressController:
   #   enabled: true
+  # caBundle: |
+  #   -----BEGIN CERTIFICATE-----
+  #   <data>
+  #   -----END CERTIFICATE-----
