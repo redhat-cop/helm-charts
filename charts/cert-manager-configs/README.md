@@ -33,8 +33,11 @@ helm template cert-manager-configs -f charts/cert-manager-configs/values.yaml ./
 ```
 
 ## Configuration
+
 | Parameter                                        | Description                                                  | Default                               |
 | ------------------------------------------------ | -------------------------------------------------------------| ------------------------------------- |
-| `namespace`                                      | Project name to deploy DevEx tools                           | `labs-ci-cd`                          |
-| `name`                                           | Project name for argocd server                               | `labs-argocd`                         |
-| `instancelabel`                                  | Unique identifier for argocd default label                   | `rht-labs.com/ubiquitous-journey`     |
+| `namespace`                                      | Project name to install cert-manager                         | `cert-manager`                        |
+| `issuer`                                         | Configure an Issuer or ClusterIssuer for cert-manager        | `{}`                                  |
+| `aws`                                            | Configure AWS credentials                                    | `{}`                                  |
+| `certificates`                                   | Configure APIServer, IngressController and custom certs      | `{}`                                  |
+| `cluster`                                        | Enable APIServer and IngressController managed certificates  | `{}`                                  |
