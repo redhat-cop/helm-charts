@@ -12,8 +12,7 @@ spec:
     name: {{ $certificate.issuerRef }}
     kind: {{ $certificate.issuerKind }}
   {{- with $dnsName := .dnsNames }}
-  dnsNames: 
-  {{ toYaml $dnsName | indent 2 }}
+  dnsNames: {{ toYaml $dnsName | nindent 4 }}
   {{- end }}
 {{- end }}
 {{- end }}
