@@ -45,3 +45,4 @@ For more info on each chart checkout these!
 * [bootstrap-project](/charts/bootstrap-project)
 * [operatorhub](/charts/operatorhub)
 * [pact-broker](/charts/pact-broker)
+* [cert-manager](/charts/cert-manager)
