@@ -25,7 +25,7 @@ Note the dns01-recursive-nameservers option above is required in most cases for 
 
 Once cert-manager is up and running, use helm to install to install your issuers, create certificates, and point your APIServer and IngressController to the automatically renewable certificates:
 
-While the cert-manager install can be done with mostly default values, these configs require custom values, including DNS secrets in (charts/cert-manager-configs/values.yaml) before you can apply the configs.
+While the cert-manager install can be done with mostly default values, these configs require custom values, including DNS secrets in [values.yaml](./charts/cert-manager-configs/values.yaml) before you can apply the configs.
 
 
 ```bash
