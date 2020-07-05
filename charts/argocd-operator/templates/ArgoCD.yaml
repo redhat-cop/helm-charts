@@ -25,7 +25,8 @@ spec:
 {{- else }}
     enabled: false
 {{- end }}
-    route: true
+    route:
+      enabled: true
     size: 1
   prometheus:
 {{- if .Values.metrics.enabled }}  
@@ -33,7 +34,8 @@ spec:
 {{- else }}
     enabled: false
 {{- end }}
-    route: true
+    route:
+      enabled: true
     size: 1
   {{- with .Values.rbac }}
   rbac:

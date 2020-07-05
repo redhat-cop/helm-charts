@@ -28,7 +28,8 @@ rbac:
   defaultPolicy: role:admin
 
 server:
-  route: true
+  route:
+    enabled: true
   autoscale:
     enabled: false
   service:
