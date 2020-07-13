@@ -3,6 +3,22 @@ entries:
   argocd-operator:
   - apiVersion: v2
     appVersion: v1.6.0
+    created: "2020-07-13T14:36:45.429781472Z"
+    description: A Helm chart for customising the deployment of the ArgoCD Operator
+      ⚓️
+    digest: 5367476a2a5b64d124c239b4eae4766850a54e601f822209c731f2d645e701c1
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    - name: mabulgu
+    name: argocd-operator
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/argocd-operator-0.0.13/argocd-operator-0.0.13.tgz
+    version: 0.0.13
+  - apiVersion: v2
+    appVersion: v1.6.0
     created: "2020-06-18T05:58:37.88514721Z"
     description: A Helm chart for customising the deployment of the ArgoCD Operator
       ⚓️
@@ -569,6 +585,20 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/sonarqube-0.0.4/sonarqube-0.0.4.tgz
     version: 0.0.4
   sonatype-nexus:
+  - apiVersion: v1
+    appVersion: 3.23.0
+    created: "2020-07-13T14:36:45.520156058Z"
+    description: Sonatype Nexus is an open source repository manager
+    digest: 539a6686e923c0c1669f404009430c8d45a1905965e56e55281bfab298ec9157
+    home: https://github.com/rht-labs/helm-charts
+    maintainers:
+    - name: eformat
+    name: sonatype-nexus
+    sources:
+    - https://github.com/sonatype/nexus-public
+    urls:
+    - https://github.com/rht-labs/helm-charts/releases/download/sonatype-nexus-0.0.3/sonatype-nexus-0.0.3.tgz
+    version: 0.0.3
   - apiVersion: v1
     appVersion: 3.23.0
     created: "2020-06-14T21:09:00.456658535Z"
