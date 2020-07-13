@@ -13,10 +13,7 @@ spec:
   {{- .Values.accounts | toYaml | trim | nindent 2 }}
   {{- end }}   
   dex:
-    config: ""
-    image: quay.io/dexidp/dex
     openShiftOAuth: true
-    version: "v2.22.0"
   ha:
     enabled: {{ .Values.ha.enabled }}
   grafana:
