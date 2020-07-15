@@ -1,0 +1,23 @@
+{{- if .Values.namespaceRoleBinding.enabled }}
+{{- range $key := .Values.namespaceRoleBinding.namespaces }}
+{{ $ns:= printf "%s" .name }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: application-controller
+    app.kubernetes.io/name: {{ $ns }}-argocd-application-controller
+    app.kubernetes.io/part-of: {{ $ns | quote }}
+  name: {{ $ns }}-argocd-application-controller
+  namespace: {{ $ns | quote }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $ns }}-argocd-application-controller
+subjects:
+- kind: ServiceAccount
+  name: argocd-application-controller
+  namespace: {{ $ns | quote }}
+{{- end }}
+{{- end }}
