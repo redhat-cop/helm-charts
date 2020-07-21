@@ -111,7 +111,7 @@ buildconfigs:
     source_secret: 'git-auth'
     pull_secret: ''
     source_repo: https://github.com/rht-labs/s2i-config-jenkins.git
-    source_repo_ref: v1.8
+    source_repo_ref: v1.9
     source_context_dir: '/'
     builder_image_kind: "DockerImage"
     builder_image_name: quay.io/openshift/origin-jenkins
