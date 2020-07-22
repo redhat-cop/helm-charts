@@ -30,17 +30,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: {{ default "postgresqlUsername" }}
-                  name: {{ template "sonarqube.fullname" . }}
+                  name: {{ template "postgresql.name" . }}
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: {{ default "postgresqlPassword" }}
-                  name: {{ template "sonarqube.fullname" . }}
+                  name: {{ template "postgresql.name" . }}
             - name: POSTGRESQL_DATABASE
               valueFrom:
                 secretKeyRef:
                   key: {{ default "postgresqlDatabase" }}
-                  name: {{ template "sonarqube.fullname" . }}                  
+                  name: {{ template "postgresql.name" . }}
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
