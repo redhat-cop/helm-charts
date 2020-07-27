@@ -14,7 +14,7 @@ spec:
     targetPort: {{ .Values.route.targetPort | default "8080-tcp" }}
   to:
     kind: Service
-    name: {{ template "postgresql.fullname" .}}
+    name: {{ template "sonarqube.fullname" . }}
     weight: 100
 status:
   ingress:

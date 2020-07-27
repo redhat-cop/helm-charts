@@ -5,13 +5,13 @@ kind: DeploymentConfig
 metadata:
   labels:
     app: {{ .Values.appName }}
-    deploymentconfig: postgresql-{{ .Values.appName }}
-  name: postgresql-{{ .Values.appName }}
+    deploymentconfig: {{ template "postgresql.name" . }}
+  name: {{ template "postgresql.name" . }}
 spec:
   replicas: 1
   selector:
     app: {{ .Values.appName }}
-    deploymentconfig: postgresql-{{ .Values.appName }}
+    deploymentconfig: {{ template "postgresql.name" . }}
   strategy:
     recreateParams:
       timeoutSeconds: 600
@@ -21,7 +21,7 @@ spec:
     metadata:
       labels:
         app: {{ .Values.appName }}
-        deploymentconfig: postgresql-{{ .Values.appName }}
+        deploymentconfig: {{ template "postgresql.name" . }}
     spec:
       containers:
         - name: postgresql
@@ -30,17 +30,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: {{ default "postgresqlUsername" }}
-                  name: {{ template "sonarqube.fullname" . }}
+                  name: {{ template "postgresql.name" . }}
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: {{ default "postgresqlPassword" }}
-                  name: {{ template "sonarqube.fullname" . }}
+                  name: {{ template "postgresql.name" . }}
             - name: POSTGRESQL_DATABASE
               valueFrom:
                 secretKeyRef:
                   key: {{ default "postgresqlDatabase" }}
-                  name: {{ template "sonarqube.fullname" . }}                  
+                  name: {{ template "postgresql.name" . }}
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -71,14 +71,14 @@ spec:
           terminationMessagePath: /dev/termination-log
           volumeMounts:
             - mountPath: /var/lib/pgsql/data
-              name: postgresql-{{ .Values.appName }}-data
+              name: {{ template "postgresql.name" . }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       volumes:
-        - name: postgresql-{{ .Values.appName }}-data
+        - name: {{ template "postgresql.name" . }}
           persistentVolumeClaim:
-            claimName: {{ template "sonarqube.fullname" . }}
+            claimName: {{ template "postgresql.name" . }}
   triggers:
     - imageChangeParams:
         automatic: true
