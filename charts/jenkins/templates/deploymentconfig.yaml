@@ -65,7 +65,7 @@ spec:
             memory: {{ .Values.deployment.limits.memory_request | quote }}
           limits:
             cpu: {{ .Values.deployment.limits.cpu_limit | quote }}
-            memory: {{ .Values.deployment.limits.memory_request | quote }}
+            memory: {{ .Values.deployment.limits.memory_limit | quote }}
         securityContext:
           capabilities: {}
           privileged: false
