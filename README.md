@@ -1,6 +1,6 @@
 # ⚓️ Open Innovation Labs Helm Charts
 
-![Release Charts](https://github.com/redhat-cop/charts/workflows/Release%20Charts/badge.svg)
+![Release Charts](https://github.com/redhat-cop/helm-charts/workflows/Release%20Charts/badge.svg)
 
 A collection of Helm Charts to support [Labs Developer Experience](https://github.com/rht-labs/ubiquitous-journey)
 
