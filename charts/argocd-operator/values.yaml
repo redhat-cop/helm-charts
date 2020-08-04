@@ -22,7 +22,7 @@ operator:
 metrics:
   enabled: false
   prometheus:
-    version: prometheusoperator.0.32.0
+    version: prometheusoperator.0.37.0
     channel: beta
     name: prometheus-operator
 ha:
