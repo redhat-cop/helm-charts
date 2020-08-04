@@ -2,8 +2,8 @@ apiVersion: v2
 name: static-site
 description: A Helm chart for deploying a static-site with auto-updating
 type: application
-version: 0.0.3
+version: 0.0.4
 appVersion: 1.17.9-alpine
-home: https://github.com/rht-labs/helm-charts
+home: https://github.com/redhat-cop/helm-charts
 maintainers:
   - name: jijiechen
