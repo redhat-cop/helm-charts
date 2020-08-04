@@ -3,6 +3,22 @@ entries:
   argocd-operator:
   - apiVersion: v2
     appVersion: v1.6.1
+    created: "2020-08-04T16:53:01.529682736Z"
+    description: A Helm chart for customising the deployment of the ArgoCD Operator
+      ⚓️
+    digest: c78afc565ac6ae8bae1838a9b2b7f0569b15159c4db01b8404d36c53ec523e88
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    - name: mabulgu
+    name: argocd-operator
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/argocd-operator-0.0.15/argocd-operator-0.0.15.tgz
+    version: 0.0.15
+  - apiVersion: v2
+    appVersion: v1.6.1
     created: "2020-07-15T16:57:43.018376264Z"
     description: A Helm chart for customising the deployment of the ArgoCD Operator
       ⚓️
@@ -183,6 +199,20 @@ entries:
   bootstrap-project:
   - apiVersion: v1
     appVersion: v0.0.1
+    created: "2020-08-04T16:53:01.615025155Z"
+    description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
+    digest: f6474c49df18ccb9233ec8aec2163051645b06dfaba63c578834ae8080434c8b
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: bootstrap-project
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/bootstrap-project-0.0.7/bootstrap-project-0.0.7.tgz
+    version: 0.0.7
+  - apiVersion: v1
+    appVersion: v0.0.1
     created: "2020-05-12T13:18:57.62169428Z"
     description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
     digest: 059892b952fe9b1b923fef9029d23b165aa0480a58dd4545dcef209dfd1a9555
@@ -260,7 +290,36 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/bootstrap-project-0.0.1/bootstrap-project-0.0.1.tgz
     version: 0.0.1
+  dev-ex-dashboard:
+  - apiVersion: v2
+    appVersion: v1.0
+    created: "2020-08-04T16:53:01.716083579Z"
+    description: A Helm chart to deploy the Developer Experience Dashboard
+    digest: a53507ca470fa0a29a374eb30b88a84788949dbb9bf8802c12e06bd756e09ab8
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: dev-ex-dashboard
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/dev-ex-dashboard-0.0.2/dev-ex-dashboard-0.0.2.tgz
+    version: 0.0.2
   etherpad:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2020-08-04T16:53:01.898278021Z"
+    description: A Helm chart for etherpad lite
+    digest: 7c565ad82b43645ca4786dc9d6b6513c0e468e6447dac4f53d6cf02552ae1db4
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: eformat
+    name: etherpad
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/etherpad-0.0.2/etherpad-0.0.2.tgz
+    version: 0.0.2
   - apiVersion: v2
     appVersion: latest
     created: "2020-04-24T10:48:51.796707343Z"
@@ -275,6 +334,21 @@ entries:
     - https://github.com/rht-labs/helm-charts/releases/download/etherpad-0.0.1/etherpad-0.0.1.tgz
     version: 0.0.1
   jenkins:
+  - apiVersion: v2
+    appVersion: v2.222.1
+    created: "2020-08-04T16:53:02.003955545Z"
+    description: A Helm chart for deploying Jenkins on OpenShift with some additional
+      build agents and plugins
+    digest: c2ae38e12abd6bf5ea4887744446ef902fdb582e59c46d7144bbf3668b54e121
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: jenkins
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/jenkins-0.0.19/jenkins-0.0.19.tgz
+    version: 0.0.19
   - apiVersion: v2
     appVersion: v2.222.1
     created: "2020-08-03T00:03:59.333284183Z"
@@ -514,6 +588,21 @@ entries:
   operatorhub:
   - apiVersion: v2
     appVersion: 0.0.2
+    created: "2020-08-04T16:53:02.149299076Z"
+    description: A Helm chart to create OperatorHub subscriptions
+    digest: aefe4618c8ff8cd52394cca5c6eef2a5ba9e1667c1bac0d06e328c765853236d
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: tylerauerbeck
+    - name: ckavili
+    - name: mabulgu
+    name: operatorhub
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operatorhub-0.0.5/operatorhub-0.0.5.tgz
+    version: 0.0.5
+  - apiVersion: v2
+    appVersion: 0.0.2
     created: "2020-05-02T10:45:42.356320542Z"
     description: A Helm chart to create OperatorHub subscriptions
     digest: cf0f9564f29062545a321b4ea6f3f713d31419af221a78ee6385cadc1aef5e3a
@@ -555,6 +644,19 @@ entries:
   owncloud:
   - apiVersion: v2
     appVersion: latest
+    created: "2020-08-04T16:53:02.245717797Z"
+    description: A Helm chart for Owncloud
+    digest: dcddffac694e283dd0b270c5b6b9fa59fddde7bbc9bfd6d4d502887de179966d
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: eformat
+    name: owncloud
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/owncloud-0.0.2/owncloud-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: latest
     created: "2020-05-12T13:18:07.611221559Z"
     description: A Helm chart for Owncloud
     digest: 1235d1903c5e8be7d8f0eb334bdf4c6b48c32f65217206d24e551d0c16a8567f
@@ -567,6 +669,20 @@ entries:
     - https://github.com/rht-labs/helm-charts/releases/download/owncloud-0.0.1/owncloud-0.0.1.tgz
     version: 0.0.1
   pact-broker:
+  - apiVersion: v2
+    appVersion: v0.0.1
+    created: "2020-08-04T16:53:02.340546218Z"
+    description: "A Helm chart for deploying Pact Broker on OpenShift \U0001F517"
+    digest: 4b337db649c396f7e3350e2f67358c4e5c184ff3be58e4852b7c1fef26cc4f9b
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: mvmaestri
+    - name: gsampaio
+    - name: springdo
+    name: pact-broker
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/pact-broker-0.0.3/pact-broker-0.0.3.tgz
+    version: 0.0.3
   - apiVersion: v2
     appVersion: v0.0.1
     created: "2020-04-21T19:10:16.854259871Z"
@@ -614,6 +730,24 @@ entries:
   sonarqube:
   - apiVersion: v1
     appVersion: 8.2-community
+    created: "2020-08-04T16:53:02.504518053Z"
+    description: SonarQube is an open sourced code quality scanning tool
+    digest: e020b0daf7238cfe03a4fc584382462ae289963771d8fb72698aa5c419f40490
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    maintainers:
+    - name: eformat
+    name: sonarqube
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonarqube-0.0.6/sonarqube-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v1
+    appVersion: 8.2-community
     created: "2020-07-27T03:58:44.228615283Z"
     description: SonarQube is an open sourced code quality scanning tool
     digest: 1297865fbf00a478616d82dbc882f6c21742c85f6e07d137999e7e0a0f58cf5d
@@ -649,6 +783,20 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/sonarqube-0.0.4/sonarqube-0.0.4.tgz
     version: 0.0.4
   sonatype-nexus:
+  - apiVersion: v1
+    appVersion: 3.23.0
+    created: "2020-08-04T16:53:02.597392673Z"
+    description: Sonatype Nexus is an open source repository manager
+    digest: d9e8d2232f3bebad28c9b2177b13cf58709f357322d649bb340a2401fa2e9711
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: eformat
+    name: sonatype-nexus
+    sources:
+    - https://github.com/sonatype/nexus-public
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonatype-nexus-0.0.4/sonatype-nexus-0.0.4.tgz
+    version: 0.0.4
   - apiVersion: v1
     appVersion: 3.23.0
     created: "2020-07-13T14:36:45.520156058Z"
@@ -692,6 +840,19 @@ entries:
     - https://github.com/rht-labs/helm-charts/releases/download/sonatype-nexus-0.0.1/sonatype-nexus-0.0.1.tgz
     version: 0.0.1
   static-site:
+  - apiVersion: v2
+    appVersion: 1.17.9-alpine
+    created: "2020-08-04T16:53:02.686785293Z"
+    description: A Helm chart for deploying a static-site with auto-updating
+    digest: 0251ffe6b863c247839d88d1dd734ad26efd73826a44aff1e78d62c0086036d0
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: jijiechen
+    name: static-site
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/static-site-0.0.4/static-site-0.0.4.tgz
+    version: 0.0.4
   - apiVersion: v2
     appVersion: 1.17.9-alpine
     created: "2020-04-20T10:35:22.893085769Z"
