@@ -7,8 +7,8 @@ version: 0.0.1
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 appVersion: v1.0
-home: https://github.com/rht-labs/helm-charts
+home: https://github.com/redhat-cop/helm-charts
 maintainers:
-- name: springdo
-- name: ckavili
-- name: eformat
+  - name: springdo
+  - name: ckavili
+  - name: eformat

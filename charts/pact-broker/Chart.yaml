@@ -3,7 +3,7 @@ appVersion: "v0.0.1"
 description: A Helm chart for deploying Pact Broker on OpenShift 🔗
 name: pact-broker
 version: 0.0.2
-home: https://github.com/rht-labs/helm-charts
+home: https://github.com/redhat-cop/helm-charts
 maintainers:
 - name: mvmaestri
 - name: gsampaio
