@@ -37,3 +37,9 @@ Session.vim
 .history
 
 *.tgz
+
+# Rego
+policy/
+
+# BATS
+_test/test_helper/
