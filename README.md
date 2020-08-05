@@ -1,8 +1,12 @@
-# ⚓️ Open Innovation Labs Helm Charts
+# ⚓️ Red Hat Communities of Practice Helm Charts
 
 ![Release Charts](https://github.com/redhat-cop/helm-charts/workflows/Release%20Charts/badge.svg)
 
-A collection of Helm Charts to support [Labs Developer Experience](https://github.com/rht-labs/ubiquitous-journey)
+A collection of Helm Charts to that are not available in any upstream location or customised to the point it does not make sense to support up stream chart development.
+
+For charts we know work on OpenShift but do not belong here, check out the list of Charts we've used for some ideas
+
+This libary is used to support [Open Innovation Labs Ubiquitous Journey Project](https://github.com/rht-labs/ubiquitous-journey)
 
 ## 🧰 Add this Helm Repo to your local 🧰
 ```
