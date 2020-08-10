@@ -4,7 +4,7 @@ kind: ImageStream
 apiVersion: image.openshift.io/v1
 metadata:
   name: {{ .name }}
-  {{- if .name | regexFind ".*slave"  }}
+  {{- if or (.name | regexFind ".*slave") (.name | regexFind ".*agent")  }}
   labels:
     build: {{ .name }}
     role: jenkins-slave
