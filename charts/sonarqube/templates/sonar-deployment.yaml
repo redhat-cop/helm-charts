@@ -195,17 +195,17 @@ spec:
             - name: SONARQUBE_JDBC_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.fullname" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
+                  name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.name" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
                   key: postgresqlUsername
             - name: SONARQUBE_JDBC_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.fullname" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
+                  name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.name" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
                   key: postgresqlPassword
             - name: SONARQUBE_JDBC_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.fullname" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
+                  name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.name" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
                   key: postgresqlDatabase
             - name: SONARQUBE_JDBC_URL
               value: "jdbc:postgresql://{{ template "postgresql.hostname" . }}:{{- .Values.postgresql.service.port -}}/$(SONARQUBE_JDBC_DATABASE)"

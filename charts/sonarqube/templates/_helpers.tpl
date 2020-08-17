@@ -19,11 +19,19 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
+  Create a short postgresql name.
+  We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "postgresql.name" -}}
+{{- printf "postgresql-%s" .Values.appName | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
   Create a default fully qualified mysql/postgresql name.
   We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "postgresql.fullname" -}}
-{{- printf "%s-%s" .Release.Name .Values.appName | trunc 63 | trimSuffix "-" -}}
+{{- printf "postgresql-%s-%s" .Release.Name .Values.appName | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*

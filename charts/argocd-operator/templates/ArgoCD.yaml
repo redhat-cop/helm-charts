@@ -13,10 +13,7 @@ spec:
   {{- .Values.accounts | toYaml | trim | nindent 2 }}
   {{- end }}   
   dex:
-    config: ""
-    image: quay.io/dexidp/dex
     openShiftOAuth: true
-    version: "v2.22.0"
   ha:
     enabled: {{ .Values.ha.enabled }}
   grafana:
@@ -25,7 +22,8 @@ spec:
 {{- else }}
     enabled: false
 {{- end }}
-    route: true
+    route:
+      enabled: true
     size: 1
   prometheus:
 {{- if .Values.metrics.enabled }}  
@@ -33,7 +31,8 @@ spec:
 {{- else }}
     enabled: false
 {{- end }}
-    route: true
+    route:
+      enabled: true
     size: 1
   {{- with .Values.rbac }}
   rbac:

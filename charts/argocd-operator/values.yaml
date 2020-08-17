@@ -1,15 +1,19 @@
 ---
 # control used by Labs Ubiquitous Journey
 enabled: true
-
 name: labs-argocd
-namespace: labs-ci-cd
+
+ci_cd_namespace: &ci_cd "labs-ci-cd"
+dev_namespace: &dev "labs-dev"
+test_namespace: &test "labs-test"
+
+namespace: *ci_cd
 instancelabel: rht-labs.com/ubiquitous-journey
 
 # operator manages upgrades etc
-version: v1.6.0
+version: v1.6.1
 operator:
-  version: argocd-operator.v0.0.9
+  version: argocd-operator.v0.0.11
   channel: alpha
   name: argocd-operator
   operatorgroup: true
@@ -18,7 +22,7 @@ operator:
 metrics:
   enabled: false
   prometheus:
-    version: prometheusoperator.0.32.0
+    version: prometheusoperator.0.37.0
     channel: beta
     name: prometheus-operator
 ha:
@@ -28,7 +32,8 @@ rbac:
   defaultPolicy: role:admin
 
 server:
-  route: true
+  route:
+    enabled: true
   autoscale:
     enabled: false
   service:
@@ -54,3 +59,11 @@ accounts:
   accounts.admin: login, apiKey
   accounts.alice: apiKey
   accounts.alice.enabled: "false"
+
+# role bindings, enable this to restrict to listed namespaces only. cluster role by default (enabled: false)
+namespaceRoleBinding:
+  enabled: false
+  namespaces:
+  - name: *ci_cd
+  - name: *dev
+  - name: *test

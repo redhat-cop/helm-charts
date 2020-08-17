@@ -12,8 +12,10 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: {{ .Values.namespace }}-argocd-application-controller
+{{- if not .Values.namespaceRoleBinding.enabled }}
 subjects:
 - kind: ServiceAccount
   name: argocd-application-controller
   namespace: {{ .Values.namespace }}
+{{- end }}
 {{- end }}

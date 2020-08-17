@@ -1,0 +1,30 @@
+{{- if .Values.postgresql.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "postgresql.name" . }}
+  labels:
+    app: {{ template "sonarqube.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+{{ if .Values.postgresql.annotations}}
+  annotations:
+    {{- range $key, $value := .Values.postgresql.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+{{- end }}
+spec:
+  accessModes:
+    - {{ .Values.postgresql.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.postgresql.size | quote }}
+{{- if .Values.postgresql.storageClass }}
+{{- if (eq "-" .Values.postgresql.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.postgresql.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end }}

@@ -222,9 +222,11 @@ postgresql:
     type: ClusterIP
   image:
     tag: "9.6"
-  persistent:
-    volume:
-      size: "5Gi"
+
+  storageClass:
+  accessMode: ReadWriteOnce
+  size: 5Gi
+
   # To use an external secret for the password for an external PostgreSQL
   # instance, set enabled to false and provide the name of the secret on the
   # line below:
@@ -232,3 +234,6 @@ postgresql:
   postgresqlUsername: "sonarUser"
   postgresqlPassword: "sonarPass"
   postgresqlDatabase: "sonarDB"
+
+  ## Set annotations on pvc
+  annotations: {}
