@@ -50,8 +50,7 @@ spec:
           command:
             - "sh"
             - "-c"
-            - 'mkdir -p $(printf "/opt/sonarqube/${1-%s\n}" temp logs data extensions/downloads extensions/plugins/tmp extensions/plugins certs) &&
-               chown 999:999 -R $(printf "/opt/sonarqube/${1-%s\n}" temp logs data extensions/downloads extensions/plugins/tmp extensions/plugins certs)'
+            - 'mkdir -pv $(printf "/opt/sonarqube/${1-%s\n}" temp logs data extensions/downloads extensions/plugins/tmp extensions/plugins certs)'
           volumeMounts:
           - mountPath: /opt/sonarqube/temp
             name: sonarqube
@@ -71,6 +70,9 @@ spec:
           - mountPath: /opt/sonarqube/extensions/plugins
             name: sonarqube
             subPath: plugins
+          - mountPath: /opt/sonarqube/certs
+            name: sonarqube
+            subPath: certs
           {{- with .Values.env }}
           env:
             {{- . | toYaml | trim | nindent 12 }}
