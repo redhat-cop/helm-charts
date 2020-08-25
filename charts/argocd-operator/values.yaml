@@ -44,9 +44,9 @@ server:
 initialRepositories:
   - name: ubiquitous-journey
     url: https://github.com/rht-labs/ubiquitous-journey.git
-  - name: rht-labs
+  - name: redhat-cop
     type: helm
-    url: https://rht-labs.github.io/helm-charts
+    url: https://redhat-cop.github.io/helm-charts
 
 secrets:
   - name: argocd-privaterepo
