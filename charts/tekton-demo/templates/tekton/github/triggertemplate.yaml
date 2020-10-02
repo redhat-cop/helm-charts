@@ -30,6 +30,12 @@ spec:
     spec:
       serviceAccountName: tekton-triggers-sa
       params:
+        - name: REF
+          value: $(params.ref)
+        - name: AUTHOR
+          value: $(params.author)
+        - name: MESSAGE
+          value: $(params.message)
         - name: DEPLOY_ENVIRONMENT
           value: 'nodejs-tekton-development'
         - name: PROMOTE_ENVIRONMENT
