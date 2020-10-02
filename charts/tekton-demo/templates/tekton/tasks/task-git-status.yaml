@@ -1,8 +1,8 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: git-status
-namespace: {{ .Values.application.environments.cicd }}
+  name: status
+  namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
     - name: ref
@@ -27,6 +27,6 @@ spec:
         echo "Full-revision-name:" $(cat /tekton/results/full-revision-name)
       image: >-
         image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.cicd }}/git:latest
-      name: git-status
+      name: status
       resources: {}
       workingDir: /workspace/git-source

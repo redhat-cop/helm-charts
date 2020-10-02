@@ -35,11 +35,9 @@ spec:
 
   - name: status
     params:
-    - name: git-branch
-      value: $(params.ref)
     taskRef:
       kind: Task
-      name: git-status
+      name: status
 
   - name: build
     taskRef:
@@ -48,9 +46,9 @@ spec:
       - status
     params:
       - name: "ref"
-        value: "$(tasks.git-status.results.ref)"
+        value: "$(tasks.status.results.ref)"
       - name: "full-revision-name"
-        value: "$(tasks.git-status.results.full-revision-name)"
+        value: "$(tasks.status.results.full-revision-name)"
     resources:       
       inputs:
         - name: source
