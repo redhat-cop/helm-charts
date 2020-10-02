@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: test-nodejs-app
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: APP_NAME
+      description: The name of the application
+      default: {{ .Values.application.name }}
+      type: string
+    - name: APP_VERSION
+      description: The version of the application
+      default: {{ .Values.application.version }}
+      type: string
+    - name: DEPLOY_PROJECT
+      description: The project where you deploy the app
+      default: {{ .Values.application.environments.development }}
+      type: string
+
+  steps:
+      - name: test-app
+        image: quay.io/openshift/origin-cli:latest
+        workingDir: /workspace/source
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            oc get dc $(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)

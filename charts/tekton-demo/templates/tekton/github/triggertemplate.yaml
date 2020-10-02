@@ -1,0 +1,58 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: {{ .Values.application.name }}-trigger-template-dev
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+  - name: ref
+    description: git reference or branch name
+  - name: revision
+    description: The revision of your git repository
+  - name: repourl
+    description: The url of your git repository
+  - name: reponame
+    description: The name of your git repository
+  - name: message
+    description: commit message
+  - name: author
+    description: commit author username
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1alpha1
+    kind: PipelineRun
+    metadata:
+      generateName: {{ .Values.application.name }}-$(params.author)-
+      namespace: {{ .Values.application.environments.cicd }}
+      labels:
+        webhooks.tekton.dev/repo: $(params.reponame)
+        webhooks.tekton.dev/author: $(params.author)
+    spec:
+      serviceAccountName: tekton-triggers-sa
+      params:
+        - name: DEPLOY_ENVIRONMENT
+          value: 'nodejs-tekton-development'
+        - name: PROMOTE_ENVIRONMENT
+          value: 'nodejs-tekton-production'
+        - name: APP_NAME
+          value: {{ .Values.application.name }}
+        - name: APP_VERSION
+          value: {{ .Values.application.version }}
+        - name: AUTHORS_API_KEY
+          value: 'authors-secret-api'
+        - name: DEPLOY_PROJECT
+          value: {{ .Values.application.environments.development }}
+        - name: PROMOTE_PROJECT
+          value: {{ .Values.application.environments.production }}
+      pipelineRef:
+        name: nodejs
+      resources:
+        - name: nodejs-git
+          resourceRef:
+            name: nodejs-git
+        - name: nodejs-image-development
+          resourceRef:
+            name: nodejs-image-development
+        - name: nodejs-image-production
+          resourceRef:
+            name: nodejs-image-production

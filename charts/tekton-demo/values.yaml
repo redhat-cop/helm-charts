@@ -1,0 +1,30 @@
+# Default values for tekton-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+cluster: apps.s45.core.rht-labs.com
+
+application:
+  name: nodejs-tekton
+  version: 1.0.0
+  environments:
+    development: nodejs-tekton-development
+    production: nodejs-tekton-production
+    cicd: nodejs-tekton-ci
+  from:
+    git:
+      name: helm-charts
+      url: helm-charts
+      revision: feature/tekton-demo
+      submodules: false
+      s2i:
+        context: charts/tekton-demo/templates/app/src
+
+pipeline:
+  name: nodejs
+  webhook:
+    host: http://dev-nodejs-tekton-ci.apps.s45.core.rht-labs.com/
+    github: 
+      org: mvmaestri
+      user: mvmaestri
+      repo: nodejs-tekton-helm
+      secret: github-webhook-secret

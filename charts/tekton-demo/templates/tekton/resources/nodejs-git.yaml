@@ -1,0 +1,12 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: nodejs-git
+spec:
+  type: git
+  params:
+    - name: url
+      value: {{ .Values.application.from.git.url }}
+    - name: revision
+      value: {{ .Values.application.from.git.revision }}
