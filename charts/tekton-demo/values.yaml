@@ -13,7 +13,7 @@ application:
   from:
     git:
       name: helm-charts
-      url: helm-charts
+      url: https://github.com/mvmaestri/helm-charts
       revision: feature/tekton-demo
       submodules: false
       s2i:
