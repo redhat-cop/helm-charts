@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-status
+namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: ref
+      type: string
+  results:
+    - name: ref
+      description: reference
+    - name: revision-type
+      description: Contains the type of branch - feature, release,...
+    - name: revision-name
+      description: Contains the name of the branch without the type, ie. omitting the first slash
+    - name: full-revision-name
+      description: Contains the full revision name, for completeness
+  steps:
+    - script: |
+        #!/bin/sh
+        echo $(params.ref)
+        echo $(params.ref) > /tekton/results/ref
+        echo $(params.ref) | awk -F "/" '{if (NF > 1) {printf "%s", $1 > "/tekton/results/revision-type"; printf "%s", $2 > "/tekton/results/revision-name"; printf "%s/%s", $1, $2 > "/tekton/results/full-revision-name"} else {printf "%s", "unknown" > "/tekton/results/revision-type"; printf "%s", $1 > "/tekton/results/revision-name"; printf "%s", $1 > "/tekton/results/full-revision-name"}}'
+        echo "Revision-type:" $(cat /tekton/results/revision-type)
+        echo "Revision-name:" $(cat /tekton/results/revision-name)
+        echo "Full-revision-name:" $(cat /tekton/results/full-revision-name)
+      image: >-
+        image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.cicd }}/git:latest
+      name: git-status
+      resources: {}
+      workingDir: /workspace/git-source

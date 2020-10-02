@@ -32,9 +32,25 @@ spec:
       default: {{ .Values.application.environments.production }}
 
   tasks:
+
+  - name: status
+    params:
+    - name: git-branch
+      value: $(params.ref)
+    taskRef:
+      kind: Task
+      name: git-status
+
   - name: build
     taskRef:
       name: s2i-nodejs
+    runAfter:
+      - status
+    params:
+      - name: "ref"
+        value: "$(tasks.git-status.results.ref)"
+      - name: "full-revision-name"
+        value: "$(tasks.git-status.results.full-revision-name)"
     resources:       
       inputs:
         - name: source
@@ -49,6 +65,8 @@ spec:
     runAfter:
       - build
     params:
+        - name: "ref"
+          value: "$(tasks.status.results.ref)"
         - name: APP_NAME
           value: "$(params.APP_NAME)"
         - name: APP_VERSION

@@ -5,6 +5,9 @@ metadata:
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
+    - name: ref
+      description: The git reference
+      type: string
     - name: APP_NAME
       description: The name of the application
       default: {{ .Values.application.name }}
@@ -60,6 +63,7 @@ spec:
           - |-
             oc label dc/$(inputs.params.APP_NAME) app.kubernetes.io/name=nodejs --overwrite -n $(inputs.params.DEPLOY_PROJECT)
             oc label dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) --overwrite -n $(inputs.params.DEPLOY_PROJECT)
+            oc set env dc/$(inputs.params.ref) ref=$(inputs.params.ref) -n $(inputs.params.DEPLOY_PROJECT)
             oc set env dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) -n $(inputs.params.DEPLOY_PROJECT)
             oc set env dc/$(inputs.params.APP_NAME) ref=$(inputs.params.APP_VERSION) -n $(inputs.params.DEPLOY_PROJECT)
             oc set env dc/$(inputs.params.APP_NAME) --from secret/$(inputs.params.AUTHORS_API_KEY) -n $(inputs.params.DEPLOY_PROJECT)
