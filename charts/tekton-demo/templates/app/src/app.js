@@ -31,6 +31,9 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
+  console.log("Running from", process.env.HOSTNAME);
+  console.log("Revision", process.env.REVISION);
+
   // render the error page
   res.status(err.status || 500);
   res.render('error');
