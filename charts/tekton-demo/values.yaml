@@ -26,5 +26,5 @@ pipeline:
     github: 
       org: mvmaestri
       user: mvmaestri
-      repo: nodejs-tekton-helm
+      repo: helm-charts
       secret: github-webhook-secret
