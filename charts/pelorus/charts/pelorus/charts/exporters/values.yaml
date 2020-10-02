@@ -21,7 +21,7 @@ exporters:
     # Values file for exporter helm chart
   - app_name: committime-github
     env_from_secrets: 
-    - github-webhook-secret
+    - github-secret
     source_context_dir: charts/pelorus/exporters/
     extraEnv:
     - name: APP_FILE
