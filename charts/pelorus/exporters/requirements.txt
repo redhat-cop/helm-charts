@@ -1,0 +1,7 @@
+requests
+prometheus_client
+openshift
+jsonpath_ng
+jira
+pytz
+python-gitlab >= 2.4.0
