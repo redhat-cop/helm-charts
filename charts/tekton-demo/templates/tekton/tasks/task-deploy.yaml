@@ -9,15 +9,6 @@ spec:
       description: The name of the application
       default: {{ .Values.application.name }}
       type: string
-    - name: REF
-      description: Git commit ref/branch
-      type: string
-    - name: AUTHOR
-      description: Git commit author
-      type: string
-    - name: MESSAGE
-      description: Git commit message
-      type: string
     - name: APP_VERSION
       description: The version of the application
       default: {{ .Values.application.version }}
@@ -70,10 +61,7 @@ spec:
             oc label dc/$(inputs.params.APP_NAME) app.kubernetes.io/name=nodejs --overwrite -n $(inputs.params.DEPLOY_PROJECT)
             oc label dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) --overwrite -n $(inputs.params.DEPLOY_PROJECT)
             oc set env dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) -n $(inputs.params.DEPLOY_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) ref=$(inputs.params.REF) -n $(inputs.params.DEPLOY_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) revision=$(inputs.params.APP_VERSION) -n $(inputs.params.DEPLOY_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) author=$(inputs.params.AUTHOR) -n $(inputs.params.DEPLOY_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) message=$(inputs.params.MESSAGE) -n $(inputs.params.DEPLOY_PROJECT)
+            oc set env dc/$(inputs.params.APP_NAME) ref=$(inputs.params.APP_VERSION) -n $(inputs.params.DEPLOY_PROJECT)
             oc set env dc/$(inputs.params.APP_NAME) --from secret/$(inputs.params.AUTHORS_API_KEY) -n $(inputs.params.DEPLOY_PROJECT)
       - name: set-app-probes
         image: quay.io/openshift/origin-cli:latest
