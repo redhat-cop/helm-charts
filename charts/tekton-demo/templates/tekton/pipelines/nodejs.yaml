@@ -43,66 +43,118 @@ spec:
 
   tasks:
 
-  - name: status
-    params:
-    - name: ref
-      value: $(params.ref)
-    - name: revision
-      value: $(params.revision)
-    - name: author
-      value: $(params.author)
-    - name: message
-      value: $(params.message)
-    taskRef:
-      kind: Task
-      name: status
+    - name: status
+      params:
+      - name: ref
+        value: $(params.ref)
+      - name: revision
+        value: $(params.revision)
+      - name: author
+        value: $(params.author)
+      - name: message
+        value: $(params.message)
+      taskRef:
+        kind: Task
+        name: status
 
-  - name: github-pending
-    taskRef:
-      kind: Task
-      name: github-set-status
-    runAfter:
-      - status
-    params:
-    - name: REPO_FULL_NAME
-      value: $(params.repofullname)
-    - name: SHA
-      value: $(params.revision)
-    - name: DESCRIPTION
-      value: "Build has started ($(params.message))"
-    - name: STATE
-      value: pending
-    - name: TARGET_URL
-      value: https://tekton/dashboard/taskrun/log
+    - name: github-pending
+      taskRef:
+        kind: Task
+        name: github-set-status
+      runAfter:
+        - status
+      params:
+      - name: REPO_FULL_NAME
+        value: $(params.repofullname)
+      - name: SHA
+        value: $(params.revision)
+      - name: DESCRIPTION
+        value: "Build has started ($(params.message))"
+      - name: STATE
+        value: pending
+      - name: TARGET_URL
+        value: https://tekton/dashboard/taskrun/log
 
-  - name: build
-    taskRef:
-      name: s2i-nodejs
-    runAfter:
-      - github-pending
-    params:
-      - name: "ref"
-        value: "$(tasks.status.results.ref)"
-      - name: "revision"
-        value: "$(tasks.status.results.revision)"
-      - name: "revision-type"
-        value: "$(tasks.status.results.revision-type)"
-      - name: "revision-name"
-        value: "$(tasks.status.results.revision-name)"
-    resources:       
-      inputs:
-        - name: source
-          resource: nodejs-git
-      outputs:
-        - name: image
-          resource: nodejs-image-development
+    - name: build
+      taskRef:
+        name: s2i-nodejs
+      runAfter:
+        - github-pending
+      params:
+        - name: "ref"
+          value: "$(tasks.status.results.ref)"
+        - name: "revision"
+          value: "$(tasks.status.results.revision)"
+        - name: "revision-type"
+          value: "$(tasks.status.results.revision-type)"
+        - name: "revision-name"
+          value: "$(tasks.status.results.revision-name)"
+      resources:       
+        inputs:
+          - name: source
+            resource: nodejs-git
+        outputs:
+          - name: image
+            resource: nodejs-image-development
 
-  - name: deploy
-    taskRef:
-      name: deploy-nodejs-app
-    runAfter:
-      - build
-    params:
+    - conditions:
+        - conditionRef: is-feature-branch
+          params:
+            - name: "revision-type"
+              value: "$(tasks.status.results.revision-type)"
+
+      name: deploy
+      taskRef:
+        name: deploy-nodejs-app
+      runAfter:
+        - build
+      params:
+          - name: "ref"
+            value: "$(tasks.status.results.ref)"
+          - name: "revision"
+            value: "$(tasks.status.results.revision)"
+          - name: "revision-type"
+            value: "$(tasks.status.results.revision-type)"
+          - name: "revision-name"
+            value: "$(tasks.status.results.revision-name)"
+          - name: APP_NAME
+            value: "$(params.APP_NAME)"
+          - name: APP_VERSION
+            value: "$(params.APP_VERSION)"  
+          - name: AUTHORS_API_KEY
+            value: "$(params.AUTHORS_API_KEY)"
+          - name: DEPLOY_PROJECT
+            value: "$(params.DEPLOY_PROJECT)"    
+      resources:
+        inputs:
+          - name: image
+            resource: nodejs-image-development
+
+    - name: test
+      taskRef:
+        name: test-nodejs-app
+      runAfter:
+        - deploy
+      params:
+        - name: APP_NAME
+          value: "$(params.APP_NAME)"
+        - name: APP_VERSION
+          value: "$(params.APP_VERSION)"
+        - name: DEPLOY_PROJECT
+          value: "$(params.DEPLOY_PROJECT)"
+
+    - conditions:
+        - conditionRef: is-release-branch
+          params:
+            - name: "revision-type"
+              value: "$(tasks.status.results.revision-type)"
+
+      name: promote
+      taskRef:
+        name: promote-nodejs-app
+      runAfter:
+        - test
+      params:
         - name: "ref"
           value: "$(tasks.status.results.ref)"
         - name: "revision"
@@ -114,57 +166,17 @@ spec:
         - name: APP_NAME
           value: "$(params.APP_NAME)"
         - name: APP_VERSION
-          value: "$(params.APP_VERSION)"  
+          value: "$(params.APP_VERSION)"
         - name: AUTHORS_API_KEY
           value: "$(params.AUTHORS_API_KEY)"
         - name: DEPLOY_PROJECT
-          value: "$(params.DEPLOY_PROJECT)"    
-    resources:
-      inputs:
-        - name: image
-          resource: nodejs-image-development
-
-  - name: test
-    taskRef:
-      name: test-nodejs-app
-    runAfter:
-      - deploy
-    params:
-      - name: APP_NAME
-        value: "$(params.APP_NAME)"
-      - name: APP_VERSION
-        value: "$(params.APP_VERSION)"
-      - name: DEPLOY_PROJECT
-        value: "$(params.DEPLOY_PROJECT)"
-
-  - name: promote
-    taskRef:
-      name: promote-nodejs-app
-    runAfter:
-      - test
-    params:
-      - name: "ref"
-        value: "$(tasks.status.results.ref)"
-      - name: "revision"
-        value: "$(tasks.status.results.revision)"
-      - name: "revision-type"
-        value: "$(tasks.status.results.revision-type)"
-      - name: "revision-name"
-        value: "$(tasks.status.results.revision-name)"
-      - name: APP_NAME
-        value: "$(params.APP_NAME)"
-      - name: APP_VERSION
-        value: "$(params.APP_VERSION)"
-      - name: AUTHORS_API_KEY
-        value: "$(params.AUTHORS_API_KEY)"
-      - name: DEPLOY_PROJECT
-        value: "$(params.DEPLOY_PROJECT)"
-      - name: PROMOTE_PROJECT
-        value: "$(params.PROMOTE_PROJECT)"
-    resources:
-      inputs:
-        - name: image
-          resource: nodejs-image-development
-      outputs:
-        - name: image
-          resource: nodejs-image-production
+          value: "$(params.DEPLOY_PROJECT)"
+        - name: PROMOTE_PROJECT
+          value: "$(params.PROMOTE_PROJECT)"
+      resources:
+        inputs:
+          - name: image
+            resource: nodejs-image-development
+        outputs:
+          - name: image
+            resource: nodejs-image-production
