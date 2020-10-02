@@ -81,6 +81,10 @@ function onError(error) {
  */
 
 function onListening() {
+
+  console.log("Running from", process.env.HOSTNAME);
+  console.log("Revision", process.env.REVISION);
+  
   var addr = server.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
