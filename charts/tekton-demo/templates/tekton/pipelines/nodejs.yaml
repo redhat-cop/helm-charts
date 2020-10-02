@@ -15,6 +15,16 @@ spec:
       type: image
 
   params:
+    - name: ref
+      description: Ref of the application
+    - name: revision
+      description: git unique head commit id
+    - name: repofullname
+      description: repository full name
+    - name: author
+      description: commit author
+    - name: message
+      description: commit message
     - name: APP_NAME
       description: The name of the application
       default: {{ .Values.application.name }}
@@ -35,20 +45,50 @@ spec:
 
   - name: status
     params:
+    - name: ref
+      value: $(params.ref)
+    - name: revision
+      value: $(params.revision)
+    - name: author
+      value: $(params.author)
+    - name: message
+      value: $(params.message)
     taskRef:
       kind: Task
       name: status
+
+  - name: github-pending
+    taskRef:
+      kind: Task
+      name: github-set-status
+    runAfter:
+      - status
+    params:
+    - name: REPO_FULL_NAME
+      value: $(params.repofullname)
+    - name: SHA
+      value: $(params.revision)
+    - name: DESCRIPTION
+      value: "Build has started ($(params.message))"
+    - name: STATE
+      value: pending
+    - name: TARGET_URL
+      value: https://tekton/dashboard/taskrun/log
 
   - name: build
     taskRef:
       name: s2i-nodejs
     runAfter:
-      - status
+      - github-pending
     params:
       - name: "ref"
         value: "$(tasks.status.results.ref)"
-      - name: "full-revision-name"
-        value: "$(tasks.status.results.full-revision-name)"
+      - name: "revision"
+        value: "$(tasks.status.results.revision)"
+      - name: "revision-type"
+        value: "$(tasks.status.results.revision-type)"
+      - name: "revision-name"
+        value: "$(tasks.status.results.revision-name)"
     resources:       
       inputs:
         - name: source
@@ -65,6 +105,12 @@ spec:
     params:
         - name: "ref"
           value: "$(tasks.status.results.ref)"
+        - name: "revision"
+          value: "$(tasks.status.results.revision)"
+        - name: "revision-type"
+          value: "$(tasks.status.results.revision-type)"
+        - name: "revision-name"
+          value: "$(tasks.status.results.revision-name)"
         - name: APP_NAME
           value: "$(params.APP_NAME)"
         - name: APP_VERSION
@@ -97,6 +143,14 @@ spec:
     runAfter:
       - test
     params:
+      - name: "ref"
+        value: "$(tasks.status.results.ref)"
+      - name: "revision"
+        value: "$(tasks.status.results.revision)"
+      - name: "revision-type"
+        value: "$(tasks.status.results.revision-type)"
+      - name: "revision-name"
+        value: "$(tasks.status.results.revision-name)"
       - name: APP_NAME
         value: "$(params.APP_NAME)"
       - name: APP_VERSION

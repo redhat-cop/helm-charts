@@ -5,6 +5,11 @@ metadata:
   name: {{ .Values.application.environments.development }}
   namespace: {{ .Values.application.environments.cicd }}
 ---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: status
+  namespace: {{ .Values.application.environments.cicd }}
 ---
 apiVersion: image.openshift.io/v1
 kind: ImageStream

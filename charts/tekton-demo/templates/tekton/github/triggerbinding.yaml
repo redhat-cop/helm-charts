@@ -14,6 +14,8 @@ spec:
     value: $(body.repository.html_url)
   - name: reponame
     value: $(body.repository.name)
+  - name: repofullname
+    value: $(body.repository.full_name)
   - name: message
     value: $(body.head_commit.message)
   - name: author

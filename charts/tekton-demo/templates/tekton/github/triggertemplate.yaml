@@ -14,6 +14,8 @@ spec:
     description: The url of your git repository
   - name: reponame
     description: The name of your git repository
+  - name: repofullname
+    description: The full name of your git repository
   - name: message
     description: commit message
   - name: author
@@ -22,7 +24,7 @@ spec:
   - apiVersion: tekton.dev/v1alpha1
     kind: PipelineRun
     metadata:
-      generateName: {{ .Values.application.name }}-$(params.author)-
+      generateName: $(params.reponame)-$(params.author)-
       namespace: {{ .Values.application.environments.cicd }}
       labels:
         webhooks.tekton.dev/repo: $(params.reponame)
@@ -30,11 +32,13 @@ spec:
     spec:
       serviceAccountName: tekton-triggers-sa
       params:
-        - name: REF
+        - name: ref
           value: $(params.ref)
-        - name: AUTHOR
+        - name: revision
+          value: $(params.revision)
+        - name: author
           value: $(params.author)
-        - name: MESSAGE
+        - name: message
           value: $(params.message)
         - name: DEPLOY_ENVIRONMENT
           value: 'nodejs-tekton-development'

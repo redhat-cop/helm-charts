@@ -5,6 +5,18 @@ metadata:
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
+    - name: ref
+      description: git ref
+      type: string
+    - name: "revision"
+      description: git unique head commit id
+      type: string
+    - name: "revision-type"
+      description: revision type usually branch type
+      type: string
+    - name: "revision-name"
+      description: revision name usually version or branch name
+      type: string
     - name: VERSION
       description: The version of nodejs
       default: 'latest'
