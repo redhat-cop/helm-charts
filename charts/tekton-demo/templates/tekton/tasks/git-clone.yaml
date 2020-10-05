@@ -3,7 +3,7 @@ kind: Task
 metadata:
   name: git-clone
   labels:
-    app.kubernetes.io/version: "0.2"
+    app.kubernetes.io/version: "0.1"
   annotations:
     tekton.dev/pipelines.minVersion: "0.12.1"
     tekton.dev/tags: git
@@ -26,7 +26,7 @@ spec:
     - name: revision
       description: git revision to checkout (branch, tag, sha, ref…)
       type: string
-      default: ""
+      default: master
     - name: refspec
       description: (optional) git refspec to fetch before checking out revision
       default: ""
@@ -49,7 +49,7 @@ spec:
     - name: deleteExisting
       description: clean out the contents of the repo's destination directory (if it already exists) before trying to clone the repo there
       type: string
-      default: "true"
+      default: "false"
     - name: httpProxy
       description: git HTTP proxy server for non-SSL requests
       type: string
@@ -62,24 +62,17 @@ spec:
       description: git no proxy - opt out of proxying HTTP/HTTPS requests
       type: string
       default: ""
-    - name: verbose
-      description: log the commands used during execution
+    - name: gitInitImage
+      description: The image used where the git-init binary is.
+      default: "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.15.2"
       type: string
-      default: "true"
   results:
     - name: commit
       description: The precise commit SHA that was fetched by this Task
-    - name: url
-      description: The precise URL that was fetched by this Task
   steps:
     - name: clone
-      image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.16.2
+      image: $(params.gitInitImage)
       script: |
-        #!/bin/sh
-        set -eu -o pipefail
-        if [[ "$(params.verbose)" == "true" ]] ; then
-          set -x
-        fi
         CHECKOUT_DIR="$(workspaces.output.path)/$(params.subdirectory)"
         cleandir() {
           # Delete any existing contents of the repo directory if it exists.
@@ -110,11 +103,11 @@ spec:
           -submodules="$(params.submodules)" \
           -depth "$(params.depth)"
         cd "$CHECKOUT_DIR"
-        RESULT_SHA="$(git rev-parse HEAD)"
+        RESULT_SHA="$(git rev-parse HEAD | tr -d '\n')"
         EXIT_CODE="$?"
-        if [ "$EXIT_CODE" != 0 ] ; then
+        if [ "$EXIT_CODE" != 0 ]
+        then
           exit $EXIT_CODE
         fi
-        # ensure we don't add a trailing newline to the result
+        # Make sure we don't add a trailing newline to the result!
         echo -n "$RESULT_SHA" > $(results.commit.path)
-        echo -n "$(params.url)" > $(results.url.path)

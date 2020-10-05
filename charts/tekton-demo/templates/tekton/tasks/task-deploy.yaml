@@ -17,6 +17,9 @@ spec:
     - name: "revision-name"
       description: revision name usually version or branch name
       type: string
+    - name: author
+      description: commit author username
+      type: string
     - name: APP_NAME
       description: The name of the application
       default: {{ .Values.application.name }}
@@ -44,66 +47,82 @@ spec:
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc get dc $(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
+            oc get deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) -n {{ .Values.application.environments.development }}
             if [[ $? -ne 0 ]]
             then
-                oc new-app -i $(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
+                oc new-app --name $(inputs.params.revision-type)-$(inputs.params.revision-name) \
+                  --namespace {{ .Values.application.environments.development }} \
+                  -l app.name={{ .Values.application.name }} \
+                  -l app.author=$(inputs.params.author) \
+                  -l app.revision-type=$(inputs.params.revision-type) \
+                  -i {{ .Values.application.name }}:$(inputs.params.revision-name)
             else
                 echo "Application already exists."
             fi
+
+
       - name: expose-app
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc get svc $(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
+            oc get svc $(inputs.params.revision-type)-$(inputs.params.revision-name) -n {{ .Values.application.environments.development }}
             if [[ $? -ne 0 ]]
             then
-                oc expose svc/$(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
+                oc expose svc/$(inputs.params.revision-type)-$(inputs.params.revision-name) -n {{ .Values.application.environments.development }}
             else
                 echo "Application is already exposed."
             fi
+
       - name: set-app-labels
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc label dc/$(inputs.params.APP_NAME) app.kubernetes.io/name=$(inputs.params.APP_NAME) --overwrite -n $(inputs.params.DEPLOY_PROJECT)
-            oc label dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.revision-name) --overwrite -n $(inputs.params.DEPLOY_PROJECT)
-            oc label dc/$(inputs.params.APP_NAME) app.revision-id=$(inputs.params.revision) --overwrite -n $(inputs.params.DEPLOY_PROJECT)
-            oc label dc/$(inputs.params.APP_NAME) app.revision-type=$(inputs.params.revision-type) --overwrite -n $(inputs.params.DEPLOY_PROJECT)
-            oc label dc/$(inputs.params.APP_NAME) app.revision-name=$(inputs.params.revision-name) --overwrite -n $(inputs.params.DEPLOY_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) revision-id=$(inputs.params.revision) -n $(inputs.params.DEPLOY_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) revision-type=$(inputs.params.revision-type) -n $(inputs.params.DEPLOY_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) revision-name=$(inputs.params.revision-name) -n $(inputs.params.DEPLOY_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) --from secret/$(inputs.params.AUTHORS_API_KEY) -n $(inputs.params.DEPLOY_PROJECT)
+            oc label deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) app.kubernetes.io/name=$(inputs.params.revision-type)-$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) app.version=$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) app.revision-id=$(inputs.params.revision) --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) app.revision-type=$(inputs.params.revision-type) --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) app.revision-name=$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) app.author=$(inputs.params.author) --overwrite -n {{ .Values.application.environments.development }}
+            oc set env deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) revision-id=$(inputs.params.revision) -n {{ .Values.application.environments.development }}
+            oc set env deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) revision-type=$(inputs.params.revision-type) -n {{ .Values.application.environments.development }}
+            oc set env deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) revision-name=$(inputs.params.revision-name) -n {{ .Values.application.environments.development }}
+            oc set env deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.development }}
+
       - name: set-app-probes
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc set probe dc/$(inputs.params.APP_NAME) --remove --readiness --liveness -n $(inputs.params.DEPLOY_PROJECT)
-            oc set probe dc/$(inputs.params.APP_NAME) --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n $(inputs.params.DEPLOY_PROJECT)
+            oc set probe deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) --remove --readiness --liveness -n {{ .Values.application.environments.development }}
+            oc set probe deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n {{ .Values.application.environments.development }}
+
       - name: set-app-autoscale
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc get hpa $(inputs.params.APP_NAME)  -n $(inputs.params.DEPLOY_PROJECT)
-            if [[ $? -ne 0 ]]
-            then
-                oc autoscale dc $(inputs.params.APP_NAME) --min 1 --max 2 --cpu-percent=75 -n $(inputs.params.DEPLOY_PROJECT)
-            else
-                echo "Application autoscale is already configured."
+            if [ "$(inputs.params.revision-type)" == "release" ]; then
+              oc get hpa $(inputs.params.revision-type)-$(inputs.params.revision-name)  -n {{ .Values.application.environments.development }}
+              if [[ $? -ne 0 ]]
+              then
+                  oc autoscale deployment $(inputs.params.revision-type)-$(inputs.params.revision-name) \
+                    --min 1 --max 2 --cpu-percent=75 \
+                    --namespace {{ .Values.application.environments.development }}
+              else
+                  echo "Application autoscale is already configured."
+              fi
             fi
+
       - name: describe-app-triggers
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc set triggers dc/$(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
+            oc set triggers deployment/$(inputs.params.revision-type)-$(inputs.params.revision-name) -n {{ .Values.application.environments.development }}

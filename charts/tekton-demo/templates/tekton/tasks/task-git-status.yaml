@@ -13,6 +13,10 @@ spec:
       type: string
     - name: message
       type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
   results:
     - name: ref
       description: reference
@@ -31,18 +35,73 @@ spec:
   steps:
     - name: git
       image: quay.io/openshift/origin-cli:latest
+      resources: {}
+      workingDir: /workspace/source
       script: |
         #!/bin/sh
         echo $(params.ref)
         echo $(params.revision)
         echo $(params.author)
         echo $(params.message)
-        echo $(params.ref) > /tekton/results/ref
+        echo $(params.ref)      > /tekton/results/ref
         echo $(params.revision) > /tekton/results/revision
-        echo $(params.author) > /tekton/results/author
-        echo $(params.message) > /tekton/results/message
+        echo $(params.author)   > /tekton/results/author
+        echo $(params.message)  > /tekton/results/message
         echo $(params.ref) | awk -F "/" '{if (NF > 1) {printf "%s", $3 > "/tekton/results/revision-type"; printf "%s", $4 > "/tekton/results/revision-name"; printf "%s/%s", $3, $4 > "/tekton/results/full-revision-name"} else {printf "%s", "unknown" > "/tekton/results/revision-type"; printf "%s", $3 > "/tekton/results/revision-name"; printf "%s", $4 > "/tekton/results/full-revision-name"}}'
         echo "Revision-type:" $(cat /tekton/results/revision-type)
         echo "Revision-name:" $(cat /tekton/results/revision-name)
+
+    ## todo: this task should test package.json/version match with git/branchname
+    - name: validate
+      image: registry.access.redhat.com/ubi8/ubi-minimal
       resources: {}
       workingDir: /workspace/source
+      script: |
+        #!/bin/sh
+
+        package={{ .Values.application.from.git.s2i.context }}/package.json
+
+        if [ ! -f $package ]; then
+            echo "Missing package.json"
+            exit 1 
+        fi
+
+        version=$(cat $package \
+        | grep version \
+        | head -1 \
+        | awk -F: '{ print $2 }' \
+        | sed 's/[",]//g')
+
+        revisionType=$(cat /tekton/results/revision-type)
+        revisionName=$(cat /tekton/results/revision-name)
+
+        if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ]; then
+          echo "Validation here"
+          echo "App version: $version"
+          exit 1
+        elif [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
+          echo "Working in a $revisionType branch"
+        else
+          echo "Branch $revisionType is not part of git flow implementation"
+          exit 1
+        fi
+        exit 0
+
+    - name: test
+      image: quay.io/openshift/origin-cli:latest
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      script: |
+        #!/bin/sh
+        echo test
+        exit 0
+        
+      # - image: zshusers/zsh:4.3.15
+      #   script: |
+      #     #!/usr/bin/env zsh
+      #     if [ "$(params.expected-sha)" != "$(params.received-sha)" ]; then
+      #       echo "Expected revision $(params.revision-name) to have SHA $(params.expected-sha)."
+      #       exit 1
+      #     else
+      #       echo "Revision $(params.revision-name) has expected SHA $(params.expected-sha)."
+      #     fi
