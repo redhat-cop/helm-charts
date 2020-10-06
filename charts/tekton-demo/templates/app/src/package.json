@@ -1,9 +1,12 @@
 {
   "name": "weather",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "echo test not implemented",
+    "lint": "echo linting not implemented",
+    "e2e": "echo e2e not implemented"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
