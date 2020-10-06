@@ -5,8 +5,9 @@ metadata:
   name: {{ .Values.application.name }}-trigger-template-dev
   namespace: {{ .Values.application.environments.cicd }}
 spec:
-  description: >-
-    This `task` consumes data from the trigger binding file and fires a new pipelinerun with a pipeline as reference.
+  # todo: upgade tekton
+  # description: >-
+  #   This `task` consumes data from the trigger binding file and fires a new pipelinerun with a pipeline as reference.
   params:
   - name: ref
     description: git reference or branch name
@@ -42,6 +43,10 @@ spec:
           value: $(params.author)
         - name: message
           value: $(params.message)
+        - name: repourl
+          value: $(params.repourl)
+        - name: repofullname
+          value: $(params.repofullname)
         - name: DEPLOY_ENVIRONMENT
           value: 'nodejs-tekton-development'
         - name: PROMOTE_ENVIRONMENT
@@ -68,3 +73,15 @@ spec:
         - name: nodejs-image-production
           resourceRef:
             name: nodejs-image-production
+      workspaces:
+        - name: shared-workspace
+        - name: upload
+        - name: release-notes
+          # tekton recent version only
+          # volumeClaimTemplate:
+          #   spec:
+          #     accessModes:
+          #     - ReadWriteOnce
+          #     resources:
+          #       requests:
+          #         storage: 500Mi

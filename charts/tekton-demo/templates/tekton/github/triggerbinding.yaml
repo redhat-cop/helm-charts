@@ -5,8 +5,8 @@ metadata:
   name: trigger-binding-dev
   namespace: {{ .Values.application.environments.cicd }}
 spec:
-  description: >-
-    This `task` can be used to transport github webhook payload into the trigger template file.
+  # description: >-
+  #   This `task` can be used to transport github webhook payload into the trigger template file.
   params:
   - name: ref
     value: $(body.ref)

@@ -13,7 +13,6 @@ spec:
       #!/bin/ash 
       test $(params.revision-type) = "feature"
 ---
----
 apiVersion: tekton.dev/v1alpha1
 kind: Condition
 metadata:
@@ -27,4 +26,3 @@ spec:
     script: | 
       #!/bin/ash 
       test $(params.revision-type) = "release"
----

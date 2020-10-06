@@ -10,6 +10,11 @@ spec:
   serviceAccountName: tekton-triggers-sa
   pipelineRef:
     name: {{ .Values.pipeline.name }}
+  params:
+    - name: DEPLOY_ENVIRONMENT
+      value: 'nodejs-tekton-development'
+    - name: PROMOTE_ENVIRONMENT
+      value: 'nodejs-tekton-production'
   resources:
     - name: nodejs-git
       resourceRef:
@@ -20,8 +25,13 @@ spec:
     - name: nodejs-image-production
       resourceRef:
         name: nodejs-image-production
-  params:
-    - name: DEPLOY_ENVIRONMENT
-      value: 'nodejs-tekton-development'
-    - name: PROMOTE_ENVIRONMENT
-      value: 'nodejs-tekton-production'
+      # todo: upgrade tekton
+      # workspaces:
+      #   - name: shared-workspace
+      # volumeClaimTemplate:
+      #   spec:
+      #     accessModes:
+      #     - ReadWriteOnce
+      #     resources:
+      #       requests:
+      #         storage: 500Mi

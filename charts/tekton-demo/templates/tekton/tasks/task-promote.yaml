@@ -48,6 +48,16 @@ spec:
         type: image
 
   steps:
+      - name: release-tag
+        image: ubi8/nodejs-10
+        workingDir: /workspace/source/
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            git status
+            git tag -l
+            git tag -a v{{ .Values.application.version }} -m "Release v{{ .Values.application.version }}"
+
       - name: promote-image
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
