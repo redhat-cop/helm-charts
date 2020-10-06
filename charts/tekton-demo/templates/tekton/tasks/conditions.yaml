@@ -1,0 +1,28 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Condition
+metadata:
+  name: is-feature-branch
+  namespace: {{ .Values.application.environments.ci }}
+spec:
+  params:
+    - name: "revision-type"
+  check:
+    image: alpine
+    script: | 
+      #!/bin/ash 
+      test $(params.revision-type) = "feature"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Condition
+metadata:
+  name: is-release-branch
+  namespace: {{ .Values.application.environments.ci }}
+spec:
+  params:
+    - name: "revision-type"
+  check:
+    image: alpine
+    script: | 
+      #!/bin/ash 
+      test $(params.revision-type) = "release"

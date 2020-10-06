@@ -1,0 +1,64 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: test-nodejs-app
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: ref
+      description: Git reference
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
+    - name: revision
+      description: commit head unique id
+  steps:
+    - name: e2e
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      script: |
+        #!/bin/sh
+        npm run e2e
+
+
+    - name: update-github-status
+      env:
+        - name: GITHUBTOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.pipeline.webhook.github.secret }}
+              key: token
+
+      image: registry.access.redhat.com/ubi8/ubi:latest
+      script: |
+        #!/usr/libexec/platform-python
+        import json
+        import os
+        import http.client
+        status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
+
+        data = {
+            "state": "success",
+            "target_url": "{{ .Values.pipeline.webhook.host }}",
+            "description": "Tests are passing",
+            "context": "tekton"
+        }
+        print("Sending this data to GitHub: ")
+        print(data)
+        conn = http.client.HTTPSConnection("api.github.com")
+        r = conn.request(
+            "POST",
+            status_url.rstrip("\n"),
+            body=json.dumps(data),
+            headers={
+                "User-Agent": "TektonCD, the peaceful cat",
+                "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
+            })
+        resp = conn.getresponse()
+        if not str(resp.status).startswith("2"):
+            print("Error: %d" % (resp.status))
+            print(resp.read())
+        else:
+          print("GitHub status 'success' has been set on commit")

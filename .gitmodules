@@ -1,0 +1,3 @@
+[submodule "charts/tekton-demo/templates/app/angular-node-typescript-boiler"]
+	path = charts/tekton-demo/templates/app/angular-node-typescript-boiler
+	url = https://github.com/mvmaestri/angular-node-typescript-boiler.git
