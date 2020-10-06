@@ -17,6 +17,6 @@
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.0",
     "package.json": "^2.0.1",
-    "pug": "2.0.0-beta11"
+    "pug": "^3.0.0"
   }
 }
