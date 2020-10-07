@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: {{ .Values.application.name }}-trigger-template-dev
+  name: {{ .Values.application.name }}-trigger-template
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   # todo: upgade tekton
@@ -23,6 +23,8 @@ spec:
     description: commit message
   - name: author
     description: commit author username
+  - name: email
+    description: commit author email
   resourcetemplates:
   - apiVersion: tekton.dev/v1alpha1
     kind: PipelineRun
@@ -41,6 +43,8 @@ spec:
           value: $(params.revision)
         - name: author
           value: $(params.author)
+        - name: email
+          value: $(params.email)
         - name: message
           value: $(params.message)
         - name: repourl
@@ -67,6 +71,14 @@ spec:
         - name: nodejs-git
           resourceRef:
             name: nodejs-git
+        # - name: nodejs-git
+        #   resourceSpec:
+        #     type: git
+        #     params:
+        #       - name: url
+        #         value: $(params.repourl)
+        #       - name: revision
+        #         value: $(params.revision)
         - name: nodejs-image-development
           resourceRef:
             name: nodejs-image-development

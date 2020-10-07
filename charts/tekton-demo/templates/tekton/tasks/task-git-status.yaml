@@ -41,7 +41,7 @@ spec:
     - name: author
       description: Contains the author username
   steps:
-    - name: git
+    - name: variables
       image: quay.io/openshift/origin-cli:latest
       resources: {}
       workingDir: /workspace/source
@@ -61,49 +61,72 @@ spec:
         echo "Revision-type:" $(cat /tekton/results/revision-type)
         echo "Revision-name:" $(cat /tekton/results/revision-name)
 
-    - name: validate
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source
-      script: |
-        #!/bin/sh
+    # - name: load-test
+    #   image: ubi8/nodejs-10
+    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   script: |
+    #     #!/bin/bash
+    #     DURATION=60       # how long should load be applied ? - in seconds
+    #     TPS=20            # number of requests per second
+    #     end=$((SECONDS+$DURATION))
+    #     #start load
+    #     while [ $SECONDS -lt $end ];
+    #     do
+    #       for ((i=1;i<=$TPS;i++)); do
+    #               curl -X POST http://release-1-1-0-nodejs-tekton-production.apps.s45.core.rht-labs.com/ -H 'Accept: application/json' -H 'Authorization: Bearer xxxxxxxxxxxxx' -H 'Content-Type: application/json' -d '{}' -o /dev/null -s -w '%{time_starttransfer}\n' >> response-times.log &
+    #       done
+    #       sleep 1
+    #     done
+    #     wait
+    #     #end load
+    #     echo Load times $(cat response-times.log)
+    #     echo "Load test has been completed"
 
-        package={{ .Values.application.from.git.s2i.context }}/package.json
+    # - name: validate
+    #   image: ubi8/nodejs-10
+    #   resources: {}
+    #   workingDir: /workspace/source
+    #   script: |
+    #     #!/bin/sh
+    #     ref=$(cat /tekton/results/ref)
+    #     revisionType=$(cat /tekton/results/revision-type)
+    #     revisionName=$(cat /tekton/results/revision-name)
+    #     package={{ .Values.application.from.git.s2i.context }}/package.json
+    #     git fetch --all --tags > /dev/null 2>&1
+    #     if git rev-parse -q --verify "refs/tags/$revisionName" >/dev/null; then
+    #         echo "Tag $revisionName already exists"
+    #         exit 1
+    #     fi
 
-        if [ ! -f $package ]; then
-            echo "Missing package.json"
-            exit 1 
-        fi
+    #     if [ ! -f $package ]; then
+    #         echo "Missing package.json"
+    #         exit 1 
+    #     fi
 
-        version=$(cat $package \
-        | grep version \
-        | head -1 \
-        | awk -F: '{ print $2 }' \
-        | sed 's/[",]//g')
+    #     # verify if it's not a tag webhook event
+    #     if [[ $ref == *"refs/tags/"* ]]; then
+    #       echo "This is a tag commit. Not building."
+    #       exit 1
+    #     fi
 
-        revisionType=$(cat /tekton/results/revision-type)
-        revisionName=$(cat /tekton/results/revision-name)
+    #     if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ] || [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
+    #       exit 0
+    #     else
+    #       echo "Branch $revisionType is not supported as part of git flow implementation"
+    #       exit 1
+    #     fi
 
-        if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ]; then
-          echo "Validation here"
-          echo "App version: $version"
-          exit 1
-        elif [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
-          echo "Working in a $revisionType branch"
-        else
-          echo "Branch $revisionType is not part of git flow implementation"
-          exit 1
-        fi
-        exit 0
+    #     echo OK
 
-    - name: debug
-      image: ubi8/nodejs-10
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      command: ["/bin/bash", "-c"]
-      args:
-        - |-
-          set -ex
-          find /workspace/source/{{ .Values.application.from.git.s2i.context }}
+
+    # - name: debug
+    #   image: ubi8/nodejs-10
+    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   command: ["/bin/bash", "-c"]
+    #   args:
+    #     - |-
+    #       set -ex
+    #       find /workspace/source/{{ .Values.application.from.git.s2i.context }}
 
     # good for debugging
     # - name: pause
