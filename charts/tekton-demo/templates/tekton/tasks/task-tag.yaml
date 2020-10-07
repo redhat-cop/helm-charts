@@ -1,0 +1,57 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: tag
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: author
+      type: string
+    - name: email
+      type: string
+    - name: revision-type
+      type: string
+    - name: revision-name
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+  steps:
+    - name: debug
+      image: ubi8/nodejs-10
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          set -ex
+          find /workspace/source/{{ .Values.application.from.git.s2i.context }}
+
+    # # todo: needs a better github token management solution
+    # - name: release-notes
+    #   image: ubi8/nodejs-10
+    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   script: |
+    #     #!/bin/sh
+    #     git config --global user.name  "$(params.author)"
+    #     git config --global user.email "$(params.email)"
+    #     git remote set-url origin "https://{{ .Values.pipeline.webhook.github.user }}:$GITHUBTOKEN@github.com/{{ .Values.pipeline.webhook.github.org }}/{{ .Values.pipeline.webhook.github.repo }}.git" > /dev/null 2>&1
+    #     git checkout $(params.revision-type)/$(params.revision-name) > /dev/null 2>&1
+    #     git log master..$(params.revision-type)/$(params.revision-name) --oneline --no-merges --decorate > release-v$(params.revision-name).md
+    #     npm version minor > /dev/null 2>&1
+    #     git add release-v$(params.revision-name).md
+    #     git add package.json
+    #     git tag -a $(params.revision-name) -m "Upgrade to v$(params.revision-name)"
+    #     git push origin --tags --exit-code > /dev/null 2>&1
+    #     if [ $? -eq 0 ]; then
+    #         echo 0
+    #     else
+    #         echo "Tag $(params.revision-name) already exists"
+    #         exit 1
+    #     fi
+    #   env:
+    #     - name: GITHUBTOKEN
+    #       valueFrom:
+    #         secretKeyRef:
+    #           name: {{ .Values.pipeline.webhook.github.secret }}
+    #           key: token

@@ -29,7 +29,9 @@ spec:
     - name: repofullname
       description: repository full name
     - name: author
-      description: commit author
+      description: commit author username
+    - name: email
+      description: commit author email
     - name: message
       description: commit message
     - name: APP_NAME
@@ -49,8 +51,7 @@ spec:
       default: {{ .Values.application.environments.production }}
 
   tasks:
-
-    - name: status
+    - name: info
       taskRef:
         kind: Task
         name: status
@@ -76,22 +77,22 @@ spec:
       taskRef:
         name: s2i-nodejs
       runAfter:
-        - status
+        - info
       params:
         - name: ref
-          value: $(tasks.status.results.ref)
+          value: $(tasks.info.results.ref)
         - name: repourl
           value: $(params.repourl)
         - name: repofullname
           value: $(params.repofullname)
         - name: revision
-          value: $(tasks.status.results.revision)
+          value: $(tasks.info.results.revision)
         - name: revision-type
-          value: $(tasks.status.results.revision-type)
+          value: $(tasks.info.results.revision-type)
         - name: revision-name
-          value: $(tasks.status.results.revision-name)
+          value: $(tasks.info.results.revision-name)
         - name: author
-          value: $(tasks.status.results.author)
+          value: $(tasks.info.results.author)
       resources:       
         inputs:
           - name: source
@@ -101,26 +102,26 @@ spec:
             resource: nodejs-image-development
 
     - name: deploy
-      conditions:
-        - conditionRef: is-feature-branch
-          params:
-            - name: revision-type
-              value: $(tasks.status.results.revision-type)
+      # conditions:
+      #   - conditionRef: is-feature-branch
+      #     params:
+      #       - name: revision-type
+      #         value: $(tasks.info.results.revision-type)
       taskRef:
         name: deploy-nodejs-app
       runAfter:
         - build
       params:
         - name: ref
-          value: $(tasks.status.results.ref)
+          value: $(tasks.info.results.ref)
         - name: revision
-          value: $(tasks.status.results.revision)
+          value: $(tasks.info.results.revision)
         - name: revision-type
-          value: $(tasks.status.results.revision-type)
+          value: $(tasks.info.results.revision-type)
         - name: revision-name
-          value: $(tasks.status.results.revision-name)
+          value: $(tasks.info.results.revision-name)
         - name: author
-          value: $(tasks.status.results.author)
+          value: $(tasks.info.results.author)
         - name: AUTHORS_API_KEY
           value: "$(params.AUTHORS_API_KEY)"
       resources:
@@ -159,30 +160,54 @@ spec:
       runAfter:
         - test
       params:
-        - name: ref
-          value: $(tasks.status.results.ref)
-        - name: revision
-          value: $(tasks.status.results.revision)
-        - name: revision-type
-          value: $(tasks.status.results.revision-type)
-        - name: revision-name
-          value: $(tasks.status.results.revision-name)
-        - name: APP_NAME
-          value: $(params.APP_NAME)
-        - name: APP_VERSION
-          value: $(params.APP_VERSION)
-        - name: AUTHORS_API_KEY
-          value: $(params.AUTHORS_API_KEY)
-        - name: DEPLOY_PROJECT
-          value: $(params.DEPLOY_PROJECT)
-        - name: PROMOTE_PROJECT
-          value: $(params.PROMOTE_PROJECT)
+      - name: ref
+        value: $(tasks.info.results.ref)
+      - name: revision
+        value: $(tasks.info.results.revision)
+      - name: revision-type
+        value: $(tasks.info.results.revision-type)
+      - name: revision-name
+        value: $(tasks.info.results.revision-name)
+      - name: author
+        value: $(params.author)
+      - name: email
+        value: $(params.email)
+      - name: APP_NAME
+        value: $(params.APP_NAME)
+      - name: APP_VERSION
+        value: $(params.APP_VERSION)
+      - name: AUTHORS_API_KEY
+        value: $(params.AUTHORS_API_KEY)
+      - name: DEPLOY_PROJECT
+        value: $(params.DEPLOY_PROJECT)
+      - name: PROMOTE_PROJECT
+        value: $(params.PROMOTE_PROJECT)
       resources:
         inputs:
+          - name: source
+            resource: nodejs-git
           - name: image
             resource: nodejs-image-development
-            # todo: versioning development here
         outputs:
           - name: image
             resource: nodejs-image-production
-            # todo: versioning production here
+
+    - name: release
+      taskRef:
+        kind: Task
+        name: tag
+      runAfter:
+        - promote
+      params:
+      - name: author
+        value: $(params.author)
+      - name: email
+        value: $(params.email)
+      - name: revision-type
+        value: $(tasks.info.results.revision-type)
+      - name: revision-name
+        value: $(tasks.info.results.revision-name)
+      resources:
+        inputs:
+          - name: source
+            resource: nodejs-git
