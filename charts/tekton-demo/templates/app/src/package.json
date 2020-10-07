@@ -5,8 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "lint": "./node_modules/.bin/eslint app.js",
-    "test": "mocha",
-    "test-unit": "echo unit test not implemented",
+    "test": "mocha test/*.spec.js",
+    "test-unit": "mocha test/*.unit.js",
     "coverage": "nyc --reporter=text mocha",
     "e2e": "echo e2e not implemented"
   },
