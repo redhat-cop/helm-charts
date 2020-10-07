@@ -1,0 +1,139 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: generic
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: ref
+      description: Git reference
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
+    - name: revision
+      description: commit head unique id
+      type: string
+    - name: revision-type
+      description: revision type
+      type: string
+    - name: revision-name
+      description: revision name
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+  steps:
+
+    - name: update-github
+      env:
+        - name: GITHUBTOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.pipeline.webhook.github.secret }}
+              key: token
+
+      image: registry.access.redhat.com/ubi8/ubi:latest
+      script: |
+        #!/usr/libexec/platform-python
+        import json
+        import os
+        import http.client
+        status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
+
+        data = {
+            "state": "pending",
+            "target_url": "{{ .Values.pipeline.webhook.host }}",
+            "description": "Building",
+            "context": "tekton"
+        }
+        print("Sending this data to GitHub: ")
+        print(data)
+        conn = http.client.HTTPSConnection("api.github.com")
+        r = conn.request(
+            "POST",
+            status_url.rstrip("\n"),
+            body=json.dumps(data),
+            headers={
+                "User-Agent": "TektonCD, the peaceful cat",
+                "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
+            })
+        resp = conn.getresponse()
+        if not str(resp.status).startswith("2"):
+            print("Error: %d" % (resp.status))
+            print(resp.read())
+            # sys.exit(resp.read())
+        else:
+          print("GitHub status 'pending' has been set on commit")
+    
+    - name: validate
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      script: |
+        #!/bin/sh
+        if [ "$(params.revision-type)" == "release" ]; then
+          if [ "$(npm version minor)" = "v$(params.revision-name)" ]; then
+            echo "Package.json version upgraded to v$(params.revision-name)"
+          else
+            exit 1 "Version from package.json does not match with branch $(params.revision-type)/$(params.revision-name)"
+          fi
+
+        elif [ "$(params.revision-type)" == "patch" ] || [ "$(params.revision-type)" = "hotfix" ]; then
+          if [ "$(npm version patch)" = "v$(params.revision-name)" ]; then
+            echo "Package.json version upgraded to v$(params.revision-name)"
+          else
+            exit 1 "Version from package.json does not match with branch $releaseType/$(params.revision-name)"
+          fi
+        else
+          echo "Skipping npm version upgrade since we are in a $(params.revision-type) branch"
+        fi
+        
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: lint
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      script: |
+        #!/bin/sh
+        npm install --only-dev
+        npm run lint
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: generate
+      image: quay.io/openshift-pipeline/s2i
+      workingdir: /workspace/source
+      command: ['s2i', 'build', '{{ .Values.application.from.git.s2i.context }}', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen']
+      volumeMounts:
+        - name: gen-source
+          mountPath: /gen-source
+
+    - name: unit-test
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      script: |
+        #!/bin/sh
+        npm run test
+      securityContext:
+        runAsUser: 0 # todo: here, might not be the best option
+
+    - name: audit
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      script: |
+        #!/bin/sh
+        npm audit
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: gen-source
+      emptyDir: {}

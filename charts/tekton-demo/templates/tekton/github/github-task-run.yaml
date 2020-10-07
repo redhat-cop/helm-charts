@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: TaskRun
 metadata:
-  name: create-api-repo-webhook-run
+  name: create-{{ .Values.application.name }}-github-webhook
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   taskRef:
@@ -22,6 +22,6 @@ spec:
     - name: GitHubSecretStringKey
       value: secret
     - name: ExternalDomain
-      value: http://dev-{{ .Values.application.environments.cicd }}.{{ .Values.cluster }}
+      value: http://trigger-{{ .Values.application.environments.cicd }}.{{ .Values.cluster }}
   timeout: 2000s
   serviceAccountName: tekton-triggers-createwebhook

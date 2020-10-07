@@ -6,20 +6,19 @@ cluster: apps.s45.core.rht-labs.com
 application:
   name: nodejs-tekton
   version: 1.0.0
-  runtime: latest # default to node
+  runtime: nodejs:10 # default to node
   environments:
     development: nodejs-tekton-development
     production: nodejs-tekton-production
-    cicd: nodejs-tekton-ci
+    cicd: nodejs-tekton-cicd
   from:
     git:
       name: helm-charts
       url: https://github.com/mvmaestri/helm-charts
-      revision: feature/tekton-demo
-      submodules: '"true"'
+      revision: release/1.1.0
+      submodules: '"false"'
       s2i:
-        image: mvmaestri/s2i-angular-nginx:1.0.1
-        context: charts/tekton-demo/templates/app/angular-node-typescript-boiler
+        context: charts/tekton-demo/templates/app/src
         #angular-node-typescript-boiler
 
 pipeline:
@@ -27,9 +26,8 @@ pipeline:
   sa:
     default: pipeline
     triggers: tekton-triggers-sa
-
   webhook:
-    host: http://dev-nodejs-tekton-ci.apps.s45.core.rht-labs.com/
+    host: http://trigger-nodejs-tekton-cicd.apps.s45.core.rht-labs.com/
     github: 
       org: mvmaestri
       user: mvmaestri

@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: s2i-nodejs
+  name: nodejs-build
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
@@ -42,7 +42,6 @@ spec:
       - name: image
         type: image
   steps:
-
     - name: update-github
       env:
         - name: GITHUBTOKEN
@@ -65,8 +64,6 @@ spec:
             "description": "Building",
             "context": "tekton"
         }
-        print("Sending this data to GitHub: ")
-        print(data)
         conn = http.client.HTTPSConnection("api.github.com")
         r = conn.request(
             "POST",
@@ -82,72 +79,108 @@ spec:
             print(resp.read())
             # sys.exit(resp.read())
         else:
-          print("GitHub status 'pending' has been set on commit")
-    
+          print("GitHub status 'pending' has been set")     
+
     - name: validate
       image: ubi8/nodejs-10
       resources: {}
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
-        if [ "$revisionType" == "release" ]; then
-          if [ "$(npm version minor)" = "v$releaseName" ]; then
-            echo "Package.json version upgraded to v$releaseName"
+        if [ "$(params.revision-type)" == "release" ]; then
+          before=$(cat package.json \
+          | grep version \
+          | head -1 \
+          | awk -F: '{ print $2 }' \
+          | sed 's/[",]//g')
+          
+          before=$(echo -e $before)
+          version=$(npm version minor)
+          echo "Upgraded to $version"
+
+          if [ "$version" = "v$(params.revision-name)" ]; then
+            echo Version is OK
+            exit 0
           else
-            exit 1 "Version from package.json does not match with branch $releaseType/$releaseName"
+            echo "Version from package.json ($before) does not match with branch $(params.revision-type)/$(params.revision-name)"
+            exit 1
           fi
 
-        elif [ "$revisionType" == "patch" ] || [ "$revisionType" = "hotfix" ]; then
-          if [ "$(npm version patch)" = "v$releaseName" ]; then
-            echo "Package.json version upgraded to v$releaseName"
+        elif [ "$(params.revision-type)" == "patch" ] || [ "$(params.revision-type)" = "hotfix" ]; then
+          if [ "$(npm version patch)" = "v$(params.revision-name)" ]; then
+            echo "Version from package.json upgraded to v$version"
           else
-            exit 1 "Version from package.json does not match with branch $releaseType/$releaseName"
+            echo "Version from package.json ($before) does not match with branch $(params.revision-type)/$(params.revision-name)"
+            exit 1 
           fi
         else
-          echo "Skipping npm version upgrade since we are in a $revisionType branch"
+          echo "Skipping npm version upgrade since we are in a $(params.revision-type) branch"
+          exit 0
         fi
-        
+      securityContext:
+        runAsUser: 0 # might not be the best option
+    
+    - name: code-prepare
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm install --only-dev
       securityContext:
         runAsUser: 0 # might not be the best option
 
-    - name: lint
+    - name: code-audit
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm audit
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-lint
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm run lint
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-test
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm run test-unit
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-coverage
       image: ubi8/nodejs-10
       resources: {}
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
-        npm install --only-dev
-        npm run lint
+        npm run coverage
       securityContext:
         runAsUser: 0 # might not be the best option
 
-    - name: generate
+    - name: image-generate
       image: quay.io/openshift-pipeline/s2i
       workingdir: /workspace/source
-      command: ['s2i', 'build', '$(inputs.params.PATH_CONTEXT)', 'image-registry.openshift-image-registry.svc:5000/openshift/nodejs:$(inputs.params.VERSION)', '--as-dockerfile', '/gen-source/Dockerfile.gen']
+      command: ['s2i', 'build', '{{ .Values.application.from.git.s2i.context }}', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen']
       volumeMounts:
         - name: gen-source
-          mountPath: /gen-source
-
-    - name: unit-test
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      script: |
-        #!/bin/sh
-        npm run test
-      securityContext:
-        runAsUser: 0 # todo: here, might not be the best option
-
-    - name: audit
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      script: |
-        #!/bin/sh
-        npm audit fix
-      securityContext:
-        runAsUser: 0 # might not be the best option
+          mountPath: /gen-source   
 
     - name: image-build
       image: quay.io/buildah/stable
@@ -158,18 +191,22 @@ spec:
           mountPath: /var/lib/containers
         - name: gen-source
           mountPath: /gen-source
-      resources:
-        limits:
-          cpu: 2000m
-          memory: 4Gi
-        requests:
-          cpu: 500m
-          memory: 4Gi
+      resources: {}
+      securityContext:
+        privileged: true
+
+    - name: image-push
+      image: quay.io/buildah/stable
+      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '$(outputs.resources.image.url):$(inputs.params.revision-name)', 'docker://$(outputs.resources.image.url):$(inputs.params.revision-name)']
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+      resources: {}
       securityContext:
         privileged: true
 
     # todo: label image properly
-    - name: image-label
+    - name: image-verify
       image: quay.io/openshift/origin-cli:latest
       workingDir: /workspace/source
       command: ["/bin/bash", "-c"]
@@ -182,21 +219,6 @@ spec:
         # oc label imagestreamtag/{{ .Values.application.name }}:$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }} app.revision-name=$(inputs.params.revision-name)          
         # oc label imagestreamtag/{{ .Values.application.name }}:$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }} app.revision-author=$(inputs.params.author)
 
-    - name: image-push
-      image: quay.io/buildah/stable
-      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '$(outputs.resources.image.url):$(inputs.params.revision-name)', 'docker://$(outputs.resources.image.url):$(inputs.params.revision-name)']
-      volumeMounts:
-        - name: varlibcontainers
-          mountPath: /var/lib/containers
-      resources:
-        limits:
-          cpu: 2000m
-          memory: 4Gi
-        requests:
-          cpu: 2000m
-          memory: 4Gi
-      securityContext:
-        privileged: true
   volumes:
     - name: varlibcontainers
       emptyDir: {}

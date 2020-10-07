@@ -22,31 +22,40 @@ spec:
       - name: source
         type: git
   results:
+    - name: cluster
+      description: apps cluster url
     - name: ref
       description: reference
     - name: revision
       description: unique id from git head commit
-    - name: repourl
-      description: repository url from github payload
-    - name: repofullname
-      description: full name user-org/reponame from github
+    - name: revision-short
+      description: unique id from git head commit short version
     - name: revision-type
       description: Contains the type of branch - feature, release,...
     - name: revision-name
       description: Contains the name of the branch without the type, ie. omitting the first slash
     - name: full-revision-name
       description: Contains the name of the branch without the type, ie. omitting the first slash
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
     - name: message
       description: Contains the commit message
     - name: author
       description: Contains the author username
   steps:
-    - name: git
+    - name: variables
       image: quay.io/openshift/origin-cli:latest
       resources: {}
       workingDir: /workspace/source
       script: |
         #!/bin/sh
+        echo $(oc config view --minify)
+        server=$(echo $(oc config view --minify -o jsonpath='{.clusters[*].cluster.server}'))
+        cluster=$(echo "apps."${server//https:\/\/api./})
+        cluster=${cluster//:6443/}
+        echo $cluster
         echo $(params.ref)
         echo $(params.revision)
         echo $(params.author)
@@ -57,6 +66,7 @@ spec:
         echo $(params.message) > /tekton/results/message
         echo $(params.repourl) > /tekton/results/repourl
         echo $(params.repofullname) > /tekton/results/repofullname
+        echo $cluster > /tekton/results/cluster
         echo $(params.ref) | awk -F "/" '{if (NF > 1) {printf "%s", $3 > "/tekton/results/revision-type"; printf "%s", $4 > "/tekton/results/revision-name"; printf "%s/%s", $3, $4 > "/tekton/results/full-revision-name"} else {printf "%s", "unknown" > "/tekton/results/revision-type"; printf "%s", $3 > "/tekton/results/revision-name"; printf "%s", $4 > "/tekton/results/full-revision-name"}}'
         echo "Revision-type:" $(cat /tekton/results/revision-type)
         echo "Revision-name:" $(cat /tekton/results/revision-name)
@@ -67,43 +77,46 @@ spec:
       workingDir: /workspace/source
       script: |
         #!/bin/sh
-
+        ref=$(cat /tekton/results/ref)
+        revisionType=$(cat /tekton/results/revision-type)
+        revisionName=$(cat /tekton/results/revision-name)
+        echo $(git rev-parse --short HEAD) > /tekton/results/revision-short
         package={{ .Values.application.from.git.s2i.context }}/package.json
+        git fetch --all --tags > /dev/null 2>&1
+        if git rev-parse -q --verify "refs/tags/$revisionName" >/dev/null; then
+            echo "Tag $revisionName already exists"
+            exit 1
+        fi
 
         if [ ! -f $package ]; then
             echo "Missing package.json"
             exit 1 
         fi
 
-        version=$(cat $package \
-        | grep version \
-        | head -1 \
-        | awk -F: '{ print $2 }' \
-        | sed 's/[",]//g')
-
-        revisionType=$(cat /tekton/results/revision-type)
-        revisionName=$(cat /tekton/results/revision-name)
-
-        if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ]; then
-          echo "Validation here"
-          echo "App version: $version"
-          exit 1
-        elif [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
-          echo "Working in a $revisionType branch"
-        else
-          echo "Branch $revisionType is not part of git flow implementation"
+        # verify if it's not a tag webhook event
+        if [[ $ref == *"refs/tags/"* ]]; then
+          echo "This is a tag commit. Not building."
           exit 1
         fi
-        exit 0
 
-    - name: debug
-      image: ubi8/nodejs-10
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      command: ["/bin/bash", "-c"]
-      args:
-        - |-
-          set -ex
-          find /workspace/source/{{ .Values.application.from.git.s2i.context }}
+        if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ] || [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
+          exit 0
+        else
+          echo "Branch $revisionType is not supported as part of git flow implementation"
+          exit 1
+        fi
+
+        echo OK
+
+
+    # - name: debug
+    #   image: ubi8/nodejs-10
+    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   command: ["/bin/bash", "-c"]
+    #   args:
+    #     - |-
+    #       set -ex
+    #       find /workspace/source/{{ .Values.application.from.git.s2i.context }}
 
     # good for debugging
     # - name: pause

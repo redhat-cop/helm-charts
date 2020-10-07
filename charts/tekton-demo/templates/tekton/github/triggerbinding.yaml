@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerBinding
 metadata:
-  name: trigger-binding-dev
+  name: trigger-binding
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   # description: >-
@@ -22,19 +22,5 @@ spec:
     value: $(body.head_commit.message)
   - name: author
     value: $(body.head_commit.author.username)
----
-apiVersion: triggers.tekton.dev/v1alpha1
-kind: TriggerBinding
-metadata:
-  name: trigger-binding-prod
-  namespace: {{ .Values.application.environments.cicd }}
-spec:
-  params:
-  - name: ref
-    value: $(body.ref)
-  - name: revision
-    value: $(body.head_commit.id)
-  - name: repourl
-    value: $(body.repository.html_url)
-  - name: reponame
-    value: $(body.repository.name)
+  - name: email
+    value: $(body.head_commit.author.email)

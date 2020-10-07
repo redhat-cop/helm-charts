@@ -43,3 +43,4 @@ policy/
 
 # BATS
 _test/test_helper/
+.nyc_output

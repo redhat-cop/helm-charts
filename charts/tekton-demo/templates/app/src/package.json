@@ -1,9 +1,14 @@
 {
   "name": "weather",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "lint": "./node_modules/.bin/eslint app.js",
+    "test": "mocha test/*.spec.js",
+    "test-unit": "mocha test/*.unit.js",
+    "coverage": "nyc --reporter=text mocha test/*.unit.js",
+    "e2e": "echo e2e not implemented"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -14,6 +19,14 @@
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.0",
     "package.json": "^2.0.1",
-    "pug": "2.0.0-beta11"
+    "pug": "^3.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "mocha": "^8.1.3",
+    "nyc": "^15.1.0"
   }
 }
