@@ -112,10 +112,14 @@ spec:
       runAfter:
         - build
       params:
+        - name: cluster
+          value: $(tasks.info.results.cluster)
         - name: ref
           value: $(tasks.info.results.ref)
         - name: revision
           value: $(tasks.info.results.revision)
+        - name: revision-short
+          value: $(tasks.info.results.revision-short)
         - name: revision-type
           value: $(tasks.info.results.revision-type)
         - name: revision-name
@@ -163,10 +167,14 @@ spec:
       runAfter:
         - test
       params:
+      - name: cluster
+        value: $(tasks.info.results.cluster)
       - name: ref
         value: $(tasks.info.results.ref)
       - name: revision
         value: $(tasks.info.results.revision)
+      - name: revision-short
+        value: $(tasks.info.results.revision-short)
       - name: revision-type
         value: $(tasks.info.results.revision-type)
       - name: revision-name

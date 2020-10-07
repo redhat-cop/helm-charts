@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: s2i-nodejs
+  name: nodejs-build
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
@@ -79,8 +79,8 @@ spec:
             print(resp.read())
             # sys.exit(resp.read())
         else:
-          print("GitHub status 'pending' has been set")
-    
+          print("GitHub status 'pending' has been set")     
+
     - name: validate
       image: ubi8/nodejs-10
       resources: {}
@@ -117,24 +117,63 @@ spec:
           echo "Skipping npm version upgrade since we are in a $(params.revision-type) branch"
           exit 0
         fi
-        
+      securityContext:
+        runAsUser: 0 # might not be the best option
+    
+    - name: code-prepare
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm install --only-dev
       securityContext:
         runAsUser: 0 # might not be the best option
 
-    - name: lint-test-audit
+    - name: code-audit
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm audit
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-lint
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm run lint
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-test
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm run test-unit
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-coverage
       image: ubi8/nodejs-10
       resources: {}
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
-        npm install --only-dev
-        npm run lint
-        run run unit-test
-        npm audit
+        npm run coverage
       securityContext:
-        runAsUser: 0 # todo: here, might not be the best option
+        runAsUser: 0 # might not be the best option
 
-    # todo: unit here
     - name: image-generate
       image: quay.io/openshift-pipeline/s2i
       workingdir: /workspace/source

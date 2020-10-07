@@ -33,7 +33,7 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: tekton-triggers-sa
+  name: {{ .Values.pipeline.sa.triggers }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -41,7 +41,7 @@ metadata:
   name: tekton-triggers-rolebinding
 subjects:
 - kind: ServiceAccount
-  name: tekton-triggers-sa
+  name: {{ .Values.pipeline.sa.triggers }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

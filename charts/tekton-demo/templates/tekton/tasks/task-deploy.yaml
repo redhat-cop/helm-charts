@@ -5,11 +5,17 @@ metadata:
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
+    - name: cluster
+      description: cluster app url
+      type: string
     - name: ref
       description: git ref
       type: string
     - name: revision
       description: git unique head commit id
+      type: string
+    - name: revision-short
+      description: git unique head commit id short version
       type: string
     - name: revision-type
       description: revision type usually branch type
@@ -32,92 +38,128 @@ spec:
       - name: app-create
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
+        script: |
+          #!/bin/sh
+          # todo: condition for develop branch
+          if [ "$(inputs.params.revision-type)" == "feature" ]; then
             replace=$(inputs.params.revision-name)
             revisionName=${replace//./-}
-            oc get deployment/$(inputs.params.revision-type)-$revisionName -n {{ .Values.application.environments.development }}
-            if [[ $? -ne 0 ]]
-            then
-                oc new-app --name=$(inputs.params.revision-type)-$revisionName -i={{ .Values.application.name }}:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.development }} --labels=app.name={{ .Values.application.name }}
+            appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+            oc get deployment/$appname -n {{ .Values.application.environments.development }}
+            if [[ $? -ne 0 ]]; then
+              oc new-app --name=$appname -i={{ .Values.application.name }}:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.development }} --labels=app.name={{ .Values.application.name }}
             else
-                echo "Application already exists."
+              echo "Application already exists."
             fi
-      # ,app.author=$(inputs.params.author),app.revision-name=$revisionName,app.revision-type=$(inputs.params.revision-type)
+
+          else
+            echo "Branch type $(inputs.params.revision-type) does not deploy to development"
+            exit 0
+          fi
+
       - name: app-expose
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
+        script: |
+          #!/bin/sh
+          if [ "$(inputs.params.revision-type)" == "feature" ]; then
             replace=$(inputs.params.revision-name)
             revisionName=${replace//./-}
-            oc get svc $(inputs.params.revision-type)-$revisionName -n {{ .Values.application.environments.development }}
+            appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+            hostname=$(inputs.params.revision-type)-$revisionName-{{ .Values.application.environments.development }}.{{ .Values.cluster }}
+            oc get svc $appname -n {{ .Values.application.environments.development }}
             if [[ $? -ne 0 ]]
-            then
-                oc expose svc/$(inputs.params.revision-type)-$(inputs.params.revision-name) -n {{ .Values.application.environments.development }}
-            else
+              then
+                oc expose svc/$appname -n {{ .Values.application.environments.development }}
+                oc patch svc/$appname -p '{ "spec": {"type":"LoadBalancer"}}, { "ports": [ { "name": "gw", "protocol": "TCP", "port": 8080,"targetPort": 8080 } ] } }' -n {{ .Values.application.environments.development }}
+                oc create route edge --service $appname --hostname $hostname -n {{ .Values.application.environments.development }}
+              else
                 echo "Application is already exposed."
-            fi
+                echo $hostname
+              fi
+          else
+            echo "Branch type $(inputs.params.revision-type) does not deploy to development"
+            exit 0
+          fi
 
       - name: app-labels
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
+        script: |
+          #!/bin/sh
+          if [ "$(inputs.params.revision-type)" == "feature" ]; then
             replace=$(inputs.params.revision-name)
             revisionName=${replace//./-} # replace . to / 
-            oc label deployment/$(inputs.params.revision-type)-$revisionName app.kubernetes.io/name=$(inputs.params.revision-type)-$revisionName --overwrite -n {{ .Values.application.environments.development }}
-            oc label deployment/$(inputs.params.revision-type)-$revisionName app.version=$revisionName --overwrite -n {{ .Values.application.environments.development }}
-            oc label deployment/$(inputs.params.revision-type)-$revisionName app.revision-id=$(inputs.params.revision) --overwrite -n {{ .Values.application.environments.development }}
-            oc label deployment/$(inputs.params.revision-type)-$revisionName app.revision-type=$(inputs.params.revision-type) --overwrite -n {{ .Values.application.environments.development }}
-            oc label deployment/$(inputs.params.revision-type)-$revisionName app.revision-name=$revisionName --overwrite -n {{ .Values.application.environments.development }}
-            oc label deployment/$(inputs.params.revision-type)-$revisionName app.author=$(inputs.params.author) --overwrite -n {{ .Values.application.environments.development }}
+            appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+            oc label deployment/$appname app.kubernetes.io/name=$appname --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$appname app.version=$revisionName --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$appname app.revision-id=$(inputs.params.revision-short) --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$appname app.revision-type=$(inputs.params.revision-type) --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$appname app.revision-name=$revisionName --overwrite -n {{ .Values.application.environments.development }}
+            oc label deployment/$appname app.revision-author=$(inputs.params.author) --overwrite -n {{ .Values.application.environments.development }}
             
-            oc set env deployment/$(inputs.params.revision-type)-$revisionName revision-id=$(inputs.params.revision) -n {{ .Values.application.environments.development }}
-            oc set env deployment/$(inputs.params.revision-type)-$revisionName revision-type=$(inputs.params.revision-type) -n {{ .Values.application.environments.development }}
-            oc set env deployment/$(inputs.params.revision-type)-$revisionName revision-name=$revisionName -n {{ .Values.application.environments.development }}
-            oc set env deployment/$(inputs.params.revision-type)-$revisionName --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.development }}
+            oc set env deployment/$appname revision-id=$(inputs.params.revision-short) -n {{ .Values.application.environments.development }}
+            oc set env deployment/$appname revision-type=$(inputs.params.revision-type) -n {{ .Values.application.environments.development }}
+            oc set env deployment/$appname revision-name=$revisionName -n {{ .Values.application.environments.development }}
+            oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.development }}
+          else
+            echo "Branch type $(inputs.params.revision-type) does not deploy to development"
+            exit 0
+          fi
 
       - name: app-probes
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
+        script: |
+          #!/bin/sh
+          if [ "$(inputs.params.revision-type)" == "feature" ]; then
             replace=$(inputs.params.revision-name)
             revisionName=${replace//./-}
-            oc set probe deployment/$(inputs.params.revision-type)-$revisionName --remove --readiness --liveness -n {{ .Values.application.environments.development }}
-            oc set probe deployment/$(inputs.params.revision-type)-$revisionName --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n {{ .Values.application.environments.development }}
+            appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+            oc set probe deployment/$appname --remove --readiness --liveness -n {{ .Values.application.environments.development }}
+            oc set probe deployment/$appname --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n {{ .Values.application.environments.development }}
+          else
+            echo "Branch type $(inputs.params.revision-type) does not deploy to development"
+            exit 0
+          fi
 
       - name: app-autoscale
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
+        script: |
+          #!/bin/sh
+          # todo: needs refactoring
+          if [ "$(inputs.params.revision-type)" == "feature" ]; then
             replace=$(inputs.params.revision-name)
             revisionName=${replace//./-}
+            appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
             if [ "$(inputs.params.revision-type)" == "release" ]; then
-              oc get hpa $(inputs.params.revision-type)-$revisionName  -n {{ .Values.application.environments.development }}
+              oc get hpa $appname  -n {{ .Values.application.environments.development }}
               if [[ $? -ne 0 ]]
-              then
-                  oc autoscale deployment $(inputs.params.revision-type)-$revisionName \
+                then
+                  oc autoscale deployment $appname \
                     --min 1 --max 2 --cpu-percent=75 \
                     --namespace {{ .Values.application.environments.development }}
-              else
+                else
                   echo "Application autoscale is already configured."
-              fi
+                fi
             fi
+          else
+            echo "Branch type $(inputs.params.revision-type) does not deploy to development"
+            exit 0
+          fi
 
       - name: app-triggers
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
+        script: |
+          #!/bin/sh
+          if [ "$(inputs.params.revision-type)" == "feature" ]; then
             replace=$(inputs.params.revision-name)
             revisionName=${replace//./-}
-            oc set triggers deployment/$(inputs.params.revision-type)-$revisionName -n {{ .Values.application.environments.development }}
+            appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+            oc set triggers deployment/$appname -n {{ .Values.application.environments.development }}
+          else
+            echo "Branch type $(inputs.params.revision-type) does not deploy to development"
+            exit 0
+          fi

@@ -35,7 +35,7 @@ spec:
         webhooks.tekton.dev/repo: $(params.reponame)
         webhooks.tekton.dev/author: $(params.author)
     spec:
-      serviceAccountName: tekton-triggers-sa
+      serviceAccountName: {{ .Values.pipeline.sa.triggers }}
       params:
         - name: ref
           value: $(params.ref)
