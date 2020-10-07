@@ -5,17 +5,27 @@ metadata:
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
+    - name: cluster
+      description: cluster app url
+      type: string
     - name: ref
       description: git ref
       type: string
-    - name: "revision"
+    - name: revision
       description: git unique head commit id
       type: string
-    - name: "revision-type"
+    - name: revision-short
+      description: git unique head commit id short version
+      type: string
+    - name: revision-type
       description: revision type usually branch type
       type: string
-    - name: "revision-name"
+    - name: revision-name
       description: revision name usually version or branch name
+      type: string
+    - name: author
+      type: string
+    - name: email
       type: string
     - name: APP_NAME
       description: The name of the application
@@ -37,10 +47,10 @@ spec:
       description: The project where you promote the app
       default: {{ .Values.application.environments }}
       type: string
-
-
   resources:
     inputs:
+      - name: source
+        type: git
       - name: image
         type: image
     outputs:
@@ -48,79 +58,183 @@ spec:
         type: image
 
   steps:
-      - name: release-tag
-        image: ubi8/nodejs-10
-        workingDir: /workspace/source/
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
-            git status
-            git tag -l
-            git tag -a v{{ .Values.application.version }} -m "Release v{{ .Values.application.version }}"
 
-      - name: promote-image
-        image: quay.io/openshift/origin-cli:latest
-        workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
-            oc tag $(inputs.params.DEPLOY_PROJECT)/$(inputs.params.APP_NAME):latest $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):latest
-            oc tag $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):latest $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION)
-            oc get dc $(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
+    - name: validate
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source
+      script: |
+        #!/bin/sh
+        revisionType=$(params.revision-type)
+        if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ]; then
+          exit 0
+        else
+          echo "Preventing $revisionType to be promoted to a production environment"
+          exit 1
+        fi
+
+    # todo: needs a better github token management solution
+    # - name: release-notes
+    #   image: ubi8/nodejs-10
+    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   script: |
+    #     #!/bin/sh
+    #     git config --global user.name  "$(params.author)"
+    #     git config --global user.email "$(params.email)"
+    #     git remote set-url origin "https://{{ .Values.pipeline.webhook.github.user }}:$GITHUBTOKEN@github.com/{{ .Values.pipeline.webhook.github.org }}/{{ .Values.pipeline.webhook.github.repo }}.git" > /dev/null 2>&1
+    #     git checkout $(params.revision-type)/$(params.revision-name) > /dev/null 2>&1
+    #     git log master..$(params.revision-type)/$(params.revision-name) --oneline --no-merges --decorate > release-v$(params.revision-name).md
+    #     npm version minor > /dev/null 2>&1
+    #     git add release-v$(params.revision-name).md
+    #     git add package.json
+    #     git commit -m "Including release notes"
+    #     git tag -a $(params.revision-name) -m "Upgrade to v$(params.revision-name)"
+    #     git push origin $(params.revision-type)/$(params.revision-name) --tags
+    #   env:
+    #     - name: GITHUBTOKEN
+    #       valueFrom:
+    #         secretKeyRef:
+    #           name: {{ .Values.pipeline.webhook.github.secret }}
+    #           key: token
+
+    - name: release-image
+      image: quay.io/openshift/origin-cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          oc tag {{ .Values.application.environments.development }}/{{ .Values.application.name }}:$(inputs.params.revision-name) {{ .Values.application.environments.production }}/{{ .Values.application.name }}:$(inputs.params.revision-name)
+          oc tag {{ .Values.application.environments.production }}/{{ .Values.application.name }}:$(inputs.params.revision-name) {{ .Values.application.environments.production }}/{{ .Values.application.name }}:$(inputs.params.revision-name)
+          oc get deployment/$appname -n {{ .Values.application.environments.production }}
+          if [[ $? -ne 0 ]]
+          then
+              oc new-app --name=$appname -i={{ .Values.application.name }}:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.production }} --labels=app.name={{ .Values.application.name }}
+          else
+              echo "Application already exists."
+          fi
+
+    - name: app-expose
+      image: quay.io/openshift/origin-cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          hostname=v$revisionName-{{ .Values.application.environments.production }}.{{ .Values.cluster }}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          
+          echo "sleep 1"
+          sleep 10
+          oc get svc/$appname -n {{ .Values.application.environments.production }}
+          if [[ $? -ne 0 ]]; then
+            echo "Exposing"
+            oc expose svc/$appname -n {{ .Values.application.environments.production }}
+          else
+            echo "Application is already exposed."
+            echo $hostname
+          fi
+
+          echo "sleep 2"
+          sleep 10
+          
+          oc get route/$appname -n {{ .Values.application.environments.production }}
+          if [[ $? -ne 0 ]]; then
+            echo "Creating routes"
+            oc create route edge --service $appname --port 8080 --hostname $hostname -n {{ .Values.application.environments.production }}
+            sleep 5
+            oc patch svc/$appname -p '{ "spec": {"type":"LoadBalancer"}}, { "ports": [ { "name": "gw", "protocol": "TCP", "port": 8080,"targetPort": 8080 } ] } }' -n {{ .Values.application.environments.production }}
+            # oc expose svc/nodejs-tekton-release-1-2-0 -n nodejs-tekton-production
+          else
+            echo "Route is already available."
+            echo $hostname
+          fi
+
+    - name: app-labels
+      image: quay.io/openshift/origin-cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          oc label deployment/$appname app.kubernetes.io/name=$appname --overwrite -n {{ .Values.application.environments.production }}
+          oc label deployment/$appname app.version=$revisionName --overwrite -n {{ .Values.application.environments.production }}
+          oc label deployment/$appname app.revision-id=$(inputs.params.revision-short) -n {{ .Values.application.environments.production }}
+          oc label deployment/$appname app.revision-type=$(inputs.params.revision-type) --overwrite -n {{ .Values.application.environments.production }}
+          oc label deployment/$appname app.revision-name=$revisionName --overwrite -n {{ .Values.application.environments.production }}
+          oc label deployment/$appname app.revision-author=$(inputs.params.author) --overwrite -n {{ .Values.application.environments.production }}
+
+    - name: app-envs
+      image: quay.io/openshift/origin-cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          oc set env deployment/$appname environment=production
+          oc set env deployment/$appname version=$(inputs.params.revision-name)
+          oc set env deployment/$appname revision-id=$(inputs.params.revision-short) -n {{ .Values.application.environments.production }}
+          oc set env deployment/$appname revision-type=$(inputs.params.revision-type) -n {{ .Values.application.environments.production }}
+          oc set env deployment/$appname revision-name=$revisionName -n {{ .Values.application.environments.production }}
+
+    - name: app-secrets
+      image: quay.io/openshift/origin-cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.production }}
+
+    - name: app-probes
+      image: quay.io/openshift/origin-cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          oc set probe deployment/$appname --remove --readiness --liveness -n {{ .Values.application.environments.production }}
+          oc set probe deployment/$appname --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n {{ .Values.application.environments.production }}
+
+    - name: app-autoscale
+      image: quay.io/openshift/origin-cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          if [ "$(inputs.params.revision-type)" == "release" ]; then
+            oc get hpa $appname  -n {{ .Values.application.environments.production }}
             if [[ $? -ne 0 ]]
             then
-                oc new-app -i $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION) -n $(inputs.params.PROMOTE_PROJECT)
-            else
-                echo "Application already exists. New version = $(inputs.params.APP_VERSION)"
-            fi
-      - name: expose-app
-        image: quay.io/openshift/origin-cli:latest
-        workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
-            oc get svc $(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
-            if [[ $? -ne 0 ]]
-            then
-                oc expose svc/$(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
-            else
-                echo "Application is already exposed."
-            fi
-      - name: set-app-labels
-        image: quay.io/openshift/origin-cli:latest
-        workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
-            oc label dc/$(inputs.params.APP_NAME) app.kubernetes.io/name=nodejs --overwrite -n $(inputs.params.PROMOTE_PROJECT)
-            oc label dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) --overwrite -n $(inputs.params.PROMOTE_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) -n $(inputs.params.PROMOTE_PROJECT)            
-            oc set env dc/$(inputs.params.APP_NAME) --from secret/$(inputs.params.AUTHORS_API_KEY) -n $(inputs.params.PROMOTE_PROJECT)
-      - name: set-app-probes
-        image: quay.io/openshift/origin-cli:latest
-        workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
-            oc set probe dc/$(inputs.params.APP_NAME) --remove --readiness --liveness -n $(inputs.params.PROMOTE_PROJECT)
-            oc set probe dc/$(inputs.params.APP_NAME) --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n $(inputs.params.PROMOTE_PROJECT)
-      - name: set-app-autoscale
-        image: quay.io/openshift/origin-cli:latest
-        workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
-            oc get hpa $(inputs.params.APP_NAME)  -n $(inputs.params.PROMOTE_PROJECT)
-            if [[ $? -ne 0 ]]
-            then
-                oc autoscale dc $(inputs.params.APP_NAME) --min 1 --max 2 --cpu-percent=75 -n $(inputs.params.PROMOTE_PROJECT)
+                oc autoscale deployment $appname \
+                  --min 1 --max 2 --cpu-percent=75 \
+                  --namespace {{ .Values.application.environments.production }}
             else
                 echo "Application autoscale is already configured."
             fi
-      - name: describe-app-triggers
-        image: quay.io/openshift/origin-cli:latest
-        workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
-            oc set triggers dc/$(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
+          fi
+
+    - name: app-triggers
+      image: quay.io/openshift/origin-cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          oc set triggers deployment/$appname -n {{ .Values.application.environments.production }}
