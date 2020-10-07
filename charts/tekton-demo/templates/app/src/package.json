@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "lint": "echo linting not implemented",
+    "lint": "./node_modules/.bin/eslint app.js",
     "test": "mocha",
+    "test-unit": "echo unit test not implemented",
     "coverage": "nyc --reporter=text mocha",
     "e2e": "echo e2e not implemented"
   },
@@ -22,6 +23,9 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
     "mocha": "^8.1.3",
     "nyc": "^15.1.0"
   }
