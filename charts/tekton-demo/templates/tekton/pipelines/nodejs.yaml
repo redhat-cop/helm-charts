@@ -75,7 +75,7 @@ spec:
 
     - name: build
       taskRef:
-        name: s2i-nodejs
+        name: nodejs-build
       runAfter:
         - info
       params:
@@ -129,7 +129,6 @@ spec:
           - name: image
             resource: nodejs-image-development
 
-    # todo: implement quality gate here
     - name: test
       taskRef:
         name: test-nodejs-app
@@ -144,6 +143,10 @@ spec:
         value: $(params.repofullname)
       - name: revision
         value: $(params.revision)
+      resources:
+        inputs:
+          - name: source
+            resource: nodejs-git
 
     # todo: upgrade based on semantic versioning principles
     # only minor supported and patch

@@ -69,16 +69,13 @@ spec:
         name: {{ .Values.pipeline.name }}
       resources:
         - name: nodejs-git
-          resourceRef:
-            name: nodejs-git
-        # - name: nodejs-git
-        #   resourceSpec:
-        #     type: git
-        #     params:
-        #       - name: url
-        #         value: $(params.repourl)
-        #       - name: revision
-        #         value: $(params.revision)
+          resourceSpec:
+            type: git
+            params:
+              - name: url
+                value: $(params.repourl)
+              - name: revision
+                value: $(params.revision)
         - name: nodejs-image-development
           resourceRef:
             name: nodejs-image-development

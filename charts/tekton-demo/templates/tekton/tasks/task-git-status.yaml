@@ -61,62 +61,41 @@ spec:
         echo "Revision-type:" $(cat /tekton/results/revision-type)
         echo "Revision-name:" $(cat /tekton/results/revision-name)
 
-    # - name: load-test
-    #   image: ubi8/nodejs-10
-    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-    #   script: |
-    #     #!/bin/bash
-    #     DURATION=60       # how long should load be applied ? - in seconds
-    #     TPS=20            # number of requests per second
-    #     end=$((SECONDS+$DURATION))
-    #     #start load
-    #     while [ $SECONDS -lt $end ];
-    #     do
-    #       for ((i=1;i<=$TPS;i++)); do
-    #               curl -X POST http://release-1-1-0-nodejs-tekton-production.apps.s45.core.rht-labs.com/ -H 'Accept: application/json' -H 'Authorization: Bearer xxxxxxxxxxxxx' -H 'Content-Type: application/json' -d '{}' -o /dev/null -s -w '%{time_starttransfer}\n' >> response-times.log &
-    #       done
-    #       sleep 1
-    #     done
-    #     wait
-    #     #end load
-    #     echo Load times $(cat response-times.log)
-    #     echo "Load test has been completed"
+    - name: validate
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source
+      script: |
+        #!/bin/sh
+        ref=$(cat /tekton/results/ref)
+        revisionType=$(cat /tekton/results/revision-type)
+        revisionName=$(cat /tekton/results/revision-name)
+        package={{ .Values.application.from.git.s2i.context }}/package.json
+        git fetch --all --tags > /dev/null 2>&1
+        if git rev-parse -q --verify "refs/tags/$revisionName" >/dev/null; then
+            echo "Tag $revisionName already exists"
+            exit 1
+        fi
 
-    # - name: validate
-    #   image: ubi8/nodejs-10
-    #   resources: {}
-    #   workingDir: /workspace/source
-    #   script: |
-    #     #!/bin/sh
-    #     ref=$(cat /tekton/results/ref)
-    #     revisionType=$(cat /tekton/results/revision-type)
-    #     revisionName=$(cat /tekton/results/revision-name)
-    #     package={{ .Values.application.from.git.s2i.context }}/package.json
-    #     git fetch --all --tags > /dev/null 2>&1
-    #     if git rev-parse -q --verify "refs/tags/$revisionName" >/dev/null; then
-    #         echo "Tag $revisionName already exists"
-    #         exit 1
-    #     fi
+        if [ ! -f $package ]; then
+            echo "Missing package.json"
+            exit 1 
+        fi
 
-    #     if [ ! -f $package ]; then
-    #         echo "Missing package.json"
-    #         exit 1 
-    #     fi
+        # verify if it's not a tag webhook event
+        if [[ $ref == *"refs/tags/"* ]]; then
+          echo "This is a tag commit. Not building."
+          exit 1
+        fi
 
-    #     # verify if it's not a tag webhook event
-    #     if [[ $ref == *"refs/tags/"* ]]; then
-    #       echo "This is a tag commit. Not building."
-    #       exit 1
-    #     fi
+        if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ] || [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
+          exit 0
+        else
+          echo "Branch $revisionType is not supported as part of git flow implementation"
+          exit 1
+        fi
 
-    #     if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ] || [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
-    #       exit 0
-    #     else
-    #       echo "Branch $revisionType is not supported as part of git flow implementation"
-    #       exit 1
-    #     fi
-
-    #     echo OK
+        echo OK
 
 
     # - name: debug

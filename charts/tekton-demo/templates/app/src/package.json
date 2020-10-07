@@ -7,7 +7,7 @@
     "lint": "./node_modules/.bin/eslint app.js",
     "test": "mocha test/*.spec.js",
     "test-unit": "mocha test/*.unit.js",
-    "coverage": "nyc --reporter=text mocha",
+    "coverage": "nyc --reporter=text mocha test/*.unit.js",
     "e2e": "echo e2e not implemented"
   },
   "dependencies": {
