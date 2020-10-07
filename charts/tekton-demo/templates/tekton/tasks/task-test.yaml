@@ -13,67 +13,95 @@ spec:
       description: full name user-org/reponame from github
     - name: revision
       description: commit head unique id
+  resources:
+    inputs:
+      - name: source
+        type: git
   steps:
-    - name: test-frontend
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      command: ["/bin/bash", "-c"]
-      args:
-        - |-
-          npm run e2e
+    # - name: test-frontend
+    #   image: ubi8/nodejs-10
+    #   resources: {}
+    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   command: ["/bin/bash", "-c"]
+    #   args:
+    #     - |-
+    #       npm run e2e
 
-    - name: test-integration
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      args:
-        - |-
-          npm run coverage
+    # - name: test-integration
+    #   image: ubi8/nodejs-10
+    #   resources: {}
+    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   args:
+    #     - |-
+    #       npm test
 
-    - name: test-coverage
+    # - name: test-coverage
+    #   image: ubi8/nodejs-10
+    #   resources: {}
+    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   script: |
+    #     #!/bin/sh
+    #     npm install --only-dev
+    #     npm run coverage
+    #   securityContext:
+    #     runAsUser: 0 # might not be the best option
+
+    - name: test-performance
       image: ubi8/nodejs-10
       resources: {}
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
-        #!/bin/sh
-        #!/bin/sh
-        npm test
+        #!/bin/bash
+        DURATION=10       # how long should load be applied ? - in seconds
+        TPS=200            # number of requests per second
+        end=$((SECONDS+$DURATION))
+        #start load
+        while [ $SECONDS -lt $end ];
+        do
+          for ((i=1;i<=$TPS;i++)); do
+                  curl -X POST http://release-1-1-0-nodejs-tekton-production.apps.s45.core.rht-labs.com/ -H 'Accept: application/json' -H 'Authorization: Bearer xxxxxxxxxxxxx' -H 'Content-Type: application/json' -d '{}' -o /dev/null -s -w '%{time_starttransfer}\n' >> response-times.log &
+          done
+          sleep 1
+        done
+        wait
+        #end load
+        echo Load times $(cat response-times.log)
+        echo "Load test has been completed"
+        exit 0
 
-    - name: test-report
-      env:
-        - name: GITHUBTOKEN
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.pipeline.webhook.github.secret }}
-              key: token
+    # - name: test-report
+    #   env:
+    #     - name: GITHUBTOKEN
+    #       valueFrom:
+    #         secretKeyRef:
+    #           name: {{ .Values.pipeline.webhook.github.secret }}
+    #           key: token
+    #   image: registry.access.redhat.com/ubi8/ubi:latest
+    #   script: |
+    #     #!/usr/libexec/platform-python
+    #     import json
+    #     import os
+    #     import http.client
+    #     status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
 
-      image: registry.access.redhat.com/ubi8/ubi:latest
-      script: |
-        #!/usr/libexec/platform-python
-        import json
-        import os
-        import http.client
-        status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
-
-        data = {
-            "state": "success",
-            "target_url": "{{ .Values.pipeline.webhook.host }}",
-            "description": "Tests are passing",
-            "context": "tekton"
-        }
-        conn = http.client.HTTPSConnection("api.github.com")
-        r = conn.request(
-            "POST",
-            status_url.rstrip("\n"),
-            body=json.dumps(data),
-            headers={
-                "User-Agent": "TektonCD, the peaceful cat",
-                "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
-            })
-        resp = conn.getresponse()
-        if not str(resp.status).startswith("2"):
-            print("Error: %d" % (resp.status))
-            print(resp.read())
-        else:
-          print("GitHub status 'success' has been set")
+    #     data = {
+    #         "state": "success",
+    #         "target_url": "{{ .Values.pipeline.webhook.host }}",
+    #         "description": "Tests are passing",
+    #         "context": "tekton"
+    #     }
+    #     conn = http.client.HTTPSConnection("api.github.com")
+    #     r = conn.request(
+    #         "POST",
+    #         status_url.rstrip("\n"),
+    #         body=json.dumps(data),
+    #         headers={
+    #             "User-Agent": "TektonCD, the peaceful cat",
+    #             "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
+    #         })
+    #     resp = conn.getresponse()
+    #     if not str(resp.status).startswith("2"):
+    #         print("Error: %d" % (resp.status))
+    #         print(resp.read())
+    #     else:
+    #       print("GitHub status 'success' has been set")
