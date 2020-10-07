@@ -14,16 +14,33 @@ spec:
     - name: revision
       description: commit head unique id
   steps:
-    - name: e2e
+    - name: test-frontend
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm run e2e
+
+    - name: test-integration
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      args:
+        - |-
+          npm run coverage
+
+    - name: test-coverage
       image: ubi8/nodejs-10
       resources: {}
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
-        npm run e2e
+        #!/bin/sh
+        npm test
 
-
-    - name: update-github-status
+    - name: test-report
       env:
         - name: GITHUBTOKEN
           valueFrom:
@@ -45,8 +62,6 @@ spec:
             "description": "Tests are passing",
             "context": "tekton"
         }
-        print("Sending this data to GitHub: ")
-        print(data)
         conn = http.client.HTTPSConnection("api.github.com")
         r = conn.request(
             "POST",
@@ -61,4 +76,4 @@ spec:
             print("Error: %d" % (resp.status))
             print(resp.read())
         else:
-          print("GitHub status 'success' has been set on commit")
+          print("GitHub status 'success' has been set")
