@@ -87,17 +87,16 @@ spec:
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
-        if [ "$(params.revision-type)" == "release" ]; then
-          before=$(cat package.json \
-          | grep version \
-          | head -1 \
-          | awk -F: '{ print $2 }' \
-          | sed 's/[",]//g')
-          
-          before=$(echo -e $before)
-          version=$(npm version minor)
-          echo "Upgraded to $version"
+        before=$(cat package.json \
+        | grep version \
+        | head -1 \
+        | awk -F: '{ print $2 }' \
+        | sed 's/[",]//g')
+        
+        before=$(echo -e $before)
 
+        if [ "$(params.revision-type)" == "release" ]; then
+          version=$(npm version minor)
           if [ "$version" = "v$(params.revision-name)" ]; then
             echo Version is OK
             exit 0
@@ -105,13 +104,13 @@ spec:
             echo "Version from package.json ($before) does not match with branch $(params.revision-type)/$(params.revision-name)"
             exit 1
           fi
-
         elif [ "$(params.revision-type)" == "patch" ] || [ "$(params.revision-type)" = "hotfix" ]; then
-          if [ "$(npm version patch)" = "v$(params.revision-name)" ]; then
-            echo "Version from package.json upgraded to v$version"
+          version=$(npm version patch)
+          if [ "$version" = "v$(params.revision-name)" ]; then
+            echo "Version from package.json upgraded to $version"
           else
             echo "Version from package.json ($before) does not match with branch $(params.revision-type)/$(params.revision-name)"
-            exit 1 
+            exit 1
           fi
         else
           echo "Skipping npm version upgrade since we are in a $(params.revision-type) branch"

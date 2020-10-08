@@ -5,8 +5,6 @@ metadata:
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
-    # - name: run-id
-    #   type: string
     - name: ref
       type: string
     - name: revision
@@ -125,7 +123,6 @@ spec:
     #       set -ex
     #       find /workspace/source/{{ .Values.application.from.git.s2i.context }}
 
-    # good for debugging
     # - name: pause
     #   image: docker
-    #   args: ["sleep", "30000"]
+    #   args: ["sleep", "120000"]

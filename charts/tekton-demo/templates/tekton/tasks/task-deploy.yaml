@@ -87,6 +87,7 @@ spec:
             else
               echo "Application is already exposed."
               echo $hostname
+              echo ""
             fi
 
             oc get route/$appname -n {{ .Values.application.environments.development }}
@@ -96,6 +97,7 @@ spec:
               sleep 5
               oc patch svc/$appname -p '{ "spec": {"type":"LoadBalancer"}}, { "ports": [ { "name": "gw", "protocol": "TCP", "port": 8080,"targetPort": 8080 } ] } }' -n {{ .Values.application.environments.development }}
             else
+              echo ""
               echo "Route is already available."
               echo $hostname
             fi

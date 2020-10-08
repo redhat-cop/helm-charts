@@ -41,7 +41,7 @@ spec:
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
-        npm install --only-dev
+        npm install --only-dev --allow-root
         npm test
       securityContext:
         runAsUser: 0 # might not be the best option
