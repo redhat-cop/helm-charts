@@ -40,7 +40,6 @@ spec:
         workingDir: /workspace/source
         script: |
           #!/bin/sh
-          # todo: condition for develop branch
           if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
             replace=$(inputs.params.revision-name)
             revisionName=${replace//./-}
@@ -131,24 +130,27 @@ spec:
       - name: app-envs
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
-        command: ["/bin/bash", "-c"]
-        args:
-          - |-
-            replace=$(inputs.params.revision-name)
-            revisionName=${replace//./-}
-            appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
-
-            if [ "$(inputs.params.revision-type)" == "develop" ]; then
-              # overwrite appname structure
-              appname={{ .Values.application.name }}-$revisionName
-            fi
-
-            oc set env deployment/$appname environment=development
-            oc set env deployment/$appname version=$(inputs.params.revision-name)
-            oc set env deployment/$appname revision-id=$(inputs.params.revision-short) -n {{ .Values.application.environments.production }}
-            oc set env deployment/$appname revision-type=$(inputs.params.revision-type) -n {{ .Values.application.environments.production }}
-            oc set env deployment/$appname revision-name=$revisionName -n {{ .Values.application.environments.production }}
-            oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.development }}
+        script: |
+          #!/bin/sh
+          replace=$(inputs.params.revision-name)
+          revisionName=${replace//./-}
+          appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          environment={{ .Values.application.environments.development }}
+          
+          if [ "$(inputs.params.revision-type)" == "develop" ]; then
+            # overwrite appname structure
+            appname={{ .Values.application.name }}-$revisionName
+            oc set env deployment/$appname --list -n $environment
+            oc set env deployment/$appname --overwrite version=$(inputs.params.revision-short) -n $environment
+          else
+            oc set env deployment/$appname --list -n $environment
+            oc set env deployment/$appname --overwrite revision-id=$(inputs.params.revision-short) -n $environment
+            oc set env deployment/$appname --overwrite revision-name=$revisionName -n $environment
+            oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n $environment
+          fi
+          
+          oc set env deployment/$appname  --overwrite environment=development -n $environment
+          oc set env deployment/$appname  --overwrite revision-type=$(inputs.params.revision-type) -n $environment
 
       - name: app-probes
         image: quay.io/openshift/origin-cli:latest

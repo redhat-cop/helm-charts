@@ -6,11 +6,11 @@ cluster: apps.s45.core.rht-labs.com
 application:
   name: nodejs-tekton
   version: 1.0.0
-  runtime: nodejs:10 # default to node
+  runtime: nodejs:10
   environments:
+    cicd: nodejs-tekton-cicd
     development: nodejs-tekton-development
     production: nodejs-tekton-production
-    cicd: nodejs-tekton-cicd
   from:
     git:
       name: helm-charts

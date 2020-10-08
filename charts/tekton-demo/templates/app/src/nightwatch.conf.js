@@ -38,7 +38,7 @@ module.exports = {
         // }
         chromeOptions: {
           args: ['--no-sandbox', 'headless'],
-          w3c: true,
+          w3c: false,
         },
       },
     },

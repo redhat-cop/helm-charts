@@ -47,7 +47,7 @@ spec:
         runAsUser: 0 # might not be the best option
 
     - name: test-performance
-      image: ubi8/nodejs-10
+      image: quay.io/openshift/origin-cli:latest
       resources: {}
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
@@ -84,8 +84,9 @@ spec:
           #end load
           echo "Load test has been completed"
           exit 0
-
         fi
+      securityContext:
+        runAsUser: 0 # might not be the best option
 
     - name: test-report
       env:
