@@ -127,7 +127,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - |-
-          npm install --only-dev
+          npm install --only-dev --unsafe-perm=true --allow-root
       securityContext:
         runAsUser: 0 # might not be the best option
 

@@ -147,6 +147,10 @@ spec:
         value: $(params.repofullname)
       - name: revision
         value: $(params.revision)
+      - name: revision-type
+        value: $(tasks.info.results.revision-type)
+      - name: revision-name
+        value: $(tasks.info.results.revision-name)
       resources:
         inputs:
           - name: source

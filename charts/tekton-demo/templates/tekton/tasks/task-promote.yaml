@@ -180,7 +180,7 @@ spec:
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
           oc set env deployment/$appname environment=production
           oc set env deployment/$appname version=$(inputs.params.revision-name)
-          oc set env deployment/$appname revision-id=$(inputs.params.revision-short) -n {{ .Values.application.environments.production }}
+          oc set env deployment/$appname revision-id=$(inputs.params.revision-short) -n {{ .Values.application.environments.production }} 
           oc set env deployment/$appname revision-type=$(inputs.params.revision-type) -n {{ .Values.application.environments.production }}
           oc set env deployment/$appname revision-name=$revisionName -n {{ .Values.application.environments.production }}
 
@@ -210,23 +210,27 @@ spec:
     - name: app-autoscale
       image: quay.io/openshift/origin-cli:latest
       workingDir: /workspace/source
-      command: ["/bin/bash", "-c"]
-      args:
-        - |-
-          replace=$(inputs.params.revision-name)
-          revisionName=${replace//./-}
+      script: |
+        #!/bin/sh
+
+        replace=$(inputs.params.revision-name)
+        revisionName=${replace//./-}
+
+        if [ "$(inputs.params.revision-type)" == "release" ] || [ "$(inputs.params.revision-type)" == "hotfix" ] || [ "$(inputs.params.revision-type)" == "patch" ]; then
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
-          if [ "$(inputs.params.revision-type)" == "release" ]; then
-            oc get hpa $appname  -n {{ .Values.application.environments.production }}
-            if [[ $? -ne 0 ]]
-            then
-                oc autoscale deployment $appname \
-                  --min 1 --max 2 --cpu-percent=75 \
-                  --namespace {{ .Values.application.environments.production }}
-            else
-                echo "Application autoscale is already configured."
-            fi
+          min=1
+          max=10
+          threshold=50
+
+          oc get hpa $appname -n {{ .Values.application.environments.production }} --ignore-not-found
+          if [[ $? -ne 0 ]]; then
+            oc autoscale deployment $appname \
+              --min $min --max $max --cpu-percent=$threshold \
+              --namespace {{ .Values.application.environments.production }}
+          else
+            echo "Application autoscale is already configured."
           fi
+        fi
 
     - name: app-triggers
       image: quay.io/openshift/origin-cli:latest

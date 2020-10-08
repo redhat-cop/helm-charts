@@ -11,3 +11,4 @@ application
 templates/application
 templates/app/angular-node-typescript-boiler
 templates/app/src
+templates/app/express-typescript-boilerplate
