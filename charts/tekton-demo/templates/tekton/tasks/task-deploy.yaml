@@ -137,20 +137,26 @@ spec:
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
           environment={{ .Values.application.environments.development }}
           
-          if [ "$(inputs.params.revision-type)" == "develop" ]; then
-            # overwrite appname structure
-            appname={{ .Values.application.name }}-$revisionName
+          if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
+
+            if [ "$(inputs.params.revision-type)" == "develop" ]; then
+              # overwrite appname structure
+              appname={{ .Values.application.name }}-$revisionName
+              oc set env deployment/$appname --overwrite version=$(inputs.params.revision-short) -n $environment
+            else
+              oc set env deployment/$appname --overwrite revision-id=$(inputs.params.revision-short) -n $environment
+              oc set env deployment/$appname --overwrite revision-name=$revisionName -n $environment
+              oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n $environment
+            fi
+            
+            oc set env deployment/$appname --overwrite environment=development -n $environment
+            oc set env deployment/$appname --overwrite revision-type=$(inputs.params.revision-type) -n $environment
             oc set env deployment/$appname --list -n $environment
-            oc set env deployment/$appname --overwrite version=$(inputs.params.revision-short) -n $environment
+
           else
-            oc set env deployment/$appname --list -n $environment
-            oc set env deployment/$appname --overwrite revision-id=$(inputs.params.revision-short) -n $environment
-            oc set env deployment/$appname --overwrite revision-name=$revisionName -n $environment
-            oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n $environment
+            echo "Branch type $(inputs.params.revision-type) does not deploy to development"
+            exit 0
           fi
-          
-          oc set env deployment/$appname  --overwrite environment=development -n $environment
-          oc set env deployment/$appname  --overwrite revision-type=$(inputs.params.revision-type) -n $environment
 
       - name: app-probes
         image: quay.io/openshift/origin-cli:latest

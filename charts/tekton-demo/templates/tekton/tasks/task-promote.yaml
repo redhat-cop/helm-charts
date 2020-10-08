@@ -82,6 +82,7 @@ spec:
         git config --global user.name  "$(params.author)"
         git config --global user.email "$(params.email)"
         git remote set-url origin "https://{{ .Values.pipeline.webhook.github.user }}:$GITHUBTOKEN@github.com/{{ .Values.pipeline.webhook.github.org }}/{{ .Values.pipeline.webhook.github.repo }}.git" > /dev/null 2>&1
+        git fetch --all --tags > /dev/null 2>&1
         git checkout $(params.revision-type)/$(params.revision-name) > /dev/null 2>&1
         git log master..$(params.revision-type)/$(params.revision-name) --oneline --no-merges --decorate > release-v$(params.revision-name).md
         npm version minor > /dev/null 2>&1

@@ -5,6 +5,8 @@ metadata:
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
+    # - name: run-id
+    #   type: string
     - name: ref
       type: string
     - name: revision
@@ -56,6 +58,7 @@ spec:
         cluster=$(echo "apps."${server//https:\/\/api./})
         cluster=${cluster//:6443/}
         echo $cluster
+
         echo $(params.ref)
         echo $(params.revision)
         echo $(params.author)

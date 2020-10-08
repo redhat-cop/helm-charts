@@ -20,6 +20,9 @@ spec:
     - name: release-notes
     
   params:
+    # - name: run-id
+    #   description: pipeline run name
+    #   default: $(context.pipelineRun.uid)
     - name: ref
       description: Ref of the application
     - name: revision
@@ -60,6 +63,8 @@ spec:
           - name: source
             resource: nodejs-git
       params:
+      # - name: run-id
+      #   value: $(params.run-id)
       - name: ref
         value: $(params.ref)
       - name: repourl
