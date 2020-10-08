@@ -3,12 +3,16 @@ block content
   .container
       h2 
         p
-         | Hello from #{version} (##{hash})
-      br         
+         | Hello from #{getRevisionId()} 
       br
+      h3
+        p
+         | Running in #{getEnvironment()}
+         | From pod #{getPod()}
+
       h5
         p
-         | This is an application build & deployed via Cloud-native CI/CD Tekton Pipeline.
+         | This is an application build & deployed via Cloud-native CI/CD Tekton Pipeline. Version: #{version} 
          br
          br
          | In order to use the "Get Author" function please also deploy the OpenLiberty Authors API
