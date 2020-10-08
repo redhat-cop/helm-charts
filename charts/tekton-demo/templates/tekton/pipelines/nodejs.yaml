@@ -9,9 +9,9 @@ spec:
   resources:
     - name: nodejs-git
       type: git
-    - name: nodejs-image-development
+    - name: {{ .Values.application.name }}-development
       type: image
-    - name: nodejs-image-production
+    - name: {{ .Values.application.name }}-production
       type: image
 
   workspaces:
@@ -20,9 +20,6 @@ spec:
     - name: release-notes
     
   params:
-    # - name: run-id
-    #   description: pipeline run name
-    #   default: $(context.pipelineRun.uid)
     - name: ref
       description: Ref of the application
     - name: revision
@@ -37,21 +34,9 @@ spec:
       description: commit author email
     - name: message
       description: commit message
-    - name: APP_NAME
-      description: The name of the application
-      default: {{ .Values.application.name }}
-    - name: APP_VERSION
-      description: The version of the application
-      default: {{ .Values.application.version }}
     - name: AUTHORS_API_KEY
       description: The OCP secret that contains DB credentials
       default: 'authors-secret-api'
-    - name: DEPLOY_PROJECT
-      description: The project where you deploy the app
-      default: {{ .Values.application.environments.development }}
-    - name: PROMOTE_PROJECT
-      description: The project where you deploy the app
-      default: {{ .Values.application.environments.production }}
 
   tasks:
     - name: info
@@ -63,8 +48,6 @@ spec:
           - name: source
             resource: nodejs-git
       params:
-      # - name: run-id
-      #   value: $(params.run-id)
       - name: ref
         value: $(params.ref)
       - name: repourl
@@ -104,7 +87,7 @@ spec:
             resource: nodejs-git
         outputs:
           - name: image
-            resource: nodejs-image-development
+            resource: {{ .Values.application.name }}-development
 
     - name: deploy
       # conditions:
@@ -136,7 +119,7 @@ spec:
       resources:
         inputs:
           - name: image
-            resource: nodejs-image-development
+            resource: {{ .Values.application.name }}-development
 
     - name: test
       taskRef:
@@ -192,25 +175,17 @@ spec:
         value: $(params.author)
       - name: email
         value: $(params.email)
-      - name: APP_NAME
-        value: $(params.APP_NAME)
-      - name: APP_VERSION
-        value: $(params.APP_VERSION)
       - name: AUTHORS_API_KEY
         value: $(params.AUTHORS_API_KEY)
-      - name: DEPLOY_PROJECT
-        value: $(params.DEPLOY_PROJECT)
-      - name: PROMOTE_PROJECT
-        value: $(params.PROMOTE_PROJECT)
       resources:
         inputs:
           - name: source
             resource: nodejs-git
           - name: image
-            resource: nodejs-image-development
+            resource: {{ .Values.application.name }}-development
         outputs:
           - name: image
-            resource: nodejs-image-production
+            resource: {{ .Values.application.name }}-production
 
     - name: release
       taskRef:

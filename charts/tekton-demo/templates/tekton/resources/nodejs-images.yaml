@@ -28,7 +28,7 @@ metadata:
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: nodejs-image-development
+  name: {{ .Values.application.name }}-development
   namespace: {{ .Values.application.environments.cicd }}
   labels:
     app: {{ .Values.application.name }}
@@ -41,7 +41,7 @@ spec:
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: nodejs-image-production
+  name: {{ .Values.application.name }}-production
   namespace: {{ .Values.application.environments.cicd }}
   labels:
     app: {{ .Values.application.name }}

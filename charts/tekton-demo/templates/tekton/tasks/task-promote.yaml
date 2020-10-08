@@ -27,25 +27,9 @@ spec:
       type: string
     - name: email
       type: string
-    - name: APP_NAME
-      description: The name of the application
-      default: {{ .Values.application.name }}
-      type: string
-    - name: APP_VERSION
-      description: The version of the application
-      default: {{ .Values.application.version }}
-      type: string
     - name: AUTHORS_API_KEY
       description: The version of the application
       default: 'authors-secret-api'
-      type: string
-    - name: DEPLOY_PROJECT
-      description: The project where you deploy the app
-      default: {{ .Values.application.environments }}
-      type: string
-    - name: PROMOTE_PROJECT
-      description: The project where you promote the app
-      default: {{ .Values.application.environments }}
       type: string
   resources:
     inputs:

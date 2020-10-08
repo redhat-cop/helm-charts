@@ -55,16 +55,8 @@ spec:
           value: 'nodejs-tekton-development'
         - name: PROMOTE_ENVIRONMENT
           value: 'nodejs-tekton-production'
-        - name: APP_NAME
-          value: {{ .Values.application.name }}
-        - name: APP_VERSION
-          value: $(params.revision)
         - name: AUTHORS_API_KEY
           value: 'authors-secret-api'
-        - name: DEPLOY_PROJECT
-          value: {{ .Values.application.environments.development }}
-        - name: PROMOTE_PROJECT
-          value: {{ .Values.application.environments.production }}
       pipelineRef:
         name: {{ .Values.pipeline.name }}
       resources:
@@ -76,12 +68,12 @@ spec:
                 value: $(params.repourl)
               - name: revision
                 value: $(params.revision)
-        - name: nodejs-image-development
+        - name: {{ .Values.application.name }}-development
           resourceRef:
-            name: nodejs-image-development
-        - name: nodejs-image-production
+            name: {{ .Values.application.name }}-development
+        - name: {{ .Values.application.name }}-production
           resourceRef:
-            name: nodejs-image-production
+            name: {{ .Values.application.name }}-production
       workspaces:
         - name: shared-workspace
         - name: upload

@@ -5,12 +5,32 @@ metadata:
   name: {{ .Values.application.name }}
   namespace: {{ .Values.application.environments.cicd }}
 spec:
-  serviceAccountName: pipeline
+  serviceAccountName: {{ .Values.pipeline.sa.default }}
   triggers:
-  - bindings:
-    - name: trigger-binding
-    template:
-      name: {{ .Values.application.name }}-trigger-template
+    - name: github-event-push
+      interceptors:
+        - cel:
+            filter: "header.match('X-GitHub-Event', 'push')"
+      bindings:
+      - name: trigger-binding
+      template:
+        name: {{ .Values.application.name }}-trigger-template
+
+    - name: github-event-pullrequest
+      interceptors:
+        - cel:
+            filter: "header.match('X-GitHub-Event', 'pull_request')"
+            overlays:
+            - key: extensions.truncated_sha
+              expression: "body.pull_request.head.sha.truncate(7)"
+      bindings:
+      - name: trigger-binding
+      template:
+        name: {{ .Values.application.name }}-trigger-template
+  # - bindings:
+  #   - name: trigger-binding
+  #   template:
+  #     name: {{ .Values.application.name }}-trigger-template
 ---
 apiVersion: route.openshift.io/v1
 kind: Route

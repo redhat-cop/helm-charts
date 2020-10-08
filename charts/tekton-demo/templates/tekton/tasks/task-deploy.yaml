@@ -80,7 +80,7 @@ spec:
               hostname=$revisionName-{{ .Values.application.environments.development }}.{{ .Values.cluster }}
             fi
 
-            oc get svc/$appname -n {{ .Values.application.environments.development }} --ignore-not-found
+            oc get svc/$appname -n {{ .Values.application.environments.development }}
             if [[ $? -ne 0 ]]; then
               echo "Exposing"
               oc expose svc/$appname -n {{ .Values.application.environments.development }}
@@ -89,7 +89,7 @@ spec:
               echo $hostname
             fi
 
-            oc get route/$appname -n {{ .Values.application.environments.development }} --ignore-not-found
+            oc get route/$appname -n {{ .Values.application.environments.development }}
             if [[ $? -ne 0 ]]; then
               echo "Creating routes"
               oc create route edge --service $appname --port 8080 --hostname $hostname -n {{ .Values.application.environments.development }}
