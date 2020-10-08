@@ -3,7 +3,7 @@ block content
   .container
       h2 
         p
-         | Hello from demo
+         | Hello from #{version} (##{hash})
       br         
       br
       h5
@@ -20,7 +20,7 @@ block content
     
       .row
         .col-md-3
-          form(method="post", action="/nodejs/get_links")
+          form(method="post", action="/get_links")
             .form-group
               label.sr-only(for="author") Author Name
               input.form-control( name="author" type="text" placeholder="Enter Author Name (for ex: Vlad)" required='required')

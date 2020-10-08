@@ -11,7 +11,12 @@ const AUTHORS_API_KEY = process.env.AUTHORS_API_KEY || 'none';
 
 /* GET home page. */
 router.get('/', (req, res) => {
-  res.render('index', { links: null, error_authors: null });
+  res.render('index', {
+    version: process.env.version,
+    hash: process.env['revision-id'],
+    links: null,
+    error_authors: null,
+  });
 });
 
 router.post('/get_links', async (req, res) => {
