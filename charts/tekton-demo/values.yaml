@@ -4,16 +4,14 @@
 cluster: apps.s45.core.rht-labs.com
 
 application:
-  name: nodejs-tekton
-  version: 1.0.0
+  name: do101
   runtime: nodejs:10
   environments:
-    cicd: nodejs-tekton-cicd
-    development: nodejs-tekton-development
-    production: nodejs-tekton-production
+    cicd: do101-cicd
+    development: do101-development
+    production: do101-production
   from:
     git:
-      name: helm-charts
       url: https://github.com/mvmaestri/helm-charts
       revision: release/1.1.0
       submodules: '"false"'
