@@ -78,9 +78,15 @@ spec:
         | sed 's/[",]//g')
         
         before=$(echo -e $before)
+        # hack for first version to be upgraded as major
+        if [ "$before" == "0.0.0" ]; then
+          importance=major
+        else
+          importance=minor
+        fi
 
         if [ "$(params.revision-type)" == "release" ]; then
-          version=$(npm version minor)
+          version=$(npm version $importance)
           if [ "$version" = "v$(params.revision-name)" ]; then
             echo Version is OK
             exit 0

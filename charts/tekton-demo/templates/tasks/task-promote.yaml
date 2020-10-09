@@ -63,13 +63,27 @@ spec:
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
+        before=$(cat package.json \
+        | grep version \
+        | head -1 \
+        | awk -F: '{ print $2 }' \
+        | sed 's/[",]//g')        
+        before=$(echo -e $before)
+
         git config --global user.name  "$(params.author)"
         git config --global user.email "$(params.email)"
         git remote set-url origin "https://{{ .Values.pipeline.webhook.github.user }}:$GITHUBTOKEN@github.com/{{ .Values.pipeline.webhook.github.org }}/{{ .Values.pipeline.webhook.github.repo }}.git" > /dev/null 2>&1
         git fetch --all --tags > /dev/null 2>&1
         git checkout $(params.revision-type)/$(params.revision-name) > /dev/null 2>&1
         git log master..$(params.revision-type)/$(params.revision-name) --oneline --no-merges --decorate > release-v$(params.revision-name).md
-        npm version minor > /dev/null 2>&1
+        
+        # hack for first version to be upgraded as major
+        if [ "$before" == "0.0.0" ]; then
+          npm version major > /dev/null 2>&1
+        else
+          npm version minor > /dev/null 2>&1
+        fi
+        
         git add release-v$(params.revision-name).md
         git add package.json
         git commit -m "Including release notes"
