@@ -1,0 +1,9 @@
+apiVersion: v2
+appVersion: v1.1.0
+description: A Helm chart for deploying maildev SMTP server.
+name: maildev
+type: application
+version: 0.1.0
+home: https://github.com/redhat-cop/helm-charts
+maintainers:
+- name: jtudelag
