@@ -136,11 +136,6 @@ spec:
             resource: {{ .Values.application.name }}-development
 
     - name: deploy
-      conditions:
-        - conditionRef: is-allowed-development
-          params:
-            - name: revision-type
-              value: $(tasks.info.results.revision-type)
       taskRef:
         name: deploy
       runAfter:

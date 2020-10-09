@@ -41,7 +41,8 @@ spec:
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
-        npm install --only-dev --allow-root
+        npm install --only-dev --unsafe-perm=true --allow-root
+        npm install chromedriver --detect_chromedriver_version
         npm test
       securityContext:
         runAsUser: 0 # might not be the best option
