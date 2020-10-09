@@ -1,9 +1,7 @@
 # tekton-demo
 
-The goal of this tool
-
-
-1. Install tkn cli
+<!-- The goal of this tool -->
+<!-- 1. Install tkn cli -->
 
 
 Images being used:
