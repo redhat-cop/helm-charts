@@ -19,14 +19,14 @@ Images being used:
 
 1. Create github secret
 
-    oc create secret generic github-webhook-secret --from-literal=token=e21b4763e84dc7e517bc7f0e0208dfd02febbdd3 -n do101-cicd
+    oc create secret generic github-webhook-secret --from-literal=token=XXXXXXX -n do101-cicd
 
 1. Create github private public key secret
 
     oc create secret generic github-deploy-secret \
         --from-file=ssh-privatekey=$HOME/.ssh/id_rsa \
         --namespace do101-cicd
-        
+
 Generating a new SSH key
 Open Terminal.
 
