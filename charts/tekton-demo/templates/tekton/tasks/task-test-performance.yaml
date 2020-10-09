@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: test-nodejs-app
+  name: test-performance
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
@@ -19,33 +19,7 @@ spec:
       type: string
     - name: revision-name
       description: revision name
-  resources:
-    inputs:
-      - name: source
-        type: git
   steps:
-    # - name: test-frontend
-    #   image: ubi8/nodejs-10
-    #   resources: {}
-    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-    #   script: |
-    #     #!/bin/sh
-    #     npm install --only-dev --unsafe-perm=true --allow-root
-    #     npm run test-e2e
-    #   securityContext:
-    #     runAsUser: 0 # might not be the best option
-
-    - name: test-integration
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      script: |
-        #!/bin/sh
-        npm install --only-dev --allow-root
-        npm test
-      securityContext:
-        runAsUser: 0 # might not be the best option
-
     - name: test-performance
       image: quay.io/openshift/origin-cli:latest
       resources: {}
@@ -87,40 +61,3 @@ spec:
         fi
       securityContext:
         runAsUser: 0 # might not be the best option
-
-    - name: test-report
-      env:
-        - name: GITHUBTOKEN
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.pipeline.webhook.github.secret }}
-              key: token
-      image: registry.access.redhat.com/ubi8/ubi:latest
-      script: |
-        #!/usr/libexec/platform-python
-        import json
-        import os
-        import http.client
-        status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
-
-        data = {
-            "state": "success",
-            "target_url": "{{ .Values.pipeline.webhook.host }}",
-            "description": "Tests are passing",
-            "context": "tekton"
-        }
-        conn = http.client.HTTPSConnection("api.github.com")
-        r = conn.request(
-            "POST",
-            status_url.rstrip("\n"),
-            body=json.dumps(data),
-            headers={
-                "User-Agent": "TektonCD, the peaceful cat",
-                "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
-            })
-        resp = conn.getresponse()
-        if not str(resp.status).startswith("2"):
-            print("Error: %d" % (resp.status))
-            print(resp.read())
-        else:
-          print("GitHub status 'success' has been set")

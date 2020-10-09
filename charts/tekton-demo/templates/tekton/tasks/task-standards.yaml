@@ -1,0 +1,86 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: standards
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: ref
+      description: Git reference
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
+    - name: revision
+      description: commit head unique id
+      type: string
+    - name: revision-type
+      description: revision type
+      type: string
+    - name: revision-name
+      description: revision name
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+  steps:
+    - name: code-prepare
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm install --only-dev --unsafe-perm=true --allow-root
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-audit
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm audit
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-lint
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm run lint
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-test
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          npm run test-unit
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+    - name: code-coverage
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      script: |
+        #!/bin/sh
+        npm run coverage
+      securityContext:
+        runAsUser: 0 # might not be the best option
+
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: gen-source
+      emptyDir: {}

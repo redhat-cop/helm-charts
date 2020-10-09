@@ -7,7 +7,7 @@ metadata:
     app: {{ .Values.application.name }}
 spec:
   resources:
-    - name: nodejs-git
+    - name: {{ .Values.application.name }}-git
       type: git
     - name: {{ .Values.application.name }}-development
       type: image
@@ -46,7 +46,7 @@ spec:
       resources:       
         inputs:
           - name: source
-            resource: nodejs-git
+            resource: {{ .Values.application.name }}-git
       params:
       - name: ref
         value: $(params.ref)
@@ -61,9 +61,55 @@ spec:
       - name: message
         value: $(params.message)
 
+    - name: prepare
+      taskRef:
+        name: prepare
+      runAfter:
+        - info
+      params:
+        - name: ref
+          value: $(tasks.info.results.ref)
+        - name: repourl
+          value: $(params.repourl)
+        - name: repofullname
+          value: $(params.repofullname)
+        - name: revision
+          value: $(tasks.info.results.revision)
+        - name: revision-type
+          value: $(tasks.info.results.revision-type)
+        - name: revision-name
+          value: $(tasks.info.results.revision-name)
+      resources:       
+        inputs:
+          - name: source
+            resource: {{ .Values.application.name }}-git
+
+    - name: standards
+      taskRef:
+        name: standards
+      runAfter:
+        - info
+      params:
+        - name: ref
+          value: $(tasks.info.results.ref)
+        - name: repourl
+          value: $(params.repourl)
+        - name: repofullname
+          value: $(params.repofullname)
+        - name: revision
+          value: $(tasks.info.results.revision)
+        - name: revision-type
+          value: $(tasks.info.results.revision-type)
+        - name: revision-name
+          value: $(tasks.info.results.revision-name)
+      resources:       
+        inputs:
+          - name: source
+            resource: {{ .Values.application.name }}-git
+
     - name: build
       taskRef:
-        name: nodejs-build
+        name: build
       runAfter:
         - info
       params:
@@ -84,7 +130,7 @@ spec:
       resources:       
         inputs:
           - name: source
-            resource: nodejs-git
+            resource: {{ .Values.application.name }}-git
         outputs:
           - name: image
             resource: {{ .Values.application.name }}-development
@@ -96,8 +142,10 @@ spec:
             - name: revision-type
               value: $(tasks.info.results.revision-type)
       taskRef:
-        name: deploy-nodejs-app
+        name: deploy
       runAfter:
+        - prepare
+        - standards
         - build
       params:
         - name: cluster
@@ -121,9 +169,28 @@ spec:
           - name: image
             resource: {{ .Values.application.name }}-development
 
-    - name: test
+    - name: test-stress
       taskRef:
-        name: test-nodejs-app
+        name: test-performance
+      runAfter:
+        - deploy
+      params:
+      - name: ref
+        value: $(params.ref)
+      - name: repourl
+        value: $(params.repourl)
+      - name: repofullname
+        value: $(params.repofullname)
+      - name: revision
+        value: $(params.revision)
+      - name: revision-type
+        value: $(tasks.info.results.revision-type)
+      - name: revision-name
+        value: $(tasks.info.results.revision-name)
+
+    - name: test-e2e
+      taskRef:
+        name: test-integration
       runAfter:
         - deploy
       params:
@@ -142,7 +209,7 @@ spec:
       resources:
         inputs:
           - name: source
-            resource: nodejs-git
+            resource: {{ .Values.application.name }}-git
 
     # todo: upgrade based on semantic versioning principles
     # only minor supported and patch
@@ -160,9 +227,10 @@ spec:
             - name: revision-type
               value: $(tasks.info.results.revision-type)
       taskRef:
-        name: promote-nodejs-app
+        name: promote
       runAfter:
-        - test
+        - test-e2e
+        - test-stress
       params:
       - name: cluster
         value: $(tasks.info.results.cluster)
@@ -185,7 +253,7 @@ spec:
       resources:
         inputs:
           - name: source
-            resource: nodejs-git
+            resource: {{ .Values.application.name }}-git
           - name: image
             resource: {{ .Values.application.name }}-development
         outputs:
@@ -210,4 +278,4 @@ spec:
       resources:
         inputs:
           - name: source
-            resource: nodejs-git
+            resource: {{ .Values.application.name }}-git

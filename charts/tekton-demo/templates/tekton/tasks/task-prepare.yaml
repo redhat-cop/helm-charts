@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: generic
+  name: prepare
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
@@ -48,8 +48,6 @@ spec:
             "description": "Building",
             "context": "tekton"
         }
-        print("Sending this data to GitHub: ")
-        print(data)
         conn = http.client.HTTPSConnection("api.github.com")
         r = conn.request(
             "POST",
@@ -65,70 +63,43 @@ spec:
             print(resp.read())
             # sys.exit(resp.read())
         else:
-          print("GitHub status 'pending' has been set on commit")
-    
+          print("GitHub status 'pending' has been set")     
+
     - name: validate
       image: ubi8/nodejs-10
       resources: {}
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
       script: |
         #!/bin/sh
-        if [ "$(params.revision-type)" == "release" ]; then
-          if [ "$(npm version minor)" = "v$(params.revision-name)" ]; then
-            echo "Package.json version upgraded to v$(params.revision-name)"
-          else
-            exit 1 "Version from package.json does not match with branch $(params.revision-type)/$(params.revision-name)"
-          fi
+        before=$(cat package.json \
+        | grep version \
+        | head -1 \
+        | awk -F: '{ print $2 }' \
+        | sed 's/[",]//g')
+        
+        before=$(echo -e $before)
 
-        elif [ "$(params.revision-type)" == "patch" ] || [ "$(params.revision-type)" = "hotfix" ]; then
-          if [ "$(npm version patch)" = "v$(params.revision-name)" ]; then
-            echo "Package.json version upgraded to v$(params.revision-name)"
+        if [ "$(params.revision-type)" == "release" ]; then
+          version=$(npm version minor)
+          if [ "$version" = "v$(params.revision-name)" ]; then
+            echo Version is OK
+            exit 0
           else
-            exit 1 "Version from package.json does not match with branch $releaseType/$(params.revision-name)"
+            echo "Version from package.json ($before) does not match with branch $(params.revision-type)/$(params.revision-name)"
+            exit 1
+          fi
+        elif [ "$(params.revision-type)" == "patch" ] || [ "$(params.revision-type)" = "hotfix" ]; then
+          version=$(npm version patch)
+          if [ "$version" = "v$(params.revision-name)" ]; then
+            echo "Version from package.json upgraded to $version"
+          else
+            echo "Version from package.json ($before) does not match with branch $(params.revision-type)/$(params.revision-name)"
+            exit 1
           fi
         else
           echo "Skipping npm version upgrade since we are in a $(params.revision-type) branch"
+          exit 0
         fi
-        
-      securityContext:
-        runAsUser: 0 # might not be the best option
-
-    - name: lint
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      script: |
-        #!/bin/sh
-        npm install --only-dev
-        npm run lint
-      securityContext:
-        runAsUser: 0 # might not be the best option
-
-    - name: generate
-      image: quay.io/openshift-pipeline/s2i
-      workingdir: /workspace/source
-      command: ['s2i', 'build', '{{ .Values.application.from.git.s2i.context }}', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen']
-      volumeMounts:
-        - name: gen-source
-          mountPath: /gen-source
-
-    - name: unit-test
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      script: |
-        #!/bin/sh
-        npm run test
-      securityContext:
-        runAsUser: 0 # todo: here, might not be the best option
-
-    - name: audit
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
-      script: |
-        #!/bin/sh
-        npm audit
       securityContext:
         runAsUser: 0 # might not be the best option
 

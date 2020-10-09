@@ -60,7 +60,7 @@ spec:
       pipelineRef:
         name: {{ .Values.pipeline.name }}
       resources:
-        - name: nodejs-git
+        - name: {{ .Values.application.name }}-git
           resourceSpec:
             type: git
             params:

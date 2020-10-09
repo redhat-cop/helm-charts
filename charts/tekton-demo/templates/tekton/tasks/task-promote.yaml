@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: promote-nodejs-app
+  name: promote
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   params:
