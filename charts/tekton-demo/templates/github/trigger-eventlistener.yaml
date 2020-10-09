@@ -11,9 +11,8 @@ spec:
       interceptors:
         - cel:
             filter: header.match('X-GitHub-Event', 'push')
-            overlays:
-            - key: extensions.truncated_sha
-              expression: "body.head_commit.id.truncate(7)"
+        - cel:
+            filter: "type(body.head_commit.id) == string"
             # overlays:
             # - key: extensions.branch_name
             #   expression: "body.ref.split('/')[2]"
