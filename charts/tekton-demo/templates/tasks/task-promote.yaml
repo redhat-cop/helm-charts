@@ -42,7 +42,6 @@ spec:
         type: image
 
   steps:
-
     - name: validate
       image: ubi8/nodejs-10
       resources: {}
@@ -61,6 +60,10 @@ spec:
     - name: release-notes
       image: ubi8/nodejs-10
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      volumeMounts:
+        - name: {{ .Values.pipeline.webhook.github.key }}
+          mountPath: /etc/idrsa
+          readOnly: true
       script: |
         #!/bin/sh
         before=$(cat package.json \
@@ -70,12 +73,27 @@ spec:
         | sed 's/[",]//g')        
         before=$(echo -e $before)
 
+        ls -ls /etc/idrsa/
+        touch ~/.ssh/config
+        ssh-add /etc/idrsa/ssh-privatekey
+        # chmod 400 ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/config
+        tee -a ~/.ssh/config << END
+        host github.com
+          HostName github.com
+          IdentitiesOnly yes
+          IdentityFile /etc/idrsa/ssh-privatekey
+          User git
+        END
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
         git config --global user.name  "$(params.author)"
         git config --global user.email "$(params.email)"
-        git remote set-url origin "https://{{ .Values.pipeline.webhook.github.user }}:$GITHUBTOKEN@github.com/{{ .Values.pipeline.webhook.github.org }}/{{ .Values.pipeline.webhook.github.repo }}.git" > /dev/null 2>&1
+        git remote set-url origin "git@github.com:{{ .Values.pipeline.webhook.github.org }}/{{ .Values.pipeline.webhook.github.repo }}.git"
+
         git fetch --all --tags > /dev/null 2>&1
-        git checkout $(params.revision-type)/$(params.revision-name) > /dev/null 2>&1
-        git log master..$(params.revision-type)/$(params.revision-name) --oneline --no-merges --decorate > release-v$(params.revision-name).md
+        git checkout -b $(params.revision-type)/$(params.revision-name) > /dev/null 2>&1
+        git log master..$(params.revision-type)/$(params.revision-name) --oneline --no-merges --decorate > release-v$(params.revision-name).md > /dev/null 2>&1
         
         # hack for first version to be upgraded as major
         if [ "$before" == "0.0.0" ]; then
@@ -83,18 +101,12 @@ spec:
         else
           npm version minor > /dev/null 2>&1
         fi
-        
+
         git add release-v$(params.revision-name).md
         git add package.json
         git commit -m "Including release notes"
         git tag -a $(params.revision-name) -m "Upgrade to v$(params.revision-name)"
         git push origin $(params.revision-type)/$(params.revision-name) --tags
-      env:
-        - name: GITHUBTOKEN
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.pipeline.webhook.github.secret }}
-              key: token
 
     - name: release-image
       image: quay.io/openshift/origin-cli:latest
@@ -179,7 +191,7 @@ spec:
         oc set env deployment/$appname --overwrite revision-id=$(inputs.params.revision-short) -n $environment
         oc set env deployment/$appname --overwrite revision-name=$revisionName -n $environment
         oc set env deployment/$appname --overwrite revision-type=$(inputs.params.revision-type) -n $environment
-        oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n $environment        
+        # oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n $environment        
 
     - name: app-secrets
       image: quay.io/openshift/origin-cli:latest
@@ -239,3 +251,7 @@ spec:
           revisionName=${replace//./-}
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
           oc set triggers deployment/$appname -n {{ .Values.application.environments.production }}
+  volumes:
+    - name: {{ .Values.pipeline.webhook.github.key }}
+      secret:
+        secretName: {{ .Values.pipeline.webhook.github.key }}

@@ -12,7 +12,7 @@ application:
     production: do101-production
   from:
     git:
-      url: https://github.com/mvmaestri/DO101-apps.git
+      url: https://github.com/mvmaestri/do101-apps.git
       revision: master
       submodules: '"false"'
       s2i:
@@ -28,5 +28,6 @@ pipeline:
     github: 
       org: mvmaestri
       user: mvmaestri
-      repo: DO101-apps
+      repo: do101-apps
       secret: github-webhook-secret
+      key: github-deploy-secret
