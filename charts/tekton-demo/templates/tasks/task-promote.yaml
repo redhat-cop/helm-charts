@@ -126,6 +126,31 @@ spec:
             echo "Application already exists."
         fi
 
+    - name: pull-request
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source
+      script: |
+        #!/bin/sh
+        curl -s https://api.github.com/repos/github/hub/releases/latest \
+        | grep browser_download_url \
+        | grep linux-amd64 \
+        | cut -d '"' -f 4 \
+        | wget -qi -
+        tar -xzf "$(find . -name "*hub-linux-amd64*")"
+        folder="$(find . -name "*hub-linux-amd64*" -type d)"
+        folder=${folder//.\//}
+        chmod +x $folder/bin/hub
+        $folder/bin/hub pull-request --base {{ .Values.pipeline.webhook.github.org }}:master --head {{ .Values.pipeline.webhook.github.org }}:$(inputs.params.revision-name) -m "Release $(inputs.params.revision-name)"
+      env:
+        - name: GITHUB_USER
+          value: {{ .Values.pipeline.webhook.github.user }}
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.pipeline.webhook.github.secret }}
+              key: token
+
     - name: app-expose
       image: quay.io/openshift/origin-cli:latest
       workingDir: /workspace/source
