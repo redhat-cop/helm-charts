@@ -12,12 +12,11 @@ application:
     production: do101-production
   from:
     git:
-      url: https://github.com/mvmaestri/helm-charts
+      url: https://github.com/mvmaestri/DO101-apps.git
       revision: master
       submodules: '"false"'
       s2i:
-        context: charts/tekton-demo/templates/app/src
-        #angular-node-typescript-boiler
+        context: weather
 
 pipeline:
   name: nodejs
