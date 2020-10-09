@@ -2,15 +2,19 @@
 
 The goal of this tool
 
+
 1. Install tkn cli
 
-Only supported images 
-- ubi8/nodejs-10
+
+Images being used:
+    
+    - ubi8/nodejs-10
+    - openshift/origin-cli
 
 
 1. Create github secret
 
-oc create secret generic github-webhook-secret --from-literal=token=XXXXXXXXXX -n do101-cicd
+    oc create secret generic github-webhook-secret --from-literal=token=XXXXXXXXXX -n do101-cicd
 
 
 2. Define policies
