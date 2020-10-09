@@ -290,7 +290,6 @@ spec:
             secretKeyRef:
               name: {{ .Values.pipeline.webhook.github.secret }}
               key: token
-
       image: registry.access.redhat.com/ubi8/ubi:latest
       script: |
         #!/usr/libexec/platform-python
@@ -300,7 +299,7 @@ spec:
         status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
 
         data = {
-            "state": "pending",
+            "state": "success",
             "target_url": "{{ .Values.pipeline.webhook.host }}",
             "description": "Building",
             "context": "tekton"
