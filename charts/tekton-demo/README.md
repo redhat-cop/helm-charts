@@ -27,24 +27,11 @@ Images being used:
         --from-file=ssh-privatekey=$HOME/.ssh/id_rsa \
         --namespace do101-cicd
 
-Generating a new SSH key
-Open Terminal.
+1. Install the package
 
-Paste the text below, substituting in your GitHub email address.
+    helm template -f charts/tekton-demo/values.yaml charts/tekton-demo | oc apply -f-
 
-$ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-This creates a new ssh key, using the provided email as a label.
 
-> Generating public/private rsa key pair.
-When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.
-
-> Enter a file in which to save the key (/Users/you/.ssh/id_rsa): [Press enter]
-At the prompt, type a secure passphrase. For more information, see "Working with SSH key passphrases".
-
-> Enter passphrase (empty for no passphrase): [Type a passphrase]
-> Enter same passphrase again: [Type passphrase again]
-
-1. Install helm package
 2. Check pod `create-do101-github-webhook-pod-kmc4p` and make sure the webhook was created correctly
 2. Define policies
 

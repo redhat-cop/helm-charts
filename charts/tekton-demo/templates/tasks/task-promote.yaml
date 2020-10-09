@@ -126,31 +126,6 @@ spec:
             echo "Application already exists."
         fi
 
-    - name: pull-request
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source
-      script: |
-        #!/bin/sh
-        curl -s https://api.github.com/repos/github/hub/releases/latest \
-        | grep browser_download_url \
-        | grep linux-amd64 \
-        | cut -d '"' -f 4 \
-        | wget -qi -
-        tar -xzf "$(find . -name "*hub-linux-amd64*")"
-        folder="$(find . -name "*hub-linux-amd64*" -type d)"
-        folder=${folder//.\//}
-        chmod +x $folder/bin/hub
-        $folder/bin/hub pull-request --base {{ .Values.pipeline.webhook.github.org }}:master --head {{ .Values.pipeline.webhook.github.org }}:$(inputs.params.revision-name) -m "Release $(inputs.params.revision-name)"
-      env:
-        - name: GITHUB_USER
-          value: {{ .Values.pipeline.webhook.github.user }}
-        - name: GITHUB_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.pipeline.webhook.github.secret }}
-              key: token
-
     - name: app-expose
       image: quay.io/openshift/origin-cli:latest
       workingDir: /workspace/source
@@ -227,7 +202,7 @@ spec:
           replace=$(inputs.params.revision-name)
           revisionName=${replace//./-}
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
-          oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.production }}
+          # oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.production }}
 
     - name: app-probes
       image: quay.io/openshift/origin-cli:latest
@@ -276,6 +251,77 @@ spec:
           revisionName=${replace//./-}
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
           oc set triggers deployment/$appname -n {{ .Values.application.environments.production }}
+
+    - name: pull-request
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source
+      script: |
+        #!/bin/sh
+        curl -s https://api.github.com/repos/github/hub/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4 | wget -qi -
+        tar -xzf "$(find . -name "*hub-linux-amd64*")"
+        folder="$(find . -name "*hub-linux-amd64*" -type d)"
+        folder=${folder//.\//}
+        chmod +x $folder/bin/hub
+        tee -a template.md << END
+          ### v$(inputs.params.revision-name)
+          This is a template
+        END
+
+        $folder/bin/hub pull-request \
+          --message="v$(inputs.params.revision-name)" \
+          --labels=release \
+          --file - < template.md \
+          --base={{ .Values.pipeline.webhook.github.org }}:master \
+          --head={{ .Values.pipeline.webhook.github.org }}:$(inputs.params.revision-type)/$(inputs.params.revision-name)
+      env:
+        - name: GITHUB_USER
+          value: {{ .Values.pipeline.webhook.github.user }}
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.pipeline.webhook.github.secret }}
+              key: token
+
+    - name: report
+      env:
+        - name: GITHUBTOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.pipeline.webhook.github.secret }}
+              key: token
+
+      image: registry.access.redhat.com/ubi8/ubi:latest
+      script: |
+        #!/usr/libexec/platform-python
+        import json
+        import os
+        import http.client
+        status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
+
+        data = {
+            "state": "pending",
+            "target_url": "{{ .Values.pipeline.webhook.host }}",
+            "description": "Building",
+            "context": "tekton"
+        }
+        conn = http.client.HTTPSConnection("api.github.com")
+        r = conn.request(
+            "POST",
+            status_url.rstrip("\n"),
+            body=json.dumps(data),
+            headers={
+                "User-Agent": "TektonCD, the peaceful cat",
+                "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
+            })
+        resp = conn.getresponse()
+        if not str(resp.status).startswith("2"):
+            print("Error: %d" % (resp.status))
+            print(resp.read())
+            # sys.exit(resp.read())
+        else:
+          print("GitHub status 'pending' has been set") 
+
   volumes:
     - name: {{ .Values.pipeline.webhook.github.key }}
       secret:

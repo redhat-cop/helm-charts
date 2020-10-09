@@ -47,6 +47,7 @@ spec:
       securityContext:
         runAsUser: 0 # might not be the best option
 
+    # todo: condition to only run in dev env
     - name: test-report
       env:
         - name: GITHUBTOKEN
@@ -65,7 +66,7 @@ spec:
         data = {
             "state": "success",
             "target_url": "{{ .Values.pipeline.webhook.host }}",
-            "description": "Tests are passing",
+            "description": "Successful deployed to dev. Tests are passing.",
             "context": "tekton"
         }
         conn = http.client.HTTPSConnection("api.github.com")
