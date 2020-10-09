@@ -28,5 +28,5 @@ pipeline:
     github: 
       org: mvmaestri
       user: mvmaestri
-      repo: helm-charts
+      repo: DO101-apps
       secret: github-webhook-secret

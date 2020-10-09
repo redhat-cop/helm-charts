@@ -10,7 +10,14 @@ spec:
     - name: github-event-push
       interceptors:
         - cel:
-            filter: "header.match('X-GitHub-Event', 'push')"
+            filter: header.match('X-GitHub-Event', 'push')
+            overlays:
+            - key: extensions.truncated_sha
+              expression: "body.head_commit.id.truncate(7)"
+            # overlays:
+            # - key: extensions.branch_name
+            #   expression: "body.ref.split('/')[2]"
+            # todo when tkn upgraded https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md#webhook-interceptors
       bindings:
       - name: trigger-binding
       template:
