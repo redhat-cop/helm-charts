@@ -1,0 +1,12 @@
+---
+# control used by Labs Ubiquitous Journey
+enabled: true
+
+name: uj-keycloak
+namespace: jtudelag-keycloak-chart
+
+# Operator container image version: https://quay.io/repository/keycloak/keycloak-operator?tag=latest&tab=tags
+version: 10.0.0
+
+# Deploy a keycloak instance
+keycloak_instance: true

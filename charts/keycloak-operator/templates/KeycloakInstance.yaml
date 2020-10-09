@@ -1,0 +1,21 @@
+{{- if and .Values.enabled .Values.keycloak_instance }}
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.name }}
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/name: {{ .Values.namespace }}-keycloak
+    app.kubernetes.io/part-of: {{ .Values.namespace }}
+spec:
+  instances: 1
+  extensions:
+    - https://github.com/aerogear/keycloak-metrics-spi/releases/download/1.0.4/keycloak-metrics-spi-1.0.4.jar
+  externalAccess:
+    enabled: True
+  podDisruptionBudget:
+    enabled: True
+{{- end }}
