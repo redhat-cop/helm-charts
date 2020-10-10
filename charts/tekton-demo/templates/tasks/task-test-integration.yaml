@@ -65,7 +65,7 @@ spec:
 
         data = {
             "state": "success",
-            "target_url": "{{ .Values.pipeline.webhook.host }}",
+            "target_url": "https://replaceme",
             "description": "Successful deployed to dev. Tests are passing.",
             "context": "tekton"
         }

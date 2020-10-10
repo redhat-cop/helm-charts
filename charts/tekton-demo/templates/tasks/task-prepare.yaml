@@ -44,7 +44,7 @@ spec:
 
         data = {
             "state": "pending",
-            "target_url": "{{ .Values.pipeline.webhook.host }}",
+            "target_url": "https://replaceme",
             "description": "Building",
             "context": "tekton"
         }
