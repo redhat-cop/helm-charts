@@ -34,6 +34,8 @@ spec:
       labels:
         webhooks.tekton.dev/repo: $(params.reponame)
         webhooks.tekton.dev/author: $(params.author)
+      annotations:
+        argocd.argoproj.io/compare-options: IgnoreExtraneous
     spec:
       serviceAccountName: {{ .Values.pipeline.sa.triggers }}
       params:

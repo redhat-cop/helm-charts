@@ -4,6 +4,8 @@ kind: TaskRun
 metadata:
   name: create-{{ .Values.application.name }}-github-webhook
   namespace: {{ .Values.application.environments.cicd }}
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
   taskRef:
     name: create-webhook
@@ -23,5 +25,5 @@ spec:
       value: secret
     - name: ExternalDomain
       value: http://trigger-{{ .Values.application.environments.cicd }}.{{ .Values.cluster }}
-  # timeout: 2000s
+  timeout: 2000s
   serviceAccountName: tekton-triggers-createwebhook
