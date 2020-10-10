@@ -84,6 +84,29 @@ spec:
           - name: source
             resource: {{ .Values.application.name }}-git
 
+    - name: helm
+      taskRef:
+        name: helm
+      runAfter:
+        - info
+      params:
+        - name: ref
+          value: $(tasks.info.results.ref)
+        - name: repourl
+          value: $(params.repourl)
+        - name: repofullname
+          value: $(params.repofullname)
+        - name: revision
+          value: $(tasks.info.results.revision)
+        - name: revision-type
+          value: $(tasks.info.results.revision-type)
+        - name: revision-name
+          value: $(tasks.info.results.revision-name)
+      resources:       
+        inputs:
+          - name: source
+            resource: {{ .Values.application.name }}-git
+
     - name: standards
       taskRef:
         name: standards
@@ -140,6 +163,7 @@ spec:
         name: deploy
       runAfter:
         - prepare
+        - helm
         - standards
         - build
       params:
