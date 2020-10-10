@@ -35,8 +35,6 @@ spec:
           chmod 700 get_helm.sh
           ./get_helm.sh
           cp /usr/local/bin/helm /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-          ls -ls
-          helm version
       securityContext:
         runAsUser: 0
 
@@ -48,7 +46,7 @@ spec:
         #!/bin/sh
           ls -ls
           ./helm lint chart
-          ./helm template -f chart/values chart
+          ./helm template -f chart/values.yaml chart
       securityContext:
         runAsUser: 0 # might not be the best option
 
