@@ -64,7 +64,7 @@ spec:
         - name: gen-source
           mountPath: /gen-source
       securityContext:
-        runAsUser: 0
+        privileged: true
         
     - name: image-push
       image: quay.io/buildah/stable
