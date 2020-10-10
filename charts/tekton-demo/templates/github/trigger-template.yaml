@@ -76,6 +76,9 @@ spec:
         - name: {{ .Values.application.name }}-production
           resourceRef:
             name: {{ .Values.application.name }}-production
+        - name: {{ .Values.application.name }}-documentation
+          resourceRef:
+            name: {{ .Values.application.name }}-documentation
       workspaces:
         - name: shared-workspace
         - name: upload
