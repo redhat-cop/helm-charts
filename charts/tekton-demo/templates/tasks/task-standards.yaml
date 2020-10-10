@@ -33,9 +33,10 @@ spec:
         #!/bin/sh
           npm ping --registry https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm ci
           if [[ $? -ne 0 ]]; then
-            npm --registry https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm --only-dev --unsafe-perm=true --allow-root
-          else
             npm install --only-dev --unsafe-perm=true --allow-root
+          else
+            echo Using nexus
+            npm --registry https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm ci --only-dev --unsafe-perm=true --allow-root
           fi
       securityContext:
         runAsUser: 0
