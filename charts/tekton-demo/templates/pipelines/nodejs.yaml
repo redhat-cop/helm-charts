@@ -157,7 +157,7 @@ spec:
           - name: source
             resource: {{ .Values.application.name }}-git
         outputs:
-          - name: image
+          - name: documentation
             resource: {{ .Values.application.name }}-documentation
 
     - name: build
