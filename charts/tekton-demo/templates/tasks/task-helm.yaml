@@ -48,6 +48,7 @@ spec:
         #!/bin/sh
           ls -ls
           ./helm lint chart
+          ./helm template -f chart/values chart
       securityContext:
         runAsUser: 0 # might not be the best option
 
