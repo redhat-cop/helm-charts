@@ -45,7 +45,7 @@ metadata:
     app.kubernetes.io/managed-by: EventListener
     app.kubernetes.io/part-of: Triggers
     eventlistener: {{ .Values.application.name }}
-  name: trigger
+  name: {{ .Values.application.name }}-trigger
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   port:
