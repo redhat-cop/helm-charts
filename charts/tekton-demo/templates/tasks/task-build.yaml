@@ -3,6 +3,8 @@ kind: Task
 metadata:
   name: build
   namespace: {{ .Values.application.environments.cicd }}
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
   params:
     - name: ref
@@ -32,7 +34,7 @@ spec:
       type: string
     - name: TLSVERIFY
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
-      default: false
+      default: "false"
       type: string
   resources:
     inputs:
@@ -41,12 +43,12 @@ spec:
     outputs:
       - name: image
         type: image
-  steps:    
+  steps:
+
     - name: image-generate
       image: quay.io/openshift-pipeline/s2i
       command: ['s2i', 'build', '{{ .Values.application.from.git.s2i.context }}', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen']
       workingdir: /workspace/source
-      resources: {}
       volumeMounts:
         - name: gen-source
           mountPath: /gen-source
