@@ -1,14 +1,4 @@
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{ .Values.application.environments.development }}
-  annotations:
-    helm.sh/hook: pre-install
-    helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "-10"
-    argocd.argoproj.io/sync-options: Prune=false
----
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -36,14 +26,3 @@ roleRef:
   kind: ClusterRole
   name: system:image-puller
   apiGroup: rbac.authorization.k8s.io
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{ .Values.application.environments.production }}
-  annotations:
-    helm.sh/hook: pre-install
-    helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "-10"
-    argocd.argoproj.io/sync-options: Prune=false
-
