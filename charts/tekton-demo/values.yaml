@@ -16,6 +16,8 @@ pipeline:
   sa:
     default: pipeline
     triggers: tekton-triggers-sa
+  nexus:
+    host: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm
   build:
     s2i:
       context: weather

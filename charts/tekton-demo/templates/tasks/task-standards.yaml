@@ -31,12 +31,12 @@ spec:
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-          npm ping --registry https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm install
+          npm ping --registry {{ .Values.pipeline.nexus.host }} install
           if [[ $? -ne 0 ]]; then
             npm install --only-dev --unsafe-perm=true --allow-root
           else
             echo Using nexus
-            npm --registry https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm install --only-dev --unsafe-perm=true --allow-root
+            npm --registry {{ .Values.pipeline.nexus.host }} install --only-dev --unsafe-perm=true --allow-root
           fi
       securityContext:
         runAsUser: 0
