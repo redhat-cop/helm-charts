@@ -47,7 +47,7 @@ spec:
 
     - name: image-generate
       image: quay.io/openshift-pipeline/s2i
-      command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/ruby:26', '--as-dockerfile', '/gen-source/Dockerfile.gen']
+      command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/ruby:2.7', '--as-dockerfile', '/gen-source/Dockerfile.gen']
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
       volumeMounts:
         - name: gen-source
@@ -64,7 +64,7 @@ spec:
         - name: gen-source
           mountPath: /gen-source
       securityContext:
-        privileged: true
+        runAsUser: 0
         
     - name: image-push
       image: quay.io/buildah/stable
