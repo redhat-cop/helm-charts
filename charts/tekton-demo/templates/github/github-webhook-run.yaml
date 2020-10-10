@@ -25,5 +25,5 @@ spec:
       value: secret
     - name: ExternalDomain
       value: http://trigger-{{ .Values.application.environments.cicd }}.{{ .Values.cluster }}
-  timeout: 2000s
+  # timeout: 2000s
   serviceAccountName: tekton-triggers-createwebhook
