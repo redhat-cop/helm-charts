@@ -24,7 +24,6 @@ pipeline:
     default: pipeline
     triggers: tekton-triggers-sa
   webhook:
-    host: http://trigger-nodejs-tekton-cicd.apps.s45.core.rht-labs.com/
     github: 
       org: mvmaestri
       user: mvmaestri
