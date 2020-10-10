@@ -43,9 +43,9 @@ spec:
         type: image
   steps:    
     - name: image-generate
-      # workingdir: /workspace/source
       image: quay.io/openshift-pipeline/s2i
       command: ['s2i', 'build', '{{ .Values.application.from.git.s2i.context }}', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen']
+      workingdir: /workspace/source
       volumeMounts:
         - name: gen-source
           mountPath: /gen-source   
