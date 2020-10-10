@@ -29,12 +29,16 @@ spec:
       image: ubi8/nodejs-10
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      command: ["/bin/bash", "-c"]
-      args:
-        - |-
-          npm install --only-dev --unsafe-perm=true --allow-root
+      script: |
+        #!/bin/sh
+          npm ping --registry https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm ci
+          if [[ $? -ne 0 ]]; then
+            npm --registry https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm --only-dev --unsafe-perm=true --allow-root
+          else
+            npm install --only-dev --unsafe-perm=true --allow-root
+          fi
       securityContext:
-        runAsUser: 0 # might not be the best option
+        runAsUser: 0
 
     - name: code-audit
       image: ubi8/nodejs-10
