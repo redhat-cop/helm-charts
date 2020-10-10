@@ -7,6 +7,7 @@ metadata:
     helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "-10"
+    argocd.argoproj.io/sync-options: Prune=false
 ---
 apiVersion: v1
 kind: Namespace
@@ -16,6 +17,7 @@ metadata:
     helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "-10"
+    argocd.argoproj.io/sync-options: Prune=false
 ---
 apiVersion: v1
 kind: Namespace
@@ -25,4 +27,5 @@ metadata:
     helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "-10"
+    argocd.argoproj.io/sync-options: Prune=false
 
