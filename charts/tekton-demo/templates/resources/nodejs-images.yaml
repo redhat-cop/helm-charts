@@ -25,6 +25,12 @@ metadata:
   name: {{ .Values.application.environments.production }}
   namespace: {{ .Values.application.environments.cicd }}
 ---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ .Values.application.name }}-documentation
+  namespace: {{ .Values.application.environments.cicd }}
+---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
@@ -36,7 +42,20 @@ spec:
   type: image
   params:
     - name: url
-      value: image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}
+      value: image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.cicd }}/{{ .Values.application.name }}-documentation
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: {{ .Values.application.name }}-documentation
+  namespace: {{ .Values.application.environments.development }}
+  labels:
+    app: {{ .Values.application.name }}
+spec:
+  type: image
+  params:
+    - name: url
+      value: image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
