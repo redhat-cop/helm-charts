@@ -7,8 +7,5 @@ spec:
   type: git
   params:
     - name: url
-      value: {{ .Values.application.from.git.url }}
     - name: revision
-      value: {{ .Values.application.from.git.revision }}
     - name: submodules
-      value: {{ .Values.application.from.git.submodules }}
