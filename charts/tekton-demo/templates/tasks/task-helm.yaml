@@ -36,6 +36,9 @@ spec:
           ./get_helm.sh
           ls -ls
           exit 1
+      securityContext:
+        runAsUser: 0
+
     # - name: chart-lint
     #   image: ubi8/nodejs-10
     #   resources: {}
