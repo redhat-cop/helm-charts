@@ -286,6 +286,7 @@ spec:
               key: token
 
     - name: report
+      image: registry.access.redhat.com/ubi8/ubi:latest
       workingDir: /workspace/source
       env:
         - name: GITHUBTOKEN
@@ -293,7 +294,6 @@ spec:
             secretKeyRef:
               name: {{ .Values.pipeline.webhook.github.secret }}
               key: token
-      image: registry.access.redhat.com/ubi8/ubi:latest
       script: |
         #!/usr/libexec/platform-python
         import json
