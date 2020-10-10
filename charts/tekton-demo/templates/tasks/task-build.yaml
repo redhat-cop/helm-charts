@@ -48,8 +48,7 @@ spec:
       workingdir: /workspace/source
       volumeMounts:
         - name: gen-source
-          mountPath: /gen-source   
-
+          mountPath: /gen-source
     - name: image-build
       image: quay.io/buildah/stable
       workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
@@ -62,7 +61,6 @@ spec:
       resources: {}
       securityContext:
         privileged: true
-
     - name: image-push
       image: quay.io/buildah/stable
       command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '$(outputs.resources.image.url):$(inputs.params.revision-name)', 'docker://$(outputs.resources.image.url):$(inputs.params.revision-name)']
@@ -72,7 +70,6 @@ spec:
       resources: {}
       securityContext:
         privileged: true
-
     # todo: label image properly
     - name: image-verify
       image: quay.io/openshift/origin-cli:latest
