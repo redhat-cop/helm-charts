@@ -1,0 +1,82 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: docs
+  namespace: {{ .Values.application.environments.cicd }}
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  params:
+    - name: ref
+      description: Git reference
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
+    - name: revision
+      description: commit head unique id
+      type: string
+    - name: revision-type
+      description: revision type
+      type: string
+    - name: revision-name
+      description: revision name
+      type: string
+    - name: author
+      description: revision commit author username
+    - name: VERSION
+      description: The version of nodejs
+      default: {{ .Values.application.runtime }}
+      type: string
+    - name: PATH_CONTEXT
+      description: The location of the path to run s2i from.
+      default: {{ .Values.pipeline.build.s2i.context }}
+      type: string
+    - name: TLSVERIFY
+      description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
+      default: "false"
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+    outputs:
+      - name: docs
+        type: image
+  steps:
+
+    - name: image-generate
+      image: quay.io/openshift-pipeline/s2i
+      command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/ruby:26', '--as-dockerfile', '/gen-source/Dockerfile.gen']
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
+      volumeMounts:
+        - name: gen-source
+          mountPath: /gen-source
+          
+    - name: image-build
+      image: quay.io/buildah/stable
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
+      command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-f', 'Dockerfile', '-t', '$(outputs.resources.docs.url):$(inputs.params.revision-name)', '.']
+      resources: {}
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+        - name: gen-source
+          mountPath: /gen-source
+      securityContext:
+        privileged: true
+        
+    - name: image-push
+      image: quay.io/buildah/stable
+      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '$(outputs.resources.docs.url):$(inputs.params.revision-name)', 'docker://$(outputs.resources.docs.url):$(inputs.params.revision-name)']
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+      resources: {}
+      securityContext:
+        privileged: true
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: gen-source
+      emptyDir: {}

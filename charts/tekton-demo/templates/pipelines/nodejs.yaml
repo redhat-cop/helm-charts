@@ -13,6 +13,8 @@ spec:
       type: image
     - name: {{ .Values.application.name }}-production
       type: image
+    - name: {{ .Values.application.name }}-documentation
+      type: image
 
   workspaces:
     - name: shared-workspace
@@ -155,8 +157,6 @@ spec:
           - name: source
             resource: {{ .Values.application.name }}-git
         outputs:
-          - name: image
-            resource: {{ .Values.application.name }}-development
           - name: docs
             resource: {{ .Values.application.name }}-documentation
 
