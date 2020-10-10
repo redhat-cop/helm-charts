@@ -11,6 +11,8 @@ spec:
     - name: ref
       description: git ref
       type: string
+    - name: repofullname
+      type: string
     - name: revision
       description: git unique head commit id
       type: string
@@ -284,6 +286,7 @@ spec:
               key: token
 
     - name: report
+      workingDir: /workspace/source
       env:
         - name: GITHUBTOKEN
           valueFrom:
@@ -319,7 +322,7 @@ spec:
             print(resp.read())
             # sys.exit(resp.read())
         else:
-          print("GitHub status 'pending' has been set") 
+          print("GitHub status 'pending' has been set")
 
   volumes:
     - name: {{ .Values.pipeline.webhook.github.key }}

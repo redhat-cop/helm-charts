@@ -229,6 +229,8 @@ spec:
       params:
       - name: cluster
         value: $(tasks.info.results.cluster)
+      - name: repofullname
+        value: $(params.repofullname)
       - name: ref
         value: $(tasks.info.results.ref)
       - name: revision

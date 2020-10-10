@@ -63,7 +63,7 @@ spec:
             print(resp.read())
             # sys.exit(resp.read())
         else:
-          print("GitHub status 'pending' has been set") 
+          print("GitHub status 'pending' has been set")
 
     - name: validate
       image: ubi8/nodejs-10
