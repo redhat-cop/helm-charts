@@ -28,7 +28,7 @@ spec:
     - name: code-prepare
       image: ubi8/nodejs-10
       resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -39,7 +39,7 @@ spec:
     - name: code-audit
       image: ubi8/nodejs-10
       resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -50,7 +50,7 @@ spec:
     - name: code-lint
       image: ubi8/nodejs-10
       resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -61,7 +61,7 @@ spec:
     - name: code-test
       image: ubi8/nodejs-10
       resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -72,7 +72,7 @@ spec:
     - name: code-coverage
       image: ubi8/nodejs-10
       resources: {}
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
         npm run coverage

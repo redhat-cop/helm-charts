@@ -61,7 +61,7 @@ spec:
     # todo: needs a better github token management solution
     - name: release-notes
       image: ubi8/nodejs-10
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       volumeMounts:
         - name: {{ .Values.pipeline.webhook.github.key }}
           mountPath: /etc/idrsa

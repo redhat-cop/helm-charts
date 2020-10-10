@@ -30,7 +30,7 @@ spec:
       type: string
     - name: PATH_CONTEXT
       description: The location of the path to run s2i from.
-      default: {{ .Values.application.from.git.s2i.context }}
+      default: {{ .Values.pipeline.build.s2i.context }}
       type: string
     - name: TLSVERIFY
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
@@ -48,14 +48,14 @@ spec:
     - name: image-generate
       image: quay.io/openshift-pipeline/s2i
       command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen']
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       volumeMounts:
         - name: gen-source
           mountPath: /gen-source
           
     - name: image-build
       image: quay.io/buildah/stable
-      workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-f', 'Dockerfile', '-t', '$(outputs.resources.image.url):$(inputs.params.revision-name)', '.']
       resources: {}
       volumeMounts:

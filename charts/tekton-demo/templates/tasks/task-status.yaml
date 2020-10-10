@@ -86,7 +86,7 @@ spec:
         revisionName=$(cat /tekton/results/revision-name)
         # echo $(git rev-parse --short HEAD) > /tekton/results/revision-short
         printf %s "$(git rev-parse --short HEAD)" >> /tekton/results/revision-short
-        package={{ .Values.application.from.git.s2i.context }}/package.json
+        package={{ .Values.pipeline.build.s2i.context }}/package.json
         git fetch --all --tags > /dev/null 2>&1
         if git rev-parse -q --verify "refs/tags/$revisionName" >/dev/null; then
             echo "Tag $revisionName already exists"
@@ -116,12 +116,12 @@ spec:
 
     # - name: debug
     #   image: ubi8/nodejs-10
-    #   workingDir: /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #   workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
     #   command: ["/bin/bash", "-c"]
     #   args:
     #     - |-
     #       set -ex
-    #       find /workspace/source/{{ .Values.application.from.git.s2i.context }}
+    #       find /workspace/source/{{ .Values.pipeline.build.s2i.context }}
 
     # - name: pause
     #   image: docker
