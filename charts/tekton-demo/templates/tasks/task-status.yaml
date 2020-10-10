@@ -75,19 +75,19 @@ spec:
         echo "Revision-type:" $(cat /tekton/results/revision-type)
         echo "Revision-name:" $(cat /tekton/results/revision-name)
 
-    - name: ruby
-      image: ubi8/ruby-26
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      script: |
-        #!/bin/sh
-          gem update --system
-          gem install bundler
-          cd docs
-          bundle install
-          bundle exec middleman build
-          ls -ls
-          exit 1
+    # - name: ruby
+    #   image: ubi8/ruby-26
+    #   resources: {}
+    #   workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
+    #   script: |
+    #     #!/bin/sh
+    #       gem update --system
+    #       gem install bundler
+    #       cd docs
+    #       bundle install
+    #       bundle exec middleman build
+    #       ls -ls
+    #       exit 1
 
       securityContext:
         runAsUser: 0
