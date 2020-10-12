@@ -199,7 +199,7 @@ spec:
           revisionName=${replace//./-}
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
           # example
-          # oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.production }}
+          # oc set env deployment/$appname --from secret/input -n {{ .Values.application.environments.production }}
 
     - name: app-probes
       image: quay.io/openshift/origin-cli:latest
