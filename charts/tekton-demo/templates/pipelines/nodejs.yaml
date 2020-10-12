@@ -15,11 +15,6 @@ spec:
       type: image
     - name: {{ .Values.application.name }}-documentation
       type: image
-
-  workspaces:
-    - name: shared-workspace
-    - name: upload
-    - name: release-notes
     
   params:
     - name: ref
@@ -256,6 +251,36 @@ spec:
           - name: source
             resource: {{ .Values.application.name }}-git
 
+    - name: apply
+      conditions:
+        - conditionRef: is-allowed-production
+          params:
+            - name: revision-type
+              value: $(tasks.info.results.revision-type)
+      taskRef:
+        name: apply
+      runAfter:
+        - test-e2e
+        - test-stress
+      params:
+      - name: repofullname
+        value: $(params.repofullname)
+      - name: ref
+        value: $(tasks.info.results.ref)
+      - name: revision
+        value: $(tasks.info.results.revision)
+      - name: revision-short
+        value: $(tasks.info.results.revision-short)
+      - name: revision-type
+        value: $(tasks.info.results.revision-type)
+      - name: revision-name
+        value: $(tasks.info.results.revision-name)
+      resources:
+        inputs:
+          - name: source
+            resource: {{ .Values.application.name }}-git
+
+
     - name: promote
       conditions:
         - conditionRef: is-allowed-production
@@ -265,8 +290,7 @@ spec:
       taskRef:
         name: promote
       runAfter:
-        - test-e2e
-        - test-stress
+        - apply
       params:
       - name: cluster
         value: $(tasks.info.results.cluster)

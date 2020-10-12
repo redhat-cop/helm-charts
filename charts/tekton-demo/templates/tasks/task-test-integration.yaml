@@ -34,11 +34,9 @@ spec:
           npm ping --registry {{ .Values.pipeline.nexus.host }}
           if [[ $? -ne 0 ]]; then
             npm install --only-dev --unsafe-perm=true --allow-root
-            npm install chromedriver --detect_chromedriver_version
           else
             echo Using nexus
-            npm --registry {{ .Values.pipeline.nexus.host }} --only-dev --unsafe-perm=true --allow-root
-            npm install chromedriver --detect_chromedriver_version
+            npm --registry {{ .Values.pipeline.nexus.host }} install --only-dev --unsafe-perm=true --allow-root
           fi
         npm test
       securityContext:
@@ -46,13 +44,13 @@ spec:
 
     # todo: condition to only run in dev env
     - name: test-report
+      image: registry.access.redhat.com/ubi8/ubi:latest
       env:
         - name: GITHUBTOKEN
           valueFrom:
             secretKeyRef:
               name: {{ .Values.pipeline.webhook.github.secret }}
               key: token
-      image: registry.access.redhat.com/ubi8/ubi:latest
       script: |
         #!/usr/libexec/platform-python
         import json

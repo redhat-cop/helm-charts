@@ -72,7 +72,3 @@ spec:
         - name: {{ .Values.application.name }}-documentation
           resourceRef:
             name: {{ .Values.application.name }}-documentation
-      workspaces:
-        - name: shared-workspace
-        - name: upload
-        - name: release-notes
