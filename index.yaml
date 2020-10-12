@@ -647,6 +647,21 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/jenkins-0.0.1/jenkins-0.0.1.tgz
     version: 0.0.1
+  network-policy:
+  - apiVersion: v2
+    appVersion: v1
+    created: "2020-10-12T15:14:42.223269883Z"
+    description: A Helm chart for Kubernetes that manages Network policies
+    digest: acf8bc30e4751f54ab3701725152aba1d68bcf599d8b0ee1308c51fabe63e9cb
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: rh-jpoole
+    name: network-policy
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/network-policy-1.0.0/network-policy-1.0.0.tgz
+    version: 1.0.0
   operatorhub:
   - apiVersion: v2
     appVersion: 0.0.2
