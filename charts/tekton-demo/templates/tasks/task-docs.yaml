@@ -50,6 +50,8 @@ spec:
       command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/ruby:2.7', '--as-dockerfile', '/gen-source/Dockerfile.gen']
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
       env:
+        - name: ADDTL_BUNDLE_ARGS
+          value: "--jobs=4"
         - name: RUBYGEM_MIRROR
           value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/rubygems/
         - name: NPM_MIRROR
@@ -62,7 +64,8 @@ spec:
       image: quay.io/buildah/stable
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
       # command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-t', '$(outputs.resources.documentation.url):$(inputs.params.revision-name)', '.']
-      env:
+        - name: ADDTL_BUNDLE_ARGS
+          value: "--jobs=4"
         - name: RUBYGEM_MIRROR
           value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/rubygems/
         - name: NPM_MIRROR
