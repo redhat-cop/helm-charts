@@ -1,6 +1,6 @@
 # 🌐📝 Network Policy
 
-Network policy chart for creating rules on Network traffic in a `Namespace`. This chart's defaults contains an example for multientant ingress for a namespace by denying all traffic, then allowing specific pod to pod communication and ingress traffic in from the openshift routers' namespace. An example `policy` is also included to allow prometheus scrape metrics from the project.
+Network policy chart for creating rules on Network traffic in a `Namespace`. This chart's defaults contains an example for multitenant ingress for a namespace by denying all traffic, then allowing specific pod to pod communication and ingress traffic in from the OpenShift routers' namespace. An example `policy` is also included to allow prometheus scrape metrics from the project.
 
 ## Installing the chart
 
@@ -19,7 +19,7 @@ $  helm template my-policy -f network-policy/values.yaml network-policy --set mu
 
 
 ## Configuration
-The following table lists the configurable parameters of the Bootstrap chart and their default values.
+The following table lists the configurable parameters of the Network Policy chart and their default values.
 
 | Parameter                                        | Description                                                  | Default                               |
 | ------------------------------------------------ | -------------------------------------------------------------| ------------------------------------- |
