@@ -1,15 +1,13 @@
 # Network policies to define in Openshift. Please use descriptive names.
 # See https://docs.openshift.com/container-platform/4.5/networking/network_policy/about-network-policy.html for more details.
-
 enabled: true
-
 multitenant_policies:
   # start with the deny everything approach
   # then enable specific rule selectors
   - name: deny-all-by-default
     spec:
-      ingress: [] # empty ingress means allow none
-      podSelector: {} # matching every pod in ns
+      ingress: []
+      podSelector: {}
   - name: allow-all-internal-same-namespace
     spec:
       ingress:
