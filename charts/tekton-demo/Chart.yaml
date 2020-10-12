@@ -1,18 +1,14 @@
 apiVersion: v2
 name: tekton-demo
-description: A tekton nodejs demo pipeline containing four steps [build, deploy, test, promote] integrated with github event listeners and routes.
+description: A tekton nodejs demo pipeline containing steps to build, deploy, test, and promote to production. It is integrated with github event listeners and automatic routes creation.
+type: application
 keywords:
   - tekton
   - pipeline
   - nodejs
   - github
-type: application
 maintainers: 
   - name: mvmaestri
 icon: https://cd.foundation/wp-content/uploads/sites/78/2020/04/tekton-icon-color-1-300x300.png
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
 version: 0.0.1
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application.
 appVersion: 0.0.1

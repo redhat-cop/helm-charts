@@ -53,7 +53,7 @@ spec:
         - name: repofullname
           value: $(params.repofullname)
       pipelineRef:
-        name: {{ .Values.pipeline.name }}
+        name: {{ .Values.application.name }}
       resources:
         - name: {{ .Values.application.name }}-git
           resourceSpec:

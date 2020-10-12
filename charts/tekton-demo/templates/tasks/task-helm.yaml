@@ -50,16 +50,6 @@ spec:
       securityContext:
         runAsUser: 0
 
-    # - name: code-coverage
-    #   image: ubi8/nodejs-10
-    #   resources: {}
-    #   workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-    #   script: |
-    #     #!/bin/sh
-    #     npm run coverage
-    #   securityContext:
-    #     runAsUser: 0
-
   volumes:
     - name: varlibcontainers
       emptyDir: {}

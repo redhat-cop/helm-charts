@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: {{ .Values.pipeline.name }}
+  name: {{ .Values.application.name }}
   namespace: {{ .Values.application.environments.cicd }}
   labels:
     app: {{ .Values.application.name }}
