@@ -7,7 +7,7 @@ application:
   name: do101
   runtime: nodejs:10
   environments:
-    cicd: do101-cicd
+    cicd: labs-ci-cd
     development: do101-development
     production: do101-production
 
