@@ -123,7 +123,7 @@ spec:
         oc get deployment/$appname -n {{ .Values.application.environments.production }}
         if [[ $? -ne 0 ]]
         then
-            oc new-app --name=$appname -i={{ .Values.application.name }}:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.production }} --labels=app.name={{ .Values.application.name }}
+            oc new-app --name=$appname -i={{ .Values.application.name }}-production:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.production }} --labels=app.name={{ .Values.application.name }}
         else
             echo "Application already exists."
         fi

@@ -52,7 +52,7 @@ spec:
 
             oc get deployment/$appname -n {{ .Values.application.environments.development }}
             if [[ $? -ne 0 ]]; then
-              oc new-app --name=$appname -i={{ .Values.application.environments.development }}/{{ .Values.application.environments.development }}:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.development }} --labels=app.name={{ .Values.application.name }}
+              oc new-app --name=$appname -i={{ .Values.application.name }}-development:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.development }} --labels=app.name={{ .Values.application.name }}
             else
               echo "Application already exists."
             fi
