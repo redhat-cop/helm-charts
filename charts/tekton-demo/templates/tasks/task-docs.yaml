@@ -49,6 +49,11 @@ spec:
       image: quay.io/openshift-pipeline/s2i
       command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/ruby:2.7', '--as-dockerfile', '/gen-source/Dockerfile.gen']
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
+      env:
+        - name: RUBYGEM_MIRROR
+          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/rubygems/
+        - name: NPM_MIRROR
+          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm/
       volumeMounts:
         - name: gen-source
           mountPath: /gen-source
@@ -61,7 +66,7 @@ spec:
         - name: RUBYGEM_MIRROR
           value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/rubygems/
         - name: NPM_MIRROR
-          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm
+          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm/
       resources: {}
       script: |
         #!/bin/sh

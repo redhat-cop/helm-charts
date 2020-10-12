@@ -66,7 +66,7 @@ spec:
     - name: image-build
       image: quay.io/buildah/stable
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-f', 'Dockerfile', '-t', '$(outputs.resources.image.url):$(inputs.params.revision-name)', '.']
+      command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-f', 'Dockerfile', '-t', '{{ .Values.application.environments.development }}/$(outputs.resources.image.url):$(inputs.params.revision-name)', '.']
       resources: {}
       volumeMounts:
         - name: varlibcontainers
@@ -78,7 +78,7 @@ spec:
 
     - name: image-push
       image: quay.io/buildah/stable
-      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '$(outputs.resources.image.url):$(inputs.params.revision-name)', 'docker://$(outputs.resources.image.url):$(inputs.params.revision-name)']
+      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '{{ .Values.application.environments.development }}/$(outputs.resources.image.url):$(inputs.params.revision-name)', 'docker://{{ .Values.application.environments.development }}/$(outputs.resources.image.url):$(inputs.params.revision-name)']
       volumeMounts:
         - name: varlibcontainers
           mountPath: /var/lib/containers
