@@ -56,7 +56,7 @@ spec:
   type: image
   params:
     - name: url
-      value: image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.cicd }}/{{ .Values.application.name }}-documentation
+      value: image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource

@@ -47,15 +47,12 @@ spec:
 
     - name: image-generate
       image: quay.io/openshift-pipeline/s2i
-      command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/ruby:2.7', '--as-dockerfile', '/gen-source/Dockerfile.gen']
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
-      env:
-        - name: ADDTL_BUNDLE_ARGS
-          value: "--jobs=4"
-        - name: RUBYGEM_MIRROR
-          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/rubygems/
-        - name: NPM_MIRROR
-          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm/
+      script: |
+        #!/bin/sh
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          s2i build . image-registry.openshift-image-registry.svc:5000/openshift/ruby:2.7 --as-dockerfile /gen-source/Dockerfile.gen
+        fi          
       volumeMounts:
         - name: gen-source
           mountPath: /gen-source
@@ -63,19 +60,12 @@ spec:
     - name: image-build
       image: quay.io/buildah/stable
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
-      # command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-t', '$(outputs.resources.documentation.url):$(inputs.params.revision-name)', '.']
-      env:
-        - name: ADDTL_BUNDLE_ARGS
-          value: "--jobs=4"
-        - name: RUBYGEM_MIRROR
-          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/rubygems/
-        - name: NPM_MIRROR
-          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm/
       resources: {}
       script: |
         #!/bin/sh
-        buildah bud --tls-verify=$(inputs.params.TLSVERIFY) --layers -t $(outputs.resources.documentation.url):$(inputs.params.revision-name) .
-
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          buildah bud --tls-verify=$(inputs.params.TLSVERIFY) --layers -t $(outputs.resources.documentation.url):$(inputs.params.revision-name) .
+        fi
       volumeMounts:
         - name: varlibcontainers
           mountPath: /var/lib/containers
@@ -86,7 +76,11 @@ spec:
         
     - name: image-push
       image: quay.io/buildah/stable
-      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '$(outputs.resources.documentation.url):$(inputs.params.revision-name)', 'docker://$(outputs.resources.documentation.url):$(inputs.params.revision-name)']
+      script: |
+        #!/bin/sh
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          buildah push --tls-verify=$(inputs.params.TLSVERIFY) $(outputs.resources.documentation.url):$(inputs.params.revision-name) docker://$(outputs.resources.documentation.url):$(inputs.params.revision-name)
+        fi
       volumeMounts:
         - name: varlibcontainers
           mountPath: /var/lib/containers
