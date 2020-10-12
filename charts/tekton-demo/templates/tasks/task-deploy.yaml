@@ -100,6 +100,20 @@ spec:
               appname={{ .Values.application.name }}-$revisionName
               # overwrite hostname
               hostname=$revisionName-{{ .Values.application.environments.development }}.{{ .Values.cluster }}
+              
+              # documentation development route
+              documentation={{ .Values.application.name }}-documentation-{{ .Values.application.environments.development }}.{{ .Values.cluster }}
+              oc get route/{{ .Values.application.name }}-documentation -n {{ .Values.application.environments.development }}
+              if [[ $? -ne 0 ]]; then
+                echo "Exposing"
+                oc create route edge --service {{ .Values.application.name }}-documentation --port 8080 --hostname $documentation -n {{ .Values.application.environments.development }}
+              else
+                echo "Documentation is already exposed."
+                echo $documentation
+                echo ""
+              fi
+
+
             fi
 
             oc get svc/$appname -n {{ .Values.application.environments.development }}
