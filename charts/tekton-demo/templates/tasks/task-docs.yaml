@@ -60,6 +60,8 @@ spec:
       env:
         - name: RUBYGEM_MIRROR
           value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/rubygems/
+        - name: NPM_MIRROR
+          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm
       resources: {}
       script: |
         #!/bin/sh
