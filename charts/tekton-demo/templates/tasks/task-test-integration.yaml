@@ -24,16 +24,6 @@ spec:
       - name: source
         type: git
   steps:
-    # - name: test-frontend
-    #   image: ubi8/nodejs-10
-    #   resources: {}
-    #   workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-    #   script: |
-    #     #!/bin/sh
-    #     npm install --only-dev --unsafe-perm=true --allow-root
-    #     npm run test-e2e
-    #   securityContext:
-    #     runAsUser: 0
 
     - name: test-integration
       image: ubi8/nodejs-10

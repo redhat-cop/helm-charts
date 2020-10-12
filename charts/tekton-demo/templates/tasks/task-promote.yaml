@@ -54,7 +54,6 @@ spec:
           exit 1
         fi
 
-    # todo: needs a better github token management solution
     - name: release-notes
       image: ubi8/nodejs-10
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}

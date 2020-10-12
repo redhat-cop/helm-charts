@@ -43,7 +43,3 @@ policy/
 
 # BATS
 _test/test_helper/
-.nyc_output
-selenium-server.log
-guinea-pig-test.png
-reports
