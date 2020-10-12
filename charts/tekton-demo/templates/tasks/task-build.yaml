@@ -75,7 +75,7 @@ spec:
           mountPath: /gen-source
       securityContext:
         privileged: true
-        
+
     - name: image-push
       image: quay.io/buildah/stable
       command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '$(outputs.resources.image.url):$(inputs.params.revision-name)', 'docker://$(outputs.resources.image.url):$(inputs.params.revision-name)']

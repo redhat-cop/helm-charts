@@ -56,8 +56,15 @@ spec:
     - name: image-build
       image: quay.io/buildah/stable
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
-      command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-t', '$(outputs.resources.documentation.url):$(inputs.params.revision-name)', '.']
+      # command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-t', '$(outputs.resources.documentation.url):$(inputs.params.revision-name)', '.']
+      env:
+        - name: RUBYGEM_MIRROR
+          value: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/rubygems/
       resources: {}
+      script: |
+        #!/bin/sh
+        buildah bud --tls-verify=$(inputs.params.TLSVERIFY) --layers -t $(outputs.resources.documentation.url):$(inputs.params.revision-name) .
+
       volumeMounts:
         - name: varlibcontainers
           mountPath: /var/lib/containers
