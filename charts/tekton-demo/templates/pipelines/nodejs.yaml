@@ -36,9 +36,6 @@ spec:
       description: commit author email
     - name: message
       description: commit message
-    - name: AUTHORS_API_KEY
-      description: The OCP secret that contains DB credentials
-      default: 'authors-secret-api'
 
   tasks:
     - name: info
@@ -212,8 +209,6 @@ spec:
           value: $(tasks.info.results.revision-name)
         - name: author
           value: $(tasks.info.results.author)
-        - name: AUTHORS_API_KEY
-          value: "$(params.AUTHORS_API_KEY)"
       resources:
         inputs:
           - name: image
@@ -261,15 +256,6 @@ spec:
           - name: source
             resource: {{ .Values.application.name }}-git
 
-    # todo: upgrade based on semantic versioning principles
-    # only minor supported and patch
-    # develop       : deploys to dev development environment with commit hash tagged
-    # feature/test  : does not deploy to development environment
-    # release/1.0.0 : rolls out slowly to canary/production
-    # hotfix/1.0.1  : imediately deployment to canary/production
-    # patch/1.0.2   : imediately deployment to canary/production (can be a patch to a small subset of pods only)
-    # pr/1          : build, test and report back to pr
-
     - name: promote
       conditions:
         - conditionRef: is-allowed-production
@@ -300,8 +286,6 @@ spec:
         value: $(params.author)
       - name: email
         value: $(params.email)
-      - name: AUTHORS_API_KEY
-        value: $(params.AUTHORS_API_KEY)
       resources:
         inputs:
           - name: source

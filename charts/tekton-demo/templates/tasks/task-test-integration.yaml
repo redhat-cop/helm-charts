@@ -33,7 +33,7 @@ spec:
     #     npm install --only-dev --unsafe-perm=true --allow-root
     #     npm run test-e2e
     #   securityContext:
-    #     runAsUser: 0 # might not be the best option
+    #     runAsUser: 0
 
     - name: test-integration
       image: ubi8/nodejs-10
@@ -41,11 +41,18 @@ spec:
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-        npm install --only-dev --unsafe-perm=true --allow-root
-        npm install chromedriver --detect_chromedriver_version
+          npm ping --registry {{ .Values.pipeline.nexus.host }}
+          if [[ $? -ne 0 ]]; then
+            npm install --only-dev --unsafe-perm=true --allow-root
+            npm install chromedriver --detect_chromedriver_version
+          else
+            echo Using nexus
+            npm --registry {{ .Values.pipeline.nexus.host }} --only-dev --unsafe-perm=true --allow-root
+            npm install chromedriver --detect_chromedriver_version
+          fi
         npm test
       securityContext:
-        runAsUser: 0 # might not be the best option
+        runAsUser: 0
 
     # todo: condition to only run in dev env
     - name: test-report

@@ -28,10 +28,6 @@ spec:
       description: The version of nodejs
       default: {{ .Values.application.runtime }}
       type: string
-    - name: PATH_CONTEXT
-      description: The location of the path to run s2i from.
-      default: {{ .Values.pipeline.build.s2i.context }}
-      type: string
     - name: TLSVERIFY
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
       default: "false"
@@ -85,6 +81,7 @@ spec:
       resources: {}
       securityContext:
         privileged: true
+    
     # todo: label image properly
     # - name: image-verify
     #   image: quay.io/openshift/origin-cli:latest

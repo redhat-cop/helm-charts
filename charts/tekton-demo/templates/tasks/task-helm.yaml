@@ -48,7 +48,7 @@ spec:
           ./helm lint chart
           ./helm template -f chart/values.yaml chart
       securityContext:
-        runAsUser: 0 # might not be the best option
+        runAsUser: 0
 
     # - name: code-coverage
     #   image: ubi8/nodejs-10
@@ -58,7 +58,7 @@ spec:
     #     #!/bin/sh
     #     npm run coverage
     #   securityContext:
-    #     runAsUser: 0 # might not be the best option
+    #     runAsUser: 0
 
   volumes:
     - name: varlibcontainers

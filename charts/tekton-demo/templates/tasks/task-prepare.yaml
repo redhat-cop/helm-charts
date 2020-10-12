@@ -107,7 +107,7 @@ spec:
           exit 0
         fi
       securityContext:
-        runAsUser: 0 # might not be the best option
+        runAsUser: 0
 
   volumes:
     - name: varlibcontainers

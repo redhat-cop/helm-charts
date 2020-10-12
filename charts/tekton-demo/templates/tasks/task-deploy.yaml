@@ -26,10 +26,6 @@ spec:
     - name: author
       description: commit author username
       type: string
-    - name: AUTHORS_API_KEY
-      description: The version of the application
-      default: 'authors-secret-api'
-      type: string
   resources:
     inputs:
       - name: image
@@ -184,7 +180,6 @@ spec:
             else
               oc set env deployment/$appname --overwrite revision-id=$(inputs.params.revision-short) -n $environment
               oc set env deployment/$appname --overwrite revision-name=$revisionName -n $environment
-              oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n $environment
             fi
             
             oc set env deployment/$appname --overwrite environment=development -n $environment

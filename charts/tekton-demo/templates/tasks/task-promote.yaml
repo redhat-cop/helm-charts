@@ -29,10 +29,6 @@ spec:
       type: string
     - name: email
       type: string
-    - name: AUTHORS_API_KEY
-      description: The version of the application
-      default: 'authors-secret-api'
-      type: string
   resources:
     inputs:
       - name: source
@@ -193,7 +189,6 @@ spec:
         oc set env deployment/$appname --overwrite revision-id=$(inputs.params.revision-short) -n $environment
         oc set env deployment/$appname --overwrite revision-name=$revisionName -n $environment
         oc set env deployment/$appname --overwrite revision-type=$(inputs.params.revision-type) -n $environment
-        # oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n $environment        
 
     - name: app-secrets
       image: quay.io/openshift/origin-cli:latest
@@ -204,6 +199,7 @@ spec:
           replace=$(inputs.params.revision-name)
           revisionName=${replace//./-}
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+          # example
           # oc set env deployment/$appname --from secret/$(inputs.params.AUTHORS_API_KEY) -n {{ .Values.application.environments.production }}
 
     - name: app-probes

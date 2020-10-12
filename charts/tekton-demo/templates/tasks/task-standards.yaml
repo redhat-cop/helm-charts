@@ -50,7 +50,7 @@ spec:
         - |-
           npm audit
       securityContext:
-        runAsUser: 0 # might not be the best option
+        runAsUser: 0
 
     - name: code-lint
       image: ubi8/nodejs-10
@@ -61,7 +61,7 @@ spec:
         - |-
           npm run lint
       securityContext:
-        runAsUser: 0 # might not be the best option
+        runAsUser: 0
 
     - name: code-test
       image: ubi8/nodejs-10
@@ -72,7 +72,7 @@ spec:
         - |-
           npm run test-unit
       securityContext:
-        runAsUser: 0 # might not be the best option
+        runAsUser: 0
 
     - name: code-coverage
       image: ubi8/nodejs-10
@@ -82,7 +82,7 @@ spec:
         #!/bin/sh
         npm run coverage
       securityContext:
-        runAsUser: 0 # might not be the best option
+        runAsUser: 0
 
   volumes:
     - name: varlibcontainers
