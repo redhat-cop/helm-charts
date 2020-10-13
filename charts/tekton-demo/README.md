@@ -1,12 +1,10 @@
-# Tekton demo
+This is an example of a pipeline developed in Tekton, the peaceful cat. It contains the main steps of a continuous software delivery process. It enforces a strict semantic version validation strategy, managing tag increments for you. Develop, Features, releases, patches and hotfixes flows are supported.
 
 ![The peaceful cat](assets/logo.png)
 
-This is an example of a pipeline developed in Tekton, the peaceful cat. It contains the main steps of a continuous software delivery process. It enforces a strict semantic version validation strategy, managing tag increments for you. Develop, Features, releases, patches and hotfixes flows are supported.
+There are several task templates available online. However, one of the biggest benefits of this repository is being able to take advantage of a model that holds all tasks in a solid and coherent way and with good parameters to be reused.
 
 ![Tekton Pipeline Demo](assets/pipeline.png)
-
-There are several task templates available online. However, one of the biggest benefits of this repository is being able to take advantage of a model that holds all tasks in a solid and coherent way and with good parameters to be reused.
 
 ## Design considerations
 
