@@ -12,9 +12,17 @@ There are several task templates available online. However, one of the biggest b
 
 Seeking to minimize dependencies on other components and avoid building your own images, which can be a little overwhelming when you want to kickstart fast your project. So bash scripting is primarily used and provides a solid and easy model to be extended.
 
-The different number of images being used has been taken into account. And with security in mind, only official images are consumed.
+The different number of images being used has been taken into account. And with security in mind, only official images are consumed. With [Red Hat Universal Base Image (UBI)](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image), you can take advantage of the greater reliability, security, and performance of official Red Hat container images where OCI-compliant Linux containers run. See also [Red Hat Ecosystem Catalog.](https://catalog.redhat.com/software/containers/search).
 
-This package automatically manages the creation of three environments, which can be customized as needed. The 3 different environments are:
+The build strategy is based on [Source-to-Image (S2I)](https://github.com/openshift/source-to-image), which is a toolkit and workflow for building reproducible container images from source code leveraging benefits like:
+
+- Reproducibility
+- Flexibility
+- Speed
+- Security
+
+Furthermore, this package automatically manages the creation of three independent environments, which can be customized as needed.
+The 3 different environments are:
 
 - cicd
 - development
@@ -37,7 +45,8 @@ The pipeline manages the creation of deployments for each environment and also t
 
 Images streams, deployments, services, and routes are created automatically through the pipeline, if necessary, at each new commit. This provides a repeatable way for software delivery and makes life easier for users who consume the application, whether for development or for other purposes.
 
-All deployments are managed through `git push` by following a strict implementation of gitflow with support for the following branches and routes hostnames:
+All deployments are managed through `git push` by following a strict implementation of gitflow.
+Currently supporting for the following branches, environment and and routes.
 
 | Branch type | Upgrade | Docs | Dev | Prod | Hostname
 | --- | --- | --- | --- | --- |  --- |
@@ -47,7 +56,7 @@ All deployments are managed through `git push` by following a strict implementat
 | `hotfix/1.0.1` | patch | ✅ | ⭕ | ✅ | v1-0-1-myapp-production.apps.s45.core.rht-labs.com | 
 | `patch/1.0.2` | patch | ✅ | ⭕ | ✅ | v1-0-2-myapp-production.apps.s45.core.rht-labs.com | 
 
-*Obs: The first version `0.0.0` will use a major upgrade to `1.0.0`.
+*Obs: The first version `0.0.0` exceptionally will use a major upgrade to `1.0.0`.
 
 A documentation based on [Slate](https://github.com/slatedocs/slate)  API docs generator will be also exposed for each environment through the routes hostnames:
 
@@ -133,8 +142,10 @@ And also for triggers ServiceAccount:
 
 Something failed? See troubleshooting.
 
-2. Check pod `create-do101-github-webhook-pod-kmc4p` and make sure the webhook was created correctly
+1. Check pod `create-do101-github-webhook-pod-kmc4p` and make sure the webhook was created correctly
 2. Define policies
+
+
 <!-- 
 
 ### Deploying to development environment
