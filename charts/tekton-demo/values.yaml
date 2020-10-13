@@ -16,7 +16,7 @@ pipeline:
     s2i:
       context: weather
   webhook:
-    github: 
+    github:
       org: mvmaestri
       user: mvmaestri
       repo: do101-apps
