@@ -6,7 +6,7 @@ This is an example of a pipeline developed in Tekton, the peaceful cat 🐈. It 
 
 There are several task templates available online. However, one of the biggest benefits of this chart is being able to take advantage of a model that holds all tasks in a solid and coherent way and with good linked parameters to be reused.
 
-![Tekton Pipeline Demo](assets/pipeline.png)
+![Tekton Pipeline Demo](assets/pipeline-with-task-steps.png)
 
 ## Considerations
 
