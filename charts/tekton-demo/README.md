@@ -39,13 +39,13 @@ Images streams, deployments, services, and routes are created automatically thro
 
 All deployments are managed through `git push` by following a strict implementation of gitflow with support for the following branches and routes hostnames:
 
-| Branch type | Upgrade | Docs | Development | Production | Hostname 
+| Branch type | Upgrade | Docs | Dev | Prod | Hostname
 | --- | --- | --- | --- | --- |  --- |
 | `develop` |  | ✅ | ✅ | ⭕ | develop-myapp-development.apps.host.com | 
-| `feature/login` |  | ⭕ | ✅ | ⭕ | feature-login-myapp-development.apps.host.com | 
-| `release/1.0.0` | minor* | ✅ | ⭕ | ✅ | v1-0-0-myapp-production.apps.host.com | 
-| `hotfix/1.0.1` | patch | ✅ | ⭕ | ✅ | v1-0-1-myapp-production.apps.host.com | 
-| `patch/1.0.2` | patch | ✅ | ⭕ | ✅ | v1-0-2-myapp-production.apps.host.com | 
+| `feature/login` |  | ⭕ | ✅ | ⭕ | feature-login-myapp-development.apps.s45.core.rht-labs.com | 
+| `release/1.0.0` | minor* | ✅ | ⭕ | ✅ | v1-0-0-myapp-production.apps.s45.core.rht-labs.com | 
+| `hotfix/1.0.1` | patch | ✅ | ⭕ | ✅ | v1-0-1-myapp-production.apps.s45.core.rht-labs.com | 
+| `patch/1.0.2` | patch | ✅ | ⭕ | ✅ | v1-0-2-myapp-production.apps.s45.core.rht-labs.com | 
 
 *Obs: The first version `0.0.0` will use a major upgrade to `1.0.0`.
 
@@ -54,7 +54,6 @@ A documentation based on [Slate](https://github.com/slatedocs/slate)  API docs g
 - documentation-myapp-development.apps.s45.core.rht-labs.com
 - documentation-myapp-production.apps.s45.core.rht-labs.com
 
-![Tekton pipeline routes](assets/routes.png)
 
 
 ## Installing
