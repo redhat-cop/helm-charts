@@ -1,13 +1,11 @@
 cluster: apps.s45.core.rht-labs.com
-
 application:
-  name: do101 # https://www.redhat.com/en/services/training/do101-introduction-openshift-applications
+  name: do101
   runtime: nodejs:10
   environments:
     cicd: labs-ci-cd
     development: do101-development
     production: do101-production
-
 pipeline:
   sa:
     default: pipeline
@@ -21,6 +19,6 @@ pipeline:
     github: 
       org: mvmaestri
       user: mvmaestri
-      repo: do101-apps # https://github.com/mvmaestri/do101-apps
+      repo: do101-apps
       secret: github-webhook-secret
       key: github-deploy-secret
