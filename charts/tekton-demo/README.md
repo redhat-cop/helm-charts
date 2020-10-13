@@ -1,6 +1,6 @@
 # Tekton demo
 
-![The peaceful cat](assets/logo.png | width=200)
+![The peaceful cat](assets/logo.png)
 
 This is an example of a pipeline developed in Tekton, the peaceful cat. It contains the main steps of a continuous software delivery process. It enforces a strict semantic version validation strategy, managing tag increments for you. Develop, Features, releases, patches and hotfixes flows are supported.
 
