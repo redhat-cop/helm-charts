@@ -4,7 +4,7 @@ This is an example of a pipeline developed in Tekton, the peaceful cat. It conta
 
 ![The peaceful cat](assets/logo.png)
 
-There are several task templates available online. However, one of the biggest benefits of this repository is being able to take advantage of a model that holds all tasks in a solid and coherent way and with good parameters to be reused.
+There are several task templates available online. However, one of the biggest benefits of this chart is being able to take advantage of a model that holds all tasks in a solid and coherent way and with good parameters to be reused.
 
 ![Tekton Pipeline Demo](assets/pipeline.png)
 
