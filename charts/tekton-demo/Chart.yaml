@@ -10,6 +10,6 @@ keywords:
 maintainers: 
   - name: mvmaestri
 icon: https://cd.foundation/wp-content/uploads/sites/78/2020/04/tekton-icon-color-1-300x300.png
-version: 0.0.1
+version: 0.0.1 
 home: https://github.com/redhat-cop/helm-charts
 appVersion: latest
