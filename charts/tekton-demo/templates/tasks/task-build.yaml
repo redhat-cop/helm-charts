@@ -81,19 +81,6 @@ spec:
       resources: {}
       securityContext:
         privileged: true
-    
-    # todo: label image properly
-    # - name: image-verify
-    #   image: quay.io/openshift/origin-cli:latest
-    #   workingDir: /workspace/source
-    #   command: ["/bin/bash", "-c"]
-    #   args:
-    #     - |-
-    #     # oc get imagestreamtag/{{ .Values.application.name }}:$(inputs.params.revision-name) -n {{ .Values.application.environments.development }}
-    #     # oc label imagestreamtag/{{ .Values.application.name }}:$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }} app.kubernetes.io/name={{ .Values.application.name }}
-    #     # oc label imagestreamtag/{{ .Values.application.name }}:$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }} app.revision-type=$(inputs.params.revision-type)
-    #     # oc label imagestreamtag/{{ .Values.application.name }}:$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }} app.revision-name=$(inputs.params.revision-name)          
-    #     # oc label imagestreamtag/{{ .Values.application.name }}:$(inputs.params.revision-name) --overwrite -n {{ .Values.application.environments.development }} app.revision-author=$(inputs.params.author)
 
   volumes:
     - name: varlibcontainers

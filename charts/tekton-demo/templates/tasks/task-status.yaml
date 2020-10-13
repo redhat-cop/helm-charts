@@ -51,7 +51,7 @@ spec:
       workingDir: /workspace/source
       script: |
         #!/bin/sh
-        echo $(oc config view --minify)
+        echo $(oc config view)
         server=$(echo $(oc config view --minify -o jsonpath='{.clusters[*].cluster.server}'))
         cluster=$(echo "apps."${server//https:\/\/api./})
         cluster=${cluster//:6443/}

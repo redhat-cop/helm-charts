@@ -1,6 +1,6 @@
 apiVersion: v2
 name: tekton-demo
-description: A tekton nodejs demo pipeline containing steps to build, deploy, test, and promote to production. It is integrated with github event listeners and automatic routes creation.
+description: This is an example of a pipeline developed in Tekton, the peaceful cat. It contains the main steps of a continuous software delivery process. It enforces a strict semantic version validation strategy, managing tag increments for you. Develop, Features, releases, patches and hotfixes flows are supported.
 type: application
 keywords:
   - tekton
