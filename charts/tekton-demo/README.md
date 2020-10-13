@@ -87,7 +87,7 @@ For the other two environments you have to ensure that they exist. If they do no
 
 To configure your own application and send it through the pipeline you must update the `values.yaml` file to reflect a repository to which you have access. Please use a repository name with a lowercase format.
 
-It will be in this repository that the webhook will be automatically created and will trigger, on each new commit, a new PipelineRun on Tekton. You can create a new token on Github by [clicking here](https://github.com/settings/tokens), make sure to tick the `admin:repo_hook`, `repo` and `user`.
+It will be in this repository that the webhook will be automatically created and will trigger, on each new commit, a new PipelineRun on Tekton. You can create a new token on Github by [clicking here](https://github.com/settings/tokens), make sure to tick the `admin:repo_hook`, `repo` and `user` permissions.
 
 ### Secrets 
 
@@ -113,7 +113,11 @@ Great. Now that the secrets have been set up correctly we can install the packag
 
 How to verify that the installation was successful:
 
-1. See if you github webhook integration was created. Go to your github repository, click on Settings, and then on Webhooks.
+- See if you github webhook integration was created. Go to your github repository, click on Settings, and then on Webhooks.
+
+You can check the webhook creation logs by searching for `webhook` in your pods in the `labs-ci-cd` namespace. If something has failed, you can delete TaskRun `create-do101-github-webhook`, update your webhook data from `values.yaml` and run the **Applying** step again.
+
+
 
 ### Policies
 
