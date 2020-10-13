@@ -1,3 +1,5 @@
+# Tekton-demo
+
 This is an example of a pipeline developed in Tekton, the peaceful cat. It contains the main steps of a continuous software delivery process. It enforces a strict semantic version validation strategy, managing tag increments for you. Develop, Features, releases, patches and hotfixes flows are supported.
 
 ![The peaceful cat](assets/logo.png)
@@ -6,7 +8,7 @@ There are several task templates available online. However, one of the biggest b
 
 ![Tekton Pipeline Demo](assets/pipeline.png)
 
-## Design considerations
+## Considerations
 
 Seeking to minimize dependencies on other components and avoid building your own images, bash scripting is primarily used and provides a solid and easy model to be extended.
 
@@ -14,9 +16,9 @@ The different number of images being used has been taken into account. And with 
 
 This package automatically manages the creation of three environments, which can be customized as needed. The 3 different environments are, `cicd`, `development`, and `production`. All the components corresponding to each environment were carefully introduced and are following the least privilege principle.
 
-## Github Integration
+## Integrations
 
-The integration with the Github repository is done through a token to manage integrations and with a secure password-less RSA key-pair to add new commits and tags. You will need to provide a valid, compatible, private key that is available to your Github account.
+The integration with the Github repository is done through a token and with a secure password-less RSA key-pair to add new commits and tags. You will need to provide a valid, compatible, private key that is available to your Github account.
 
 Besides that, it was designed to be plug and play. Upon installation, the webhook will be created automatically for you and all other data must come from the payload received through a new commit in your repository.
 
@@ -29,7 +31,8 @@ The pipeline manages the creation of deployments for each environment and also t
 
 Images streams, services, and routes are created automatically through the pipeline, if necessary, at each new commit. This provides a repeatable way for software delivery and makes life easier for users who consume the application, whether for development or for other purposes.
 
-Access routes are defined following the model below, giving environments as `development` and `production`.
+External routes are defined following the model below, giving environments as `development` and `production`.
+
 
 ![Tekton pipeline routes](assets/routes.png)
 
@@ -59,13 +62,13 @@ For the other two environments you have to ensure that they exist. If they do no
     oc create namespace do101-development
     oc create namespace do101-production
 
-### Configuration
+## Configuration
 
 To configure your own application and send it through the pipeline you must update the `values.yaml` file to reflect a repository to which you have access. Please use a repository with a lowercase name.
 
 It will be in this repository that the webhook will be automatically created and will trigger, on each new commit, a new PipelineRun on Tekton. You can create a new token on Github by [clicking here](https://github.com/settings/tokens), make sure to tick the `admin:repo_hook`, `repo` and `user`.
 
-#### Secrets 
+### Secrets 
 
 The Github token will only be shown once, be sure to save it somewhere safe. 
 Then copy the token and replace it in the command below.
@@ -80,7 +83,7 @@ Assuming your private key was created in the default location `$HOME/.ssh/id_rsa
         --from-file=ssh-privatekey=$HOME/.ssh/id_rsa \
         --namespace labs-ci-cd
 
-#### Applying
+### Applying
 
 Great. Now that the secrets have been set up correctly we can install the package. For this, we will use helm, as below.
 
@@ -89,7 +92,6 @@ Great. Now that the secrets have been set up correctly we can install the packag
 How to verify that the installation was successful:
 
 1. See if you github webhook integration was created. Go to your github repository, click on Settings, and then on Webhooks.
-2. 
 
 ### Policies
 
