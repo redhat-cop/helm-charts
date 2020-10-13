@@ -38,7 +38,7 @@ Access routes are defined following the model below, giving environments as `dev
 | `develop` | develop-development.apps.s45.core.rht-labs.com |
 | `feature/login-page` | feature-login-page-development.apps.s45.core.rht-labs.com |
 
-## How to install
+## Installing
 
 In this step by step we will assume the following values:
 
@@ -56,11 +56,16 @@ For the other two environments you have to ensure that they exist. If they do no
     oc create namespace do101-development
     oc create namespace do101-production
 
+### Configuration
+
 To configure your own application and send it through the pipeline you must update the `values.yaml` file to reflect a repository to which you have access. Please use a repository with a lowercase name.
 
 It will be in this repository that the webhook will be automatically created and will trigger, on each new commit, a new PipelineRun on Tekton. You can create a new token on Github by [clicking here](https://github.com/settings/tokens), make sure to tick the `admin:repo_hook`, `repo` and `user`.
 
-The Github token will only be shown once, be sure to save it somewhere safe. Then copy the token and replace it in the command below.
+#### Secrets 
+
+The Github token will only be shown once, be sure to save it somewhere safe. 
+Then copy the token and replace it in the command below.
 
     oc create secret generic github-webhook-secret --from-literal=token=XXXXXXXXXXXXXXXX -n labs-ci-cd
 
@@ -72,6 +77,8 @@ Assuming your private key was created in the default location `$HOME/.ssh/id_rsa
         --from-file=ssh-privatekey=$HOME/.ssh/id_rsa \
         --namespace labs-ci-cd
 
+#### Applying
+
 Great. Now that the secrets have been set up correctly we can install the package. For this, we will use helm, as below.
 
     helm template -f charts/tekton-demo/values.yaml charts/tekton-demo | oc apply -f-
@@ -80,6 +87,8 @@ How to verify that the installation was successful:
 
 1. See if you github webhook integration was created. Go to your github repository, click on Settings, and then on Webhooks.
 2. 
+
+### Policies
 
 Before publishing a new commit, we will need to define some permissions for the pipeline ServiceAccount. This will allow the pipeline to move images from one environment to another.
 
