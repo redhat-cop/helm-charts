@@ -1,0 +1,74 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: {{ .Values.application.name }}-trigger-template
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  # description: >-
+  #   This `task` consumes data from the trigger binding file and fires a new pipelinerun with a pipeline as reference.
+  params:
+  - name: ref
+    description: git reference or branch name
+  - name: revision
+    description: The revision of your git repository
+  - name: repourl
+    description: The url of your git repository
+  - name: reponame
+    description: The name of your git repository
+  - name: repofullname
+    description: The full name of your git repository
+  - name: message
+    description: commit message
+  - name: author
+    description: commit author username
+  - name: email
+    description: commit author email
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1alpha1
+    kind: PipelineRun
+    metadata:
+      generateName: $(params.reponame)-$(params.author)-
+      namespace: {{ .Values.application.environments.cicd }}
+      labels:
+        webhooks.tekton.dev/repo: $(params.reponame)
+        webhooks.tekton.dev/author: $(params.author)
+      annotations:
+        argocd.argoproj.io/compare-options: IgnoreExtraneous
+    spec:
+      serviceAccountName: {{ .Values.pipeline.sa.triggers }}
+      params:
+        - name: ref
+          value: $(params.ref)
+        - name: revision
+          value: $(params.revision)
+        - name: author
+          value: $(params.author)
+        - name: email
+          value: $(params.email)
+        - name: message
+          value: $(params.message)
+        - name: repourl
+          value: $(params.repourl)
+        - name: repofullname
+          value: $(params.repofullname)
+      pipelineRef:
+        name: {{ .Values.application.name }}
+      resources:
+        - name: {{ .Values.application.name }}-git
+          resourceSpec:
+            type: git
+            params:
+              - name: url
+                value: $(params.repourl)
+              - name: revision
+                value: $(params.revision)
+        - name: {{ .Values.application.name }}-development
+          resourceRef:
+            name: {{ .Values.application.name }}-development
+        - name: {{ .Values.application.name }}-production
+          resourceRef:
+            name: {{ .Values.application.name }}-production
+        - name: {{ .Values.application.name }}-documentation
+          resourceRef:
+            name: {{ .Values.application.name }}-documentation

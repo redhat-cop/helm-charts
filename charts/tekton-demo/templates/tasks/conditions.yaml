@@ -1,0 +1,36 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Condition
+metadata:
+  name: is-allowed-development
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: revision-type
+  check:
+    image: quay.io/openshift/origin-cli:latest
+    script: | 
+      #!/bin/sh
+      if [ "$(params.revision-type)" == "feature" ] || [ "$(params.revision-type)" == "develop" ]; then
+        exit 0
+      else 
+        exit 1
+      fi
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Condition
+metadata:
+  name: is-allowed-production
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: revision-type
+  check:
+    image: quay.io/openshift/origin-cli:latest
+    script: | 
+      #!/bin/sh 
+      if [ "$(params.revision-type)" == "release" ] || [ "$(params.revision-type)" == "hotfix" ] || [ "$(params.revision-type)" == "patch" ]; then
+        exit 0
+      else 
+        exit 1
+      fi

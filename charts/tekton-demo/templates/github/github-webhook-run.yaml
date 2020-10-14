@@ -1,0 +1,27 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: create-{{ .Values.application.name }}-github-webhook
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  taskRef:
+    name: create-webhook
+  inputs:
+    params:
+    - name: GitHubOrg
+      value: {{ .Values.pipeline.webhook.github.org }}
+    - name: GitHubUser
+      value: {{ .Values.pipeline.webhook.github.user }}
+    - name: GitHubRepo
+      value: {{ .Values.pipeline.webhook.github.repo }}
+    - name: GitHubSecretName
+      value: {{ .Values.pipeline.webhook.github.secret }}
+    - name: GitHubAccessTokenKey
+      value: token
+    - name: GitHubSecretStringKey
+      value: secret
+    - name: ExternalDomain
+      value: http://{{ .Values.application.name }}-trigger-{{ .Values.application.environments.cicd }}.{{ .Values.cluster }}
+
+  serviceAccountName: tekton-triggers-createwebhook

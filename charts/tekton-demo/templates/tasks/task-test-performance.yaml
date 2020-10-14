@@ -1,0 +1,63 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: test-performance
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: ref
+      description: Git reference
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
+    - name: revision
+      description: commit head unique id
+      type: string
+    - name: revision-type
+      description: revision type
+      type: string
+    - name: revision-name
+      description: revision name
+  steps:
+    - name: test-performance
+      image: quay.io/openshift/origin-cli:latest
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
+      script: |
+        #!/bin/bash
+
+        replace=$(inputs.params.revision-name)
+        revisionName=${replace//./-} # replace . to / 
+        appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
+
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          endpoint=$(oc get route/{{ .Values.application.name }}-$(inputs.params.revision-type) -n {{ .Values.application.environments.development }} -o=jsonpath='{ .status.ingress[*].host }')
+        elif [ "$(inputs.params.revision-type)" == "feature" ]; then
+          endpoint=$(oc get route/$appname -n {{ .Values.application.environments.development }} -o=jsonpath='{ .status.ingress[*].host }')
+        else
+          echo "Skipping"
+          exit 0
+        fi
+
+        if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
+          
+          echo Endpoint: $endpoint
+          DURATION=10       # how long should load be applied ? - in seconds
+          TPS=200           # number of requests per second
+          end=$((SECONDS+$DURATION))
+          #start load
+          while [ $SECONDS -lt $end ];
+          do
+            for ((i=1;i<=$TPS;i++)); do
+              curl -X POST https://$endpoint -H 'Accept: application/json' -H 'Authorization: Bearer xxxxxxxxxxxxx' -H 'Content-Type: application/json' -d '{}' -o /dev/null -s -w '%{time_starttransfer}\n' >> response-times.log &
+            done
+            sleep 1
+          done
+          wait
+          #end load
+          echo "Load test has been completed"
+          exit 0
+        fi
+      securityContext:
+        runAsUser: 0

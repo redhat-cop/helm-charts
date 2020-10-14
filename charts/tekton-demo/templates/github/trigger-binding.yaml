@@ -1,0 +1,26 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: trigger-binding
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  # description: >-
+  #   This `task` can be used to transport github webhook payload into the trigger template file.
+  params:
+  - name: ref
+    value: $(body.ref)
+  - name: revision
+    value: $(body.head_commit.id)
+  - name: repourl
+    value: $(body.repository.html_url)
+  - name: reponame
+    value: $(body.repository.name)
+  - name: repofullname
+    value: $(body.repository.full_name)
+  - name: message
+    value: $(body.head_commit.message)
+  - name: author
+    value: $(body.head_commit.author.username)
+  - name: email
+    value: $(body.head_commit.author.email)
