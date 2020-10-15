@@ -1,6 +1,20 @@
 ## 🧰 OpenShift Ready Charts 🧰
 This collection of charts we've used in the past that runs on OpenShift. Here are some examples and the values used to run on OpenShift:
 
+#### 🕵️‍♀️ Sealed Secrets
+![Sealed Secrets](https://github.com/helm/charts/tree/master/stable/sealed-secrets) allows you to encrypt your K8s Secret into a SealedSecret, which is safe to store - even to a public repository.... Example Values for OpenShift:
+
+```yaml
+nameOverride: sealed-secrets
+fullnameOverride: sealed-secrets
+# namespace must exist
+namespace: labs-ci-cd
+# Dont touch the security context values, deployment will fail in OpenShift otherwise.
+securityContext:
+  runAsUser: ""
+  fsGroup: ""
+```
+
 #### 🗣 Mattermost
 ![Mattermost](https://github.com/mattermost/mattermost-helm/tree/master/charts/mattermost-team-edition) is an OpenSource Chat Application. Example Values file for OpenShift:
 

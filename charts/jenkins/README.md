@@ -63,7 +63,7 @@ The following table lists the configurable parameters of the Jenkins chart and t
 | `buildconfigs.jenkins.builder_image_tag`         | Builder image tag for custom build                                          | `2`                                                  |
 
 ### Environment Variables
-There are additional environment variables you can set to customize your Jenkins based on your needs. You can update these values on your [values](https://github.com/rht-labs/helm-charts/blob/master/charts/jenkins/values.yaml#L23) file.
+There are additional environment variables you can set to customize your Jenkins based on your needs. You can update these values on your [values](https://github.com/redhat-cop/helm-charts/blob/master/charts/jenkins/values.yaml#L23) file.
 | Variable                                         | Description                                                                 | Default                                              |
 | ------------------------------------------------ | --------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `JVM_ARCH`                                       | Java VM architecture                                                        | `x86_64`                                             |
@@ -84,26 +84,29 @@ There are additional environment variables you can set to customize your Jenkins
 
 
 ### Jenkins Agents
-Following agents are created by default when you install the chart. They are designed to run in OpenShift as described [here](https://docs.openshift.com/container-platform/4.1/openshift_images/using_images/images-other-jenkins.html#images-other-jenkins-config-kubernetes_images-other-jenkins). You can find more details at [containers-quickstarts](https://github.com/redhat-cop/containers-quickstarts") repository.
+Following agents are created by default when you install the chart. They are designed to run in OpenShift as described [here](https://docs.openshift.com/container-platform/latest/openshift_images/using_images/images-other-jenkins.html#images-other-jenkins-config-kubernetes_images-other-jenkins). You can find more details at [containers-quickstarts](https://github.com/redhat-cop/containers-quickstarts") repository.
 
-- jenkins-slave-mvn
-- jenkins-slave-argocd
-- jenkins-slave-helm
-- jenkins-slave-ansible
-- jenkins-slave-arachni
-- jenkins-slave-golang
-- jenkins-slave-gradle
-- jenkins-slave-image-mgmt
-- jenkins-slave-mongodb
-- jenkins-slave-npm
-- jenkins-slave-python
-- jenkins-slave-ruby
-- jenkins-slave-zap
+- jenkins-agent-ansible
+- jenkins-agent-arachni
+- jenkins-agent-argocd
+- jenkins-agent-conftest
+- jenkins-agent-erlang
+- jenkins-agent-golang
+- jenkins-agent-graalvm
+- jenkins-agent-gradle
+- jenkins-agent-helm
+- jenkins-agent-image-mgmt
+- jenkins-agent-mongodb
+- jenkins-agent-mvn
+- jenkins-agent-npm
+- jenkins-agent-python
+- jenkins-agent-ruby
+- jenkins-agent-rust
 
-You can remove the ones you do not need by deleting the related imagestream and buildconfig blocks from [values](https://github.com/rht-labs/helm-charts/blob/master/charts/jenkins/values.yaml#L80) file.
+You can remove the ones you do not need by deleting the related imagestream and buildconfig blocks from [values](https://github.com/redhat-cop/helm-charts/blob/master/charts/jenkins/values.yaml#L80) file.
 
 ### Persistence
-If you want to set your Jenkins as ephemeral, you should either remove the persistence [block](https://github.com/rht-labs/helm-charts/blob/master/charts/jenkins/values.yaml#L55) from your values file or set persistent value as below during the installation:
+If you want to set your Jenkins as ephemeral, you should either remove the persistence [block](https://github.com/redhat-cop/helm-charts/blob/master/charts/jenkins/values.yaml#L55) from your values file or set persistent value as below during the installation:
 
 ```bash
 $ helm template --set persistence='' -f jenkins/values.yaml jenkins | oc apply -f-

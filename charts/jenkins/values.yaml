@@ -1,5 +1,6 @@
 ---
 appName: &name jenkins
+jenkinsAgentRepo: &jarepo "https://github.com/redhat-cop/containers-quickstarts"
 
 route: true
 
@@ -89,19 +90,22 @@ imagestreams:
   #   builder_image: origin-jenkins
   #   builder_imagetag: latest
   # Jenkins agents image streams
-  - name: jenkins-agent-mvn
-  - name: jenkins-agent-argocd
-  - name: jenkins-agent-helm
   - name: jenkins-agent-ansible
   - name: jenkins-agent-arachni
+  - name: jenkins-agent-argocd
+  - name: jenkins-agent-conftest
+  - name: jenkins-agent-erlang
   - name: jenkins-agent-golang
+  - name: jenkins-agent-graalvm
   - name: jenkins-agent-gradle
+  - name: jenkins-agent-helm
   - name: jenkins-agent-image-mgmt
   - name: jenkins-agent-mongodb
+  - name: jenkins-agent-mvn
   - name: jenkins-agent-npm
   - name: jenkins-agent-python
   - name: jenkins-agent-ruby
-  - name: jenkins-agent-conftest
+  - name: jenkins-agent-rust
 
 buildconfigs:
   # Jenkins S2I from Red Hat Labs
@@ -117,57 +121,73 @@ buildconfigs:
     builder_image_name: quay.io/openshift/origin-jenkins
     builder_image_tag: "latest"
   # Jenkins agents for running builds etc
-  - name: "jenkins-agent-mvn"
-    source_context_dir: "jenkins-agents/jenkins-agent-mvn"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-    builder_image_name: "quay.io/eformat/origin-jenkins-agent-maven"
-    builder_image_tag: "latest"
-  - name: "jenkins-agent-helm"
-    source_context_dir: "jenkins-agents/jenkins-agent-helm"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-  - name: "jenkins-agent-argocd"
-    source_context_dir: "jenkins-agents/jenkins-agent-argocd"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
+  - name: "jenkins-agent-ansible"
+    source_context_dir: "jenkins-agents/jenkins-agent-ansible"
+    source_repo: *jarepo
     source_repo_ref: "master"
   - name: "jenkins-agent-arachni"
     source_context_dir: "jenkins-agents/jenkins-agent-arachni"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
+    source_repo: *jarepo
     source_repo_ref: "master"
-  - name: "jenkins-agent-golang"
-    source_context_dir: "jenkins-agents/jenkins-agent-golang"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-  - name: "jenkins-agent-gradle"
-    source_context_dir: "jenkins-agents/jenkins-agent-gradle"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-  - name: "jenkins-agent-image-mgmt"
-    source_context_dir: "jenkins-agents/jenkins-agent-image-mgmt"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-  - name: "jenkins-agent-mongodb"
-    source_context_dir: "jenkins-agents/jenkins-agent-mongodb"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-  - name: "jenkins-agent-npm"
-    source_context_dir: "jenkins-agents/jenkins-agent-npm"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-  - name: "jenkins-agent-python"
-    source_context_dir: "jenkins-agents/jenkins-agent-python"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-  - name: "jenkins-agent-ruby"
-    source_context_dir: "jenkins-agents/jenkins-agent-ruby"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
-    source_repo_ref: "master"
-  - name: "jenkins-agent-ansible"
-    source_context_dir: "jenkins-agents/jenkins-agent-ansible"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
+  - name: "jenkins-agent-argocd"
+    source_context_dir: "jenkins-agents/jenkins-agent-argocd"
+    source_repo: *jarepo
     source_repo_ref: "master"
   - name: "jenkins-agent-conftest"
     source_context_dir: "jenkins-agents/jenkins-agent-conftest"
-    source_repo: "https://github.com/redhat-cop/containers-quickstarts"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+    builder_image_name: "quay.io/redhat-cop/jenkins-agent-python"
+    builder_image_tag: "v1.0"
+  - name: "jenkins-agent-erlang"
+    source_context_dir: "jenkins-agents/jenkins-agent-erlang"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-golang"
+    source_context_dir: "jenkins-agents/jenkins-agent-golang"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-graalvm"
+    source_context_dir: "jenkins-agents/jenkins-agent-graalvm"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+    builder_image_name: "quay.io/openshift/origin-jenkins-agent-maven"
+    builder_image_tag: "4.5"
+  - name: "jenkins-agent-gradle"
+    source_context_dir: "jenkins-agents/jenkins-agent-gradle"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-helm"
+    source_context_dir: "jenkins-agents/jenkins-agent-helm"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-image-mgmt"
+    source_context_dir: "jenkins-agents/jenkins-agent-image-mgmt"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-mongodb"
+    source_context_dir: "jenkins-agents/jenkins-agent-mongodb"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-mvn"
+    source_context_dir: "jenkins-agents/jenkins-agent-mvn"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+    builder_image_name: "quay.io/eformat/origin-jenkins-agent-maven"
+    builder_image_tag: "latest"
+  - name: "jenkins-agent-npm"
+    source_context_dir: "jenkins-agents/jenkins-agent-npm"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-python"
+    source_context_dir: "jenkins-agents/jenkins-agent-python"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-ruby"
+    source_context_dir: "jenkins-agents/jenkins-agent-ruby"
+    source_repo: *jarepo
+    source_repo_ref: "master"
+  - name: "jenkins-agent-rust"
+    source_context_dir: "jenkins-agents/jenkins-agent-rust"
+    source_repo: *jarepo
     source_repo_ref: "master"

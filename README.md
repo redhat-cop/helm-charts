@@ -8,6 +8,8 @@ For charts we know work on OpenShift but do not belong here, check out the list 
 
 This libary is used to support [Open Innovation Labs Ubiquitous Journey Project](https://github.com/rht-labs/ubiquitous-journey)
 
+Additional charts for managing an OpenShift cluster can be found in [redhat-cop/openshift-management](https://github.com/redhat-cop/openshift-management/tree/master/charts)
+
 ## 🧰 Add this Helm Repo to your local 🧰
 ```
 helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
