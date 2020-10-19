@@ -25,7 +25,7 @@ spec:
   - name: email
     description: commit author email
   resourcetemplates:
-  - apiVersion: tekton.dev/v1alpha1
+  - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
       generateName: $(params.reponame)-$(params.author)-

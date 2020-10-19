@@ -31,7 +31,7 @@ metadata:
   name: {{ .Values.application.name }}-documentation
   namespace: {{ .Values.application.environments.cicd }}
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: PipelineResource
 metadata:
   name: {{ .Values.application.name }}-development
@@ -45,7 +45,7 @@ spec:
       value: image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development
 
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: PipelineResource
 metadata:
   name: {{ .Values.application.name }}-documentation
@@ -58,7 +58,7 @@ spec:
     - name: url
       value: image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.tekton.dev/v1beta1
 kind: PipelineResource
 metadata:
   name: {{ .Values.application.name }}-production
