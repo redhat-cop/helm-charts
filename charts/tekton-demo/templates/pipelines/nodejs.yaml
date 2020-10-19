@@ -61,6 +61,8 @@ spec:
         value: $(params.author)
       - name: message
         value: $(params.message)
+      - name: pipelinerun
+        value: $(context.pipelineRun.name)
 
     - name: standards
       taskRef:
@@ -196,11 +198,6 @@ spec:
         value: $(tasks.git.results.revision-name)
 
     - name: apply
-      # conditions:
-      #   - conditionRef: is-allowed-production
-      #     params:
-      #       - name: revision-type
-      #         value: $(tasks.git.results.revision-type)
       taskRef:
         name: apply
       runAfter:
@@ -209,8 +206,6 @@ spec:
       workspaces:
       - name: source
         workspace: {{ .Values.application.name }}-source
-      - name: shared
-        workspace: {{ .Values.application.name }}-shared
       params:
       - name: repofullname
         value: $(params.repofullname)
@@ -226,11 +221,11 @@ spec:
         value: $(tasks.git.results.revision-name)
 
     - name: promote
-      # conditions:
-      #   - conditionRef: is-allowed-production
-      #     params:
-      #       - name: revision-type
-      #         value: $(tasks.git.results.revision-type)
+      conditions:
+        - conditionRef: is-allowed-production
+          params:
+            - name: revision-type
+              value: $(tasks.git.results.revision-type)
       taskRef:
         name: promote
       runAfter:
@@ -240,7 +235,7 @@ spec:
         workspace: {{ .Values.application.name }}-source
       params:
       - name: cluster
-        value: $(tasks.git.results.cluster)
+        value: {{ .Values.cluster }}
       - name: repofullname
         value: $(params.repofullname)
       - name: ref
@@ -275,3 +270,20 @@ spec:
         value: $(tasks.git.results.revision-type)
       - name: revision-name
         value: $(tasks.git.results.revision-name)
+
+  finally:
+    - name: finally
+      taskRef:
+        name: finally
+      params:
+      - name: uid
+        value: $(context.pipelineRun.uid)
+      - name: name
+        value: $(context.pipelineRun.name)
+      - name: repofullname
+        value: $(params.repofullname)
+      - name: repourl
+        value: $(params.repourl)
+      workspaces:
+        - name: source
+          workspace: {{ .Values.application.name }}-source

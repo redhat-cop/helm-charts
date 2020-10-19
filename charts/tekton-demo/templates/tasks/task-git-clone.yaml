@@ -76,6 +76,8 @@ spec:
       type: string
     - name: message
       type: string
+    - name: pipelinerun
+      type: string
   results:
     - name: commit
       description: The precise commit SHA that was fetched by this Task
@@ -295,3 +297,15 @@ spec:
       securityContext:
         runAsUser: 0
 
+    - name: status
+      image: ubi8/nodejs-12
+      resources: {}
+      workingDir: /workspace/output
+      script: |
+        #!/bin/sh
+        curl -LO https://github.com/tektoncd/cli/releases/download/v0.13.0/tkn_0.13.0_Linux_x86_64.tar.gz
+        tar xvzf tkn_0.13.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
+        /usr/local/bin/tkn version -n {{ .Values.application.environments.cicd }}
+        /usr/local/bin/tkn pr desc $(params.pipelinerun)
+      securityContext:
+        runAsUser: 0

@@ -8,7 +8,13 @@ spec:
     - name: source
   params:
     - name: uid
+      type: string
     - name: name
+      type: string
+    - name: repofullname
+      type: string
+    - name: repourl
+      type: string
   steps:
     - name: debug
       image: ubi8/nodejs-12
@@ -18,7 +24,58 @@ spec:
         #!/bin/sh
           set -ex
           find /workspace/source/
-          echo UID: $(inputs.params.uuid)
+          echo UID: $(inputs.params.uid)
           echo Name: $(inputs.params.name)
+      securityContext:
+        runAsUser: 0
+
+    # - name: update-github
+    #   image: registry.access.redhat.com/ubi8/ubi:latest
+    #   env:
+    #     - name: GITHUBTOKEN
+    #       valueFrom:
+    #         secretKeyRef:
+    #           name: {{ .Values.pipeline.webhook.github.secret }}
+    #           key: password
+    #   script: |
+    #     #!/usr/libexec/platform-python
+    #     import json
+    #     import os
+    #     import http.client
+    #     status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
+
+    #     data = {
+    #         "state": "success",
+    #         "target_url": "https://replaceme",
+    #         "description": "Building",
+    #         "context": "tekton"
+    #     }
+    #     conn = http.client.HTTPSConnection("api.github.com")
+    #     r = conn.request(
+    #         "POST",
+    #         status_url.rstrip("\n"),
+    #         body=json.dumps(data),
+    #         headers={
+    #             "User-Agent": "TektonCD, the peaceful cat",
+    #             "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
+    #         })
+    #     resp = conn.getresponse()
+    #     if not str(resp.status).startswith("2"):
+    #         print("Error: %d" % (resp.status))
+    #         print(resp.read())
+    #         # sys.exit(resp.read())
+    #     else:
+    #       print("GitHub status 'success' has been set")
+
+    - name: status
+      image: ubi8/nodejs-12
+      resources: {}
+      workingDir: /workspace/output
+      script: |
+        #!/bin/sh
+        curl -LO https://github.com/tektoncd/cli/releases/download/v0.13.0/tkn_0.13.0_Linux_x86_64.tar.gz
+        tar xvzf tkn_0.13.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
+        /usr/local/bin/tkn version -n {{ .Values.application.environments.cicd }}
+        /usr/local/bin/tkn pr desc $(input.params.name)
       securityContext:
         runAsUser: 0

@@ -262,7 +262,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ .Values.pipeline.webhook.github.secret }}
-              key: token
+              key: password
 
     - name: report
       image: registry.access.redhat.com/ubi8/ubi:latest
@@ -301,8 +301,3 @@ spec:
             # sys.exit(resp.read())
         else:
           print("GitHub status 'pending' has been set")
-
-  volumes:
-    - name: {{ .Values.pipeline.webhook.github.key }}
-      secret:
-        secretName: {{ .Values.pipeline.webhook.github.key }}
