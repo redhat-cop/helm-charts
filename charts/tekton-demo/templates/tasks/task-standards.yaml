@@ -4,6 +4,8 @@ metadata:
   name: standards
   namespace: {{ .Values.application.environments.cicd }}
 spec:
+  workspaces:
+    - name: source
   params:
     - name: ref
       description: Git reference
@@ -20,11 +22,41 @@ spec:
     - name: revision-name
       description: revision name
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
   steps:
+
+    - name: helm-prepare
+      image: ubi8/nodejs-12
+      resources: {}
+      workingDir: /workspace/shared
+      script: |
+        #!/bin/sh
+          pwd
+          ls -ls
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+          cp /usr/local/bin/helm /workspace/shared/
+      securityContext:
+        runAsUser: 0
+
+    - name: helm-lint
+      image: ubi8/nodejs-12
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
+      script: |
+        #!/bin/sh
+        pwd
+        ls -ls
+        /workspace/shared/helm version
+        if [ -d "chart" ]; then
+          /workspace/shared/helm lint chart
+          /workspace/shared/helm template -f chart/values.yaml chart
+        else
+          echo "Chart does not exist"
+        fi
+      securityContext:
+        runAsUser: 0
+
     - name: code-prepare
       image: ubi8/nodejs-10
       resources: {}
@@ -67,10 +99,13 @@ spec:
       image: ubi8/nodejs-10
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      command: ["/bin/bash", "-c"]
-      args:
-        - |-
+      script: |
+        #!/bin/sh
+        if [[ $(npm run | grep "^  test-unit" | wc -l) == "1" ]]; then
           npm run test-unit
+        else
+          echo "Not implemented (npm run test-unit)"
+        fi
       securityContext:
         runAsUser: 0
 
@@ -80,7 +115,11 @@ spec:
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-        npm run coverage
+        if [[ $(npm run | grep "^  coverage" | wc -l) == "1" ]]; then
+          npm run coverage
+        else
+          echo "Not implemented (npm run coverage)"
+        fi
       securityContext:
         runAsUser: 0
 

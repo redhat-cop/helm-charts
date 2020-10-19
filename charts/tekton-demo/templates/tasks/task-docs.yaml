@@ -33,9 +33,6 @@ spec:
       default: "false"
       type: string
   resources:
-    inputs:
-      - name: source
-        type: git
     outputs:
       - name: documentation
         type: image

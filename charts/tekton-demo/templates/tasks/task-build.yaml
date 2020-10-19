@@ -32,10 +32,9 @@ spec:
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
       default: "false"
       type: string
+  workspaces:
+    - name: source
   resources:
-    inputs:
-      - name: source
-        type: git
     outputs:
       - name: image
         type: image
