@@ -209,6 +209,8 @@ spec:
       workspaces:
       - name: source
         workspace: {{ .Values.application.name }}-source
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
       params:
       - name: repofullname
         value: $(params.repofullname)
@@ -255,8 +257,6 @@ spec:
         value: $(params.author)
       - name: email
         value: $(params.email)
-      - name: image
-        value: $(tasks.build.results.image)
 
     - name: release
       taskRef:

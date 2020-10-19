@@ -4,6 +4,8 @@ metadata:
   name: promote
   namespace: {{ .Values.application.environments.cicd }}
 spec:
+  workspaces:
+    - name: source
   params:
     - name: cluster
       description: cluster app url
@@ -28,9 +30,6 @@ spec:
     - name: author
       type: string
     - name: email
-      type: string
-    - name: image
-      description: image from development to be renamed to production
       type: string
 
   steps:
@@ -63,19 +62,19 @@ spec:
         | sed 's/[",]//g')        
         before=$(echo -e $before)
 
-        ls -ls /etc/idrsa/
-        touch ~/.ssh/config
-        ssh-add /etc/idrsa/ssh-privatekey
-        # chmod 400 ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/config
-        tee -a ~/.ssh/config << END
-        host github.com
-          HostName github.com
-          IdentitiesOnly yes
-          IdentityFile /etc/idrsa/ssh-privatekey
-          User git
-        END
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        # ls -ls /etc/idrsa/
+        # touch ~/.ssh/config
+        # ssh-add /etc/idrsa/ssh-privatekey
+        # # chmod 400 ~/.ssh/id_rsa
+        # chmod 600 ~/.ssh/config
+        # tee -a ~/.ssh/config << END
+        # host github.com
+        #   HostName github.com
+        #   IdentitiesOnly yes
+        #   IdentityFile /etc/idrsa/ssh-privatekey
+        #   User git
+        # END
+        # ssh-keyscan github.com >> ~/.ssh/known_hosts
 
         git config --global user.name  "$(params.author)"
         git config --global user.email "$(params.email)"
@@ -110,9 +109,7 @@ spec:
         oc get deployment/$appname -n {{ .Values.application.environments.production }}
         if [[ $? -ne 0 ]]
         then
-            image=$(inputs.params.image)
-            image=${image//development/production}
-            oc new-app --name=$appname -i=$image --namespace={{ .Values.application.environments.production }} --labels=app.name={{ .Values.application.name }}
+            oc new-app --name=$appname -i={{ .Values.application.name }}-production:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.production }} --labels=app.name={{ .Values.application.name }}
         else
             echo "Application already exists."
         fi

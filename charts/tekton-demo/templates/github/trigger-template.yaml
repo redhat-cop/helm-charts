@@ -45,7 +45,15 @@ spec:
                   - ReadWriteOnce
                 resources:
                   requests:
-                    storage: 1Gi
+                    storage: 3Gi
+          - name: {{ .Values.application.name }}-shared
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteMany
+                resources:
+                  requests:
+                    storage: 2Gi
       params:
         - name: ref
           value: $(params.ref)

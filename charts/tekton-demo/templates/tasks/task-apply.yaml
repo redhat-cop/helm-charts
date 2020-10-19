@@ -4,6 +4,8 @@ metadata:
   name: apply
   namespace: {{ .Values.application.environments.cicd }}
 spec:
+  workspaces:
+  - name: source
   params:
     - name: ref
       description: git ref
@@ -22,11 +24,9 @@ spec:
     - name: revision-name
       description: revision name usually version or branch name
       type: string
-  workspaces:
-  - name: source
   steps:
     - name: helm-prepare
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
