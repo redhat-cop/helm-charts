@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: finally
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  workspaces:
+    - name: source
+  params:
+    - name: uid
+    - name: name
+  steps:
+    - name: debug
+      image: ubi8/nodejs-12
+      resources: {}
+      workingDir: /workspace/source
+      script: |
+        #!/bin/sh
+          set -ex
+          find /workspace/source/
+          echo UID: $(inputs.params.uuid)
+          echo Name: $(inputs.params.name)
+      securityContext:
+        runAsUser: 0

@@ -44,7 +44,7 @@ spec:
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-          ls -ls
-          ./helm template -f chart/values.yaml chart | oc apply -f-
+        ls -ls
+        ./helm template -f chart/values.yaml chart | oc apply -f-
       securityContext:
         runAsUser: 0

@@ -49,10 +49,10 @@ spec:
     - name: release-notes
       image: ubi8/nodejs-12
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      volumeMounts:
-        - name: {{ .Values.pipeline.webhook.github.key }}
-          mountPath: /etc/idrsa
-          readOnly: true
+      # volumeMounts:
+      #   - name: {{ .Values.pipeline.webhook.github.key }}
+      #     mountPath: /etc/idrsa
+      #     readOnly: true
       script: |
         #!/bin/sh
         before=$(cat package.json \
