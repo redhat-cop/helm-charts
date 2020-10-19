@@ -6,6 +6,9 @@ metadata:
   labels:
     app: {{ .Values.application.name }}
 spec:
+  workspaces:
+    - name: {{ .Values.application.name }}-source
+      description: The git repo will be cloned onto the volume backing this workspace
   resources:
     - name: {{ .Values.application.name }}-git
       type: git
@@ -15,7 +18,6 @@ spec:
       type: image
     - name: {{ .Values.application.name }}-documentation
       type: image
-    
   params:
     - name: ref
       description: Ref of the application
@@ -37,7 +39,7 @@ spec:
       taskRef:
         kind: Task
         name: status
-      resources:       
+      resources:
         inputs:
           - name: source
             resource: {{ .Values.application.name }}-git
@@ -73,12 +75,13 @@ spec:
           value: $(tasks.info.results.revision-type)
         - name: revision-name
           value: $(tasks.info.results.revision-name)
-      resources:       
+      resources:
         inputs:
           - name: source
             resource: {{ .Values.application.name }}-git
 
     - name: helm
+      retries: 2
       taskRef:
         name: helm
       runAfter:
@@ -208,6 +211,7 @@ spec:
         inputs:
           - name: image
             resource: {{ .Values.application.name }}-development
+          
 
     - name: test-stress
       taskRef:
@@ -339,3 +343,11 @@ spec:
         inputs:
           - name: source
             resource: {{ .Values.application.name }}-git
+  # finally:
+  #   # Cleanup workspace
+  #   - name: finally
+  #     taskRef:
+  #       name: finally
+  #     workspaces:
+  #       - name: source
+  #         workspace: git-source

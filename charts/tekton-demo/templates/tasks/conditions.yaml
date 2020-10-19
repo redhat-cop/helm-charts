@@ -1,5 +1,5 @@
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1alpha1
 kind: Condition
 metadata:
   name: is-allowed-development
@@ -17,7 +17,7 @@ spec:
         exit 1
       fi
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1alpha1
 kind: Condition
 metadata:
   name: is-allowed-production

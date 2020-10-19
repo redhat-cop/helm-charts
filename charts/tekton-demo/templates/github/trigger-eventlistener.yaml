@@ -5,33 +5,14 @@ metadata:
   name: {{ .Values.application.name }}
   namespace: {{ .Values.application.environments.cicd }}
 spec:
-  serviceAccountName: {{ .Values.pipeline.sa.default }}
+  serviceAccountName: {{ .Values.pipeline.sa.triggers }}
   triggers:
-    - name: github-event-push
+    - name: cel-trig-with-canonical
       interceptors:
         - cel:
-            filter: header.match('X-GitHub-Event', 'push')
-        - cel:
-            filter: "type(body.head_commit.id) == string"
-            # todo: when tkn upgraded https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md#webhook-interceptors
-            # filter payloads from github and avoid triggering a pipelinerun for other webhook events
-            # overlays:
-            # - key: extensions.branch_name
-            #   expression: "body.ref.split('/')[2]"
+            filter: "header.canonical('X-GitHub-Event') == 'push'"
       bindings:
-      - name: trigger-binding
-      template:
-        name: {{ .Values.application.name }}-trigger-template
-
-    - name: github-event-pullrequest
-      interceptors:
-        - cel:
-            filter: "header.match('X-GitHub-Event', 'pull_request')"
-            overlays:
-            - key: extensions.truncated_sha
-              expression: "body.pull_request.head.sha.truncate(7)"
-      bindings:
-      - name: trigger-binding
+        - ref: {{ .Values.application.name }}-trigger-binding
       template:
         name: {{ .Values.application.name }}-trigger-template
 ---

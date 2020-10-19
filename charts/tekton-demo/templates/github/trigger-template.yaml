@@ -37,6 +37,15 @@ spec:
         argocd.argoproj.io/compare-options: IgnoreExtraneous
     spec:
       serviceAccountName: {{ .Values.pipeline.sa.triggers }}
+      workspaces:
+          - name: {{ .Values.application.name }}-source
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi
       params:
         - name: ref
           value: $(params.ref)
