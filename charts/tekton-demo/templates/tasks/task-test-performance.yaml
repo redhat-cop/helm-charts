@@ -23,7 +23,6 @@ spec:
     - name: test-performance
       image: quay.io/openshift/origin-cli:latest
       resources: {}
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/bash
 

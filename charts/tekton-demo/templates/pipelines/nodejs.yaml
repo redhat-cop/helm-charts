@@ -46,7 +46,7 @@ spec:
         workspace: {{ .Values.application.name }}-source
       params:
       - name: verbose
-        value: false
+        value: "false"
       - name: url
         value: $(params.repourl)
       - name: revision
@@ -104,16 +104,11 @@ spec:
           value: $(tasks.git.results.revision-name)
         - name: author
           value: $(tasks.git.results.author)
-      resources:       
-        outputs:
-          - name: documentation
-            resource: {{ .Values.application.name }}-documentation
 
     - name: build
       taskRef:
         name: build
       runAfter:
-        - prepare
         - standards
       workspaces:
       - name: source
@@ -131,12 +126,6 @@ spec:
           value: $(tasks.git.results.revision-type)
         - name: revision-name
           value: $(tasks.git.results.revision-name)
-        - name: author
-          value: $(tasks.git.results.author)
-      resources:
-        outputs:
-          - name: image
-            resource: {{ .Values.application.name }}-development
 
     - name: deploy
       taskRef:
@@ -144,9 +133,12 @@ spec:
       runAfter:
         - docs
         - build
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
         - name: cluster
-          value: $(tasks.git.results.cluster)
+          value: {{ .Values.cluster }}
         - name: ref
           value: $(tasks.git.results.ref)
         - name: revision
@@ -157,12 +149,10 @@ spec:
           value: $(tasks.git.results.revision-type)
         - name: revision-name
           value: $(tasks.git.results.revision-name)
-        - name: author
-          value: $(tasks.git.results.author)
-      resources:
-        inputs:
-          - name: image
-            resource: {{ .Values.application.name }}-development
+        # - name: image
+        #   value: $(tasks.build.results.image)
+        # - name: documentation
+        #   value: $(tasks.docs.results.image)
           
     - name: test-stress
       taskRef:
@@ -188,6 +178,9 @@ spec:
         name: test-integration
       runAfter:
         - deploy
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
       - name: ref
         value: $(params.ref)
@@ -201,10 +194,6 @@ spec:
         value: $(tasks.git.results.revision-type)
       - name: revision-name
         value: $(tasks.git.results.revision-name)
-      resources:
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
 
     - name: apply
       # conditions:
@@ -217,6 +206,9 @@ spec:
       runAfter:
         - test-e2e
         - test-stress
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
       - name: repofullname
         value: $(params.repofullname)
@@ -230,11 +222,6 @@ spec:
         value: $(tasks.git.results.revision-type)
       - name: revision-name
         value: $(tasks.git.results.revision-name)
-      resources:
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
-
 
     - name: promote
       # conditions:
@@ -246,6 +233,9 @@ spec:
         name: promote
       runAfter:
         - apply
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
       - name: cluster
         value: $(tasks.git.results.cluster)
@@ -265,22 +255,17 @@ spec:
         value: $(params.author)
       - name: email
         value: $(params.email)
-      resources:
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
-          - name: image
-            resource: {{ .Values.application.name }}-development
-        outputs:
-          - name: image
-            resource: {{ .Values.application.name }}-production
+      - name: image
+        value: $(tasks.build.results.image)
 
     - name: release
       taskRef:
-        kind: Task
         name: tag
       runAfter:
         - promote
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
       - name: author
         value: $(params.author)
@@ -290,7 +275,3 @@ spec:
         value: $(tasks.git.results.revision-type)
       - name: revision-name
         value: $(tasks.git.results.revision-name)
-      resources:
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git

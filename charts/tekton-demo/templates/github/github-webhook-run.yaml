@@ -18,7 +18,7 @@ spec:
   - name: GitHubSecretName
     value: {{ .Values.pipeline.webhook.github.secret }}
   - name: GitHubAccessTokenKey
-    value: token
+    value: password
   - name: GitHubSecretStringKey
     value: secret
   - name: ExternalDomain

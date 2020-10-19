@@ -4,6 +4,8 @@ metadata:
   name: test-integration
   namespace: {{ .Values.application.environments.cicd }}
 spec:
+  workspaces:
+    - name: source
   params:
     - name: ref
       description: Git reference
@@ -19,14 +21,10 @@ spec:
       type: string
     - name: revision-name
       description: revision name
-  resources:
-    inputs:
-      - name: source
-        type: git
   steps:
 
     - name: test-integration
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -50,7 +48,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ .Values.pipeline.webhook.github.secret }}
-              key: token
+              key: password
       script: |
         #!/usr/libexec/platform-python
         import json

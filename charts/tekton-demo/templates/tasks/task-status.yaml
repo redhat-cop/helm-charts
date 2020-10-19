@@ -17,10 +17,9 @@ spec:
       type: string
     - name: message
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
+  workspaces:
+  - name: source
+  description: The git repo will be cloned onto the volume backing this workspace
   results:
     - name: cluster
       description: apps cluster url
@@ -48,7 +47,7 @@ spec:
     - name: variables
       image: quay.io/openshift/origin-cli:latest
       resources: {}
-      workingDir: /workspace/source
+      workingDir: $(workspaces.source.path)
       script: |
         #!/bin/sh
         echo $(oc config view)
@@ -76,9 +75,9 @@ spec:
         echo "Revision-name:" $(cat /tekton/results/revision-name)
 
     - name: validate
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
-      workingDir: /workspace/source
+      workingDir: $(workspaces.source.path)
       script: |
         #!/bin/sh
         ref=$(cat /tekton/results/ref)

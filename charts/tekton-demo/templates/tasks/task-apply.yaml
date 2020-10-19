@@ -22,11 +22,8 @@ spec:
     - name: revision-name
       description: revision name usually version or branch name
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
-
+  workspaces:
+  - name: source
   steps:
     - name: helm-prepare
       image: ubi8/nodejs-10

@@ -220,12 +220,44 @@ spec:
           print("GitHub status 'pending' has been set")
 
     - name: validate
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
-      workingDir: /workspace/output/{{ .Values.pipeline.build.s2i.context }}
+      workingDir: /workspace/output
       script: |
         #!/bin/sh
-        before=$(cat package.json \
+
+        ref=$(cat /tekton/results/ref)
+        revisionType=$(cat /tekton/results/revision-type)
+        revisionName=$(cat /tekton/results/revision-name)
+        printf %s "$(git rev-parse --short HEAD)" >> /tekton/results/revision-short
+        package={{ .Values.pipeline.build.s2i.context }}/package.json
+        git fetch --all --tags > /dev/null 2>&1
+        if git rev-parse -q --verify "refs/tags/$revisionName" >/dev/null; then
+            echo "Tag $revisionName already exists"
+            exit 1
+        fi
+
+        if [ ! -f $package ]; then
+            echo "Missing package.json"
+            exit 1 
+        fi
+
+        # verify if it's not a tag webhook event
+        if [[ $ref == *"refs/tags/"* ]]; then
+          echo "This is a tag commit. Not building."
+          exit 1
+        fi
+
+        if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ] || [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
+          exit 0
+        else
+          echo "Branch $revisionType is not supported as part of git flow implementation"
+          exit 1
+        fi
+
+        echo OK
+
+        before=$(cat $package \
         | grep version \
         | head -1 \
         | awk -F: '{ print $2 }' \
@@ -262,3 +294,4 @@ spec:
         fi
       securityContext:
         runAsUser: 0
+

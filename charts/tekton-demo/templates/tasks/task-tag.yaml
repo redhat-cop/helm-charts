@@ -13,10 +13,8 @@ spec:
       type: string
     - name: revision-name
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
+  workspaces:
+    - name: source
   steps:
     - name: debug
       image: ubi8/nodejs-10

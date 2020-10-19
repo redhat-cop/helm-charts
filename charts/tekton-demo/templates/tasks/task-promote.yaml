@@ -29,21 +29,14 @@ spec:
       type: string
     - name: email
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
-      - name: image
-        type: image
-    outputs:
-      - name: image
-        type: image
+    - name: image
+      description: image from development to be renamed to production
+      type: string
 
   steps:
     - name: validate
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         revisionType=$(params.revision-type)
@@ -55,7 +48,7 @@ spec:
         fi
 
     - name: release-notes
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       volumeMounts:
         - name: {{ .Values.pipeline.webhook.github.key }}
@@ -107,7 +100,6 @@ spec:
 
     - name: release-image
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -118,14 +110,15 @@ spec:
         oc get deployment/$appname -n {{ .Values.application.environments.production }}
         if [[ $? -ne 0 ]]
         then
-            oc new-app --name=$appname -i={{ .Values.application.name }}-production:$(inputs.params.revision-name) --namespace={{ .Values.application.environments.production }} --labels=app.name={{ .Values.application.name }}
+            image=$(inputs.params.image)
+            image=${image//development/production}
+            oc new-app --name=$appname -i=$image --namespace={{ .Values.application.environments.production }} --labels=app.name={{ .Values.application.name }}
         else
             echo "Application already exists."
         fi
 
     - name: app-expose
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -159,7 +152,6 @@ spec:
 
     - name: app-labels
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -175,7 +167,6 @@ spec:
 
     - name: app-envs
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -191,7 +182,6 @@ spec:
 
     - name: app-secrets
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -203,7 +193,6 @@ spec:
 
     - name: app-probes
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -215,7 +204,6 @@ spec:
 
     - name: app-autoscale
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
 
@@ -240,7 +228,6 @@ spec:
 
     - name: app-triggers
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -250,7 +237,7 @@ spec:
           oc set triggers deployment/$appname -n {{ .Values.application.environments.production }}
 
     - name: pull-request
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
       workingDir: /workspace/source
       script: |
@@ -282,13 +269,12 @@ spec:
 
     - name: report
       image: registry.access.redhat.com/ubi8/ubi:latest
-      workingDir: /workspace/source
       env:
         - name: GITHUBTOKEN
           valueFrom:
             secretKeyRef:
               name: {{ .Values.pipeline.webhook.github.secret }}
-              key: token
+              key: password
       script: |
         #!/usr/libexec/platform-python
         import json

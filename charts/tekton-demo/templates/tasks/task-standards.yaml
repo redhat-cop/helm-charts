@@ -58,23 +58,23 @@ spec:
         runAsUser: 0
 
     - name: code-prepare
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-          npm ping --registry {{ .Values.pipeline.nexus.host }} install
-          if [[ $? -ne 0 ]]; then
-            npm install --only-dev --unsafe-perm=true --allow-root
-          else
-            echo Using nexus
-            npm --registry {{ .Values.pipeline.nexus.host }} install --only-dev --unsafe-perm=true --allow-root
-          fi
+        npm ping --registry {{ .Values.pipeline.nexus.host }} install
+        if [[ $? -ne 0 ]]; then
+          npm install --only-dev --unsafe-perm=true --allow-root
+        else
+          echo Using nexus
+          npm --registry {{ .Values.pipeline.nexus.host }} install --only-dev --unsafe-perm=true --allow-root
+        fi
       securityContext:
         runAsUser: 0
 
     - name: code-audit
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
@@ -85,7 +85,7 @@ spec:
         runAsUser: 0
 
     - name: code-lint
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
@@ -96,7 +96,7 @@ spec:
         runAsUser: 0
 
     - name: code-test
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -110,7 +110,7 @@ spec:
         runAsUser: 0
 
     - name: code-coverage
-      image: ubi8/nodejs-10
+      image: ubi8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |

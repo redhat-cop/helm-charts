@@ -32,10 +32,13 @@ spec:
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
       default: "false"
       type: string
-  resources:
-    outputs:
-      - name: documentation
-        type: image
+
+  results:
+  - name: image
+    description: url of the image just built
+  - name: digest
+    description: digest of the image just built
+
   steps:
 
     - name: image-generate
@@ -57,7 +60,7 @@ spec:
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
-          buildah bud --tls-verify=$(inputs.params.TLSVERIFY) --layers -t $(outputs.resources.documentation.url):$(inputs.params.revision-name) .
+          buildah bud --tls-verify=$(inputs.params.TLSVERIFY) --layers -t image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name) .
         fi
       volumeMounts:
         - name: varlibcontainers
@@ -72,7 +75,7 @@ spec:
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
-          buildah push --tls-verify=$(inputs.params.TLSVERIFY) $(outputs.resources.documentation.url):$(inputs.params.revision-name) docker://$(outputs.resources.documentation.url):$(inputs.params.revision-name)
+          buildah push --tls-verify=$(inputs.params.TLSVERIFY) --digestfile $(workspaces.source.path)/image-digest image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name) docker://image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name)
         fi
       volumeMounts:
         - name: varlibcontainers
@@ -80,6 +83,19 @@ spec:
       resources: {}
       securityContext:
         privileged: true
+
+    - name: image-digest
+      image: quay.io/buildah/stable
+      script: |
+        #!/bin/sh
+        printf %s "null" >> /tekton/results/digest
+        printf %s "null" >> /tekton/results/image
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          printf %s "image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name)" >> /tekton/results/image
+          cat $(workspaces.source.path)/image-digest | tee /tekton/results/digest
+        fi
+        exit 0
+
   volumes:
     - name: varlibcontainers
       emptyDir: {}
