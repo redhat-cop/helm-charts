@@ -6,6 +6,8 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
+  workspaces:
+    - name: source
   params:
     - name: ref
       description: Git reference
@@ -75,7 +77,7 @@ spec:
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
-          buildah push --tls-verify=$(inputs.params.TLSVERIFY) --digestfile $(workspaces.source.path)/image-digest image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name) docker://image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name)
+          buildah push --tls-verify=$(inputs.params.TLSVERIFY) --digestfile $(workspaces.source.path)/image-digest image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name) docker://image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name)
         fi
       volumeMounts:
         - name: varlibcontainers

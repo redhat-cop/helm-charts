@@ -67,6 +67,7 @@ spec:
     - name: standards
       taskRef:
         name: standards
+      retries: 2
       runAfter:
         - git
       workspaces:
@@ -91,6 +92,9 @@ spec:
         name: docs
       runAfter:
         - standards
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
         - name: ref
           value: $(tasks.git.results.ref)

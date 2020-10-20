@@ -30,12 +30,12 @@ spec:
       workingDir: /workspace/shared
       script: |
         #!/bin/sh
-          pwd
-          ls -ls
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-          cp /usr/local/bin/helm /workspace/shared/
+        pwd
+        ls -ls
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+        cp /usr/local/bin/helm /workspace/shared/
       securityContext:
         runAsUser: 0
 
