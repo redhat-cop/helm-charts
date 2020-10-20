@@ -25,7 +25,7 @@ spec:
   steps:
 
     - name: helm-prepare
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/shared
       script: |
@@ -40,7 +40,7 @@ spec:
         runAsUser: 0
 
     - name: helm-lint
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -58,7 +58,7 @@ spec:
         runAsUser: 0
 
     - name: code-prepare
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -74,7 +74,7 @@ spec:
         runAsUser: 0
 
     - name: code-audit
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
@@ -85,7 +85,7 @@ spec:
         runAsUser: 0
 
     - name: code-lint
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
@@ -96,7 +96,7 @@ spec:
         runAsUser: 0
 
     - name: code-test
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -110,7 +110,7 @@ spec:
         runAsUser: 0
 
     - name: code-coverage
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |

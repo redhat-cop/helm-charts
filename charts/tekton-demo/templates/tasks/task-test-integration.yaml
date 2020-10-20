@@ -24,7 +24,7 @@ spec:
   steps:
 
     - name: test-integration
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |

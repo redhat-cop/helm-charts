@@ -26,7 +26,7 @@ spec:
       type: string
   steps:
     - name: helm-prepare
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |

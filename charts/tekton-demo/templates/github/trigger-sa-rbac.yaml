@@ -37,6 +37,7 @@ metadata:
 secrets:
   - name: {{ .Values.pipeline.webhook.github.secret }}
   - name: {{ .Values.pipeline.webhook.github.key }}
+  - name: {{ .Values.registry.secret }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

@@ -222,7 +222,7 @@ spec:
           print("GitHub status 'pending' has been set")
 
     - name: validate
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/output
       script: |
@@ -298,7 +298,7 @@ spec:
         runAsUser: 0
 
     - name: status
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/output
       script: |

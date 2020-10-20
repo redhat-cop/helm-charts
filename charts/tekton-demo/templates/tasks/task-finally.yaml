@@ -17,15 +17,15 @@ spec:
       type: string
   steps:
     - name: debug
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source
       script: |
         #!/bin/sh
           set -ex
-          find /workspace/source/
-          echo UID: $(inputs.params.uid)
-          echo Name: $(inputs.params.name)
+          # find /workspace/source/
+          echo UID: $(params.uid)
+          echo Name: $(params.name)
       securityContext:
         runAsUser: 0
 
@@ -68,14 +68,13 @@ spec:
     #       print("GitHub status 'success' has been set")
 
     - name: status
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/output
       script: |
         #!/bin/sh
         curl -LO https://github.com/tektoncd/cli/releases/download/v0.13.0/tkn_0.13.0_Linux_x86_64.tar.gz
         tar xvzf tkn_0.13.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
-        /usr/local/bin/tkn version -n {{ .Values.application.environments.cicd }}
-        /usr/local/bin/tkn pr desc $(input.params.name)
+        /usr/local/bin/tkn pr desc $(params.name)
       securityContext:
         runAsUser: 0
