@@ -41,24 +41,6 @@ spec:
     
   steps:
 
-{{ if (.Values.pipeline.nexus.host) }}
-    - name: image-generate
-      image: quay.io/openshift-pipeline/s2i
-      command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen', '--env', 'HTTPS_PROXY={{ .Values.pipeline.nexus.host }}']
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      volumeMounts:
-        - name: gen-source
-          mountPath: /gen-source  
-{{ else }}
-    - name: image-generate
-      image: quay.io/openshift-pipeline/s2i
-      command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen']
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      volumeMounts:
-        - name: gen-source
-          mountPath: /gen-source
-{{ end }}
-          
     - name: image-build
       image: quay.io/buildah/stable
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
@@ -82,13 +64,13 @@ spec:
       securityContext:
         privileged: true
 
-    - name: image-digest
-      image: quay.io/buildah/stable
-      script: |
-        #!/bin/sh
-        printf %s "image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)" >> /tekton/results/image
-        cat $(workspaces.source.path)/image-digest | tee /tekton/results/digest
-        exit 0
+    # - name: image-digest
+    #   image: quay.io/buildah/stable
+    #   script: |
+    #     #!/bin/sh
+    #     printf %s "image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)" >> /tekton/results/image
+    #     cat $(workspaces.source.path)/image-digest | tee /tekton/results/digest
+    #     exit 0
 
   volumes:
     - name: varlibcontainers

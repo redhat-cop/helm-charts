@@ -4,8 +4,6 @@ metadata:
   name: deploy
   namespace: {{ .Values.application.environments.cicd }}
 spec:
-  workspaces:
-    - name: source
   params:
     - name: cluster
       description: cluster app url
@@ -28,7 +26,6 @@ spec:
   steps:
     - name: app-create
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -55,7 +52,6 @@ spec:
 
     - name: app-docs
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -77,7 +73,6 @@ spec:
 
     - name: app-expose
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -136,7 +131,6 @@ spec:
 
     - name: app-labels
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -158,7 +152,6 @@ spec:
 
     - name: app-envs
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -188,7 +181,6 @@ spec:
 
     - name: app-probes
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -212,7 +204,6 @@ spec:
 
     - name: app-autoscale
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
 
@@ -245,7 +236,6 @@ spec:
 
     - name: app-triggers
       image: quay.io/openshift/origin-cli:latest
-      workingDir: /workspace/source
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then

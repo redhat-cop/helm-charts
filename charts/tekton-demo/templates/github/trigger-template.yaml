@@ -39,21 +39,16 @@ spec:
       serviceAccountName: {{ .Values.pipeline.sa.triggers }}
       workspaces:
           - name: {{ .Values.application.name }}-source
+            persistentVolumeClaim:
+              claimName: {{ .Values.application.name }}-pvc
+          - name: {{ .Values.application.name }}-shared
             volumeClaimTemplate:
               spec:
                 accessModes:
                   - ReadWriteOnce
                 resources:
                   requests:
-                    storage: 3Gi
-          - name: {{ .Values.application.name }}-shared
-            volumeClaimTemplate:
-              spec:
-                accessModes:
-                  - ReadWriteMany
-                resources:
-                  requests:
-                    storage: 2Gi
+                    storage: 1Gi
       params:
         - name: ref
           value: $(params.ref)

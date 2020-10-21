@@ -1,40 +1,20 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: test-integration
+  name: github
   namespace: {{ .Values.application.environments.cicd }}
 spec:
-  workspaces:
-    - name: source
   params:
-    - name: ref
-      description: Git reference
-    - name: repourl
-      description: repository url from github payload
+    - name: status
+      type: string
     - name: repofullname
-      description: full name user-org/reponame from github
+      type: string
     - name: revision
-      description: commit head unique id
       type: string
-    - name: revision-type
-      description: revision type
+    - name: repourl
       type: string
-    - name: revision-name
-      description: revision name
   steps:
-
-    - name: test-integration
-      image: registry.redhat.io/rhel8/nodejs-12
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      script: |
-        #!/bin/sh
-        npm test
-      securityContext:
-        runAsUser: 0
-
-    # todo: condition to only run in dev env
-    - name: test-report
+    - name: update-github
       image: registry.access.redhat.com/ubi8/ubi:latest
       env:
         - name: GITHUBTOKEN
@@ -50,9 +30,9 @@ spec:
         status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
 
         data = {
-            "state": "success",
+            "state": "$(params.status)",
             "target_url": "https://replaceme",
-            "description": "Successful deployed to dev. Tests are passing.",
+            "description": "Building",
             "context": "tekton"
         }
         conn = http.client.HTTPSConnection("api.github.com")
@@ -68,5 +48,6 @@ spec:
         if not str(resp.status).startswith("2"):
             print("Error: %d" % (resp.status))
             print(resp.read())
+            # sys.exit(resp.read())
         else:
-          print("GitHub status 'success' has been set")
+          print("GitHub status '$(params.status)' has been set")

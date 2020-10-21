@@ -64,6 +64,26 @@ spec:
       - name: pipelinerun
         value: $(context.pipelineRun.name)
 
+    - name: prepare
+      taskRef:
+        name: prepare
+      workspaces:
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
+
+    - name: github
+      taskRef:
+        name: github
+      params:
+      - name: status
+        value: pending
+      - name: revision
+        value: $(params.revision)
+      - name: repourl
+        value: $(params.repourl)
+      - name: repofullname
+        value: $(params.repofullname)
+
     - name: standards
       taskRef:
         name: standards
@@ -73,6 +93,8 @@ spec:
       workspaces:
       - name: source
         workspace: {{ .Values.application.name }}-source
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
       params:
         - name: ref
           value: $(tasks.git.results.ref)
@@ -139,9 +161,6 @@ spec:
       runAfter:
         - docs
         - build
-      workspaces:
-      - name: source
-        workspace: {{ .Values.application.name }}-source
       params:
         - name: cluster
           value: {{ .Values.cluster }}
@@ -161,6 +180,7 @@ spec:
         name: test-performance
       runAfter:
         - deploy
+        - apply
       params:
       - name: ref
         value: $(params.ref)
@@ -180,6 +200,7 @@ spec:
         name: test-integration
       runAfter:
         - deploy
+        - apply
       workspaces:
       - name: source
         workspace: {{ .Values.application.name }}-source
@@ -201,24 +222,13 @@ spec:
       taskRef:
         name: apply
       runAfter:
-        - test-e2e
-        - test-stress
+        - docs
+        - build
       workspaces:
       - name: source
         workspace: {{ .Values.application.name }}-source
-      params:
-      - name: repofullname
-        value: $(params.repofullname)
-      - name: ref
-        value: $(tasks.git.results.ref)
-      - name: revision
-        value: $(tasks.git.results.revision)
-      - name: revision-short
-        value: $(tasks.git.results.revision-short)
-      - name: revision-type
-        value: $(tasks.git.results.revision-type)
-      - name: revision-name
-        value: $(tasks.git.results.revision-name)
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
 
     - name: promote
       conditions:
@@ -229,10 +239,8 @@ spec:
       taskRef:
         name: promote
       runAfter:
-        - apply
-      workspaces:
-      - name: source
-        workspace: {{ .Values.application.name }}-source
+        - test-e2e
+        - test-stress
       params:
       - name: cluster
         value: {{ .Values.cluster }}

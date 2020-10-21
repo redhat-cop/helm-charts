@@ -4,8 +4,6 @@ metadata:
   name: promote
   namespace: {{ .Values.application.environments.cicd }}
 spec:
-  workspaces:
-    - name: source
   params:
     - name: cluster
       description: cluster app url
@@ -34,7 +32,7 @@ spec:
 
   steps:
     - name: validate
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       script: |
         #!/bin/sh
@@ -46,13 +44,14 @@ spec:
           exit 1
         fi
 
+    # todo: use tekton auth secrets
     - name: release-notes
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      # volumeMounts:
-      #   - name: {{ .Values.pipeline.webhook.github.key }}
-      #     mountPath: /etc/idrsa
-      #     readOnly: true
+      volumeMounts:
+        - name: {{ .Values.pipeline.webhook.github.key }}
+          mountPath: /etc/idrsa
+          readOnly: true
       script: |
         #!/bin/sh
         before=$(cat package.json \
@@ -62,19 +61,19 @@ spec:
         | sed 's/[",]//g')        
         before=$(echo -e $before)
 
-        # ls -ls /etc/idrsa/
-        # touch ~/.ssh/config
-        # ssh-add /etc/idrsa/ssh-privatekey
-        # # chmod 400 ~/.ssh/id_rsa
-        # chmod 600 ~/.ssh/config
-        # tee -a ~/.ssh/config << END
-        # host github.com
-        #   HostName github.com
-        #   IdentitiesOnly yes
-        #   IdentityFile /etc/idrsa/ssh-privatekey
-        #   User git
-        # END
-        # ssh-keyscan github.com >> ~/.ssh/known_hosts
+        ls -ls /etc/idrsa/
+        touch ~/.ssh/config
+        ssh-add /etc/idrsa/ssh-privatekey
+        # chmod 400 ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/config
+        tee -a ~/.ssh/config << END
+        host github.com
+          HostName github.com
+          IdentitiesOnly yes
+          IdentityFile /etc/idrsa/ssh-privatekey
+          User git
+        END
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
 
         git config --global user.name  "$(params.author)"
         git config --global user.email "$(params.email)"
@@ -234,7 +233,7 @@ spec:
           oc set triggers deployment/$appname -n {{ .Values.application.environments.production }}
 
     - name: pull-request
-      image: ubi8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source
       script: |
