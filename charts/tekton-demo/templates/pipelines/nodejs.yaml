@@ -67,6 +67,7 @@ spec:
     - name: prepare
       taskRef:
         name: prepare
+      retries: 2
       workspaces:
       - name: shared
         workspace: {{ .Values.application.name }}-shared
@@ -238,6 +239,11 @@ spec:
               value: $(tasks.git.results.revision-type)
       taskRef:
         name: promote
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
       runAfter:
         - test-e2e
         - test-stress
@@ -261,11 +267,27 @@ spec:
       - name: email
         value: $(params.email)
 
+    - name: pull-request
+      taskRef:
+        name: github-pull-request
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
+      runAfter:
+        - promote
+      params:
+      - name: revision-type
+        value: $(tasks.git.results.revision-type)
+      - name: revision-name
+        value: $(tasks.git.results.revision-name)
+
     - name: release
       taskRef:
         name: tag
       runAfter:
-        - promote
+        - pull-request
       workspaces:
       - name: source
         workspace: {{ .Values.application.name }}-source
@@ -295,3 +317,5 @@ spec:
       workspaces:
         - name: source
           workspace: {{ .Values.application.name }}-source
+        - name: shared
+          workspace: {{ .Values.application.name }}-shared

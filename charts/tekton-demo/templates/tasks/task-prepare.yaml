@@ -27,3 +27,46 @@ spec:
         fi
       securityContext:
         runAsUser: 0
+
+    - name: hub
+      image: registry.redhat.io/rhel8/nodejs-12
+      workingDir: /workspace/shared
+      script: |
+        #!/bin/sh
+        nexus=https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-static
+        if curl --output /dev/null --silent --head --fail "$nexus/hub"; then
+          echo "Downloading hub from nexus"
+          wget -q -O hub $nexus/hub
+          chmod +x hub
+        else
+          echo "Downloading hub"
+          curl -s https://api.github.com/repos/github/hub/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4 | wget -qi -
+          tar -xzf "$(find . -name "*hub-linux-amd64*")"
+          folder="$(find . -name "*hub-linux-amd64*" -type d)"
+          folder=${folder//.\//}
+          chmod +x $folder/bin/hub
+          mv $folder/bin/hub hub
+          curl -u admin:admin123 --upload-file hub $nexus/hub
+        fi
+      securityContext:
+        runAsUser: 0
+
+    - name: tkn
+      image: registry.redhat.io/rhel8/nodejs-12
+      workingDir: /workspace/shared
+      script: |
+        #!/bin/sh
+        nexus=https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-static
+        if curl --output /dev/null --silent --head --fail "$nexus/tkn"; then
+          echo "Downloading tkn from nexus"
+          wget -q -O tkn $nexus/tkn
+          chmod +x tkn
+        else
+          echo "Downloading tkn"
+          curl -LO https://github.com/tektoncd/cli/releases/download/v0.13.0/tkn_0.13.0_Linux_x86_64.tar.gz
+          tar xvzf tkn_0.13.0_Linux_x86_64.tar.gz
+          chmod +x tkn
+          curl -u admin:admin123 --upload-file tkn $nexus/tkn
+        fi
+      securityContext:
+        runAsUser: 0

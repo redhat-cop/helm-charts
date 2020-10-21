@@ -6,6 +6,7 @@ metadata:
 spec:
   workspaces:
     - name: source
+    - name: shared
   params:
     - name: uid
       type: string
@@ -23,58 +24,15 @@ spec:
       script: |
         #!/bin/sh
           set -ex
-          # find /workspace/source/
+          find /workspace/shared
           echo UID: $(params.uid)
           echo Name: $(params.name)
       securityContext:
         runAsUser: 0
 
-    # - name: update-github
-    #   image: registry.access.redhat.com/ubi8/ubi:latest
-    #   env:
-    #     - name: GITHUBTOKEN
-    #       valueFrom:
-    #         secretKeyRef:
-    #           name: {{ .Values.pipeline.webhook.github.secret }}
-    #           key: password
-    #   script: |
-    #     #!/usr/libexec/platform-python
-    #     import json
-    #     import os
-    #     import http.client
-    #     status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
-
-    #     data = {
-    #         "state": "success",
-    #         "target_url": "https://replaceme",
-    #         "description": "Building",
-    #         "context": "tekton"
-    #     }
-    #     conn = http.client.HTTPSConnection("api.github.com")
-    #     r = conn.request(
-    #         "POST",
-    #         status_url.rstrip("\n"),
-    #         body=json.dumps(data),
-    #         headers={
-    #             "User-Agent": "TektonCD, the peaceful cat",
-    #             "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
-    #         })
-    #     resp = conn.getresponse()
-    #     if not str(resp.status).startswith("2"):
-    #         print("Error: %d" % (resp.status))
-    #         print(resp.read())
-    #         # sys.exit(resp.read())
-    #     else:
-    #       print("GitHub status 'success' has been set")
-
     - name: status
       image: registry.redhat.io/rhel8/nodejs-12
-      resources: {}
-      workingDir: /workspace/output
+      workingDir: /workspace/shared
       script: |
         #!/bin/sh
-        curl -LO https://github.com/tektoncd/cli/releases/download/v0.13.0/tkn_0.13.0_Linux_x86_64.tar.gz
-        tar xvzf tkn_0.13.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
-        /usr/local/bin/tkn pr desc $(params.name)
-      securityContext:
-        runAsUser: 0
+        ./tkn pr desc $(params.name)

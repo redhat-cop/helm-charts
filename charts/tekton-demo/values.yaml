@@ -1,7 +1,9 @@
 cluster: apps.s45.core.rht-labs.com
+registry:
+  secret: 11009103-tekton-pipeline-pull-secret
 application:
   name: do101
-  runtime: nodejs:10
+  runtime: nodejs:12
   environments:
     cicd: labs-ci-cd
     development: do101-development
@@ -9,16 +11,17 @@ application:
 pipeline:
   sa:
     default: pipeline
-    triggers: tekton-triggers-sa
+    triggers: do101-tekton-triggers-sa
   nexus:
     host: https://nexus-labs-ci-cd.apps.s45.core.rht-labs.com/repository/labs-npm
   build:
     s2i:
       context: weather
+
   webhook:
-    github:
+    github: 
       org: mvmaestri
       user: mvmaestri
       repo: do101-apps
-      secret: github-webhook-secret
-      key: github-deploy-secret
+      secret: do101-github-webhook-secret
+      key: do101-github-deploy-secret
