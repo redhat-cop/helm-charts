@@ -22,10 +22,6 @@ spec:
     - name: revision-name
       description: revision name
       type: string
-    - name: VERSION
-      description: The version of nodejs
-      default: {{ .Values.application.runtime }}
-      type: string
     - name: TLSVERIFY
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
       default: "false"
@@ -63,14 +59,6 @@ spec:
       resources: {}
       securityContext:
         privileged: true
-
-    # - name: image-digest
-    #   image: quay.io/buildah/stable
-    #   script: |
-    #     #!/bin/sh
-    #     printf %s "image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)" >> /tekton/results/image
-    #     cat $(workspaces.source.path)/image-digest | tee /tekton/results/digest
-    #     exit 0
 
   volumes:
     - name: varlibcontainers
