@@ -1,0 +1,11 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: {{ .Values.application.name }}-git
+spec:
+  type: git
+  params:
+    - name: url
+    - name: revision
+    - name: submodules

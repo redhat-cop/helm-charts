@@ -1,0 +1,14 @@
+apiVersion: v2
+name: tekton-demo
+description: This is an example of a pipeline developed in Tekton, the peaceful cat. It contains the main steps of a continuous software delivery process. It enforces a strict semantic version validation strategy, managing tag increments for you. Develop, Features, releases, patches and hotfixes flows are supported
+version: 0.0.1
+appVersion: "latest"
+home: https://github.com/redhat-cop/helm-charts
+keywords:
+  - tekton
+  - pipeline
+  - nodejs
+  - github
+icon: https://cd.foundation/wp-content/uploads/sites/78/2020/04/tekton-icon-color-1-300x300.png
+maintainers:
+  - name: mvmaestri

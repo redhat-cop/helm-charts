@@ -1,0 +1,116 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: prepare
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: ref
+      description: Git reference
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
+    - name: revision
+      description: commit head unique id
+      type: string
+    - name: revision-type
+      description: revision type
+      type: string
+    - name: revision-name
+      description: revision name
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+  steps:
+
+    - name: update-github
+      env:
+        - name: GITHUBTOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.pipeline.webhook.github.secret }}
+              key: token
+
+      image: registry.access.redhat.com/ubi8/ubi:latest
+      script: |
+        #!/usr/libexec/platform-python
+        import json
+        import os
+        import http.client
+        status_url = """/repos/$(params.repofullname)/statuses/$(params.revision)"""
+
+        data = {
+            "state": "pending",
+            "target_url": "https://replaceme",
+            "description": "Building",
+            "context": "tekton"
+        }
+        conn = http.client.HTTPSConnection("api.github.com")
+        r = conn.request(
+            "POST",
+            status_url.rstrip("\n"),
+            body=json.dumps(data),
+            headers={
+                "User-Agent": "TektonCD, the peaceful cat",
+                "Authorization": "Bearer " + os.environ["GITHUBTOKEN"],
+            })
+        resp = conn.getresponse()
+        if not str(resp.status).startswith("2"):
+            print("Error: %d" % (resp.status))
+            print(resp.read())
+            # sys.exit(resp.read())
+        else:
+          print("GitHub status 'pending' has been set")
+
+    - name: validate
+      image: ubi8/nodejs-10
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
+      script: |
+        #!/bin/sh
+        before=$(cat package.json \
+        | grep version \
+        | head -1 \
+        | awk -F: '{ print $2 }' \
+        | sed 's/[",]//g')
+        
+        before=$(echo -e $before)
+        # hack for first version to be upgraded as major
+        if [ "$before" == "0.0.0" ]; then
+          importance=major
+        else
+          importance=minor
+        fi
+
+        if [ "$(params.revision-type)" == "release" ]; then
+          version=$(npm version $importance)
+          if [ "$version" = "v$(params.revision-name)" ]; then
+            echo Version is OK
+            exit 0
+          else
+            echo "Version from package.json ($before) does not match with branch $(params.revision-type)/$(params.revision-name)"
+            exit 1
+          fi
+        elif [ "$(params.revision-type)" == "patch" ] || [ "$(params.revision-type)" = "hotfix" ]; then
+          version=$(npm version patch)
+          if [ "$version" = "v$(params.revision-name)" ]; then
+            echo "Version from package.json upgraded to $version"
+          else
+            echo "Version from package.json ($before) does not match with branch $(params.revision-type)/$(params.revision-name)"
+            exit 1
+          fi
+        else
+          echo "Skipping npm version upgrade since we are in a $(params.revision-type) branch"
+          exit 0
+        fi
+      securityContext:
+        runAsUser: 0
+
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: gen-source
+      emptyDir: {}

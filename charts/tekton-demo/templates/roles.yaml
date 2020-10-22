@@ -1,0 +1,28 @@
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pipeline-builder-image-puller-{{ .Values.application.environments.development }}
+  namespace: {{ .Values.application.environments.cicd }}
+subjects:
+- kind: ServiceAccount
+  name: {{ .Values.pipeline.sa.triggers }}
+  namespace: {{ .Values.application.environments.development }}
+roleRef:
+  kind: ClusterRole
+  name: system:image-puller
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pipeline-builder-image-puller-{{ .Values.application.environments.production }}
+  namespace: {{ .Values.application.environments.cicd }}
+subjects:
+- kind: ServiceAccount
+  name: {{ .Values.pipeline.sa.triggers }}
+  namespace: {{ .Values.application.environments.production }}
+roleRef:
+  kind: ClusterRole
+  name: system:image-puller
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,90 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: docs
+  namespace: {{ .Values.application.environments.cicd }}
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  params:
+    - name: ref
+      description: Git reference
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
+    - name: revision
+      description: commit head unique id
+      type: string
+    - name: revision-type
+      description: revision type
+      type: string
+    - name: revision-name
+      description: revision name
+      type: string
+    - name: author
+      description: revision commit author username
+    - name: VERSION
+      description: The version of nodejs
+      default: {{ .Values.application.runtime }}
+      type: string
+    - name: TLSVERIFY
+      description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
+      default: "false"
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+    outputs:
+      - name: documentation
+        type: image
+  steps:
+
+    - name: image-generate
+      image: quay.io/openshift-pipeline/s2i
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
+      script: |
+        #!/bin/sh
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          s2i build . image-registry.openshift-image-registry.svc:5000/openshift/ruby:2.7 --as-dockerfile /gen-source/Dockerfile.gen
+        fi          
+      volumeMounts:
+        - name: gen-source
+          mountPath: /gen-source
+          
+    - name: image-build
+      image: quay.io/buildah/stable
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
+      resources: {}
+      script: |
+        #!/bin/sh
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          buildah bud --tls-verify=$(inputs.params.TLSVERIFY) --layers -t $(outputs.resources.documentation.url):$(inputs.params.revision-name) .
+        fi
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+        - name: gen-source
+          mountPath: /gen-source
+      securityContext:
+        privileged: true
+        
+    - name: image-push
+      image: quay.io/buildah/stable
+      script: |
+        #!/bin/sh
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          buildah push --tls-verify=$(inputs.params.TLSVERIFY) $(outputs.resources.documentation.url):$(inputs.params.revision-name) docker://$(outputs.resources.documentation.url):$(inputs.params.revision-name)
+        fi
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+      resources: {}
+      securityContext:
+        privileged: true
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: gen-source
+      emptyDir: {}

@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: tag
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  params:
+    - name: author
+      type: string
+    - name: email
+      type: string
+    - name: revision-type
+      type: string
+    - name: revision-name
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+  steps:
+    - name: debug
+      image: ubi8/nodejs-10
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          set -ex
+          find /workspace/source/{{ .Values.pipeline.build.s2i.context }}
