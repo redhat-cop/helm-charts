@@ -95,8 +95,6 @@ It will be in this repository that the webhook will be automatically created and
 The Github token will only be shown once, be sure to save it somewhere safe. 
 Then copy the token and replace it in the command below, replacing also your username. Please make sure you also update the namespace accordingly.
 
-<!-- oc create secret generic do101-github-webhook-secret --from-literal=token=XXXXXXXXXXXXXXXX -n labs-ci-cd -->
-
 ```
 cat <<EOF | oc apply -f -
 apiVersion: v1
