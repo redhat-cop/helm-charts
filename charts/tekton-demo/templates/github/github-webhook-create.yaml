@@ -26,7 +26,6 @@ spec:
   - name: WebhookEvents
     description: "List of events the webhook will send notifications for"
     default: '[\"push\",\"pull_request\"]'
-
   volumes:
   - name: {{ .Values.pipeline.webhook.github.secret }}
     secret:
