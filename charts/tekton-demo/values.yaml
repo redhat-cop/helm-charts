@@ -1,6 +1,4 @@
 cluster: apps.s45.core.rht-labs.com
-registry:
-  secret: 11009103-tekton-pipeline-pull-secret
 application:
   name: do101
   runtime: nodejs:12
@@ -19,7 +17,7 @@ pipeline:
       context: weather
 
   webhook:
-    github: 
+    github:
       org: mvmaestri
       user: mvmaestri
       repo: do101-apps
