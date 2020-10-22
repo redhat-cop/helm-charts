@@ -6,6 +6,7 @@ metadata:
 spec:
   workspaces:
     - name: source
+    - name: shared
   params:
     - name: ref
       description: Git reference
@@ -24,35 +25,18 @@ spec:
       type: string
   steps:
 
-    - name: helm-prepare
-      image: registry.redhat.io/rhel8/nodejs-12
-      resources: {}
-      workingDir: /workspace/shared
-      script: |
-        #!/bin/sh
-        pwd
-        ls -ls
-        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-        chmod 700 get_helm.sh
-        ./get_helm.sh
-        cp /usr/local/bin/helm /workspace/shared/
-      securityContext:
-        runAsUser: 0
-
     - name: helm-lint
       image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-        pwd
-        ls -ls
-        /workspace/shared/helm version
         if [ -d "chart" ]; then
           /workspace/shared/helm lint chart
           /workspace/shared/helm template -f chart/values.yaml chart
         else
           echo "Chart does not exist"
+          exit 0
         fi
       securityContext:
         runAsUser: 0
@@ -63,7 +47,7 @@ spec:
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-        npm ping --registry {{ .Values.pipeline.nexus.host }} install
+        npm ping --registry {{ .Values.pipeline.nexus.host }}
         if [[ $? -ne 0 ]]; then
           npm install --only-dev --unsafe-perm=true --allow-root
         else

@@ -4,6 +4,9 @@ metadata:
   name: promote
   namespace: {{ .Values.application.environments.cicd }}
 spec:
+  workspaces:
+  - name: source
+  - name: shared
   params:
     - name: cluster
       description: cluster app url
@@ -31,6 +34,7 @@ spec:
       type: string
 
   steps:
+    # todo: use when expressions when available
     - name: validate
       image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
@@ -38,6 +42,7 @@ spec:
         #!/bin/sh
         revisionType=$(params.revision-type)
         if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ]; then
+          echo OK
           exit 0
         else
           echo "Preventing $revisionType to be promoted to a production environment"
@@ -48,12 +53,11 @@ spec:
     - name: release-notes
       image: registry.redhat.io/rhel8/nodejs-12
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      volumeMounts:
-        - name: {{ .Values.pipeline.webhook.github.key }}
-          mountPath: /etc/idrsa
-          readOnly: true
       script: |
         #!/bin/sh
+
+        ls -ls
+
         before=$(cat package.json \
         | grep version \
         | head -1 \
@@ -61,23 +65,8 @@ spec:
         | sed 's/[",]//g')        
         before=$(echo -e $before)
 
-        ls -ls /etc/idrsa/
-        touch ~/.ssh/config
-        ssh-add /etc/idrsa/ssh-privatekey
-        # chmod 400 ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/config
-        tee -a ~/.ssh/config << END
-        host github.com
-          HostName github.com
-          IdentitiesOnly yes
-          IdentityFile /etc/idrsa/ssh-privatekey
-          User git
-        END
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-        git config --global user.name  "$(params.author)"
+        git config --global user.name "$(params.author)"
         git config --global user.email "$(params.email)"
-        git remote set-url origin "git@github.com:{{ .Values.pipeline.webhook.github.org }}/{{ .Values.pipeline.webhook.github.repo }}.git"
 
         git fetch --all --tags > /dev/null 2>&1
         git checkout -b $(params.revision-type)/$(params.revision-name) > /dev/null 2>&1
@@ -95,6 +84,8 @@ spec:
         git commit -m "Including release notes"
         git tag -a $(params.revision-name) -m "Upgrade to v$(params.revision-name)"
         git push origin $(params.revision-type)/$(params.revision-name) --tags
+      securityContext:
+        runAsUser: 0
 
     - name: release-image
       image: quay.io/openshift/origin-cli:latest
@@ -232,37 +223,6 @@ spec:
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
           oc set triggers deployment/$appname -n {{ .Values.application.environments.production }}
 
-    - name: pull-request
-      image: registry.redhat.io/rhel8/nodejs-12
-      resources: {}
-      workingDir: /workspace/source
-      script: |
-        #!/bin/sh
-        curl -s https://api.github.com/repos/github/hub/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4 | wget -qi -
-        tar -xzf "$(find . -name "*hub-linux-amd64*")"
-        folder="$(find . -name "*hub-linux-amd64*" -type d)"
-        folder=${folder//.\//}
-        chmod +x $folder/bin/hub
-        tee -a template.md << END
-          ### v$(inputs.params.revision-name)
-          This is a template
-        END
-
-        $folder/bin/hub pull-request \
-          --message="v$(inputs.params.revision-name)" \
-          --labels=release \
-          --file - < template.md \
-          --base={{ .Values.pipeline.webhook.github.org }}:master \
-          --head={{ .Values.pipeline.webhook.github.org }}:$(inputs.params.revision-type)/$(inputs.params.revision-name)
-      env:
-        - name: GITHUB_USER
-          value: {{ .Values.pipeline.webhook.github.user }}
-        - name: GITHUB_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.pipeline.webhook.github.secret }}
-              key: password
-
     - name: report
       image: registry.access.redhat.com/ubi8/ubi:latest
       env:
@@ -299,4 +259,4 @@ spec:
             print(resp.read())
             # sys.exit(resp.read())
         else:
-          print("GitHub status 'pending' has been set")
+          print("GitHub status 'success' has been set")

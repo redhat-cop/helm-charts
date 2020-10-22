@@ -17,19 +17,6 @@ spec:
     - name: repourl
       type: string
   steps:
-    - name: debug
-      image: registry.redhat.io/rhel8/nodejs-12
-      resources: {}
-      workingDir: /workspace/source
-      script: |
-        #!/bin/sh
-          set -ex
-          find /workspace/shared
-          echo UID: $(params.uid)
-          echo Name: $(params.name)
-      securityContext:
-        runAsUser: 0
-
     - name: status
       image: registry.redhat.io/rhel8/nodejs-12
       workingDir: /workspace/shared
