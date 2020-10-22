@@ -45,7 +45,7 @@ spec:
       description: Contains the author username
   steps:
     - name: variables
-      image: quay.io/openshift/origin-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest
       resources: {}
       workingDir: $(workspaces.source.path)
       script: |
