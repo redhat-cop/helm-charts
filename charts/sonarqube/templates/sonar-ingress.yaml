@@ -1,6 +1,7 @@
-{{- if .Values.ingress.enabled -}}
-{{- $serviceName := include "sonarqube.fullname" . -}}
-{{- $servicePort := .Values.service.externalPort -}}
+---
+{{- if .Values.ingress.enabled }}
+{{- $serviceName := include "sonarqube.fullname" . }}
+{{- $servicePort := .Values.service.externalPort }}
 {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }}
 apiVersion: networking.k8s.io/v1beta1
 {{ else }}
