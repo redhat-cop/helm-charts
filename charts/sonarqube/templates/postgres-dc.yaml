@@ -1,5 +1,5 @@
 ---
-{{- if eq .Values.postgresql.enabled true -}}
+{{- if eq .Values.postgresql.enabled true }}
 apiVersion: apps.openshift.io/v1 
 kind: DeploymentConfig
 metadata:
