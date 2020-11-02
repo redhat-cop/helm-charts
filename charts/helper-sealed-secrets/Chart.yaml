@@ -1,0 +1,9 @@
+apiVersion: v2
+appVersion: "v1"
+description: A Helm Chart for managing Sealed Secrets 🕵️‍♀️
+name: helper-sealed-secrets
+version: 1.0.0
+home: https://github.com/redhat-cop/helm-charts
+maintainers:
+  - name: springdo
+  - name: ckavili
