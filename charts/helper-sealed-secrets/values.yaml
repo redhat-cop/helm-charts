@@ -1,0 +1,19 @@
+secrets:
+  # example for generic opaque secret data
+  - name: example-opaque
+    data:
+      secret_stuff: your_sealed_secrets_encryptedData_value
+      other_secret_stuff: your_sealed_secrets_encryptedData_value
+  # example for dockercfg
+  - name: example-dockercfg
+    type: kubernetes.io/dockercfg
+    data:
+      .dockercfg: your_sealed_secrets_encryptedData_value
+  # Basic auth for example bound to jenkins
+  - name: example-basic-auth
+    type: kubernetes.io/basic-auth
+    labels:
+      credential.sync.jenkins.openshift.io: "true"
+    data:
+      username: your_sealed_secrets_encryptedData_value
+      password: your_sealed_secrets_encryptedData_value
