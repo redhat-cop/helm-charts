@@ -381,6 +381,20 @@ entries:
     urls:
     - https://github.com/rht-labs/helm-charts/releases/download/etherpad-0.0.1/etherpad-0.0.1.tgz
     version: 0.0.1
+  helper-sealed-secrets:
+  - apiVersion: v2
+    appVersion: v1
+    created: "2020-11-05T14:29:44.727540611Z"
+    description: "A Helm Chart for managing Sealed Secrets \U0001F575️‍♀️"
+    digest: c98cb305e88809731a86d6eedce0a27829c4b74f0c59bdb1b9ecff2796a31668
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    name: helper-sealed-secrets
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/helper-sealed-secrets-1.0.0/helper-sealed-secrets-1.0.0.tgz
+    version: 1.0.0
   jenkins:
   - apiVersion: v2
     appVersion: v2.222.1
