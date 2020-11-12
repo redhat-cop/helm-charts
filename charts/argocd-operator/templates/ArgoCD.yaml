@@ -42,6 +42,13 @@ spec:
   initialRepositories: |
    {{- . | toYaml | trim | nindent 4 }}
   {{- end }}
+  {{- if .Values.initialSSHKnownHosts }}
+  initialSSHKnownHosts: 
+    keys: |
+      {{- range $host := .Values.initialSSHKnownHosts }}
+      {{ $host }}
+      {{- end }}
+  {{- end }}
   insecure: false
   {{- with .Values.server }}
   server:
