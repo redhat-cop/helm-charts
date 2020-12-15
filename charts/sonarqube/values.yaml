@@ -221,7 +221,7 @@ postgresql:
     database: *name
     type: ClusterIP
   image:
-    tag: "9.6"
+    tag: "9.6-el8"
 
   storageClass:
   accessMode: ReadWriteOnce
