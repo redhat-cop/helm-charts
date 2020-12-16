@@ -1,9 +1,9 @@
 ## sonatype-nexus
 
-Chart if forked from the official sonatype nexus operator (which actually calls this chart). It uses a UBI based image set in [values.yaml](values.yaml)
+Chart was forked from the official sonatype nexus operator (which actually calls this chart). It uses a UBI based image set in [values.yaml](values.yaml)
 
 ```yaml
-  imageName: registry.connect.redhat.com/sonatype/nexus-repository-manager:3.23.0-ubi-1
+  imageName: registry.connect.redhat.com/sonatype/nexus-repository-manager:<version>
 ```
 
 https://github.com/sonatype/operator-nxrm3/blob/master/helm-charts/sonatype-nexus/Chart.yaml
