@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: build
@@ -22,47 +22,25 @@ spec:
     - name: revision-name
       description: revision name
       type: string
-    - name: author
-      description: revision commit author username
-    - name: VERSION
-      description: The version of nodejs
-      default: {{ .Values.application.runtime }}
-      type: string
     - name: TLSVERIFY
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
       default: "false"
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
-    outputs:
-      - name: image
-        type: image
+  workspaces:
+    - name: source
+
+  results:
+  - name: image
+    description: url of the image just built
+  - name: digest
+    description: digest of the image just built
+    
   steps:
 
-{{ if (.Values.pipeline.nexus.host) }}
-    - name: image-generate
-      image: quay.io/openshift-pipeline/s2i
-      command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen', '--env', 'HTTPS_PROXY={{ .Values.pipeline.nexus.host }}']
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      volumeMounts:
-        - name: gen-source
-          mountPath: /gen-source  
-{{ else }}
-    - name: image-generate
-      image: quay.io/openshift-pipeline/s2i
-      command: ['s2i', 'build', '.', 'image-registry.openshift-image-registry.svc:5000/openshift/{{ .Values.application.runtime }}', '--as-dockerfile', '/gen-source/Dockerfile.gen']
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      volumeMounts:
-        - name: gen-source
-          mountPath: /gen-source
-{{ end }}
-          
     - name: image-build
-      image: quay.io/buildah/stable
+      image: registry.redhat.io/rhel8/buildah
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-f', 'Dockerfile', '-t', '$(outputs.resources.image.url):$(inputs.params.revision-name)', '.']
+      command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-f', 'Dockerfile', '-t', 'image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)', '.']
       resources: {}
       volumeMounts:
         - name: varlibcontainers
@@ -73,8 +51,8 @@ spec:
         privileged: true
 
     - name: image-push
-      image: quay.io/buildah/stable
-      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '$(outputs.resources.image.url):$(inputs.params.revision-name)', 'docker://$(outputs.resources.image.url):$(inputs.params.revision-name)']
+      image: registry.redhat.io/rhel8/buildah
+      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '--digestfile', '$(workspaces.source.path)/image-digest', 'image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)', 'docker://image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)']
       volumeMounts:
         - name: varlibcontainers
           mountPath: /var/lib/containers

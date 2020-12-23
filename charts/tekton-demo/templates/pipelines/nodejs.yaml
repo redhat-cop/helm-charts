@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: {{ .Values.application.name }}
@@ -6,6 +6,11 @@ metadata:
   labels:
     app: {{ .Values.application.name }}
 spec:
+  workspaces:
+    - name: {{ .Values.application.name }}-source
+      description: The git repo will be cloned onto the volume backing this workspace
+    - name: {{ .Values.application.name }}-shared
+      description: shared folder
   resources:
     - name: {{ .Values.application.name }}-git
       type: git
@@ -15,7 +20,6 @@ spec:
       type: image
     - name: {{ .Values.application.name }}-documentation
       type: image
-    
   params:
     - name: ref
       description: Ref of the application
@@ -33,187 +37,151 @@ spec:
       description: commit message
 
   tasks:
-    - name: info
+
+    - name: git
       taskRef:
-        kind: Task
-        name: status
-      resources:       
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
+        name: git-clone
+      workspaces:
+      - name: output
+        workspace: {{ .Values.application.name }}-source
       params:
+      - name: verbose
+        value: "false"
+      - name: url
+        value: $(params.repourl)
+      - name: revision
+        value: $(params.revision)
       - name: ref
         value: $(params.ref)
       - name: repourl
         value: $(params.repourl)
       - name: repofullname
         value: $(params.repofullname)
-      - name: revision
-        value: $(params.revision)
       - name: author
         value: $(params.author)
       - name: message
         value: $(params.message)
+      - name: pipelinerun
+        value: $(context.pipelineRun.name)
 
     - name: prepare
       taskRef:
         name: prepare
-      runAfter:
-        - info
-      params:
-        - name: ref
-          value: $(tasks.info.results.ref)
-        - name: repourl
-          value: $(params.repourl)
-        - name: repofullname
-          value: $(params.repofullname)
-        - name: revision
-          value: $(tasks.info.results.revision)
-        - name: revision-type
-          value: $(tasks.info.results.revision-type)
-        - name: revision-name
-          value: $(tasks.info.results.revision-name)
-      resources:       
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
+      retries: 2
+      workspaces:
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
 
-    - name: helm
+    - name: github
       taskRef:
-        name: helm
-      runAfter:
-        - info
+        name: github
       params:
-        - name: ref
-          value: $(tasks.info.results.ref)
-        - name: repourl
-          value: $(params.repourl)
-        - name: repofullname
-          value: $(params.repofullname)
-        - name: revision
-          value: $(tasks.info.results.revision)
-        - name: revision-type
-          value: $(tasks.info.results.revision-type)
-        - name: revision-name
-          value: $(tasks.info.results.revision-name)
-      resources:       
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
+      - name: status
+        value: pending
+      - name: revision
+        value: $(params.revision)
+      - name: repourl
+        value: $(params.repourl)
+      - name: repofullname
+        value: $(params.repofullname)
 
     - name: standards
       taskRef:
         name: standards
+      retries: 2
       runAfter:
-        - info
+        - git
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
       params:
         - name: ref
-          value: $(tasks.info.results.ref)
+          value: $(tasks.git.results.ref)
         - name: repourl
           value: $(params.repourl)
         - name: repofullname
           value: $(params.repofullname)
         - name: revision
-          value: $(tasks.info.results.revision)
+          value: $(tasks.git.results.revision)
         - name: revision-type
-          value: $(tasks.info.results.revision-type)
+          value: $(tasks.git.results.revision-type)
         - name: revision-name
-          value: $(tasks.info.results.revision-name)
-      resources:       
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
+          value: $(tasks.git.results.revision-name)
 
     - name: docs
       taskRef:
         name: docs
       runAfter:
-        - info
+        - standards
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
         - name: ref
-          value: $(tasks.info.results.ref)
+          value: $(tasks.git.results.ref)
         - name: repourl
           value: $(params.repourl)
         - name: repofullname
           value: $(params.repofullname)
         - name: revision
-          value: $(tasks.info.results.revision)
+          value: $(tasks.git.results.revision)
         - name: revision-type
-          value: $(tasks.info.results.revision-type)
+          value: $(tasks.git.results.revision-type)
         - name: revision-name
-          value: $(tasks.info.results.revision-name)
+          value: $(tasks.git.results.revision-name)
         - name: author
-          value: $(tasks.info.results.author)
-      resources:       
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
-        outputs:
-          - name: documentation
-            resource: {{ .Values.application.name }}-documentation
+          value: $(tasks.git.results.author)
 
     - name: build
       taskRef:
         name: build
       runAfter:
-        - info
+        - standards
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
         - name: ref
-          value: $(tasks.info.results.ref)
+          value: $(tasks.git.results.ref)
         - name: repourl
           value: $(params.repourl)
         - name: repofullname
           value: $(params.repofullname)
         - name: revision
-          value: $(tasks.info.results.revision)
+          value: $(tasks.git.results.revision)
         - name: revision-type
-          value: $(tasks.info.results.revision-type)
+          value: $(tasks.git.results.revision-type)
         - name: revision-name
-          value: $(tasks.info.results.revision-name)
-        - name: author
-          value: $(tasks.info.results.author)
-      resources:       
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
-        outputs:
-          - name: image
-            resource: {{ .Values.application.name }}-development
+          value: $(tasks.git.results.revision-name)
 
     - name: deploy
       taskRef:
         name: deploy
       runAfter:
-        - prepare
-        - helm
-        - standards
         - docs
         - build
       params:
         - name: cluster
-          value: $(tasks.info.results.cluster)
+          value: {{ .Values.cluster }}
         - name: ref
-          value: $(tasks.info.results.ref)
+          value: $(tasks.git.results.ref)
         - name: revision
-          value: $(tasks.info.results.revision)
+          value: $(tasks.git.results.revision)
         - name: revision-short
-          value: $(tasks.info.results.revision-short)
+          value: $(tasks.git.results.revision-short)
         - name: revision-type
-          value: $(tasks.info.results.revision-type)
+          value: $(tasks.git.results.revision-type)
         - name: revision-name
-          value: $(tasks.info.results.revision-name)
-        - name: author
-          value: $(tasks.info.results.author)
-      resources:
-        inputs:
-          - name: image
-            resource: {{ .Values.application.name }}-development
-
+          value: $(tasks.git.results.revision-name)
+          
     - name: test-stress
       taskRef:
         name: test-performance
       runAfter:
         - deploy
+        - apply
       params:
       - name: ref
         value: $(params.ref)
@@ -224,15 +192,19 @@ spec:
       - name: revision
         value: $(params.revision)
       - name: revision-type
-        value: $(tasks.info.results.revision-type)
+        value: $(tasks.git.results.revision-type)
       - name: revision-name
-        value: $(tasks.info.results.revision-name)
+        value: $(tasks.git.results.revision-name)
 
     - name: test-e2e
       taskRef:
         name: test-integration
       runAfter:
         - deploy
+        - apply
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
       - name: ref
         value: $(params.ref)
@@ -243,99 +215,107 @@ spec:
       - name: revision
         value: $(params.revision)
       - name: revision-type
-        value: $(tasks.info.results.revision-type)
+        value: $(tasks.git.results.revision-type)
       - name: revision-name
-        value: $(tasks.info.results.revision-name)
-      resources:
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
+        value: $(tasks.git.results.revision-name)
 
     - name: apply
-      conditions:
-        - conditionRef: is-allowed-production
-          params:
-            - name: revision-type
-              value: $(tasks.info.results.revision-type)
       taskRef:
         name: apply
       runAfter:
-        - test-e2e
-        - test-stress
-      params:
-      - name: repofullname
-        value: $(params.repofullname)
-      - name: ref
-        value: $(tasks.info.results.ref)
-      - name: revision
-        value: $(tasks.info.results.revision)
-      - name: revision-short
-        value: $(tasks.info.results.revision-short)
-      - name: revision-type
-        value: $(tasks.info.results.revision-type)
-      - name: revision-name
-        value: $(tasks.info.results.revision-name)
-      resources:
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
-
+        - docs
+        - build
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
 
     - name: promote
       conditions:
         - conditionRef: is-allowed-production
           params:
             - name: revision-type
-              value: $(tasks.info.results.revision-type)
+              value: $(tasks.git.results.revision-type)
       taskRef:
         name: promote
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
       runAfter:
-        - apply
+        - test-e2e
+        - test-stress
       params:
       - name: cluster
-        value: $(tasks.info.results.cluster)
+        value: {{ .Values.cluster }}
       - name: repofullname
         value: $(params.repofullname)
       - name: ref
-        value: $(tasks.info.results.ref)
+        value: $(tasks.git.results.ref)
       - name: revision
-        value: $(tasks.info.results.revision)
+        value: $(tasks.git.results.revision)
       - name: revision-short
-        value: $(tasks.info.results.revision-short)
+        value: $(tasks.git.results.revision-short)
       - name: revision-type
-        value: $(tasks.info.results.revision-type)
+        value: $(tasks.git.results.revision-type)
       - name: revision-name
-        value: $(tasks.info.results.revision-name)
+        value: $(tasks.git.results.revision-name)
       - name: author
         value: $(params.author)
       - name: email
         value: $(params.email)
-      resources:
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
-          - name: image
-            resource: {{ .Values.application.name }}-development
-        outputs:
-          - name: image
-            resource: {{ .Values.application.name }}-production
+
+    - name: pull-request
+      taskRef:
+        name: github-pull-request
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
+      - name: shared
+        workspace: {{ .Values.application.name }}-shared
+      runAfter:
+        - promote
+      params:
+      - name: revision-type
+        value: $(tasks.git.results.revision-type)
+      - name: revision-name
+        value: $(tasks.git.results.revision-name)
 
     - name: release
       taskRef:
-        kind: Task
         name: tag
       runAfter:
-        - promote
+        - pull-request
+      workspaces:
+      - name: source
+        workspace: {{ .Values.application.name }}-source
       params:
       - name: author
         value: $(params.author)
       - name: email
         value: $(params.email)
       - name: revision-type
-        value: $(tasks.info.results.revision-type)
+        value: $(tasks.git.results.revision-type)
       - name: revision-name
-        value: $(tasks.info.results.revision-name)
-      resources:
-        inputs:
-          - name: source
-            resource: {{ .Values.application.name }}-git
+        value: $(tasks.git.results.revision-name)
+
+  finally:
+    - name: finally
+      taskRef:
+        name: finally
+      params:
+      - name: uid
+        value: $(context.pipelineRun.uid)
+      - name: name
+        value: $(context.pipelineRun.name)
+      - name: repofullname
+        value: $(params.repofullname)
+      - name: repourl
+        value: $(params.repourl)
+      workspaces:
+        - name: source
+          workspace: {{ .Values.application.name }}-source
+        - name: shared
+          workspace: {{ .Values.application.name }}-shared

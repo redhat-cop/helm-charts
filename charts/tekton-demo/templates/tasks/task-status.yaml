@@ -17,10 +17,9 @@ spec:
       type: string
     - name: message
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
+  workspaces:
+  - name: source
+  description: The git repo will be cloned onto the volume backing this workspace
   results:
     - name: cluster
       description: apps cluster url
@@ -46,9 +45,9 @@ spec:
       description: Contains the author username
   steps:
     - name: variables
-      image: quay.io/openshift/origin-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest
       resources: {}
-      workingDir: /workspace/source
+      workingDir: $(workspaces.source.path)
       script: |
         #!/bin/sh
         echo $(oc config view)
@@ -76,9 +75,9 @@ spec:
         echo "Revision-name:" $(cat /tekton/results/revision-name)
 
     - name: validate
-      image: ubi8/nodejs-10
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
-      workingDir: /workspace/source
+      workingDir: $(workspaces.source.path)
       script: |
         #!/bin/sh
         ref=$(cat /tekton/results/ref)
@@ -114,7 +113,7 @@ spec:
         echo OK
 
     # - name: debug
-    #   image: ubi8/nodejs-10
+    #   image: registry.redhat.io/rhel8/nodejs-12
     #   workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
     #   command: ["/bin/bash", "-c"]
     #   args:

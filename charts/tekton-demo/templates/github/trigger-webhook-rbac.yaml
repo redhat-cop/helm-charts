@@ -39,6 +39,9 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tekton-triggers-createwebhook
+secrets:
+  - name: {{ .Values.pipeline.webhook.github.secret }}
+  - name: {{ .Values.pipeline.webhook.github.key }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

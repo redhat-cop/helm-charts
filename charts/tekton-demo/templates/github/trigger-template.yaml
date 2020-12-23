@@ -25,7 +25,7 @@ spec:
   - name: email
     description: commit author email
   resourcetemplates:
-  - apiVersion: tekton.dev/v1alpha1
+  - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
       generateName: $(params.reponame)-$(params.author)-
@@ -37,6 +37,18 @@ spec:
         argocd.argoproj.io/compare-options: IgnoreExtraneous
     spec:
       serviceAccountName: {{ .Values.pipeline.sa.triggers }}
+      workspaces:
+          - name: {{ .Values.application.name }}-source
+            persistentVolumeClaim:
+              claimName: {{ .Values.application.name }}-pvc
+          - name: {{ .Values.application.name }}-shared
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi
       params:
         - name: ref
           value: $(params.ref)

@@ -1,9 +1,12 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: standards
   namespace: {{ .Values.application.environments.cicd }}
 spec:
+  workspaces:
+    - name: source
+    - name: shared
   params:
     - name: ref
       description: Git reference
@@ -20,29 +23,42 @@ spec:
     - name: revision-name
       description: revision name
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
   steps:
-    - name: code-prepare
-      image: ubi8/nodejs-10
+
+    - name: helm-lint
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-          npm ping --registry {{ .Values.pipeline.nexus.host }} install
-          if [[ $? -ne 0 ]]; then
-            npm install --only-dev --unsafe-perm=true --allow-root
-          else
-            echo Using nexus
-            npm --registry {{ .Values.pipeline.nexus.host }} install --only-dev --unsafe-perm=true --allow-root
-          fi
+        if [ -d "chart" ]; then
+          /workspace/shared/helm lint chart
+          /workspace/shared/helm template -f chart/values.yaml chart
+        else
+          echo "Chart does not exist"
+          exit 0
+        fi
+      securityContext:
+        runAsUser: 0
+
+    - name: code-prepare
+      image: registry.redhat.io/rhel8/nodejs-12
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
+      script: |
+        #!/bin/sh
+        npm ping --registry {{ .Values.pipeline.nexus.host }}
+        if [[ $? -ne 0 ]]; then
+          npm install --only-dev --unsafe-perm=true --allow-root
+        else
+          echo Using nexus
+          npm --registry {{ .Values.pipeline.nexus.host }} install --only-dev --unsafe-perm=true --allow-root
+        fi
       securityContext:
         runAsUser: 0
 
     - name: code-audit
-      image: ubi8/nodejs-10
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
@@ -53,7 +69,7 @@ spec:
         runAsUser: 0
 
     - name: code-lint
-      image: ubi8/nodejs-10
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
@@ -64,23 +80,30 @@ spec:
         runAsUser: 0
 
     - name: code-test
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      command: ["/bin/bash", "-c"]
-      args:
-        - |-
-          npm run test-unit
-      securityContext:
-        runAsUser: 0
-
-    - name: code-coverage
-      image: ubi8/nodejs-10
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-        npm run coverage
+        if [[ $(npm run | grep "^  test-unit" | wc -l) == "1" ]]; then
+          npm run test-unit
+        else
+          echo "Not implemented (npm run test-unit)"
+        fi
+      securityContext:
+        runAsUser: 0
+
+    - name: code-coverage
+      image: registry.redhat.io/rhel8/nodejs-12
+      resources: {}
+      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
+      script: |
+        #!/bin/sh
+        if [[ $(npm run | grep "^  coverage" | wc -l) == "1" ]]; then
+          npm run coverage
+        else
+          echo "Not implemented (npm run coverage)"
+        fi
       securityContext:
         runAsUser: 0
 

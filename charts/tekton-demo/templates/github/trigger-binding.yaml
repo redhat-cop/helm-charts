@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerBinding
 metadata:
-  name: trigger-binding
+  name: {{ .Values.application.name }}-trigger-binding
   namespace: {{ .Values.application.environments.cicd }}
 spec:
   # description: >-

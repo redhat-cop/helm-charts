@@ -1,0 +1,43 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: github-pull-request
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  workspaces:
+    - name: source
+    - name: shared
+  params:
+    - name: revision-type
+      description: revision type usually branch type
+      type: string
+    - name: revision-name
+      description: revision name usually version or branch name
+      type: string
+  steps:
+
+    - name: pull-request
+      image: registry.redhat.io/rhel8/nodejs-12
+      workingDir: /workspace/source
+      script: |
+        #!/bin/sh
+        pwd
+        ls -ls
+        ls -ls /workspace/shared
+        /workspace/shared/hub pull-request \
+          --message="v$(inputs.params.revision-name)" \
+          --message="#### v$(inputs.params.revision-name)" \
+          --message="This is a template" \
+          --labels=release \
+          --base={{ .Values.pipeline.webhook.github.org }}:master \
+          --head={{ .Values.pipeline.webhook.github.org }}:$(inputs.params.revision-type)/$(inputs.params.revision-name)
+      env:
+        - name: GITHUB_USER
+          value: {{ .Values.pipeline.webhook.github.user }}
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.pipeline.webhook.github.secret }}
+              key: password
+      securityContext:
+        runAsUser: 0

@@ -26,7 +26,7 @@ spec:
         type: git
   steps:
     - name: helm-prepare
-      image: ubi8/nodejs-10
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -39,7 +39,7 @@ spec:
         runAsUser: 0
 
     - name: chart-lint
-      image: ubi8/nodejs-10
+      image: registry.redhat.io/rhel8/nodejs-12
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |

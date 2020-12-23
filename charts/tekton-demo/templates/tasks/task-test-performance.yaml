@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: test-performance
@@ -21,9 +21,8 @@ spec:
       description: revision name
   steps:
     - name: test-performance
-      image: quay.io/openshift/origin-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest
       resources: {}
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/bash
 

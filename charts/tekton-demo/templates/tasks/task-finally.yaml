@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: finally
+  namespace: {{ .Values.application.environments.cicd }}
+spec:
+  workspaces:
+    - name: source
+    - name: shared
+  params:
+    - name: uid
+      type: string
+    - name: name
+      type: string
+    - name: repofullname
+      type: string
+    - name: repourl
+      type: string
+  steps:
+    - name: status
+      image: registry.redhat.io/rhel8/nodejs-12
+      workingDir: /workspace/shared
+      script: |
+        #!/bin/sh
+        ./tkn pr desc $(params.name)

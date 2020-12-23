@@ -1,4 +1,5 @@
-# Tekton-demo
+# Tekton-demo 
+![](https://img.shields.io/badge/tekton-0.14.3-blue)
 
 This is an example of a pipeline developed in Tekton, the peaceful cat 🐈. It contains the main steps of a continuous software delivery process and it enforces a strict semantic version validation strategy, managing tag increments automatically for you.
 
@@ -12,14 +13,14 @@ There are several task templates available online. However, one of the biggest b
 
 Seeking to minimize dependencies on other components and avoid building your own images, which can be a little overwhelming when you want to kickstart fast your project. So bash scripting is primarily used and provides a solid and easy model to be extended.
 
-The different number of images being used has been taken into account. And with security in mind, only official images are consumed. With [Red Hat Universal Base Image (UBI)](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image), you can take advantage of the greater reliability, security, and performance of official Red Hat container images where OCI-compliant Linux containers run. See also [Red Hat Ecosystem Catalog.](https://catalog.redhat.com/software/containers/search).
+The different number of images being used has been taken into account. And with security in mind, only official images provided by Red Hat, Inc. are consumed. With [Red Hat Universal Base Image (UBI)](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image), you can take advantage of the greater reliability, security, and performance of official Red Hat container images where OCI-compliant Linux containers run. See also [Red Hat Ecosystem Catalog](https://catalog.redhat.com/software/containers/search).
 
-The build strategy is based on [Source-to-Image (S2I)](https://github.com/openshift/source-to-image), which is a toolkit and workflow for building reproducible container images from source code leveraging benefits like:
+The build strategy is based on [buildah](https://github.com/containers/buildah), which is a tool that facilitates building OCI container images.
 
-- Reproducibility
-- Flexibility
-- Speed
-- Security
+The registry used is `registry.redhat.io` which means that you you will not be able to consume images unauthenticated. However, with an active subscription you can create a service account and apply a secret to the cluster to pull these images and this is covered in one of the following steps below.
+
+- Learn more about [Red Hat Container Registry Authentication](https://access.redhat.com/RegistryAuthentication).
+
 
 Furthermore, this package automatically manages the creation of three independent environments, which can be customized as needed.
 The 3 different environments are:
@@ -92,18 +93,63 @@ It will be in this repository that the webhook will be automatically created and
 ### Secrets 
 
 The Github token will only be shown once, be sure to save it somewhere safe. 
-Then copy the token and replace it in the command below.
+Then copy the token and replace it in the command below, replacing also your username. Please make sure you also update the namespace accordingly.
 
-    oc create secret generic github-webhook-secret --from-literal=token=XXXXXXXXXXXXXXXX -n labs-ci-cd
+```
+cat <<EOF | oc apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: do101-github-webhook-secret
+  namespace: labs-ci-cd
+  annotations:
+    tekton.dev/git-0: https://github.com
+type: kubernetes.io/basic-auth
+stringData:
+  username: <yourusername>
+  password: <token>
+EOF
+```
 
 In order to avoid using passwords to publish new content on Github, we will use a keypair. 
 [Here's](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) how to create one if you don't already have one available on your machine.
 
-Assuming your private key was created in the default location `$HOME/.ssh/id_rsa`, you can run the command below to create a generic secret.
+Assuming your private key was created in the default location `$HOME/.ssh/id_rsa`, you can run the command below to create a generic secret. Please note the secret metadata name here should match with the one provided in the `values.yaml`. Also, some more content is provided by Tekton regarding [secrets and authentication](https://github.com/tektoncd/pipeline/blob/master/docs/auth.md#configuring-ssh-auth-authentication-for-git).
 
-    oc create secret generic github-deploy-secret \
-        --from-file=ssh-privatekey=$HOME/.ssh/id_rsa \
-        --namespace labs-ci-cd
+```
+pvtkey=$(cat $HOME/.ssh/id_rsa)
+cat <<EOF | oc apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: do101-github-deploy-secret
+  namespace: labs-ci-cd
+  annotations:
+    tekton.dev/git-0: github.com
+type: kubernetes.io/ssh-auth
+stringData:
+  ssh-privatekey: "$pvtkey"
+EOF
+```
+
+To configure access to `registry.redhat.io` you need to create a new registry service account. Registry service accounts are named tokens that can be used in environments where credentials will be shared, such as deployment systems. 
+
+[Click here to create a new one](https://access.redhat.com/terms-based-registry), give it a name and fill in the description if you think it is necessary. Please save the username and token for further use. 
+
+Then copy the token and paste it into the snippet below
+
+```
+cat <<EOF | oc apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: 11009103-tekton-pipeline-pull-secret
+data:
+  .dockerconfigjson: <tokenhere>
+type: kubernetes.io/dockerconfigjson
+EOF
+```
+
 
 ### Applying
 
@@ -125,24 +171,24 @@ Before publishing a new commit, we will need to define some permissions for the 
 
 ```
 oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:labs-ci-cd:tekton-triggers-sa \
+    system:image-puller system:serviceaccount:labs-ci-cd:do101-tekton-triggers-sa \
     --namespace=do101-development
 ```
 
 ```
 oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:labs-ci-cd:tekton-triggers-sa \
+    system:image-puller system:serviceaccount:labs-ci-cd:do101-tekton-triggers-sa \
     --namespace=do101-production
 ```
 
 And also for triggers ServiceAccount:
 
-    oc adm policy add-scc-to-user privileged system:serviceaccount:labs-ci-cd:tekton-triggers-sa -n labs-ci-cd
-    oc adm policy add-scc-to-user privileged system:serviceaccount:labs-ci-cd:tekton-triggers-sa -n do101-development
-    oc adm policy add-scc-to-user privileged system:serviceaccount:labs-ci-cd:tekton-triggers-sa -n do101-production
-    oc adm policy add-role-to-user edit system:serviceaccount:labs-ci-cd:tekton-triggers-sa -n labs-ci-cd
-    oc adm policy add-role-to-user edit system:serviceaccount:labs-ci-cd:tekton-triggers-sa -n do101-development
-    oc adm policy add-role-to-user edit system:serviceaccount:labs-ci-cd:tekton-triggers-sa -n do101-production
+    oc adm policy add-scc-to-user privileged system:serviceaccount:labs-ci-cd:do101-tekton-triggers-sa -n labs-ci-cd
+    oc adm policy add-scc-to-user privileged system:serviceaccount:labs-ci-cd:do101-tekton-triggers-sa -n do101-development
+    oc adm policy add-scc-to-user privileged system:serviceaccount:labs-ci-cd:do101-tekton-triggers-sa -n do101-production
+    oc adm policy add-role-to-user edit system:serviceaccount:labs-ci-cd:do101-tekton-triggers-sa -n labs-ci-cd
+    oc adm policy add-role-to-user edit system:serviceaccount:labs-ci-cd:do101-tekton-triggers-sa -n do101-development
+    oc adm policy add-role-to-user edit system:serviceaccount:labs-ci-cd:do101-tekton-triggers-sa -n do101-production
 
 Something failed? See troubleshooting.
 
@@ -204,32 +250,3 @@ Supported webhooks under the `pipeline.webhook` object
 | github | user | github repository username |
 | github | secret | a [github personal access token](https://github.com/settings/tokens) with `admin:repo` and `repo` permissions |
 | github | secret | a [ssh keypair](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) to allow to push content without password |
-
-<!-- 
-
-### Deploying to development environment
-
-1. Create a new branch called `develop` and push to the repo to trigger a new build
-
-    git checkout -b develop
-    git push origin develop
-
-2. Create a new branch called `feature/awesome-feature` and push to the repo to trigger a new independent build
-
-    git checkout -b feature/awesome-feature
-    git push origin feature/awesome-feature
-
-### Deploying to production environment
-
-1. From the latest `develop` branch, create a new branch called `release/1.0.0`
-
-    git checkout -b release/1.0.0
-    git push origin release/1.0.0
-
-2. Patching and hotfixes folllows the same structure
-
-    git checkout -b hotfix/1.0.1
-    git push origin hotfix/1.0.1
-
-    git checkout -b patch/1.0.2
-    git push origin patch/1.0.2 -->

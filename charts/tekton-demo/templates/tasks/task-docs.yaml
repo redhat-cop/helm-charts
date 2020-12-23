@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: docs
@@ -6,6 +6,8 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
+  workspaces:
+    - name: source
   params:
     - name: ref
       description: Git reference
@@ -32,50 +34,38 @@ spec:
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
       default: "false"
       type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
-    outputs:
-      - name: documentation
-        type: image
-  steps:
 
-    - name: image-generate
-      image: quay.io/openshift-pipeline/s2i
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
-      script: |
-        #!/bin/sh
-        if [ "$(inputs.params.revision-type)" == "develop" ]; then
-          s2i build . image-registry.openshift-image-registry.svc:5000/openshift/ruby:2.7 --as-dockerfile /gen-source/Dockerfile.gen
-        fi          
-      volumeMounts:
-        - name: gen-source
-          mountPath: /gen-source
+  results:
+  - name: image
+    description: url of the image just built
+  - name: digest
+    description: digest of the image just built
+
+  steps:
           
     - name: image-build
-      image: quay.io/buildah/stable
+      image: registry.redhat.io/rhel8/buildah
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
       resources: {}
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
-          buildah bud --tls-verify=$(inputs.params.TLSVERIFY) --layers -t $(outputs.resources.documentation.url):$(inputs.params.revision-name) .
+          buildah bud --tls-verify=$(inputs.params.TLSVERIFY) --layers -t image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name) .
         fi
       volumeMounts:
         - name: varlibcontainers
           mountPath: /var/lib/containers
-        - name: gen-source
-          mountPath: /gen-source
+        # - name: gen-source
+        #   mountPath: /gen-source
       securityContext:
         privileged: true
         
     - name: image-push
-      image: quay.io/buildah/stable
+      image: registry.redhat.io/rhel8/buildah
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
-          buildah push --tls-verify=$(inputs.params.TLSVERIFY) $(outputs.resources.documentation.url):$(inputs.params.revision-name) docker://$(outputs.resources.documentation.url):$(inputs.params.revision-name)
+          buildah push --tls-verify=$(inputs.params.TLSVERIFY) --digestfile $(workspaces.source.path)/image-digest image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name) docker://image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name)
         fi
       volumeMounts:
         - name: varlibcontainers
@@ -83,8 +73,21 @@ spec:
       resources: {}
       securityContext:
         privileged: true
+
+    - name: image-digest
+      image: registry.redhat.io/rhel8/buildah
+      script: |
+        #!/bin/sh
+        printf %s "null" >> /tekton/results/digest
+        printf %s "null" >> /tekton/results/image
+        if [ "$(inputs.params.revision-type)" == "develop" ]; then
+          printf %s "image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-documentation:$(inputs.params.revision-name)" >> /tekton/results/image
+          cat $(workspaces.source.path)/image-digest | tee /tekton/results/digest
+        fi
+        exit 0
+
   volumes:
     - name: varlibcontainers
       emptyDir: {}
-    - name: gen-source
-      emptyDir: {}
+    # - name: gen-source
+    #   emptyDir: {}

@@ -8,7 +8,7 @@ spec:
   params:
     - name: revision-type
   check:
-    image: quay.io/openshift/origin-cli:latest
+    image: registry.redhat.io/openshift4/ose-cli:latest
     script: | 
       #!/bin/sh
       if [ "$(params.revision-type)" == "feature" ] || [ "$(params.revision-type)" == "develop" ]; then
@@ -26,7 +26,7 @@ spec:
   params:
     - name: revision-type
   check:
-    image: quay.io/openshift/origin-cli:latest
+    image: registry.redhat.io/openshift4/ose-cli:latest
     script: | 
       #!/bin/sh 
       if [ "$(params.revision-type)" == "release" ] || [ "$(params.revision-type)" == "hotfix" ] || [ "$(params.revision-type)" == "patch" ]; then

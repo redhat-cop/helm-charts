@@ -1,0 +1,272 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone
+  labels:
+    app.kubernetes.io/version: "0.2"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: git
+    tekton.dev/displayName: "git clone"
+spec:
+  description: >-
+    These Tasks are Git tasks to work with repositories used by other tasks
+    in your Pipeline.
+    The git-clone Task will clone a repo from the provided url into the
+    output Workspace. By default the repo will be cloned into the root of
+    your Workspace. You can clone into a subdirectory by setting this Task's
+    subdirectory param.
+  workspaces:
+    - name: output
+      description: The git repo will be cloned onto the volume backing this workspace
+  params:
+    - name: url
+      description: git url to clone
+      type: string
+    - name: revision
+      description: git revision to checkout (branch, tag, sha, ref…)
+      type: string
+      default: ""
+    - name: refspec
+      description: (optional) git refspec to fetch before checking out revision
+      default: ""
+    - name: submodules
+      description: defines if the resource should initialize and fetch the submodules
+      type: string
+      default: "true"
+    - name: depth
+      description: performs a shallow clone where only the most recent commit(s) will be fetched
+      type: string
+      default: "1"
+    - name: sslVerify
+      description: defines if http.sslVerify should be set to true or false in the global git config
+      type: string
+      default: "true"
+    - name: subdirectory
+      description: subdirectory inside the "output" workspace to clone the git repo into
+      type: string
+      default: ""
+    - name: deleteExisting
+      description: clean out the contents of the repo's destination directory (if it already exists) before trying to clone the repo there
+      type: string
+      default: "true"
+    - name: httpProxy
+      description: git HTTP proxy server for non-SSL requests
+      type: string
+      default: ""
+    - name: httpsProxy
+      description: git HTTPS proxy server for SSL requests
+      type: string
+      default: ""
+    - name: noProxy
+      description: git no proxy - opt out of proxying HTTP/HTTPS requests
+      type: string
+      default: ""
+    - name: verbose
+      description: log the commands used during execution
+      type: string
+      default: "true"
+    - name: ref
+      type: string
+    - name: repourl
+      type: string
+    - name: repofullname
+      type: string
+    - name: author
+      type: string
+    - name: message
+      type: string
+    - name: pipelinerun
+      type: string
+  results:
+    - name: commit
+      description: The precise commit SHA that was fetched by this Task
+    - name: url
+      description: The precise URL that was fetched by this Task
+    - name: cluster
+      description: apps cluster url
+    - name: ref
+      description: reference
+    - name: revision
+      description: unique id from git head commit
+    - name: revision-short
+      description: unique id from git head commit short version
+    - name: revision-type
+      description: Contains the type of branch - feature, release,...
+    - name: revision-name
+      description: Contains the name of the branch without the type, ie. omitting the first slash
+    - name: full-revision-name
+      description: Contains the name of the branch without the type, ie. omitting the first slash
+    - name: repourl
+      description: repository url from github payload
+    - name: repofullname
+      description: full name user-org/reponame from github
+    - name: message
+      description: Contains the commit message
+    - name: author
+      description: Contains the author username
+
+  steps:
+    - name: clone
+      image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.17.1
+      script: |
+        #!/bin/sh
+        set -eu -o pipefail
+        if [[ "$(params.verbose)" == "true" ]] ; then
+          set -x
+        fi
+        CHECKOUT_DIR="$(workspaces.output.path)/$(params.subdirectory)"
+        cleandir() {
+          # Delete any existing contents of the repo directory if it exists.
+          #
+          # We don't just "rm -rf $CHECKOUT_DIR" because $CHECKOUT_DIR might be "/"
+          # or the root of a mounted volume.
+          if [[ -d "$CHECKOUT_DIR" ]] ; then
+            # Delete non-hidden files and directories
+            rm -rf "$CHECKOUT_DIR"/*
+            # Delete files and directories starting with . but excluding ..
+            rm -rf "$CHECKOUT_DIR"/.[!.]*
+            # Delete files and directories starting with .. plus any other character
+            rm -rf "$CHECKOUT_DIR"/..?*
+          fi
+        }
+        if [[ "$(params.deleteExisting)" == "true" ]] ; then
+          cleandir
+        fi
+        test -z "$(params.httpProxy)" || export HTTP_PROXY=$(params.httpProxy)
+        test -z "$(params.httpsProxy)" || export HTTPS_PROXY=$(params.httpsProxy)
+        test -z "$(params.noProxy)" || export NO_PROXY=$(params.noProxy)
+        /ko-app/git-init \
+          -url "$(params.url)" \
+          -revision "$(params.revision)" \
+          -refspec "$(params.refspec)" \
+          -path "$CHECKOUT_DIR" \
+          -sslVerify="$(params.sslVerify)" \
+          -submodules="$(params.submodules)" \
+          -depth "$(params.depth)"
+        cd "$CHECKOUT_DIR"
+        RESULT_SHA="$(git rev-parse HEAD)"
+        EXIT_CODE="$?"
+        if [ "$EXIT_CODE" != 0 ] ; then
+          exit $EXIT_CODE
+        fi
+        # ensure we don't add a trailing newline to the result
+        echo -n "$RESULT_SHA" > $(results.commit.path)
+        echo -n "$(params.url)" > $(results.url.path)
+
+    - name: variables
+      image: registry.redhat.io/openshift4/ose-cli:latest
+      resources: {}
+      script: |
+        #!/bin/sh
+        echo $(oc config view)
+        server=$(echo $(oc config view --minify -o jsonpath='{.clusters[*].cluster.server}'))
+        cluster=$(echo "apps."${server//https:\/\/api./})
+        cluster=${cluster//:6443/}
+        echo $cluster
+
+        echo $(params.ref)
+        echo $(params.revision)
+        echo $(params.author)
+        echo $(params.message)
+        echo $(params.ref) > $(results.ref.path)
+        echo $(params.revision) | sed 's/ *$//g' > $(results.revision.path)
+        echo $(params.author) > $(results.author.path)
+        echo $(params.message) > $(results.message.path)
+        echo $(params.repourl) > $(results.repourl.path)
+        echo $(params.repofullname) > $(results.repofullname.path)
+        echo $cluster > $(results.url.path)/tekton/results/cluster
+        echo $(params.ref) | awk -F "/" '{if (NF > 1) {printf "%s", $3 > "/tekton/results/revision-type"; printf "%s", $4 > "/tekton/results/revision-name"; printf "%s/%s", $3, $4 > "/tekton/results/full-revision-name"} else {printf "%s", "unknown" > "/tekton/results/revision-type"; printf "%s", $3 > "/tekton/results/revision-name"; printf "%s", $4 > "/tekton/results/full-revision-name"}}'
+        if [ "$(cat /tekton/results/revision-type)" == "develop" ]; then
+          printf %s "develop" >> /tekton/results/revision-name
+        fi
+        echo "Revision-type:" $(cat /tekton/results/revision-type)
+        echo "Revision-name:" $(cat /tekton/results/revision-name)
+
+    - name: validate
+      image: registry.redhat.io/rhel8/nodejs-12
+      resources: {}
+      workingDir: /workspace/output
+      script: |
+        #!/bin/sh
+
+        ref=$(cat /tekton/results/ref)
+        revisionType=$(cat /tekton/results/revision-type)
+        revisionName=$(cat /tekton/results/revision-name)
+        printf %s "$(git rev-parse --short HEAD)" >> /tekton/results/revision-short
+        package={{ .Values.pipeline.build.s2i.context }}/package.json
+        git fetch --all --tags > /dev/null 2>&1
+        if git rev-parse -q --verify "refs/tags/$revisionName" >/dev/null; then
+            echo "Tag $revisionName already exists"
+            exit 1
+        fi
+
+        if [ ! -f $package ]; then
+            echo "Missing package.json"
+            exit 1 
+        fi
+
+        # verify if it's not a tag webhook event
+        if [[ $ref == *"refs/tags/"* ]]; then
+          echo "This is a tag commit. Not building."
+          exit 1
+        fi
+
+        if [ "$revisionType" == "release" ] || [ "$revisionType" = "hotfix" ] || [ "$revisionType" = "patch" ] || [ "$revisionType" == "feature" ] || [ "$revisionType" = "develop" ]; then
+          exit 0
+        else
+          echo "Branch $revisionType is not supported as part of git flow implementation"
+          exit 1
+        fi
+
+        echo OK
+
+        before=$(cat $package \
+        | grep version \
+        | head -1 \
+        | awk -F: '{ print $2 }' \
+        | sed 's/[",]//g')
+        
+        before=$(echo -e $before)
+        # hack for first version to be upgraded as major
+        if [ "$before" == "0.0.0" ]; then
+          importance=major
+        else
+          importance=minor
+        fi
+
+        if [ "$(cat /tekton/results/revision-type)" == "release" ]; then
+          version=$(npm version $importance)
+          if [ "$version" = "v$(cat /tekton/results/revision-name)" ]; then
+            echo Version is OK
+            exit 0
+          else
+            echo "Version from package.json ($before) does not match with branch $(cat /tekton/results/revision-type)/$(cat /tekton/results/revision-name)"
+            exit 1
+          fi
+        elif [ "$(cat /tekton/results/revision-type)" == "patch" ] || [ "$(cat /tekton/results/revision-type)" = "hotfix" ]; then
+          version=$(npm version patch)
+          if [ "$version" = "v$(cat /tekton/results/revision-name)" ]; then
+            echo "Version from package.json upgraded to $version"
+          else
+            echo "Version from package.json ($before) does not match with branch $(cat /tekton/results/revision-type)/$(cat /tekton/results/revision-name)"
+            exit 1
+          fi
+        else
+          echo "Skipping npm version upgrade since we are in a $(cat /tekton/results/revision-type) branch"
+          exit 0
+        fi
+      securityContext:
+        runAsUser: 0
+
+    # - name: status
+    #   image: registry.redhat.io/rhel8/nodejs-12
+    #   resources: {}
+    #   workingDir: /workspace/output
+    #   script: |
+    #     #!/bin/sh
+    #     curl -LO https://github.com/tektoncd/cli/releases/download/v0.13.0/tkn_0.13.0_Linux_x86_64.tar.gz
+    #     tar xvzf tkn_0.13.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
+    #     /usr/local/bin/tkn pr desc $(params.pipelinerun)
+    #   securityContext:
+    #     runAsUser: 0

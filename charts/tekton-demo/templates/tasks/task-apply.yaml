@@ -1,53 +1,24 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: apply
   namespace: {{ .Values.application.environments.cicd }}
 spec:
-  params:
-    - name: ref
-      description: git ref
-      type: string
-    - name: repofullname
-      type: string
-    - name: revision
-      description: git unique head commit id
-      type: string
-    - name: revision-short
-      description: git unique head commit id short version
-      type: string
-    - name: revision-type
-      description: revision type usually branch type
-      type: string
-    - name: revision-name
-      description: revision name usually version or branch name
-      type: string
-  resources:
-    inputs:
-      - name: source
-        type: git
-
+  workspaces:
+  - name: source
+  - name: shared
   steps:
-    - name: helm-prepare
-      image: ubi8/nodejs-10
-      resources: {}
-      workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      script: |
-        #!/bin/sh
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-          cp /usr/local/bin/helm /workspace/source/{{ .Values.pipeline.build.s2i.context }}
-      securityContext:
-        runAsUser: 0
-
     - name: helm-apply
-      image: quay.io/openshift/origin-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
-          ls -ls
-          ./helm template -f chart/values.yaml chart | oc apply -f-
+        if [ -d "chart" ]; then
+          /workspace/shared/helm template -f chart/values.yaml chart | oc apply -f-
+        else
+          echo "Chart does not exist"
+          exit 0
+        fi
       securityContext:
         runAsUser: 0
