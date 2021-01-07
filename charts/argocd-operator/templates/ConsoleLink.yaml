@@ -10,3 +10,4 @@ spec:
   href: 'https://argocd-server-{{ .Values.namespace }}.{{ .Values.domain }}'
   location: ApplicationMenu
   text: ArgoCD
+  
