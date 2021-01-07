@@ -1,0 +1,12 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: {{ .Values.name }}
+spec:
+  applicationMenu:
+    imageURL: >-
+      {{ .Values.image_url }}
+    section: Tools
+  href: '{{ .Values.url }}'
+  location: ApplicationMenu
+  text: {{ .Values.text}}
