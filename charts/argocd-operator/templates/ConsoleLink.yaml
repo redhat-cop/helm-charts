@@ -1,3 +1,4 @@
+{{- if .Values.console_link.enabled }}
 apiVersion: console.openshift.io/v1
 kind: ConsoleLink
 metadata:
@@ -10,3 +11,4 @@ spec:
   href: 'https://argocd-server-{{ .Values.namespace }}.{{ .Values.domain }}'
   location: ApplicationMenu
   text: ArgoCD
+{{- end }}

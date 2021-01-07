@@ -3,7 +3,10 @@
 enabled: true
 name: labs-argocd
 
-domain: apps.cluster.example.com
+# if ArgoCD will be deployed on OpenShift, set console_link to enabled: true
+console_link:
+  enabled: true
+  domain: apps.cluster.example.com
 
 ci_cd_namespace: &ci_cd "labs-ci-cd"
 dev_namespace: &dev "labs-dev"
