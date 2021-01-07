@@ -1,0 +1,12 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: argocd-server
+spec:
+  applicationMenu:
+    imageURL: >-
+      https://argocd-server-{{ .Values.namespace }}.{{ .Values.domain }}/assets/images/logo.png
+    section: Tools
+  href: 'https://argocd-server-{{ .Values.namespace }}.{{ .Values.domain }}'
+  location: ApplicationMenu
+  text: ArgoCD

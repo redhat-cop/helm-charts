@@ -20,3 +20,4 @@ The following table lists the configurable parameters of the ArgoCD chart and th
 | `namespace`                                      | Project name to deploy DevEx tools                           | `labs-ci-cd`                          |
 | `name`                                           | Project name for argocd server                               | `labs-argocd`                         |
 | `instancelabel`                                  | Unique identifier for argocd default label                   | `rht-labs.com/ubiquitous-journey`     |
+| `domain`                                         | Cluster wildcard DNS record for routes                       | `apps.cluster.example.com`            |
