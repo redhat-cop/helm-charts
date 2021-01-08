@@ -1,0 +1,11 @@
+apiVersion: v2
+description: A Helm chart for customising the deployment of the datagrid operator ⚓️
+name: datagrid-operator
+type: application
+version: 0.0.1
+appVersion: 0.0.2
+home: https://github.com/redhat-cop/helm-charts
+icon: https://www.redhat.com/cms/managed-files/data-grid-slice2-500x415.png
+maintainers:
+- name: mvmaestri
+- name: fwalker@redhat.com

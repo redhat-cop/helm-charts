@@ -1,0 +1,13 @@
+apiVersion: infinispan.org/v2alpha1
+kind: Cache
+metadata:
+  name: cache1
+  labels:
+    app: datagrid
+    cluster: datagrid-cluster
+spec:
+  adminAuth: 
+    secretName: basic-auth
+  clusterName: datagrid-cluster
+  name: cache1
+  templateName: org.infinispan.DIST_SYNC 

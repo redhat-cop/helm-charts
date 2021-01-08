@@ -1,0 +1,27 @@
+---
+# control used by Labs Ubiquitous Journey
+enabled: true
+name: labs-datagrid
+
+ci_cd_namespace: &ci_cd "labs-ci-cd"
+dev_namespace: &dev "labs-dev"
+test_namespace: &test "labs-test"
+
+namespace: *ci_cd
+instancelabel: rht-labs.com/ubiquitous-journey
+
+# operator manages upgrades etc
+operator:
+  name: datagrid
+  version: datagrid-operator.v8.1.2
+  channel: 8.1.x
+  operatorgroup: true
+
+
+# role bindings, enable this to restrict to listed namespaces only. cluster role by default (enabled: false)
+namespaceRoleBinding:
+  enabled: false
+  namespaces:
+  - name: *ci_cd
+  - name: *dev
+  - name: *test

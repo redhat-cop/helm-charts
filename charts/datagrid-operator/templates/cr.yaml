@@ -1,0 +1,37 @@
+{{- if .Values.enabled }}
+{{- if .Values.operator }}
+---
+apiVersion: infinispan.org/v1
+kind: Infinispan
+metadata:
+  name: datagrid-cluster
+  labels:
+    app: datagrid
+spec:
+  replicas: 2
+  service:
+    type: Cache 
+  replicationFactor: 3
+  autoscale:
+    maxMemUsagePercent: 70
+    maxReplicas: 5
+    minMemUsagePercent: 30
+    minReplicas: 2
+  security:
+    endpointSecretName: endpoint-identities 
+    endpointEncryption: 
+        type: Secret
+        certSecretName: tls-secret
+  container: 
+    extraJvmOpts: "-XX:NativeMemoryTracking=summary"
+    cpu: "2000m"
+    memory: 1Gi
+  logging: 
+    categories:
+      org.infinispan: trace
+      org.jgroups: trace
+  expose: 
+    type: Route
+
+{{- end }}
+{{- end }}
