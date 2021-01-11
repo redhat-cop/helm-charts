@@ -413,6 +413,20 @@ entries:
     urls:
     - https://github.com/rht-labs/helm-charts/releases/download/etherpad-0.0.1/etherpad-0.0.1.tgz
     version: 0.0.1
+  helper-console-links:
+  - apiVersion: v2
+    appVersion: v1.6.1
+    created: "2021-01-11T04:33:28.126105919Z"
+    description: A Helm chart for customising the OpenShift web Console with Tool
+      links
+    digest: b0e3af987405c94913e9998905adeca40033e7dea0b793a8dba11890362220f1
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: JuozasA
+    name: helper-console-links
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/helper-console-links-0.0.1/helper-console-links-0.0.1.tgz
+    version: 0.0.1
   helper-sealed-secrets:
   - apiVersion: v2
     appVersion: v1
