@@ -10,6 +10,9 @@ metadata:
     app: {{ .Values.appName }}
 spec:
   host: {{ .Values.route.host | quote }}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
   port:
     targetPort: {{ .Values.route.targetPort | default "8080-tcp" }}
   to:
