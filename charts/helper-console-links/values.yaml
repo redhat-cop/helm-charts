@@ -1,0 +1,10 @@
+name: argocd-server
+
+# OpenShift route URL
+url: https://argocd-server-labs-ci-cd.apps.ocp.rht-labs.com
+
+# URL to png,svg image
+image_url: https://argocd-server-labs-ci-cd.apps.ocp.rht-labs.com/assets/images/logo.png
+
+# URL Link title
+text: ArgoCD
