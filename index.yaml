@@ -757,6 +757,21 @@ entries:
   operatorhub:
   - apiVersion: v2
     appVersion: 0.0.2
+    created: "2021-01-13T21:49:42.31379272Z"
+    description: A Helm chart to create OperatorHub subscriptions
+    digest: 1cd370a912e5d7041270b81455317e8e06be792d98d2f62ebb1594ab2786d05d
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: tylerauerbeck
+    - name: ckavili
+    - name: mabulgu
+    name: operatorhub
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operatorhub-0.0.6/operatorhub-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
+    appVersion: 0.0.2
     created: "2020-08-04T16:53:02.149299076Z"
     description: A Helm chart to create OperatorHub subscriptions
     digest: aefe4618c8ff8cd52394cca5c6eef2a5ba9e1667c1bac0d06e328c765853236d
