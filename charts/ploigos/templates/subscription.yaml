@@ -1,0 +1,20 @@
+{{- if .Values.operator.namespaces }}
+{{- range $key := .Values.operator.namespaces }}
+{{ $ns:= printf "%s" .name}}
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/ploigos-software-factory-operator.{{ $ns }}: ""
+  name: {{ $key.operatorname }}
+  namespace: {{ $ns }}
+spec:
+  channel: {{ $key.channel }}
+  installPlanApproval: Automatic
+  name: {{ $key.operatorname }}
+  source: redhatgov-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: {{ $key.version }}
+{{- end }}
+{{- end }}
