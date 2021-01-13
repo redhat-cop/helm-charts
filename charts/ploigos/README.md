@@ -22,7 +22,7 @@ Once you have installed the platform you can use the `TsscPipeline CRD`
 
 # Usage
 
-To install plogios operator and platform into the `devsecops` namespace
+As a cluster admin user, to install plogios operator and platform into the `devsecops` namespace
 ```bash
 helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
 helm repo update
