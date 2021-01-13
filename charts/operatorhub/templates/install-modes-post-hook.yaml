@@ -1,0 +1,67 @@
+{{- if .Values.operators }}
+{{- range $op := .Values.operators }}
+{{- if $op.installModes }}
+{{- $im := $op.installModes }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: patch-csv
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: patch-csv
+rules:
+- apiGroups:
+  - "operators.coreos.com"
+  resources:
+  - clusterserviceversions
+  verbs:
+  - get
+  - list
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: patch-csv
+subjects:
+- kind: ServiceAccount
+  name: patch-csv
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: patch-csv
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: operatorhub-{{ $op.name }}-{{ randAlphaNum 5 | lower }}-patch-csv
+  namespace: "{{ $op.namespace }}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "operatorhub-{{ $op.name }}-install-modes-post-hook-job"
+    spec:
+      serviceAccount: patch-csv
+      serviceAccountName: patch-csv
+      restartPolicy: Never
+      containers:
+      - name: post-install-job
+        image: "quay.io/openshift/origin-cli:latest"
+        command:
+          - /bin/bash
+          - -c
+          - | #TODO: Get the CSV from the cluster instead from a var? 
+              oc -n {{ $op.namespace }} patch csv {{ $op.subscription.csv }} --type=merge -p '{"spec":{"installModes":[{"supported": {{ $im.OwnNamespace }}, "type":"OwnNamespace"},{"supported": {{ $im.SingleNamespace }}, "type":"SingleNamespace"},{"supported": {{ $im.MultiNamespace }}, "type":"MultiNamespace"},{"supported": {{ $im.AllNamespaces }}, "type":"AllNamespaces"}]}}'
+{{- end }}
+{{- end }}
+{{- end }}
