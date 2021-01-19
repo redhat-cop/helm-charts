@@ -855,6 +855,20 @@ entries:
   pact-broker:
   - apiVersion: v2
     appVersion: v0.0.1
+    created: "2021-01-19T11:12:52.793788118Z"
+    description: "A Helm chart for deploying Pact Broker on OpenShift \U0001F517"
+    digest: 2618638ab6f6930d7a77c438b989bc03d16ebe565d9291b0c8479de63211d2d3
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: mvmaestri
+    - name: gsampaio
+    - name: springdo
+    name: pact-broker
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/pact-broker-0.0.4/pact-broker-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: v0.0.1
     created: "2020-08-04T16:53:02.340546218Z"
     description: "A Helm chart for deploying Pact Broker on OpenShift \U0001F517"
     digest: 4b337db649c396f7e3350e2f67358c4e5c184ff3be58e4852b7c1fef26cc4f9b
