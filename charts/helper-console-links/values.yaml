@@ -1,10 +1,11 @@
-name: argocd-server
-
-# OpenShift route URL
-url: https://argocd-server-labs-ci-cd.apps.ocp.rht-labs.com
-
-# URL to png,svg image
-image_url: https://argocd-server-labs-ci-cd.apps.ocp.rht-labs.com/assets/images/logo.png
-
-# URL Link title
-text: ArgoCD
+section:
+  - name: CICD Tools
+    urls:
+      - name: argocd-server
+        url: https://argocd-server-labs-ci-cd.apps.ocp.rht-labs.com
+        image_url: https://argocd-server-labs-ci-cd.apps.ocp.rht-labs.com/assets/images/logo.png
+        text: ArgoCD
+      - name: nexus
+        url: https://nexus-labs-ci-cd.apps.ocp.rht-labs.com
+        image_url: https://nexus-labs-ci-cd.apps.ocp.rht-labs.com/static/rapture/resources/icons/x32/nexus-white.png
+        text: Nexus
