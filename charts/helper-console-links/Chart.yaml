@@ -2,7 +2,8 @@ apiVersion: v2
 appVersion: v1.6.1
 description: A Helm chart for customising the OpenShift web Console with Tool links
 name: helper-console-links
-version: 0.0.1
+version: 0.0.2
 home: https://github.com/redhat-cop/helm-charts
 maintainers:
 - name: JuozasA
+- name: eformat
