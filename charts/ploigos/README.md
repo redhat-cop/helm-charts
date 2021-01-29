@@ -28,5 +28,3 @@ helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
 helm repo update
 helm upgrade --install redhat-cop/ploigos --generate-name --namespace devsecops --create-namespace
 ```
-
-helm upgrade ploigos --install . --namespace devsecops --create-namespace
