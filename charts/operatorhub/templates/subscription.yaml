@@ -14,7 +14,7 @@ spec:
   source: {{ $sub.sourceName | default "redhat-operators" | quote }}
   sourceNamespace: {{ $sub.sourceNamespace | default "openshift-marketplace" | quote }}
 {{- if $sub.csv }}
-  startingCSV: {{ $sub.csv }}
+  startingCSV: {{ $sub.csv | quote }}
 {{- end }}
 {{- end }}
 {{- end }}

@@ -10,8 +10,14 @@ metadata:
   name: {{ $op.name | quote }} 
   namespace: {{ $op.namespace | quote }}
 spec:
+  {{- if $og.namespaceSelector }}
+  selector:
+    matchLabels:
+      {{ $og.namespaceSelector }}
+  {{ else }}
   targetNamespaces:
   - {{ $op.namespace }}
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
