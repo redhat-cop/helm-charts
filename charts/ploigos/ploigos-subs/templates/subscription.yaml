@@ -1,5 +1,5 @@
-{{- if .Values.operator.namespaces }}
-{{- range $key := .Values.operator.namespaces }}
+{{- if .Values.exports.operator.namespaces }}
+{{- range $key := .Values.exports.operator.namespaces }}
 {{ $ns:= printf "%s" .name}}
 ---
 apiVersion: operators.coreos.com/v1alpha1

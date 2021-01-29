@@ -33,6 +33,7 @@ Session.vim
 
 # Chart dependencies
 **/charts/*.tgz
+Chart.lock
 
 .history
 

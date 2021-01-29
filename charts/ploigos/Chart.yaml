@@ -1,9 +1,0 @@
-apiVersion: v2
-name: ploigos
-description: A Helm chart for Ploigos - Trusted Software Supply Chain
-type: application
-version: 0.0.2
-appVersion: 0.0.14
-home: https://github.com/redhat-cop/helm-charts
-maintainers:
-  - name: eformat

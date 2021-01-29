@@ -26,5 +26,7 @@ As a cluster admin user, to install plogios operator and platform into the `devs
 ```bash
 helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
 helm repo update
-helm install redhat-cop/ploigos --generate-name --namespace devsecops --create-namespace
+helm upgrade --install redhat-cop/ploigos --generate-name --namespace devsecops --create-namespace
 ```
+
+helm upgrade ploigos --install . --namespace devsecops --create-namespace

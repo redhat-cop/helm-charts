@@ -1,5 +1,5 @@
-{{- if .Values.operator.namespaces }}
-{{- range $op := .Values.operator.namespaces }}
+{{- if .Values.exports.operator.namespaces }}
+{{- range $op := .Values.exports.operator.namespaces }}
 {{- if $op.operatorgroup }}
 {{- if $op.operatorgroup.create }}
 {{- $og := $op.operatorgroup }}

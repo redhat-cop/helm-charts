@@ -1,0 +1,9 @@
+apiVersion: v2
+name: ploigos-subs
+description: A Helm chart for Ploigos Operator Subscriptions
+type: application
+version: 0.0.1
+appVersion: 0.1.1
+home: https://github.com/redhat-cop/helm-charts
+maintainers:
+  - name: eformat
