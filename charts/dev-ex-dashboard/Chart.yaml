@@ -8,6 +8,7 @@ version: 0.0.2
 # incremented each time you make changes to the application.
 appVersion: v1.0
 home: https://github.com/redhat-cop/helm-charts
+icon: https://cdn.iconscout.com/icon/free/png-256/dashboard-1739866-1481441.png
 maintainers:
   - name: springdo
   - name: ckavili

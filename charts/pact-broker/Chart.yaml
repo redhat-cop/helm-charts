@@ -4,6 +4,7 @@ description: A Helm chart for deploying Pact Broker on OpenShift 🔗
 name: pact-broker
 version: 0.0.4
 home: https://github.com/redhat-cop/helm-charts
+icon: https://img.stackshare.io/service/11305/pact.png
 maintainers:
 - name: mvmaestri
 - name: gsampaio

@@ -4,6 +4,7 @@ description: A Helm chart for customising the OpenShift web Console with Tool li
 name: helper-console-links
 version: 0.0.2
 home: https://github.com/redhat-cop/helm-charts
+icon: https://image.flaticon.com/icons/png/512/25/25284.png
 maintainers:
 - name: JuozasA
 - name: eformat

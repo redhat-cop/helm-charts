@@ -5,6 +5,7 @@ type: application
 version: 0.0.6
 appVersion: 0.0.2
 home: https://github.com/redhat-cop/helm-charts
+icon: https://avatars3.githubusercontent.com/u/38202270?s=280&v=4
 maintainers:
   - name: tylerauerbeck
   - name: ckavili

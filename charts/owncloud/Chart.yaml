@@ -5,5 +5,6 @@ type: application
 version: 0.0.2
 appVersion: latest
 home: https://github.com/redhat-cop/helm-charts
+icon: https://alternative.me/media/256/owncloud-icon-ge0uksoxjjfyflu8-c.png
 maintainers:
 - name: eformat
