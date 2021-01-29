@@ -10,7 +10,7 @@ maintainers:
 dependencies:
   - name: ploigos-subs
     version: "0.0.1"
-    repository: "file://../ploigos-subs" #"https://eformat.github.io/helm-charts"
+    repository: "https://redhat-cop.github.io/helm-charts"
     import-values:
       - operator
     tags:
