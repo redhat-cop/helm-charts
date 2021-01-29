@@ -26,5 +26,12 @@ As a cluster admin user, to install plogios operator and platform into the `devs
 ```bash
 helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
 helm repo update
-helm upgrade --install redhat-cop/ploigos --generate-name --namespace devsecops --create-namespace
+helm upgrade --install ploigos redhat-cop/ploigos --namespace devsecops --create-namespace
+```
+
+Deleting the helm chart works, however the ploigos operator does not yet clean up tidily, so run:
+```bash
+helm delete ploigos --namespace devsecops
+oc delete $(oc get subscription -o name) -n devsecops
+oc delete project devsecops
 ```
