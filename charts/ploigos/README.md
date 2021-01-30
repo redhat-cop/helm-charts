@@ -22,16 +22,38 @@ Once you have installed the platform you can use the `TsscPipeline CRD`
 
 # Usage
 
-As a cluster admin user, to install plogios operator and platform into the `devsecops` namespace
+## Add Helm Chart Repo
+
+Add the chart repo
 ```bash
 helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
 helm repo update
-helm upgrade --install ploigos redhat-cop/ploigos --namespace devsecops --create-namespace
 ```
+## New cluster with no TSSC CRD's
+
+If your cluster does not contain the TSSC CRD:
+```bash
+oc get crd tsscplatforms.redhatgov.io
+```
+
+You must first install it as a cluster admin user using the operator subscription which we can uninstall once done.
+```bash
+cd ./ploigos-subs
+helm upgrade --install ploigos-subs . --namespace devsecops --create-namespace
+helm uninstall ploigos-subs --namespace devsecops
+```
+## Cluster that contains TSSC CRD's
+
+Once to TSSC CRD has been installed in the cluster, install the operator and platform into the `devsecops` namespace
+```bash
+helm upgrade --install ploigos redhat-cop/ploigos --namespace devsecops
+```
+
+## Deleting
 
 Deleting the helm chart works, however the ploigos operator does not yet clean up tidily, so run:
 ```bash
-helm delete ploigos --namespace devsecops
+helm uninstall ploigos --namespace devsecops
 oc delete $(oc get subscription -o name) -n devsecops
 oc delete project devsecops
 ```
