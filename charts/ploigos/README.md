@@ -46,7 +46,7 @@ helm uninstall ploigos-subs --namespace devsecops
 
 Once to TSSC CRD has been installed in the cluster, install the operator and platform into the `devsecops` namespace
 ```bash
-helm upgrade --install ploigos redhat-cop/ploigos --namespace devsecops
+helm upgrade --install ploigos redhat-cop/ploigos --namespace devsecops --create-namespace
 ```
 
 ## Deleting
