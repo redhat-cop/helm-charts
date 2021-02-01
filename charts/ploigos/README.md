@@ -34,14 +34,7 @@ helm upgrade --install ploigos redhat-cop/ploigos --namespace devsecops --create
 ```
 ## Deleting
 
-Deleting the helm chart works, however the ploigos operator does not yet clean up tidily yet, so you can run:
+To delete the installation run
 ```bash
-helm uninstall ploigos --namespace devsecops
-oc delete $(oc get subscription -o name) -n devsecops
-
-oc patch keycloakrealms.keycloak.org openshift -n devsecops --type='json' -p='[{"op": "remove" , "path": "/metadata/finalizers" }]'
-oc patch keycloakusers.keycloak.org workshop-admin openshift-admin openshift-admin user{1..3} -n devsecops --type='json' -p='[{"op": "remove" , "path": "/metadata/finalizers" }]'
-oc patch keycloakclients.keycloak.org gitea-client openshift-client sonarqube-client -n devsecops -n devsecops --type='json' -p='[{"op": "remove" , "path": "/metadata/finalizers" }]'
-oc patch tsscplatform tsscplatform -n devsecops --type='json' -p='[{"op": "remove" , "path": "/metadata/finalizers" }]'
-oc delete project devsecops
+./delete-tssc.sh
 ```
