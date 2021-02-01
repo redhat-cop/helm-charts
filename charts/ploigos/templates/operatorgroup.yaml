@@ -1,0 +1,20 @@
+{{- if .Values.operator.namespaces }}
+{{- range $op := .Values.operator.namespaces }}
+{{- if $op.operatorgroup }}
+{{- if $op.operatorgroup.create }}
+{{- $og := $op.operatorgroup }}
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: ""
+  name: {{ $op.name }}-operatorgroup
+  namespace: {{ $op.name }}
+spec:
+  targetNamespaces:
+  - {{ $op.name }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

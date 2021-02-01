@@ -7,11 +7,3 @@ appVersion: 0.1.1
 home: https://github.com/redhat-cop/helm-charts
 maintainers:
 - name: eformat
-dependencies:
-  - name: ploigos-subs
-    version: "0.0.1"
-    repository: "https://redhat-cop.github.io/helm-charts"
-    import-values:
-      - operator
-    tags:
-      - subs
