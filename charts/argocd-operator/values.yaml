@@ -48,7 +48,7 @@ initialRepositories:
     type: helm
     url: https://redhat-cop.github.io/helm-charts
 
-# configure your repo credential template 
+# configure your repo credential template
 # example for ref only
 repositoryCredentials:
   - url: https://gitlab-ce.apps.example.cluster.com
