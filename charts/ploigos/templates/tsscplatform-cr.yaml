@@ -1,0 +1,18 @@
+{{- if .Values.operator.namespaces }}
+{{- range $key := .Values.operator.namespaces }}
+---
+apiVersion: redhatgov.io/v1alpha1
+kind: TsscPlatform
+metadata:
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "25"
+  namespace: {{ $key.name }}
+  name: tsscplatform
+spec:
+  tsscPlatform:
+    pullSecret:
+      name: installation-pull-secrets
+      namespace: openshift-image-registry
+{{- end }}
+{{- end }}
