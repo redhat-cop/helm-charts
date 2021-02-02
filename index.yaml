@@ -922,6 +922,20 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/pact-broker-0.0.1/pact-broker-0.0.1.tgz
     version: 0.0.1
+  ploigos:
+  - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2021-02-02T00:41:58.272723468Z"
+    description: A Helm chart for Ploigos - Trusted Software Supply Chain
+    digest: b3a4267f8a89e66b06aa1fffdb6dbed4857ab6cfe6b68b8454d95b1bcedd59ea
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: eformat
+    name: ploigos
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/ploigos-0.0.4/ploigos-0.0.4.tgz
+    version: 0.0.4
   sealed-secrets:
   - apiVersion: v1
     appVersion: 0.12.1
