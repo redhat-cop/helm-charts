@@ -12,12 +12,12 @@ oc -n ${NS} wait pod -lapp="{{- default .Chart.Name .Values.nameOverride | trunc
 sleep 2
 
 # helm hosted via rest
-echo "creating helm-charts helm hosted repo"
+echo "creating {{ .Values.helmRepository | default "helm-charts" }} helm hosted repo"
 curl -s -k -X POST "${NEXUS_URL}/service/rest/beta/repositories/helm/hosted" \
   --user "${NEXUS_USER}" \
   -H "accept: application/json" \
   -H "Content-Type: application/json" \
-  -d "{ \"name\": \"helm-charts\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true, \"writePolicy\": \"ALLOW\" }}"
+  -d "{ \"name\": \"{{ .Values.helmRepository | default "helm-charts" }}\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true, \"writePolicy\": \"ALLOW\" }}"
 
 # npm proxy
 echo "creating labs-npm npm proxy"
