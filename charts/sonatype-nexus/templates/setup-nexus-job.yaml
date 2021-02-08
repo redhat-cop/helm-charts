@@ -20,10 +20,10 @@ subjects:
   name: nexus-setup
 ---
 apiVersion: v1
+kind: ConfigMap
 data:
   config-nexus.sh: |-
     {{- include "config-nexus" . | indent 4 }}
-kind: ConfigMap
 metadata:
   name: nexussetup
   labels:
