@@ -1,9 +1,10 @@
 apiVersion: v2
 name: network-policy
 description: A Helm chart for Kubernetes that manages Network policies
-version: 1.0.0
+version: 1.0.1
 appVersion: v1
 home: https://github.com/redhat-cop/helm-charts
+icon: https://www.openshift.com/hubfs/images/icons/red-circle_lock.svg
 maintainers:
   - name: springdo
   - name: ckavili
