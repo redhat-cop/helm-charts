@@ -1,14 +1,14 @@
 ---
 # control used by Labs Ubiquitous Journey
 enabled: true
-name: labs-argocd
+name: argocd
 
 ci_cd_namespace: &ci_cd "labs-ci-cd"
 dev_namespace: &dev "labs-dev"
 test_namespace: &test "labs-test"
 
 namespace: *ci_cd
-instancelabel: rht-labs.com/ubiquitous-journey
+instancelabel: rht-labs.com/uj
 
 # operator manages upgrades etc
 version: v1.8.2
@@ -48,10 +48,21 @@ initialRepositories:
     type: helm
     url: https://redhat-cop.github.io/helm-charts
 
+# configure your repo credential template
+# example for ref only
+repositoryCredentials:
+  - url: https://gitlab-ce.apps.example.cluster.com
+    type: git
+    passwordSecret:
+      key: password
+      name: argocd-privaterepo
+    usernameSecret:
+      key: username
+      name: argocd-privaterepo
 secrets:
   - name: argocd-privaterepo
-    username: ""
-    password: ""
+    username: "user123"
+    password: "pass123"
     sshPrivateKey: ""
 
 # examples
