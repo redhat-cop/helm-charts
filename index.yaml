@@ -437,6 +437,22 @@ entries:
   dev-ex-dashboard:
   - apiVersion: v2
     appVersion: v1.0
+    created: "2021-02-09T21:43:52.121083274Z"
+    description: A Helm chart to deploy the Developer Experience Dashboard
+    digest: 828d28b1089eecd0a99184ccd44b297bdf5eb955a86eaa8e4d1cef023c312d36
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://cdn.iconscout.com/icon/free/png-256/dashboard-1739866-1481441.png
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: dev-ex-dashboard
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/dev-ex-dashboard-0.0.4/dev-ex-dashboard-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: v1.0
     created: "2021-02-08T22:25:19.016727102Z"
     description: A Helm chart to deploy the Developer Experience Dashboard
     digest: ee726dda116ae27d6cca027b00865d2558bf3f4e888442f90fbacbfd309fb063
@@ -467,6 +483,20 @@ entries:
     - https://github.com/redhat-cop/helm-charts/releases/download/dev-ex-dashboard-0.0.2/dev-ex-dashboard-0.0.2.tgz
     version: 0.0.2
   etherpad:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2021-02-09T21:43:52.192512373Z"
+    description: A Helm chart for etherpad lite
+    digest: c37c7efe00a1753619d30694095b6a122f63fbfe3aebf9921e9410ee65716478
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://pbs.twimg.com/profile_images/1336377123964145665/2gTadaDt_400x400.jpg
+    maintainers:
+    - name: eformat
+    name: etherpad
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/etherpad-0.0.4/etherpad-0.0.4.tgz
+    version: 0.0.4
   - apiVersion: v2
     appVersion: latest
     created: "2021-02-08T22:25:19.095613882Z"
@@ -579,6 +609,22 @@ entries:
     - https://github.com/redhat-cop/helm-charts/releases/download/helper-sealed-secrets-1.0.0/helper-sealed-secrets-1.0.0.tgz
     version: 1.0.0
   jenkins:
+  - apiVersion: v2
+    appVersion: v2.222.1
+    created: "2021-02-09T21:43:52.264275971Z"
+    description: A Helm chart for deploying Jenkins on OpenShift with some additional
+      build agents and plugins
+    digest: ed58edd3ed5b7a8a880483f96a1728776c9a856458140111b77003748c8790f9
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.jenkins.io/images/logos/jenkins/256.png
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: jenkins
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/jenkins-0.0.23/jenkins-0.0.23.tgz
+    version: 0.0.23
   - apiVersion: v2
     appVersion: v2.222.1
     created: "2021-02-08T22:25:19.367093068Z"
@@ -1037,6 +1083,21 @@ entries:
   pact-broker:
   - apiVersion: v2
     appVersion: latest
+    created: "2021-02-09T21:43:52.345935627Z"
+    description: "A Helm chart for deploying Pact Broker on OpenShift \U0001F517"
+    digest: 9a208e3d632604a1162b53931f9c504cfd7098056a3d28aafb06f7d66586ec8b
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://img.stackshare.io/service/11305/pact.png
+    maintainers:
+    - name: mvmaestri
+    - name: gsampaio
+    - name: springdo
+    name: pact-broker
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/pact-broker-0.0.6/pact-broker-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
+    appVersion: latest
     created: "2021-02-08T22:25:19.685511606Z"
     description: "A Helm chart for deploying Pact Broker on OpenShift \U0001F517"
     digest: f49e627074d2c16f3b0afecb7b5cb121fa942532cf830c937f7225a96f8244ba
@@ -1137,6 +1198,24 @@ entries:
     - https://github.com/rht-labs/helm-charts/releases/download/sealed-secrets-1.10.2/sealed-secrets-1.10.2.tgz
     version: 1.10.2
   sonarqube:
+  - apiVersion: v2
+    appVersion: 8.2-community
+    created: "2021-02-09T21:43:52.426116489Z"
+    description: SonarQube is an open sourced code quality scanning tool
+    digest: 84475f206cb9218e451a7cad8f36bbdefcdfb68d2297f075819d0b84a60c21ce
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    maintainers:
+    - name: eformat
+    name: sonarqube
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonarqube-0.0.12/sonarqube-0.0.12.tgz
+    version: 0.0.12
   - apiVersion: v2
     appVersion: 8.2-community
     created: "2021-02-08T22:25:19.786539906Z"
@@ -1264,6 +1343,21 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/sonarqube-0.0.4/sonarqube-0.0.4.tgz
     version: 0.0.4
   sonatype-nexus:
+  - apiVersion: v2
+    appVersion: 3.29.1
+    created: "2021-02-09T21:43:52.507256947Z"
+    description: Sonatype Nexus is an open source repository manager
+    digest: 155a63149d8d71bd916707f0b7ca988b3411b8c735873e4057105d39e54dc70a
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://help.sonatype.com/docs/files/331022/34537964/3/1564671303641/NexusRepo_Icon.png
+    maintainers:
+    - name: eformat
+    name: sonatype-nexus
+    sources:
+    - https://github.com/sonatype/nexus-public
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonatype-nexus-0.0.11/sonatype-nexus-0.0.11.tgz
+    version: 0.0.11
   - apiVersion: v2
     appVersion: 3.29.1
     created: "2021-02-08T22:25:19.886030842Z"
