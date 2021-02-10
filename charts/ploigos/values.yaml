@@ -2,7 +2,7 @@
 operator:
   namespaces:
   - name: devsecops
-    version: ploigos-software-factory-operator.v0.1.1
+    version: ploigos-software-factory-operator.v0.2.2
     channel: alpha
     operatorname: ploigos-software-factory-operator
     operatorgroup:
