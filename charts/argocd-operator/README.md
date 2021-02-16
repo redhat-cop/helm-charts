@@ -14,12 +14,32 @@ The above command creates objects with default naming convention and configurati
 ## Removing
 
 To delete the chart:
-```
+```bash
 helm uninstall argocd --namespace labs-ci-cd
+```
+
+## Troubleshooting
+
+If your chart only partially installed you can try disabling hooks when deleting
+```bash
+helm delete argocd --no-hooks
 ```
 
 ## Configuration
 
 The [values.yml](values.yaml) file contains instructions for common chart overrides.
+
+If you wish to use ArgoCD to manage this chart directly (or as a helm chart dependency) you may need to make use of the `ignoreHelmHooks` flag to ignore helm lifecycle hooks. For example as a Helm Chart dependency to UJ bootstrap:
+```bash
+argocd app create bootstrap-journey \
+  --dest-namespace labs-bootstrap \
+  --dest-server https://kubernetes.default.svc \
+  --repo https://github.com/rht-labs/ubiquitous-journey.git \
+  --revision master \
+  --sync-policy automated \
+  --path "bootstrap" \
+  --helm-set argocd-operator.ignoreHelmHooks=true \
+  --values "values-bootstrap.yaml"
+```
 
 For more detailed overview of what's configurable, checkout the [ArgoCD Operator Docs](https://argocd-operator.readthedocs.io/en/latest/reference/argocd/)

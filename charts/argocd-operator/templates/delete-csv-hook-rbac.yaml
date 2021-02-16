@@ -1,3 +1,4 @@
+{{- if not .Values.ignoreHelmHooks }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -51,3 +52,4 @@ metadata:
     "helm.sh/hook": pre-delete
     "helm.sh/hook-weight": "1"
     "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+{{- end }}

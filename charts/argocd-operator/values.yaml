@@ -3,6 +3,9 @@
 enabled: true
 name: argocd
 
+# this is for argo type deployments (set to true) dont deploy helm hooked resources
+ignoreHelmHooks: false
+
 ci_cd_namespace: &ci_cd "labs-ci-cd"
 dev_namespace: &dev "labs-dev"
 test_namespace: &test "labs-test"

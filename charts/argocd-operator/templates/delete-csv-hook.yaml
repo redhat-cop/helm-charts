@@ -1,3 +1,4 @@
+{{- if not .Values.ignoreHelmHooks }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -26,3 +27,4 @@ spec:
       serviceAccount: delete-csv-job
       serviceAccountName: delete-csv-job
       terminationGracePeriodSeconds: 10
+{{- end }}

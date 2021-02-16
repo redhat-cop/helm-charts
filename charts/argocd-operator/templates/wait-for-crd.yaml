@@ -1,3 +1,4 @@
+{{- if not .Values.ignoreHelmHooks }}
 ---
 apiVersion: v1
 kind: Pod
@@ -18,3 +19,4 @@ spec:
   terminationGracePeriodSeconds: 0
   serviceAccount: default
   serviceAccountName: default
+{{- end }}
