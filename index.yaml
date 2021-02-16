@@ -1375,6 +1375,21 @@ entries:
   sonatype-nexus:
   - apiVersion: v2
     appVersion: 3.29.1
+    created: "2021-02-16T09:09:30.016614289Z"
+    description: Sonatype Nexus is an open source repository manager
+    digest: a91e91774d397a735e72270a71b55bd2f438975c32c53a82bf7ab34412b66f5c
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://help.sonatype.com/docs/files/331022/34537964/3/1564671303641/NexusRepo_Icon.png
+    maintainers:
+    - name: eformat
+    name: sonatype-nexus
+    sources:
+    - https://github.com/sonatype/nexus-public
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonatype-nexus-0.0.12/sonatype-nexus-0.0.12.tgz
+    version: 0.0.12
+  - apiVersion: v2
+    appVersion: 3.29.1
     created: "2021-02-09T21:43:52.507256947Z"
     description: Sonatype Nexus is an open source repository manager
     digest: 155a63149d8d71bd916707f0b7ca988b3411b8c735873e4057105d39e54dc70a
