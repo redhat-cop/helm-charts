@@ -1,8 +1,8 @@
 apiVersion: v2
-appVersion: v1.8.3
+appVersion: v1.8.5
 description: A Helm chart for customising the deployment of the ArgoCD Operator ⚓️
 name: argocd-operator
-version: 1.0.2
+version: 1.0.3
 home: https://github.com/redhat-cop/helm-charts
 icon: https://cncf-branding.netlify.app/img/projects/argo/stacked/color/argo-stacked-color.png
 maintainers:
