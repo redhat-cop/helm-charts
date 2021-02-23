@@ -17,9 +17,9 @@ The following table lists the configurable parameters of the Bootstrap chart and
 
 | Parameter                                        | Description                                                  | Default                               |
 | ------------------------------------------------ | -------------------------------------------------------------| ------------------------------------- |
-| `ci_cd_namespace`                                | Project name to deploy DevEx tools                           | `labs-ci-cd`                               |
-| `dev_namespace`                                  | Project name for dev environment                             | `labs-dev`                                 |
-| `test_namespace`                                 | Project name for test environment                            | `labs-test`                                |
+| `ci_cd_namespace`                                | Project name to deploy DevEx tools                           | `labs-ci-cd`                          |
+| `dev_namespace`                                  | Project name for dev environment                             | `labs-dev`                            |
+| `test_namespace`                                 | Project name for test environment                            | `labs-test`                           |
 | `namespaces.labs-ci-cd.bindings.name`            | IDM group name to assign role in ci-cd namespace             | `[labs-devs, labs-admins, dummy-sa]`  |
 | `namespaces.labs-ci-cd.bindings.kind`            | Kind to bind to the role in ci-cd namespace                  | `[Group, ServiceAccount]`             |
 | `namespaces.labs-ci-cd.bindings.role`            | The role to bind to the group in ci-cd namespace             | `[edit, admin]`                       |
@@ -29,6 +29,7 @@ The following table lists the configurable parameters of the Bootstrap chart and
 | `namespaces.labs-test.bindings.name`             | IDM group name to assign role in test namespace              | `[labs-devs, labs-admins, dummy-sa]`  |
 | `namespaces.labs-test.bindings.kind`             | Kind to bind to the role in test namespace                   | `[Group, ServiceAccount]`             |
 | `namespaces.labs-test.bindings.role`             | The role to bind to the group in test namespace              | `[edit, admin]`                       |
+| `namespaces.[*].labels`                          | The labels applied to the namespace                          | {}                                    |
 | `serviceaccounts.name`                           | The name of the service account that will be created         | `dummy-sa`                            |
 | `serviceaccounts.namespace`                      | The namespace that the service account will be created in    | `dummy-sa`                            |
 
