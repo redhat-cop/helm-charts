@@ -1218,6 +1218,19 @@ entries:
   ploigos:
   - apiVersion: v2
     appVersion: 0.2.2
+    created: "2021-02-24T03:16:23.99039313Z"
+    description: A Helm chart for Ploigos - Trusted Software Supply Chain
+    digest: a31c98e672a5d123148392e9665303836cb1092b1c7dfca99ea1804f47f44bd5
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: eformat
+    name: ploigos
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/ploigos-0.0.6/ploigos-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
+    appVersion: 0.2.2
     created: "2021-02-10T13:56:21.002553469Z"
     description: A Helm chart for Ploigos - Trusted Software Supply Chain
     digest: 53ae219fac3b050c23d839529365d03d1b7f084d8d37abc24ae22bd8ca4d1f96
