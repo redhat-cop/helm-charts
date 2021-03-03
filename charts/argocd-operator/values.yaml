@@ -14,7 +14,7 @@ namespace: *ci_cd
 instancelabel: rht-labs.com/uj
 
 # operator manages upgrades etc
-version: v1.8.5
+version: v1.8.7
 operator:
   version: argocd-operator.v0.0.14
   channel: alpha
