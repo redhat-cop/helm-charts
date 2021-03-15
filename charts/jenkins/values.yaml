@@ -151,8 +151,6 @@ buildconfigs:
     source_context_dir: "jenkins-agents/jenkins-agent-graalvm"
     source_repo: *jarepo
     source_repo_ref: "master"
-    builder_image_name: "quay.io/openshift/origin-jenkins-agent-maven"
-    builder_image_tag: "4.5"
   - name: "jenkins-agent-gradle"
     source_context_dir: "jenkins-agents/jenkins-agent-gradle"
     source_repo: *jarepo
@@ -173,8 +171,6 @@ buildconfigs:
     source_context_dir: "jenkins-agents/jenkins-agent-mvn"
     source_repo: *jarepo
     source_repo_ref: "master"
-    builder_image_name: "quay.io/eformat/origin-jenkins-agent-maven"
-    builder_image_tag: "latest"
   - name: "jenkins-agent-npm"
     source_context_dir: "jenkins-agents/jenkins-agent-npm"
     source_repo: *jarepo
