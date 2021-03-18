@@ -34,9 +34,13 @@ spec:
       name: {{ .source_secret }}
     {{- end }}
     git:
-      uri: {{ .source_repo | quote }}
+      uri: {{ .source_repo  | default "https://github.com/redhat-cop/containers-quickstarts"  | quote }}
       ref: {{ .source_repo_ref | default "master" | quote }}
+    {{- if .source_context_dir }}
     contextDir: {{ .source_context_dir | quote }}
+    {{- else }}
+    contextDir: "jenkins-agents/{{ .name }}"
+    {{- end }}      
   strategy:
 {{- if .strategy_type }}
     type: {{ .strategy_type }}
