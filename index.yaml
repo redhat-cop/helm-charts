@@ -1340,6 +1340,24 @@ entries:
     version: 1.10.2
   sonarqube:
   - apiVersion: v2
+    appVersion: 8.7.1-community
+    created: "2021-03-21T21:03:18.743921574Z"
+    description: SonarQube is an open sourced code quality scanning tool
+    digest: 1cbcc2aeb0836f5d9d688d78b63db1553e614943a0fd6e1b38c36cea4f5da909
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    maintainers:
+    - name: eformat
+    name: sonarqube
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonarqube-0.0.13/sonarqube-0.0.13.tgz
+    version: 0.0.13
+  - apiVersion: v2
     appVersion: 8.2-community
     created: "2021-02-09T21:43:52.426116489Z"
     description: SonarQube is an open sourced code quality scanning tool
