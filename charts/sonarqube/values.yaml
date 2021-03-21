@@ -16,7 +16,7 @@ deploymentStrategy: {}
 
 image:
   repository: *name
-  tag: 8.2-community
+  tag: 8.7.1-community
   # If using a private repository, the name of the imagePullSecret to use
   # pullSecret: my-repo-secret
 
@@ -221,7 +221,7 @@ postgresql:
     database: *name
     type: ClusterIP
   image:
-    tag: "9.6-el8"
+    tag: "12-el8"
 
   storageClass:
   accessMode: ReadWriteOnce
