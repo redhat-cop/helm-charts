@@ -53,8 +53,41 @@ setup_file() {
   [ "$status" -eq 0 ]
 }
 
+@test "charts/helper-console-links" {
+  tmp=$(helm_template "charts/helper-console-links")
+
+  namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
+  cmd="conftest test ${tmp} --output tap ${namespaces}"
+  run ${cmd}
+
+  print_info "${status}" "${output}" "${cmd}" "${tmp}"
+  [ "$status" -eq 0 ]
+}
+
+@test "charts/helper-sealed-secrets" {
+  tmp=$(helm_template "charts/helper-sealed-secrets")
+
+  namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
+  cmd="conftest test ${tmp} --output tap ${namespaces}"
+  run ${cmd}
+
+  print_info "${status}" "${output}" "${cmd}" "${tmp}"
+  [ "$status" -eq 0 ]
+}
+
 @test "charts/jenkins" {
   tmp=$(helm_template "charts/jenkins")
+
+  namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
+  cmd="conftest test ${tmp} --output tap ${namespaces}"
+  run ${cmd}
+
+  print_info "${status}" "${output}" "${cmd}" "${tmp}"
+  [ "$status" -eq 0 ]
+}
+
+@test "charts/network-policy" {
+  tmp=$(helm_template "charts/network-policy")
 
   namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
   cmd="conftest test ${tmp} --output tap ${namespaces}"
@@ -132,6 +165,17 @@ setup_file() {
 
 @test "charts/static-site" {
   tmp=$(helm_template "charts/static-site")
+
+  namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
+  cmd="conftest test ${tmp} --output tap ${namespaces}"
+  run ${cmd}
+
+  print_info "${status}" "${output}" "${cmd}" "${tmp}"
+  [ "$status" -eq 0 ]
+}
+
+@test "charts/tekton-demo" {
+  tmp=$(helm_template "charts/tekton-demo")
 
   namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
   cmd="conftest test ${tmp} --output tap ${namespaces}"
