@@ -16,6 +16,8 @@ run() {
 
     popd > /dev/null
   done
+
+  echo "Done testing all charts."
 }
 
 run

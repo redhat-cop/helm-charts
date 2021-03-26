@@ -3,26 +3,23 @@
 trap "exit 1" TERM
 export TOP_PID=$$
 
-export project_name="etherpad-$(date +'%d%m%Y')"
+export project_name="network-policy-$(date +'%d%m%Y')"
 
 install() {
   echo "install - $(pwd)"
 
   oc new-project ${project_name}
-  helm template etherpad --skip-tests . | oc apply -f -
+  helm template network-policy --skip-tests . | oc apply -f -
 }
 
 test() {
   echo "test - $(pwd)"
 
-  oc rollout status Deployment/etherpad -n ${project_name} --watch=true
-
   timeout 2m bash <<"EOT"
   run() {
-    host=$(oc get route/etherpad -o jsonpath='{.spec.host}' -n ${project_name})
-    echo "Attempting $host"
+    echo "Attempting oc get networkpolicy/deny-all-by-default -n ${project_name}"
 
-    while [[ $(curl -L -k -s -o /dev/null -w '%{http_code}' https://${host}) != '200' ]]; do
+    while [[ $(oc get networkpolicy/deny-all-by-default -o name -n ${project_name}) != "networkpolicy.networking.k8s.io/deny-all-by-default" ]]; do
       sleep 10
     done
   }
@@ -31,10 +28,9 @@ test() {
 EOT
 
   if [[ $? != 0 ]]; then
-    echo "CURL timed-out. Failing"
+    echo "OC timed-out. Failing"
 
-    host=$(oc get route/etherpad -o jsonpath='{.spec.host}' -n ${project_name})
-    curl -L -k -vvv "https://${host}"
+    oc get networkpolicy -n ${project_name}
     exit 1
   fi
 
