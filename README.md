@@ -17,6 +17,7 @@ helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
 
 ## 🏃‍♀️💨 How do I run a chart?
 Login to your cluster and into your destination project. To install any given Chart using the default values just run:
+
 ```bash
 helm install $NAME redhat-cop/$CHART_NAME
 eg:
@@ -29,6 +30,7 @@ Where:
 
 ## 🏃‍♂️💨Customisation to a chart prior to install
 For each chart, navigate to the root of it for the readme and default values. To over ride them, you could create your own `my-values.yaml` and make your changes there before installing
+
 ```bash
 helm install $NAME -f my-values.yaml redhat-cop/$CHART_NAME
 eg:
@@ -39,6 +41,7 @@ helm install my-jenkins -f my-values.yaml redhat-cop/jenkins
 
 Before adding a chart to this repo, make sure there is no linting issues, otherwise the PR actions will fail. 
 We use both the integrated [`helm lint`](https://helm.sh/docs/helm/helm_lint/) command and the [`chart testing`](https://github.com/helm/chart-testing/blob/master/doc/ct_lint.md) tool.
+
 ```bash
 helm lint charts/jenkins
 ct lint charts/jenkins
@@ -46,9 +49,19 @@ ct lint charts/jenkins
 
 ## 👩‍🏫 Chart README Files
 For more info on each chart checkout these!
-* [jenkins](/charts/jenkins)
-* [sonarqube](/charts/sonarqube)
+* [argocd-operator](/charts/argocd-operator)
 * [bootstrap-project](/charts/bootstrap-project)
+* [dev-ex-dashboard](/charts/dev-ex-dashboard)
+* [etherpad](/charts/etherpad)
+* [helper-console-links](/charts/helper-console-links)
+* [helper-sealed-secrets ](/charts/helper-sealed-secrets)
+* [jenkins](/charts/jenkins)
+* [network-policy](/charts/network-policy)
 * [operatorhub](/charts/operatorhub)
+* [owncloud](/charts/owncloud)
 * [pact-broker](/charts/pact-broker)
+* [ploigos](/charts/ploigos)
+* [sonarqube](/charts/sonarqube)
+* [sonatype-nexus](/charts/sonatype-nexus)
+* [static-site](/charts/static-site)
 * [tekton-demo](/charts/tekton-demo)
