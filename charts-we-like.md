@@ -118,3 +118,26 @@ server:
         path = "/vault/data"
       }
 ```
+
+### 🚉 EAP
+[EAP](https://github.com/jbossas/eap-charts.git) 
+is Red Hat's [Jakarta EE offering](https://www.redhat.com/en/technologies/jboss-middleware/application-platform)
+
+```yaml
+build:
+  uri: https://github.com/jboss-developer/jboss-eap-quickstarts.git
+  ref: EAP_7.4.0.Beta
+  pullSecret: replace-with-your-secret
+  s2i:
+    jdk: "11"
+    galleonLayers: 'jaxrs-server'
+  env:
+  - name: ARTIFACT_DIR
+    value: helloworld-rs/target
+  - name: MAVEN_ARGS_APPEND
+    value: -am -pl helloworld-rs
+  - name: MAVEN_OPTS
+    value: '-XX:MetaspaceSize=96m -XX:MaxMetaspaceSize=256m'
+deploy:
+  replicas: 3
+```
