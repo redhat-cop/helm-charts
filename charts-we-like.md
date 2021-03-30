@@ -1,8 +1,9 @@
 ## 🧰 OpenShift Ready Charts 🧰
-This collection of charts we've used in the past that runs on OpenShift. Here are some examples and the values used to run on OpenShift:
+Below is a collection of charts we've used in the past that run on OpenShift with examples and the values to get up and going:
 
 #### 🕵️‍♀️ Sealed Secrets
-[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets/tree/main/helm/sealed-secrets) allows you to encrypt your K8s Secret into a SealedSecret, which is safe to store - even to a public repository.... Example Values for OpenShift:
+[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets/tree/main/helm/sealed-secrets) 
+allows you to encrypt your K8s Secret into a SealedSecret, which is safe to store - even to a public repository:
 
 ```yaml
 nameOverride: sealed-secrets
@@ -16,7 +17,8 @@ securityContext:
 ```
 
 #### 🗣 Mattermost
-[Mattermost](https://github.com/mattermost/mattermost-helm/tree/master/charts/mattermost-team-edition) is an OpenSource Chat Application. Example Values file for OpenShift:
+[Mattermost](https://github.com/mattermost/mattermost-helm/tree/master/charts/mattermost-team-edition)
+is an OpenSource Chat Application:
 
 ```yaml
 route:
@@ -28,7 +30,8 @@ mysql:
 ```
 
 #### 🧪 Zalenium
-[Zalenium](https://github.com/zalando/zalenium/tree/master/charts/zalenium) is a Selenium Grid deployment with on demand provisioning of the browsers for running your tests.
+[Zalenium](https://github.com/zalando/zalenium/tree/master/charts/zalenium) 
+is a Selenium Grid deployment with on demand provisioning of the browsers for running your tests:
 
 ```yaml
 hub:
@@ -48,7 +51,7 @@ hub:
 ```
 
 #### 🌮 Wekan
-[Wekan](https://github.com/wekan/wekan/tree/master/helm/wekan) is an OpenSource Kanban tool.
+[Wekan](https://github.com/wekan/wekan/tree/master/helm/wekan) is an OpenSource Kanban tool:
 
 ```yaml
 service:
@@ -67,7 +70,9 @@ route:
 ```
 
 #### 🦟 Hoverfly
-[Hoverfly](https://github.com/helm/charts/tree/master/incubator/hoverfly) is a lightweight, open source API simulation tool. Using Hoverfly, you can create realistic simulations of the APIs your application depends on.
+[Hoverfly](https://github.com/helm/charts/tree/master/incubator/hoverfly) 
+is a lightweight, open source API simulation tool. Using Hoverfly, you can create realistic simulations of the APIs your application depends on:
+
 ```yaml
 replicaCount: "1"
 openshift:
@@ -81,7 +86,9 @@ openshift:
 ```
 
 #### 🗝 Vault
-[Vault](https://github.com/hashicorp/vault-helm.git) helps you to store and control access to yout tokens, passwords, certificates, API keys, and other secrets.
+[Vault](https://github.com/hashicorp/vault-helm.git) 
+helps you to store and control access to your tokens, passwords, certificates, API keys and other secrets.
+
 ```yaml
 global:
   tlsDisable: false
