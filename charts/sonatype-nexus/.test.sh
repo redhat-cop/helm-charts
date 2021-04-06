@@ -9,7 +9,7 @@ install() {
   echo "install - $(pwd)"
 
   oc new-project ${project_name}
-  helm template nexus . | oc apply -f -
+  helm template nexus --skip-tests . | oc apply -f -
 }
 
 test() {

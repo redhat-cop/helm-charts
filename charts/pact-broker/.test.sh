@@ -9,7 +9,7 @@ install() {
   echo "install - $(pwd)"
 
   oc new-project ${project_name}
-  helm template . | oc apply -f -
+  helm template pact-broker . --skip-tests | oc apply -f -
 }
 
 test() {

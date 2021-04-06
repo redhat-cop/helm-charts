@@ -9,7 +9,7 @@ install() {
   echo "install - $(pwd)"
 
   oc new-project ${project_name}
-  helm template . | oc apply -f -
+  helm template jenkins . --skip-tests | oc apply -f -
 }
 
 test() {
