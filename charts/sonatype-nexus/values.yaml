@@ -22,6 +22,12 @@ ingress:
   tls:
     enabled: true
     secretName: nexus-tls
+
+helmRepository:
+  - helm-charts
+  - helm-charts-stable
+  - helm-charts-incubator
+
 nexus:
   dockerPort: 5003
   env:
