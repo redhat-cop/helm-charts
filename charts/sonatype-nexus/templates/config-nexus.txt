@@ -13,11 +13,15 @@ sleep 2
 
 # helm hosted via rest
 echo "creating {{ .Values.helmRepository | default "helm-charts" }} helm hosted repo"
-curl -s -k -X POST "${NEXUS_URL}/service/rest/beta/repositories/helm/hosted" \
-  --user "${NEXUS_USER}" \
-  -H "accept: application/json" \
-  -H "Content-Type: application/json" \
-  -d "{ \"name\": \"{{ .Values.helmRepository | default "helm-charts" }}\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true, \"writePolicy\": \"ALLOW\" }}"
+helmList='{{ .Values.helmRepository | default "helm-charts" }}'
+helmList=`echo "$helmList" | sed -r 's/\[|\]//g'`
+for repo in ${helmList}; do
+    curl -s -k -X POST "${NEXUS_URL}/service/rest/beta/repositories/helm/hosted" \
+    --user "${NEXUS_USER}" \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d "{ \"name\": \"${repo}\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true, \"writePolicy\": \"ALLOW\" }}"
+done
 
 # npm proxy
 echo "creating {{ .Values.npmRepository | default "labs-npm" }} npm proxy"
