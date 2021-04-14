@@ -9,7 +9,7 @@ install() {
   echo "install - $(pwd)"
 
   oc new-project ${project_name}
-  helm install kopf kopf
+  helm install kopf .
 }
 
 test() {
