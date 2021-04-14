@@ -186,7 +186,7 @@ setup_file() {
 }
 
 @test "charts/kopf" {
-  tmp=$(helm_template "charts/tekton-demo")
+  tmp=$(helm_template "charts/kopf")
 
   namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
   cmd="conftest test ${tmp} --output tap ${namespaces}"
