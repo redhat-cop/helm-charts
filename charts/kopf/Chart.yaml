@@ -1,0 +1,10 @@
+apiVersion: v2
+name: kopf
+description: A Helm chart to deploy CustomResourceDefinitions required for the Kopf framework
+type: application
+version: 0.1.0
+appVersion: "1.29.2"
+home: https://github.com/redhat-cop/helm-charts
+maintainers:
+- name: tylerauerbeck
+- name: jkupferer
