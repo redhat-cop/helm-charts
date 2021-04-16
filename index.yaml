@@ -758,7 +758,7 @@ entries:
   - apiVersion: v2
     appVersion: v1
     created: "2020-11-05T14:29:44.727540611Z"
-    description: "A Helm Chart for managing Sealed Secrets \U0001F575️‍♀️"
+    description: "A Helm Chart for managing Sealed Secrets \U0001F575️♀️"
     digest: c98cb305e88809731a86d6eedce0a27829c4b74f0c59bdb1b9ecff2796a31668
     home: https://github.com/redhat-cop/helm-charts
     maintainers:
@@ -1130,6 +1130,22 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/jenkins-0.0.1/jenkins-0.0.1.tgz
     version: 0.0.1
+  kopf:
+  - apiVersion: v2
+    appVersion: 1.29.2
+    created: "2021-04-16T18:57:43.824280707Z"
+    description: A Helm chart to deploy CustomResourceDefinitions required for the
+      Kopf framework
+    digest: b14598f81da185c55d75afecfe6df8a73960305e333fd2ea8a396b85114b1da8
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: tylerauerbeck
+    - name: jkupferer
+    name: kopf
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/kopf-0.1.0/kopf-0.1.0.tgz
+    version: 0.1.0
   network-policy:
   - apiVersion: v2
     appVersion: v1
@@ -1925,4 +1941,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2020-03-31T15:00:43.554648618Z"
+generated: "2021-04-16T18:57:43.82468781Z"
