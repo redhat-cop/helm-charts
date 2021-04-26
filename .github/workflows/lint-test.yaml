@@ -1,8 +1,9 @@
 name: Lint and Test Charts
 
-on: pull_request
-  paths-ignore:
-    - '.github/**'
+on: 
+  pull_request:
+    paths-ignore:
+      - '.github/**'
 jobs:
   lint-test:
     runs-on: ubuntu-latest
