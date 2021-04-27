@@ -29,6 +29,8 @@ helm delete argocd --no-hooks
 
 The [values.yml](values.yaml) file contains instructions for common chart overrides.
 
+Anything configurable in the Operator is passed to the ArgoCD custom resource provided by the Operator. For more detailed overview of what's included, checkout the [ArgoCD Operator Docs](https://argocd-operator.readthedocs.io/en/latest/reference/argocd/)
+
 If you wish to use ArgoCD to manage this chart directly (or as a helm chart dependency) you may need to make use of the `ignoreHelmHooks` flag to ignore helm lifecycle hooks. For example as a Helm Chart dependency to UJ bootstrap:
 ```bash
 argocd app create bootstrap-journey \
@@ -41,5 +43,3 @@ argocd app create bootstrap-journey \
   --helm-set argocd-operator.ignoreHelmHooks=true \
   --values "values-bootstrap.yaml"
 ```
-
-For more detailed overview of what's configurable, checkout the [ArgoCD Operator Docs](https://argocd-operator.readthedocs.io/en/latest/reference/argocd/)
