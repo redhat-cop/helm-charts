@@ -13,57 +13,13 @@ metadata:
   {{- end }}
   namespace: {{ .Values.namespace }}
 spec:
-  applicationInstanceLabelKey: {{ .Values.instancelabel }}
-  {{- if .Values.accounts }}  
-  {{- .Values.accounts | toYaml | trim | nindent 2 }}
-  {{- end }}   
-  dex:
-    openShiftOAuth: true
-  ha:
-    enabled: {{ .Values.ha.enabled }}
-  grafana:
-{{- if .Values.metrics.enabled }}  
-    enabled: true
-{{- else }}
-    enabled: false
-{{- end }}
-    route:
-      enabled: true
-    size: 1
-  prometheus:
-{{- if .Values.metrics.enabled }}  
-    enabled: true
-{{- else }}
-    enabled: false
-{{- end }}
-    route:
-      enabled: true
-    size: 1
-  {{- with .Values.rbac }}
-  rbac:
-    {{- . | toYaml | trim | nindent 4 }}
-  {{- end }}
-  {{- with .Values.initialRepositories }}
-  initialRepositories: |
-   {{- . | toYaml | trim | nindent 4 }}
-  {{- end }}
-  {{- with .Values.repositoryCredentials }}
-  repositoryCredentials: |
-   {{- . | toYaml | trim | nindent 4 }}
-  {{- end }}
-  {{- if .Values.initialSSHKnownHosts }}
-  initialSSHKnownHosts: 
-    keys: |
-      {{- range $host := .Values.initialSSHKnownHosts }}
-      {{ $host }}
-      {{- end }}
-  {{- end }}
+  # some defaults 🤷‍♂️
   insecure: false
-  {{- with .Values.server }}
-  server:
-    {{- . | toYaml | trim | nindent 4 }}
-  {{- end }} 
   statusBadgeEnabled: true
   usersAnonymousEnabled: false
-  version: {{ .Values.version | quote }}
+  dex:
+    openShiftOAuth: true
+  {{- if .Values.argocd_cr }}
+  {{- .Values.argocd_cr | toYaml | trim | nindent 2 }}
+  {{- end }}
 {{- end }}
