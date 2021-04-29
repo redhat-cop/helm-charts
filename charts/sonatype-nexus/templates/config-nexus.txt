@@ -12,7 +12,7 @@ oc -n ${NS} wait pod -lapp="{{- default .Chart.Name .Values.nameOverride | trunc
 sleep 2
 
 # helm hosted via rest
-echo "creating {{ .Values.helmRepository | default "helm-charts" }} helm hosted repo"
+echo "🐺 creating {{ .Values.helmRepository | default "helm-charts" }} helm hosted repo"
 helmList='{{ .Values.helmRepository | default "helm-charts" }}'
 helmList=`echo "$helmList" | sed -r 's/\[|\]//g'`
 for repo in ${helmList}; do
@@ -24,15 +24,40 @@ for repo in ${helmList}; do
 done
 
 # npm proxy
-echo "creating {{ .Values.npmRepository | default "labs-npm" }} npm proxy"
+echo "🐛 creating {{ .Values.npmRepository | default "labs-npm" }} npm proxy"
 curl -s -k -X POST "${NEXUS_URL}/service/rest/beta/repositories/npm/proxy" \
   --user "${NEXUS_USER}" \
   -H "accept: application/json" \
   -H "Content-Type: application/json" \
   -d "{ \"name\": \"{{ .Values.npmRepository | default "labs-npm" }}\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true}, \"proxy\": { \"remoteUrl\": \"https://registry.npmjs.org\", \"contentMaxAge\": 1440, \"metadataMaxAge\": 1440 }, \"httpClient\": { \"blocked\": false, \"autoBlock\": false, \"connection\": { \"retries\": 0, \"userAgentSuffix\": \"string\", \"timeout\": 60, \"enableCircularRedirects\": false, \"enableCookies\": false}}, \"negativeCache\": { \"enabled\": false, \"timeToLive\": 1440 } }"
 
+
+# Red Hat GA Repository
+echo "🔥 creating {{ .Values.rhGaRepositories | default "red-hat-ga" }} red hat ga proxy"
+curl -s -k -X POST "${NEXUS_URL}/service/rest/v1/repositories/maven/proxy" \
+  --user "${NEXUS_USER}" \
+  -H "accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d "{ \"name\": \"{{ .Values.rhGaRepositories | default "red-hat-ga" }}\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true }, \"cleanup\": { \"policyNames\": [ \"string\" ] }, \"proxy\": { \"remoteUrl\": \"https://maven.repository.redhat.com/ga\", \"contentMaxAge\": 1440, \"metadataMaxAge\": 1440 }, \"negativeCache\": { \"enabled\": true, \"timeToLive\": 1440 }, \"httpClient\": { \"blocked\": false, \"autoBlock\": true, \"connection\": { \"retries\": 0, \"userAgentSuffix\": \"string\", \"timeout\": 60, \"enableCircularRedirects\": false, \"enableCookies\": false, \"useTrustStore\": false }, \"authentication\": { \"type\": \"username\", \"username\": \"string\", \"password\": \"string\", \"ntlmHost\": \"string\", \"ntlmDomain\": \"string\", \"preemptive\": false } }, \"routingRule\": \"string\", \"maven\": { \"versionPolicy\": \"MIXED\", \"layoutPolicy\": \"STRICT\" }}"
+
+# Red Hat Early Access Repository
+echo "🔥 creating {{ .Values.rhEaRepositories | default "red-hat-ea" }} red hat early access proxy"
+curl -s -k -X POST "${NEXUS_URL}/service/rest/v1/repositories/maven/proxy" \
+  --user "${NEXUS_USER}" \
+  -H "accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d "{ \"name\": \"{{ .Values.rhEaRepositories | default "red-hat-ea" }}\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true }, \"cleanup\": { \"policyNames\": [ \"string\" ] }, \"proxy\": { \"remoteUrl\": \"https://maven.repository.redhat.com/earlyaccess/all\", \"contentMaxAge\": 1440, \"metadataMaxAge\": 1440 }, \"negativeCache\": { \"enabled\": true, \"timeToLive\": 1440 }, \"httpClient\": { \"blocked\": false, \"autoBlock\": true, \"connection\": { \"retries\": 0, \"userAgentSuffix\": \"string\", \"timeout\": 60, \"enableCircularRedirects\": false, \"enableCookies\": false, \"useTrustStore\": false }, \"authentication\": { \"type\": \"username\", \"username\": \"string\", \"password\": \"string\", \"ntlmHost\": \"string\", \"ntlmDomain\": \"string\", \"preemptive\": false } }, \"routingRule\": \"string\", \"maven\": { \"versionPolicy\": \"MIXED\", \"layoutPolicy\": \"STRICT\" }}"
+
+# Maven Public Group
+echo "🦄 Adding repos to Maven Group"
+curl -s -k -X PUT "${NEXUS_URL}/service/rest/v1/repositories/maven/group/maven-public" \
+  --user "${NEXUS_USER}" \
+  -H "accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d "{ \"name\": \"maven-public\", \"format\": \"maven2\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true }, \"group\": { \"memberNames\": [\"{{ .Values.rhEaRepositories | default "red-hat-ea" }}\", \"{{ .Values.rhGaRepositories | default "red-hat-ga" }}\",\"maven-releases\", \"maven-snapshots\", \"maven-central\"]}, \"type\": \"group\"}"
+
 # raw hosted via rest
-echo "creating {{ .Values.rawRepository | default "labs-static" }} raw hosted repo"
+echo "🐺 creating {{ .Values.rawRepository | default "labs-static" }} raw hosted repo"
 curl -s -k -X POST "${NEXUS_URL}/service/rest/beta/repositories/raw/hosted" \
   --user "${NEXUS_USER}" \
   -H "accept: application/json" \
@@ -42,7 +67,7 @@ curl -s -k -X POST "${NEXUS_URL}/service/rest/beta/repositories/raw/hosted" \
 # disable anonymous access by not running onboarding
 oc -n ${NS} exec $(oc -n ${NS} get pods -o custom-columns=NAME:.metadata.name --no-headers -lapp="{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}") -- bash -c 'if ! grep -q "nexus.onboarding.enabled" /nexus-data/etc/nexus.properties; then echo "nexus.onboarding.enabled=false" >> /nexus-data/etc/nexus.properties; fi'
 
-echo "restarting nexus..."
+echo "😇 restarting nexus..."
 oc -n ${NS} delete pod -lapp="{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}"
 oc -n ${NS} wait pod -lapp="{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}" --for=condition=Ready --timeout=300s
 
