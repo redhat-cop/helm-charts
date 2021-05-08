@@ -6,6 +6,8 @@ defaultText: "✍️ Assign yourself a user and share your ideas! ✍️"
 
 image:
   repository: etherpad
+  name:
+  tag:
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
