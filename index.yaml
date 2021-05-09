@@ -3,23 +3,6 @@ entries:
   argocd-operator:
   - apiVersion: v2
     appVersion: v1.8.7
-    created: "2021-05-09T23:09:58.120459779Z"
-    description: A Helm chart for customising the deployment of the ArgoCD Operator
-      ⚓️
-    digest: 0a4a12ed7b2fc76eb9b78421c69bdbcdc532889f68241427c9534c2cf9331bd8
-    home: https://github.com/redhat-cop/helm-charts
-    icon: https://cncf-branding.netlify.app/img/projects/argo/stacked/color/argo-stacked-color.png
-    maintainers:
-    - name: springdo
-    - name: ckavili
-    - name: eformat
-    - name: mabulgu
-    name: argocd-operator
-    urls:
-    - https://github.com/redhat-cop/helm-charts/releases/download/argocd-operator-1.1.2/argocd-operator-1.1.2.tgz
-    version: 1.1.2
-  - apiVersion: v2
-    appVersion: v1.8.7
     created: "2021-05-05T19:32:13.691157161Z"
     description: A Helm chart for customising the deployment of the ArgoCD Operator
       ⚓️
@@ -1570,6 +1553,24 @@ entries:
     version: 1.10.2
   sonarqube:
   - apiVersion: v2
+    appVersion: 8.9.0-community
+    created: "2021-05-09T23:10:09.608887276Z"
+    description: SonarQube is an open sourced code quality scanning tool
+    digest: 90b0c5f52cdfcf4218415f54a702592b51ebd8caa510f32f62bb7d11a227e564
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    maintainers:
+    - name: eformat
+    name: sonarqube
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonarqube-0.0.15/sonarqube-0.0.15.tgz
+    version: 0.0.15
+  - apiVersion: v2
     appVersion: 8.7.1-community
     created: "2021-04-13T20:26:49.91571066Z"
     description: SonarQube is an open sourced code quality scanning tool
@@ -2022,4 +2023,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-05-09T23:09:58.120967476Z"
+generated: "2021-05-09T23:10:09.609376582Z"
