@@ -1,6 +1,11 @@
 ---
 appName: &name sonarqube
 
+# default admin password
+# account:
+#   adminPassword: admin
+#   currentAdminPassword: admin
+
 # dont run any init containers
 initContainers: false
 
@@ -16,7 +21,7 @@ deploymentStrategy: {}
 
 image:
   repository: *name
-  tag: 8.7.1-community
+  tag: 8.9.0-community
   # If using a private repository, the name of the imagePullSecret to use
   # pullSecret: my-repo-secret
 

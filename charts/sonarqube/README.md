@@ -6,7 +6,7 @@
 
 This chart bootstraps a SonarQube instance with a PostgreSQL database.
 
-`Attribution`: A Fork of thie code was taken from here and customized for OpenShift
+`Attribution`: A Fork of this code was taken from here and customized for OpenShift
 
 https://github.com/Oteemo/charts/tree/master/charts/sonarqube
 
@@ -23,7 +23,7 @@ $ helm install rht-labs-charts/sonarqube
 
 The above command deploys Sonarqube on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
 
-The default login is admin/admin.
+The default login is admin/admin, but can be overridden.
 
 ## Uninstalling the chart
 
@@ -39,6 +39,7 @@ The following table lists the configurable parameters of the Sonarqube chart and
 
 | Parameter                             | Description                                                                  | Default                                        |
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- |
+| `admin.adminPassword`                 | Set Admin Password, also refer "admin.currentAdminPassword"                  | `admin`                                        |
 | `replicaCount`                        | Number of replicas deployed                                                  | `1`                                            |
 | `deploymentStrategy`                  | Deployment strategy                                                          | `{}`                                           |
 | `image.repository`                    | image repository                                                             | `sonarqube`                                    |
