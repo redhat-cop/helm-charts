@@ -650,6 +650,20 @@ entries:
   etherpad:
   - apiVersion: v2
     appVersion: latest
+    created: "2021-05-09T22:20:08.527362923Z"
+    description: A Helm chart for etherpad lite
+    digest: cdb92a6180c7fe1055359280f36a30517976cc9c7c827514399b52453617061f
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://pbs.twimg.com/profile_images/1336377123964145665/2gTadaDt_400x400.jpg
+    maintainers:
+    - name: eformat
+    name: etherpad
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/etherpad-0.0.6/etherpad-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
+    appVersion: latest
     created: "2021-04-13T20:26:49.390910512Z"
     description: A Helm chart for etherpad lite
     digest: 4de0f6d1320a8300f8aecaeeff06186538c43b31af484e5ae6fc0fbb2b8085cf
@@ -1991,4 +2005,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-05-05T19:32:13.691698281Z"
+generated: "2021-05-09T22:20:08.527793129Z"
