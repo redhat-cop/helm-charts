@@ -1404,6 +1404,21 @@ entries:
   pact-broker:
   - apiVersion: v2
     appVersion: latest
+    created: "2021-05-12T14:47:29.048064434Z"
+    description: "A Helm chart for deploying Pact Broker on OpenShift \U0001F517"
+    digest: 8f6ac1c64e1ee2f77320849b20ff58390f5836e5303cfa9348882cf1328cb971
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://img.stackshare.io/service/11305/pact.png
+    maintainers:
+    - name: mvmaestri
+    - name: gsampaio
+    - name: springdo
+    name: pact-broker
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/pact-broker-0.0.8/pact-broker-0.0.8.tgz
+    version: 0.0.8
+  - apiVersion: v2
+    appVersion: latest
     created: "2021-04-13T20:26:49.721305223Z"
     description: "A Helm chart for deploying Pact Broker on OpenShift \U0001F517"
     digest: d8a81b5555e88da88666b322f8efd3ab762a62072e40298ca4e1d6e3ecca7fed
@@ -2057,4 +2072,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-05-12T13:44:51.634525382Z"
+generated: "2021-05-12T14:47:29.051566381Z"
