@@ -83,6 +83,6 @@ spec:
           - postgresql
         from:
           kind: ImageStreamTag
-          name: postgresql:{{ .Values.postgresql.image.tag | default "9.6" }}
+          name: postgresql:{{ .Values.postgresql.image.tag | default "9.6-el8" }}
           namespace: openshift
       type: ImageChange
