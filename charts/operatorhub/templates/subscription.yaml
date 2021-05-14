@@ -1,3 +1,4 @@
+{{ $namespace := .Values.namespace }}
 {{- if .Values.operators }}
 {{- range $op := .Values.operators }}
 {{- $sub := $op.subscription }}
