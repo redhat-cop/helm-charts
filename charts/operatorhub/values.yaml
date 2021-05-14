@@ -2,9 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+namespace: operator-namespace
 operators:
   - name: subscription-name
-    namespace: operator-namespace
     subscription:
       channel: operator-channel
       approval: approval-type
