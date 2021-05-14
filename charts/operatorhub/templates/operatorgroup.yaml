@@ -1,3 +1,4 @@
+{{ $namespace := .Values.namespace }}
 {{- if .Values.operators }}
 {{- range $op := .Values.operators }}
 {{- if $op.operatorgroup }}
@@ -8,7 +9,7 @@ apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
   name: {{ $op.name | quote }} 
-  namespace: {{ $op.namespace | quote }}
+  namespace: {{ $namespace | quote }}
 spec:
   {{- if $og.namespaceSelector }}
   selector:
@@ -16,7 +17,7 @@ spec:
       {{ $og.namespaceSelector }}
   {{ else }}
   targetNamespaces:
-  - {{ $op.namespace }}
+  - {{ $namespace }}
   {{- end }}
 {{- end }}
 {{- end }}

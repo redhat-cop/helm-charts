@@ -23,9 +23,9 @@ $ helm repo add rht-labs https://rht-labs.github.io/rht-labs
 After adding the chart repo, create a YAML file to specify the overrides in the following structure:
 
 ```yaml
+namespace: operator-namespace
 operators:
   - name: subscription-name
-    namespace: operator-namespace
     subscription:
       channel: operator-channel
       approval: approval-type
@@ -80,9 +80,9 @@ The following table lists the configurable parameters of the OperatorHub chart a
 Prometheus Operator example, with `namespaceSelector` and `installModes`:
 
 ```yaml
+namespace: prometheus-operator
 operators:
   - name: prometheus-operator
-    namespace: prometheus-operator
     subscription:
       channel: beta
       approval: Automatic
