@@ -2,7 +2,7 @@ apiVersion: v2
 name: operatorhub
 description: A Helm chart to create OperatorHub subscriptions
 type: application
-version: 0.0.7
+version: 0.0.8
 appVersion: 0.0.2
 home: https://github.com/redhat-cop/helm-charts
 icon: https://avatars3.githubusercontent.com/u/38202270?s=280&v=4
