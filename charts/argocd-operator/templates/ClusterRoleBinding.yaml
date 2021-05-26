@@ -15,7 +15,7 @@ roleRef:
 {{- if not .Values.namespaceRoleBinding.enabled }}
 subjects:
 - kind: ServiceAccount
-  name: argocd-application-controller
+  name: {{ .Values.name }}-argocd-application-controller
   namespace: {{ .Values.namespace }}
 {{- end }}
 {{- end }}
