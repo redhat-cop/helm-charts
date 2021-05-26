@@ -17,7 +17,7 @@ roleRef:
   name: {{ $ns }}-argocd-application-controller
 subjects:
 - kind: ServiceAccount
-  name: argocd-application-controller
+  name: {{ .Values.name }}-argocd-application-controller
   namespace: {{ $ns | quote }}
 {{- end }}
 {{- end }}
