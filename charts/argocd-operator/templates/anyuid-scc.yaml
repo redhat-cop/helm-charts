@@ -17,7 +17,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: gatekeeper-anyuid-scc
+  name: {{ .Values.namespace }}-argocd-redis-ha-anyuid-scc
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
