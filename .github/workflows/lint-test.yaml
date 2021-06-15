@@ -17,7 +17,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.4.0
+          version: v3.5.1
 
       - uses: actions/setup-python@v2
         with:
@@ -37,7 +37,7 @@ jobs:
 
       - name: Run chart-testing (lint)
         run: ct lint
-        
+
       # TODO
       # These checks invariably fail with openshift specific features, features that need pv/pvc
       # Need a better strategy here
