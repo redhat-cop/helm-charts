@@ -8,7 +8,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   channel: {{ .Values.operator.channel }}
-  installPlanApproval: Automatic
+  installPlanApproval: {{ .Values.operator.installPlanApproval }}
   name: {{ .Values.operator.name }}
   source: community-operators
   sourceNamespace: openshift-marketplace

@@ -12,6 +12,7 @@ namespace: labs-ci-cd
 operator:
   version: argocd-operator.v0.0.15
   channel: alpha
+  installPlanApproval: Automatic
   name: argocd-operator
   operatorgroup: true
 
