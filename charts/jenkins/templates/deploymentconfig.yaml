@@ -44,7 +44,11 @@ spec:
         {{- end }}
         {{- end }}
         image: ' '
+        {{- if .Values.persistence }}
+        imagePullPolicy: Always
+        {{- else }}
         imagePullPolicy: IfNotPresent
+        {{- end }}
         livenessProbe:
           failureThreshold: 2
           httpGet:
