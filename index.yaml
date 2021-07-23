@@ -3,6 +3,23 @@ entries:
   argocd-operator:
   - apiVersion: v2
     appVersion: v2.0.2
+    created: "2021-07-23T09:22:14.577824977Z"
+    description: A Helm chart for customising the deployment of the ArgoCD Operator
+      ⚓️
+    digest: d9b3b1223e865cf5782068b4e9ef3471113949dab5fff068313b8fb0f45d4908
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://cncf-branding.netlify.app/img/projects/argo/stacked/color/argo-stacked-color.png
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    - name: mabulgu
+    name: argocd-operator
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/argocd-operator-1.1.10/argocd-operator-1.1.10.tgz
+    version: 1.1.10
+  - apiVersion: v2
+    appVersion: v2.0.2
     created: "2021-07-23T08:09:50.019332144Z"
     description: A Helm chart for customising the deployment of the ArgoCD Operator
       ⚓️
@@ -2206,4 +2223,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-07-23T08:09:50.020734344Z"
+generated: "2021-07-23T09:22:14.578549217Z"
