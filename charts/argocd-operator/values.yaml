@@ -29,14 +29,14 @@ namespaceRoleBinding:
 metrics:
   enabled: false
   prometheus:
-    version: prometheusoperator.0.47.0
+    version: prometheusoperator.0.37.0
     channel: beta
     name: prometheus-operator
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
   applicationInstanceLabelKey: rht-labs.com/uj123
-  version: v2.0.5
+  version: v2.0.2
 
   grafana:
     enabled: true
