@@ -31,14 +31,6 @@ deployment:
     cpu_request: 500m
     cpu_limit: 1
   env_vars:
-    - name: JVM_ARCH
-      value: 'x86_64'
-    - name: DISABLE_ADMINISTRATIVE_MONITORS
-      value: 'false'
-    - name: ENABLE_FATAL_ERROR_LOG_FILE
-      value: 'false'
-    - name: JENKINS_OPTS
-      value: '--sessionTimeout=0'
     - name: SLACK_BASE_URL
       value: ''
     - name: SLACK_ROOM
