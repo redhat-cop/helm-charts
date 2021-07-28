@@ -1,0 +1,15 @@
+{{- if .Values.operatorgroup }}
+{{- if .Values.namespaces }}
+{{- range $key := .Values.namespaces }}
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ .name }}-og
+  namespace: {{ .name | quote }}
+spec:
+  targetNamespaces: 
+  - {{ .name }}
+{{- end }}
+{{- end }}
+{{- end }}
