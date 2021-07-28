@@ -44,3 +44,5 @@ namespaces:
 serviceaccounts:
 - name: dummy-sa
   namespace: *ci_cd
+
+operatorgroup: true
