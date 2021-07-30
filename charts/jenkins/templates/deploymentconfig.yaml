@@ -37,6 +37,14 @@ spec:
           value: {{ .Values.appName }}
         - name: JNLP_SERVICE_NAME
           value: {{ .Values.appName }}-jnlp
+        - name: JVM_ARCH
+          value: 'x86_64'
+        - name: DISABLE_ADMINISTRATIVE_MONITORS
+          value: 'false'
+        - name: ENABLE_FATAL_ERROR_LOG_FILE
+          value: 'false'
+        - name: JENKINS_OPTS
+          value: '--sessionTimeout=180'
         {{- range $key := .Values.deployment.env_vars }}
         {{- if .value }}
         - name: {{ .name }}
