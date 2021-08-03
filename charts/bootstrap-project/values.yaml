@@ -3,6 +3,7 @@ dev_namespace: &dev "labs-dev"
 test_namespace: &test "labs-test"
 namespaces:
 - name: *ci_cd
+  operatorgroup: false
   bindings:
   # this labs-devs is the GROUP NAME in IDM
   - name: labs-devs
@@ -17,6 +18,7 @@ namespaces:
     role: admin
   namespace: *ci_cd
 - name: *dev
+  operatorgroup: true
   bindings:
   - name: labs-devs
     kind: Group
@@ -29,6 +31,7 @@ namespaces:
     role: admin
   namespace: *ci_cd
 - name: *test
+  operatorgroup: true
   bindings:
   - name: labs-devs
     kind: Group
@@ -44,5 +47,3 @@ namespaces:
 serviceaccounts:
 - name: dummy-sa
   namespace: *ci_cd
-
-operatorgroup: true
