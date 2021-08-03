@@ -1,6 +1,6 @@
-{{- if .Values.operatorgroup }}
 {{- if .Values.namespaces }}
 {{- range $key := .Values.namespaces }}
+{{- if .operatorgroup }}
 ---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
