@@ -600,6 +600,21 @@ entries:
   bootstrap-project:
   - apiVersion: v2
     appVersion: v0.0.1
+    created: "2021-08-03T10:42:43.926522468Z"
+    description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
+    digest: acb6dd07c03d5ab6b5acd932c667025fda8d46e08535c9d3d54b59ff53844b9b
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.iconpacks.net/icons/1/free-rocket-icon-1206-thumb.png
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: bootstrap-project
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/bootstrap-project-1.0.1/bootstrap-project-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: v0.0.1
     created: "2021-07-28T11:40:48.289899268Z"
     description: "A Helm chart for deploying and managing Openshift projects \U0001F986"
     digest: 29408dd9ef77dc71c2e221cd59311c11801c36627698393223f20bc6d3789972
@@ -2287,4 +2302,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-08-03T10:41:59.143994865Z"
+generated: "2021-08-03T10:42:43.92710359Z"
