@@ -49,19 +49,15 @@ The following table lists the configurable parameters of the Jenkins chart and t
 | `services.jenkins-jnlp.port`                     | Port of Jenkins master service                                              | `50000`                                              |
 | `services.jenkins-jnlp.target_port`              | Target port of Jenkins JNLP service                                         | `50000`                                              |
 | `services.jenkins-jnlp.selector`                 | Selector for Jenkins JNLP service to match with Jenkins master deployment   | `jenkins`                                            |
-| `imagestreams.jenkins.external.builder_registry` | Builder image registry for Jenkins custom build                             | `quay.io`                                            |
-| `imagestreams.jenkins.external.builder_repo`     | Builder image repo for Jenkins custom build                                 | `openshift`                                          |
-| `imagestreams.jenkins.external.builder_image`    | Builder image for Jenkins custom build                                      | `origin-jenkins`                                     |
-| `imagestreams.jenkins.external.builder_imagetag` | Builder image tag for Jenkins custom build                                  | `latest`                                             |
-| `buildconfigs.jenkins.build_trigger_secret`      | Webhook Secret for Jenkins master build                                     | `shhhhh-this-is-my-super-duper-secret123-shhhhh`     |
-| `buildconfigs.jenkins.strategy_type`             | Build strategy type for Jenkins master                                      | `Source`                                             |
-| `buildconfigs.jenkins.pull_secret`               | Pull secret for Jenkins master source code repo                             | `''`                                                 |
-| `buildconfigs.jenkins.source_repo`               | Git repo URL for custom Jenkins                                             | `https://github.com/rht-labs/s2i-config-jenkins.git` |
-| `buildconfigs.jenkins.source_repo_ref`           | Git Reference of custom Jenkins repo                                        | `v1.6`                                               |
-| `buildconfigs.jenkins.source_context_dir`        | The directory in the source repository where Jenkins master docker build is | `/`                                                  |
-| `buildconfigs.jenkins.builder_image_name`        | Builder image name for custom build                                         | `jenkins`                                            |
-| `buildconfigs.jenkins.builder_image_tag`         | Builder image tag for custom build                                          | `2`                                                  |
-
+|`buildconfigs.name`| Build and ImageStream name | `''`
+|`buildconfigs.name.strategy_type`| Build strategy type for Jenkins | `Docker`
+|`buildconfigs.name.source_repo`| Git repo URL for custom | `https://github.com/redhat-cop/containers-quickstarts`
+|`buildconfigs.name.source_repo_ref`| Git Reference of custom Jenkins | `master`
+|`buildconfigs.name.source_context_dir`| The directory in the source repository where Jenkins master docker build is | `/` 
+|`buildconfigs.name.builder_image_kind`| Builder image kind | `ImageStreamTag`
+|`buildconfigs.name.builder_image_name`| Builder image name for custom build | `''`
+|`buildconfigs.name.builder_image_tag`| Builder image tag for custom build | `''`
+|`role` | The value of role value for Jenkins Agent ImageStream. It is used for Jenkins sync plugin to discover agents automatically | `jenkins-slave`
 ### Environment Variables
 There are additional environment variables you can set to customize your Jenkins based on your needs. You can update these values on your [values](https://github.com/redhat-cop/helm-charts/blob/master/charts/jenkins/values.yaml#L23) file.
 | Variable                                         | Description                                                                 | Default                                              |
