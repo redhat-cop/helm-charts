@@ -38,8 +38,8 @@ The following table lists the configurable parameters of the Jenkins chart and t
 | `deployment.limits.cpu_request`                  | Starting request of cpu that Jenkins master use                             | `500m`                                               |
 | `deployment.limits.cpu_limit`                    | Maximum amount of memory Jenkins master use                                 | `1`                                                  |
 | `deployment.env_vars`                            | Environment variables for Jenkins master                                    | `''`                                                 |
-| `persistence.accessModes`                        | Access mode for Jenkins PV                                                  | `ReadWriteOnce`                                      |
-| `persistence.volumeSize`                         | Volume size for Jenkins PV                                                  | `20Gi`                                               |
+| `persistence.accessModes`                        | Access mode for Jenkins PV                                                  | `''`                                      |
+| `persistence.volumeSize`                         | Volume size for Jenkins PV                                                  | `''`                                               |
 | `services.jenkins.port_name`                     | Port name of service for Jenkins master                                     | `web`                                                |
 | `services.jenkins.port`                          | Port of Jenkins master service                                              | `80`                                                 |
 | `services.jenkins.target_port`                   | Target port of Jenkins master service                                       | `8080`                                               |
