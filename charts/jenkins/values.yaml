@@ -54,9 +54,9 @@ deployment:
     - name: GITLAB_GROUP_NAME
       value: rht-labs
 
-persistence:
-  accessModes: ReadWriteOnce
-  volumeSize: 20Gi
+# persistence:
+#   accessModes: ReadWriteOnce
+#   volumeSize: 20Gi
 
 services:
   - name: *name
