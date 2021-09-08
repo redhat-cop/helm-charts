@@ -990,6 +990,21 @@ entries:
   helper-sealed-secrets:
   - apiVersion: v2
     appVersion: v1
+    created: "2021-09-08T21:29:39.407004922Z"
+    description: "A Helm Chart for managing Sealed Secrets \U0001F575️♀️\U0001F510"
+    digest: de6fd08b554c6261f6710b987d69b8abce4d314ae5cfd38a2c051688db592b2c
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://avatars.githubusercontent.com/u/34656521?s=400&v=4
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: helper-sealed-secrets
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/helper-sealed-secrets-1.0.3/helper-sealed-secrets-1.0.3.tgz
+    version: 1.0.3
+  - apiVersion: v2
+    appVersion: v1
     created: "2021-08-04T06:08:01.993185681Z"
     description: "A Helm Chart for managing Sealed Secrets \U0001F575️♀️\U0001F510"
     digest: 0240567d19f5b6f6bda693c898ce2b87fb5b7ab76e18dc339c9e50f1877e0e03
@@ -2381,4 +2396,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-09-02T22:28:22.292918867Z"
+generated: "2021-09-08T21:29:39.40769093Z"
