@@ -1,11 +1,12 @@
 ---
-# control used by Labs Ubiquitous Journey
+# Control used by Labs Ubiquitous Journey
 enabled: true
 name: ansible-automation-platform
 
-# this is for argo type deployments (set to true) dont deploy helm hooked resources
+# Disable helm hooked resources
 ignoreHelmHooks: false
 
+# Namespace where everything gets deployed
 namespace: ansible-automation-platform
 
 # Subscription and OperatorGroup
