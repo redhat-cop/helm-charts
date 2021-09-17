@@ -17,7 +17,7 @@ operator:
   operatorgroup: true
 
 # Ansible Automation Controller Custom Resource spec
-AutomationController:
+automationController:
   createPreloadData: true
   routeTlsTerminationMechanism: Edge
   garbageCollectSecrets: false
