@@ -1,0 +1,27 @@
+{{- if .Values.enabled }}
+---
+apiVersion: automationcontroller.ansible.com/v1beta1
+kind: AutomationController
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+  {{- if not .Values.ignoreHelmHooks }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "25"
+  {{- end }}
+  namespace: {{ .Values.namespace }}
+spec:
+  create_preload_data: {{.Values.AutomationController.createPreloadData }}
+  route_tls_termination_mechanism: {{.Values.AutomationController.routeTlsTerminationMechanism }}
+  garbage_collect_secrets: {{.Values.AutomationController.garbageCollectSecrets }}
+  ingress_type: {{.Values.AutomationController.ingressType }}
+  projects_use_existing_claim: {{.Values.AutomationController.projectsUseExistingClaim }}
+  image_pull_policy:  {{.Values.AutomationController.imagePullPolicy }}
+  admin_email: {{ .Values.AutomationController.admin_email }}
+  task_privileged: {{.Values.AutomationController.taskPrivileged }}
+  projects_persistence: {{.Values.AutomationController.projectsPersistence }}
+  replicas:  {{.Values.AutomationController.replicas }}
+  admin_user: {{ .Values.AutomationController.adminUser }}
+{{- end }}
