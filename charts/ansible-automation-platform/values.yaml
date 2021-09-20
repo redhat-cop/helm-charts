@@ -1,0 +1,32 @@
+---
+# Control used by Labs Ubiquitous Journey
+enabled: true
+name: ansible-automation-platform
+
+# Disable helm hooked resources
+ignoreHelmHooks: false
+
+# Namespace where everything gets deployed
+namespace: ansible-automation-platform
+
+# Subscription and OperatorGroup
+operator:
+  version: ansible-automation-platform-operator.v2.0.0
+  channel: early-access
+  installPlanApproval: Automatic
+  name: ansible-automation-platform-operator
+  operatorgroup: true
+
+# Ansible Automation Controller Custom Resource spec
+automationController:
+  createPreloadData: true
+  routeTlsTerminationMechanism: Edge
+  garbageCollectSecrets: false
+  ingressType: Route
+  projectsUseExistingClaim: _No_
+  imagePullPolicy: IfNotPresent
+  adminEmail: admin@example.com
+  taskPrivileged: true
+  projectsPersistence: true
+  replicas: 1
+  adminUser: admin
