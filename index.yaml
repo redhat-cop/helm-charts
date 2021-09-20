@@ -1,5 +1,19 @@
 apiVersion: v1
 entries:
+  ansible-automation-platform:
+  - apiVersion: v2
+    appVersion: v2.0.0
+    created: "2021-09-20T04:09:32.646835113Z"
+    description: A Helm chart for customising the deployment of the Ansible Automation
+      Platform Operator
+    digest: a30cfab10f0cd17602302324c7fb2208a9d1b961dfc1b2f20eb4d06ad34c31aa
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: paulbarfuss
+    name: ansible-automation-platform
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/ansible-automation-platform-0.0.1/ansible-automation-platform-0.0.1.tgz
+    version: 0.0.1
   argocd-operator:
   - apiVersion: v2
     appVersion: v2.1.2
@@ -2412,4 +2426,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-09-11T19:25:25.088834312Z"
+generated: "2021-09-20T04:09:32.647889286Z"
