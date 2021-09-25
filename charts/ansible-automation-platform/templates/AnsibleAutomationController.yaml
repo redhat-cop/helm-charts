@@ -23,5 +23,23 @@ spec:
   task_privileged: {{.Values.automationController.taskPrivileged }}
   projects_persistence: {{.Values.automationController.projectsPersistence }}
   replicas:  {{.Values.automationController.replicas }}
-  admin_user: {{ .Values.automationController.adminUser }}
+  admin_user: {{ .Values.automationController.admin_user }}
+  {{- if .Values.automationController.ldap_cacert }}
+  ldap_cacert_secret: ldap-cacert
+  {{- end }}
+  {{- if .Values.automationController.admin_password }}
+  admin_password_secret: "ansible-automation-controller-custom-admin-password"
+  {{- end }}
+  web_resource_requirements:
+  {{- with .Values.automationController.web_resource_requirements }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  task_resource_requirements:
+  {{- with .Values.automationController.task_resource_requirements }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  ee_resource_requirements:
+  {{- with .Values.automationController.ee_resource_requirements }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
 {{- end }}

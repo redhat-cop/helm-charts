@@ -14,7 +14,7 @@ spec:
     - name: crd-check 
       image: quay.io/openshift/origin-cli:4.7
       imagePullPolicy: IfNotPresent
-      command: ['sh', '-c', 'while [ true ]; do oc get crd automationControllers.automationController.ansible.com; if [ $? -eq 0 ]; then break; fi ; sleep 5s; done']
+      command: ['sh', '-c', 'while [ true ]; do oc get automationcontrollers.automationcontroller.ansible.com; if [ $? -eq 0 ]; then break; fi ; sleep 5s; done']
   restartPolicy: Never
   terminationGracePeriodSeconds: 0
   serviceAccount: default
