@@ -19,9 +19,9 @@ helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
 Login to your cluster and into your destination project. To install any given Chart using the default values just run:
 
 ```bash
-helm install $NAME redhat-cop/$CHART_NAME
+helm install --set route.enabled=false $NAME redhat-cop/$CHART_NAME
 eg:
-helm install my-jenkins redhat-cop/jenkins
+helm install --set route.enabled=false my-jenkins redhat-cop/jenkins
 ```
 Where:
 * $NAME - is the name you want to give the installed Helm App
@@ -32,9 +32,9 @@ Where:
 For each chart, navigate to the root of it for the readme and default values. To over ride them, you could create your own `my-values.yaml` and make your changes there before installing
 
 ```bash
-helm install $NAME -f my-values.yaml redhat-cop/$CHART_NAME
+helm install --set route.enabled=false $NAME -f my-values.yaml redhat-cop/$CHART_NAME
 eg:
-helm install my-jenkins -f my-values.yaml redhat-cop/jenkins
+helm install --set route.enabled=false my-jenkins -f my-values.yaml redhat-cop/jenkins
 ```
 
 ## 🏃‍♂️💨 Chart linting
