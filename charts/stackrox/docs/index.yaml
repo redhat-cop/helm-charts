@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  stackrox-chart:
+  - apiVersion: v2
+    created: "2021-10-04T09:15:23.000001996+10:00"
+    description: Install and Configure Stackrox
+    digest: 43811e554b97d35787bea3a566c4b116e930e87b8337a6e2da9f11df271efccd
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://avatars.githubusercontent.com/u/40638982?s=200&v=4
+    maintainers:
+    - name: eformat
+    name: stackrox-chart
+    type: application
+    urls:
+    - http://rht-labs.com/stackrox-chart/stackrox-chart-0.0.1.tgz
+    version: 0.0.1
+generated: "2021-10-04T09:15:22.999489034+10:00"

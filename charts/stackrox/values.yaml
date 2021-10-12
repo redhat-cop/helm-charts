@@ -1,0 +1,7 @@
+# turn on verbose logging for config job
+verbose: false
+
+# stackrox configuration
+stackrox:
+  clusterName: do500
+  namespace: stackrox
