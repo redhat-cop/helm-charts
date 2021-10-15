@@ -2373,6 +2373,20 @@ entries:
     urls:
     - https://github.com/rht-labs/helm-charts/releases/download/sonatype-nexus-0.0.1/sonatype-nexus-0.0.1.tgz
     version: 0.0.1
+  stackrox-chart:
+  - apiVersion: v2
+    created: "2021-10-15T08:12:35.51276218Z"
+    description: Install and Configure Stackrox
+    digest: 969a0cc9c29b5cf6c3ec6957001fd358eb2d7ca5ede7ce966086752c22ce8524
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://avatars.githubusercontent.com/u/40638982?s=200&v=4
+    maintainers:
+    - name: eformat
+    name: stackrox-chart
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/stackrox-chart-0.0.1/stackrox-chart-0.0.1.tgz
+    version: 0.0.1
   static-site:
   - apiVersion: v2
     appVersion: 1.17.9-alpine
@@ -2457,4 +2471,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-09-30T23:49:57.299889647Z"
+generated: "2021-10-15T08:12:35.513447892Z"
