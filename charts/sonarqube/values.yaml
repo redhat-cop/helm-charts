@@ -4,7 +4,7 @@ appName: &name sonarqube
 # default admin password
 # account:
 #   username: admin
-#   adminPassword: admin
+#   password: admin123
 #   currentAdminPassword: admin
 
 # support an existing secret for admin credentials
@@ -26,7 +26,7 @@ deploymentStrategy: {}
 
 image:
   repository: *name
-  tag: 9.0.1-community
+  tag: 9.1.0-community
   # If using a private repository, the name of the imagePullSecret to use
   # pullSecret: my-repo-secret
 
