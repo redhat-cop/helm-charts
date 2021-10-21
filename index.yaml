@@ -892,6 +892,20 @@ entries:
   etherpad:
   - apiVersion: v2
     appVersion: latest
+    created: "2021-10-21T13:56:02.524030894Z"
+    description: A Helm chart for etherpad lite
+    digest: b84c3bb13c4cf152d76c374998a1ee35f0ec8daa4f8fb3f5b7af4e467e7778de
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://pbs.twimg.com/profile_images/1336377123964145665/2gTadaDt_400x400.jpg
+    maintainers:
+    - name: eformat
+    name: etherpad
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/etherpad-0.0.7/etherpad-0.0.7.tgz
+    version: 0.0.7
+  - apiVersion: v2
+    appVersion: latest
     created: "2021-05-09T22:20:08.527362923Z"
     description: A Helm chart for etherpad lite
     digest: cdb92a6180c7fe1055359280f36a30517976cc9c7c827514399b52453617061f
@@ -2170,22 +2184,6 @@ entries:
     version: 0.0.4
   sonatype-nexus:
   - apiVersion: v2
-    appVersion: 3.35.0
-    created: "2021-10-21T13:55:35.750189777Z"
-    description: Sonatype Nexus is an open source repository manager
-    digest: 80edc902ce9ef204131736197220cecec69a0d5d3389642f269a9a1856aa149e
-    home: https://github.com/redhat-cop/helm-charts
-    icon: https://help.sonatype.com/docs/files/331022/34537964/3/1564671303641/NexusRepo_Icon.png
-    maintainers:
-    - name: eformat
-    - name: ckavili
-    name: sonatype-nexus
-    sources:
-    - https://github.com/sonatype/nexus-public
-    urls:
-    - https://github.com/redhat-cop/helm-charts/releases/download/sonatype-nexus-1.1.1/sonatype-nexus-1.1.1.tgz
-    version: 1.1.1
-  - apiVersion: v2
     appVersion: 3.33.0
     created: "2021-08-11T03:02:38.426509711Z"
     description: Sonatype Nexus is an open source repository manager
@@ -2487,4 +2485,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-10-21T13:55:35.751288584Z"
+generated: "2021-10-21T13:56:02.525018971Z"
