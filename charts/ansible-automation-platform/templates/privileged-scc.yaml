@@ -1,0 +1,16 @@
+{{- if .Values.automationController.taskPrivileged }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.namespace }}-privileged-scc
+  namespace: {{ .Values.namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:openshift:scc:privileged
+subjects:
+  - kind: ServiceAccount
+    name: ansible-automation-platform
+    namespace: {{ .Values.namespace }}
+{{- end }}

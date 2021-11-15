@@ -1,0 +1,12 @@
+# Default values for ipa.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+admin_password: Passw0rd
+image: freeipa-server:rhel-7
+hostname: my-ipa.apps.openshift-4815-njnfd.do500.redhatlabs.dev
+install_opts: "-U --setup-dns --no-forwarders --no-ntp"
+realm: "-r REDHATLABS.DEV"
+container_args: "ipa-server-install"
+volume: 1Gi
+namespace: mouse

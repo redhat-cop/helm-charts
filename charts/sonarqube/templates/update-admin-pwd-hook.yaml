@@ -1,6 +1,5 @@
 ---
 {{- if .Values.account }}
-{{- if .Values.account.adminPassword }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -35,6 +34,21 @@ spec:
       containers:
       - name: {{ template "sonarqube.fullname" . }}-change-default-admin-password
         image: "quay.io/openshift/origin-cli:latest"
-        command: ["sh", "-c", 'until curl -v --connect-timeout 100 {{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/system/status | grep -w UP; do sleep 10; done; curl -v --connect-timeout 100 -u admin:{{ default "admin" .Values.account.currentAdminPassword }} -X POST "{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/users/change_password?login=admin&previousPassword={{ .Values.account.currentAdminPassword | default "admin" | urlquery }}&password={{ .Values.account.adminPassword | default "admin" | urlquery }}"']
-{{- end }}
+        env:
+          - name: USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: {{ default "username" }}
+                name: {{- if .Values.account.existingSecret }} {{ .Values.account.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
+          - name: PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: {{ default "password" }}
+                name: {{- if .Values.account.existingSecret }} {{ .Values.account.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
+          - name: CURRENT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: {{ default "currentAdminPassword" }}
+                name: {{- if .Values.account.existingSecret }} {{ .Values.account.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
+        command: ["sh", "-c", 'until curl -u ${USERNAME}:${CURRENT_PASSWORD} -v --connect-timeout 100 {{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/system/status | grep -w UP; do sleep 10; done; curl -v --connect-timeout 100 -u ${USERNAME}:${CURRENT_PASSWORD} -X POST "{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/users/change_password?login=${USERNAME}&previousPassword=${CURRENT_PASSWORD}&password=${PASSWORD}"']
 {{- end }}

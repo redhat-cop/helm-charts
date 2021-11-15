@@ -1,0 +1,65 @@
+---
+# Control used by Labs Ubiquitous Journey
+enabled: true
+name: ansible-automation-platform
+
+# Disable helm hooked resources
+ignoreHelmHooks: false
+
+# Namespace where everything gets deployed
+namespace: ansible-automation-platform
+
+# Subscription and OperatorGroup
+operator:
+  version: ansible-automation-platform-operator.v2.0.0
+  channel: early-access
+  installPlanApproval: Automatic
+  name: ansible-automation-platform-operator
+  operatorgroup: true
+
+# Ansible Automation Controller Custom Resource spec
+automationController:
+  createPreloadData: true
+  routeTlsTerminationMechanism: Edge
+  garbageCollectSecrets: false
+  ingressType: Route
+  projectsUseExistingClaim: _No_
+  imagePullPolicy: IfNotPresent
+  taskPrivileged: true
+  projectsPersistence: true
+  replicas: 1
+  admin_user: admin
+  admin_email: admin@example.com
+  #  admin_password: admin123
+  #  web_resource_requirements:
+  #    limits:
+  #      cpu: 2000m
+  #      memory: 4Gi
+  #      ephemeral-storage: 50Mi
+  #    requests:
+  #      cpu: 800m
+  #      memory: 2Gi
+  #      ephemeral-storage: 50Mi
+  #  task_resource_requirements:
+  #    limits:
+  #      cpu: 2000m
+  #      memory: 8Gi
+  #      ephemeral-storage: 50Mi
+  #    requests:
+  #      cpu: 800m
+  #      memory: 4Gi
+  #      ephemeral-storage: 50Mi
+  #  ee_resource_requirements:
+  #    limits:
+  #      cpu: 2000m
+  #      memory: 4Gi
+  #      ephemeral-storage: 50Mi
+  #    requests:
+  #      cpu: 500m
+  #      memory: 2Gi
+  #      ephemeral-storage: 50Mi
+  #  ldap_cacert: |
+  #    -----BEGIN CERTIFICATE-----
+  #    <ADD YOUR CERTIFICATE HERE>
+  #    -----END CERTIFICATE-----
+  #

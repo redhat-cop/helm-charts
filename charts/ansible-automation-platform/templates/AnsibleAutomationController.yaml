@@ -1,0 +1,45 @@
+{{- if .Values.enabled }}
+---
+apiVersion: automationcontroller.ansible.com/v1beta1
+kind: AutomationController
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+  {{- if not .Values.ignoreHelmHooks }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "25"
+  {{- end }}
+  namespace: {{ .Values.namespace }}
+spec:
+  create_preload_data: {{.Values.automationController.createPreloadData }}
+  route_tls_termination_mechanism: {{.Values.automationController.routeTlsTerminationMechanism }}
+  garbage_collect_secrets: {{.Values.automationController.garbageCollectSecrets }}
+  ingress_type: {{.Values.automationController.ingressType }}
+  projects_use_existing_claim: {{.Values.automationController.projectsUseExistingClaim }}
+  image_pull_policy:  {{.Values.automationController.imagePullPolicy }}
+  admin_email: {{ .Values.automationController.admin_email }}
+  task_privileged: {{.Values.automationController.taskPrivileged }}
+  projects_persistence: {{.Values.automationController.projectsPersistence }}
+  replicas:  {{.Values.automationController.replicas }}
+  admin_user: {{ .Values.automationController.admin_user }}
+  {{- if .Values.automationController.ldap_cacert }}
+  ldap_cacert_secret: ldap-cacert
+  {{- end }}
+  {{- if .Values.automationController.admin_password }}
+  admin_password_secret: "ansible-automation-controller-custom-admin-password"
+  {{- end }}
+  web_resource_requirements:
+  {{- with .Values.automationController.web_resource_requirements }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  task_resource_requirements:
+  {{- with .Values.automationController.task_resource_requirements }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  ee_resource_requirements:
+  {{- with .Values.automationController.ee_resource_requirements }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

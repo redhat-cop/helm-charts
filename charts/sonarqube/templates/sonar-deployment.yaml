@@ -44,7 +44,7 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
       {{- end }}
-{{- if .Values.initContainers }}      
+{{- if .Values.initContainers }}
       initContainers:
         - name: chmod-volume-mounts
           image: {{ default "busybox:1.31" .Values.plugins.initVolumesContainerImage }}
