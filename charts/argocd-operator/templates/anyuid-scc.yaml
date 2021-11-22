@@ -11,6 +11,6 @@ roleRef:
   name: system:openshift:scc:anyuid
 subjects:
 - kind: ServiceAccount
-  name: {{ .Values.namespace }}-argocd-redis-ha
+  name: {{ .Values.name }}-argocd-redis-ha
   namespace: {{ .Values.namespace }}
 {{- end }}
