@@ -25,7 +25,6 @@ argocd_cr:
     policy: |
       g, system:cluster-admins, role:admin
     scopes: '[groups]'
-  repositoryCredentials: null
   resourceExclusions: |
     - apiGroups:
         - tekton.dev
