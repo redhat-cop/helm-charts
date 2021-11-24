@@ -1,0 +1,19 @@
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: {{ .Values.operator.name }}
+  namespace: openshift-operators
+spec:
+  channel: {{ .Values.operator.channel }}
+  installPlanApproval: {{ .Values.operator.installPlanApproval }}
+  name: {{ .Values.operator.name }}
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: {{ .Values.operator.version | quote }}
+  config:
+    env:
+    - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
+      value:  {{ .Values.operator.disableDefaultArgoCD | quote }}
+    - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
+      value: {{ join "," .Values.namespaces | quote }}
