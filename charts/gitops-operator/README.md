@@ -37,15 +37,14 @@ You _do not_ need to override the ArgoCD `applicationInstanceLabelKey`. It is au
 
 Anything configurable in the Operator is passed to the ArgoCD custom resource provided by the Operator. See `argocd_cr` in `values.yaml` for example defaults. For more detailed overview of what's included, checkout the [ArgoCD Operator Docs](https://argocd-operator.readthedocs.io/en/latest/reference/argocd/).
 
-If you wish to use ArgoCD to manage this chart directly (or as a helm chart dependency) you may need to make use of the `ignoreHelmHooks` flag to ignore helm lifecycle hooks. For example as a Helm Chart dependency to UJ bootstrap:
+If you wish to use ArgoCD to manage this chart directly (or as a helm chart dependency) you may need to make use of the `ignoreHelmHooks` flag to ignore helm lifecycle hooks.
+
+One example might be deploying team instances without the Operator and helm lifecycle hooks.
 ```bash
-argocd app create bootstrap-journey \
-  --dest-namespace labs-bootstrap \
-  --dest-server https://kubernetes.default.svc \
-  --repo https://github.com/rht-labs/ubiquitous-journey.git \
-  --revision master \
-  --sync-policy automated \
-  --path "bootstrap" \
-  --helm-set gitops-operator.ignoreHelmHooks=true \
-  --values "values.yaml"
+helm template foo charts/gitops-operator --set operator= --set ignoreHelmHooks=true | oc apply -f-
+```
+
+Or deploying just the Operator, no helm lifecycle hooks and no team instances.
+```bash
+helm template foo charts/gitops-operator --set namespaces= --set ignoreHelmHooks=true | oc apply -f-
 ```
