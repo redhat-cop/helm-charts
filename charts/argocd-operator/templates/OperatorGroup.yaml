@@ -5,12 +5,12 @@
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: {{ .Values.namespace }}
-  generateName: {{ .Values.namespace }}-
-  namespace: {{ .Values.namespace }}
+  name: {{ include "argocd-operator.ns" . }}
+  generateName: {{ include "argocd-operator.ns" . }}-
+  namespace: {{ include "argocd-operator.ns" . }}
 spec:
   targetNamespaces:
-  - {{ .Values.namespace }}
+  - {{ include "argocd-operator.ns" . }}
 {{- end }}
 {{- end }}
 {{- end }}

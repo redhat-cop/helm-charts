@@ -6,11 +6,12 @@ name: argocd
 # this is for argo type deployments (set to true) dont deploy helm hooked resources
 ignoreHelmHooks: false
 
-namespace: labs-ci-cd
+# use the RELEASENAME if you want otherwise set this when helm template
+# namespace: labs-ci-cd
 
 # operator manages upgrades etc
 operator:
-  version: argocd-operator.v0.0.15
+  version: argocd-operator.v0.1.0
   channel: alpha
   installPlanApproval: Automatic
   name: argocd-operator
@@ -33,10 +34,21 @@ metrics:
     channel: beta
     name: prometheus-operator
 
+secrets:
+  - name: argocd-privaterepo
+    username: 'user'
+    password: 'pass1234'
+    sshPrivateKey: ''
+
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
-  applicationInstanceLabelKey: rht-labs.com/uj123
+  applicationInstanceLabelKey: rht-labs.com/uj1234
   version: v2.1.5
+
+  statusBadgeEnabled: true
+  usersAnonymousEnabled: false
+  dex:
+    openShiftOAuth: true
 
   grafana:
     enabled: true
@@ -59,6 +71,10 @@ argocd_cr:
   server:
     route:
       enabled: true
+      tls:
+        termination: passthrough
+        insecureEdgeTerminationPolicy: Redirect
+      wildcardPolicy: None
     autoscale:
       enabled: false
     service:
@@ -84,14 +100,3 @@ argocd_cr:
       usernameSecret:
         key: username
         name: argocd-privaterepo
-  secrets:
-    - name: argocd-privaterepo
-      username: 'user123'
-      password: 'pass123'
-      sshPrivateKey: ''
-
-  # examples
-  accounts:
-    accounts.admin: login, apiKey
-    accounts.alice: apiKey
-    accounts.alice.enabled: 'false'

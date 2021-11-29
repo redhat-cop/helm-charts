@@ -32,5 +32,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "argocd-operator.ns" . }}
 {{- end }}

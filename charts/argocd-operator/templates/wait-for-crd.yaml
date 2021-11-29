@@ -3,15 +3,15 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: cluster-check 
+  name: cluster-check
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "-1"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "argocd-operator.ns" . }}
 spec:
   containers:
-  - name: crd-check 
+  - name: crd-check
     image: quay.io/openshift/origin-cli:4.7
     imagePullPolicy: IfNotPresent
     command: ['sh', '-c', 'while [ true ]; do oc get crd argocds.argoproj.io applications.argoproj.io appprojects.argoproj.io argocdexports.argoproj.io; if [ $? -eq 0 ]; then break; fi ; sleep 5s; done']
