@@ -1,0 +1,22 @@
+{{- if not .Values.ignoreHelmHooks }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cluster-check 
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  namespace: {{ .Release.Namespace }}
+spec:
+  containers:
+  - name: crd-check 
+    image: quay.io/openshift/origin-cli:latest
+    imagePullPolicy: IfNotPresent
+    command: ['sh', '-c', 'while [ true ]; do oc get crd argocds.argoproj.io applications.argoproj.io appprojects.argoproj.io; if [ $? -eq 0 ]; then break; fi ; sleep 5s; done']
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 0
+  serviceAccount: default
+  serviceAccountName: default
+{{- end }}
