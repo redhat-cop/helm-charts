@@ -44,7 +44,7 @@ secrets:
 argocd_cr:
   applicationInstanceLabelKey: rht-labs.com/uj1234
   version: v2.1.5
-  
+
   statusBadgeEnabled: true
   usersAnonymousEnabled: false
   dex:
