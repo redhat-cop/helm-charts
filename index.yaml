@@ -1034,6 +1034,21 @@ entries:
     urls:
     - https://github.com/rht-labs/helm-charts/releases/download/etherpad-0.0.1/etherpad-0.0.1.tgz
     version: 0.0.1
+  gitops-operator:
+  - apiVersion: v2
+    appVersion: v2.1.7
+    created: "2021-11-29T15:34:01.268570177Z"
+    description: "A Helm chart for customising the deployment of the Red Hat GitOps
+      Operator \U0001F52B"
+    digest: a0b1a4ffc6a6ea8b9d67971aa64131a55a2b779fc50b193259db87bc6acf00d9
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/eformat/openshift-gitops/main/rh-gitops.png
+    maintainers:
+    - name: eformat
+    name: gitops-operator
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/gitops-operator-0.0.1/gitops-operator-0.0.1.tgz
+    version: 0.0.1
   helper-console-links:
   - apiVersion: v2
     appVersion: v1.6.1
@@ -2583,4 +2598,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2021-11-29T15:26:04.542767014Z"
+generated: "2021-11-29T15:34:01.269303587Z"
