@@ -6,6 +6,7 @@ name: argocd
 # this is for argo type deployments (set to true) dont deploy helm hooked resources
 ignoreHelmHooks: false
 
+# use the RELEASENAME if you want otherwise set this when helm template
 # namespace: labs-ci-cd
 
 # operator manages upgrades etc
@@ -34,14 +35,14 @@ metrics:
     name: prometheus-operator
 
 secrets:
-  - name: git-auth
-    username: 'springdo'
+  - name: argocd-privaterepo
+    username: 'user'
     password: 'pass1234'
     sshPrivateKey: ''
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
-  applicationInstanceLabelKey: rht-labs.com/uj1235
+  applicationInstanceLabelKey: rht-labs.com/uj1234
   version: v2.1.5
   
   statusBadgeEnabled: true
