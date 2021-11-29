@@ -8,7 +8,7 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "-1"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "argocd-operator.ns" . }}
 spec:
   containers:
   - name: crd-check 

@@ -11,14 +11,8 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "25"
   {{- end }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "argocd-operator.ns" . }}
 spec:
-  # some defaults 🤷‍♂️
-  insecure: false
-  statusBadgeEnabled: true
-  usersAnonymousEnabled: false
-  dex:
-    openShiftOAuth: true
   {{- if .Values.argocd_cr }}
   {{- .Values.argocd_cr | toYaml | trim | nindent 2 }}
   {{- end }}
