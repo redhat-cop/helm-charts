@@ -4,13 +4,13 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argocd-redis-ha-anyuid-scc
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "argocd-operator.ns" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: system:openshift:scc:anyuid
 subjects:
 - kind: ServiceAccount
-  name: {{ .Values.namespace }}-argocd-redis-ha
-  namespace: {{ .Values.namespace }}
+  name: {{ .Values.name }}-argocd-redis-ha
+  namespace: {{ include "argocd-operator.ns" . }}
 {{- end }}
