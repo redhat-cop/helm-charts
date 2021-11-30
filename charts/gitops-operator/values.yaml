@@ -17,6 +17,15 @@ operator:
   name: openshift-gitops-operator
   disableDefaultArgoCD: true
 
+# adding your secrets for git access or other repository credentials
+secrets: []
+# EXAMPLE ...
+# secrets:
+#   - name: git-auth
+#     username: 'user'
+#     password: 'pass1234'
+#     sshPrivateKey: ''
+
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
   version: v2.1.7
@@ -50,3 +59,13 @@ argocd_cr:
 
   # configure your repo credential template (override this)
   repositoryCredentials: null
+  # EXAMPLE
+  # repositoryCredentials: |
+  #   - url: https://gitlab-ce.apps.openshift-498-bd8hw.do500.redhatlabs.dev
+  #     type: git
+  #     passwordSecret:
+  #       key: password
+  #       name: git-auth
+  #     usernameSecret:
+  #       key: username
+  #       name: git-auth
