@@ -23,6 +23,11 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: default
+  {{- if not $.Values.ignoreHelmHooks }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "25"
+  {{- end }}
   namespace: {{ $ns }}
 spec:
   clusterResourceWhitelist:
