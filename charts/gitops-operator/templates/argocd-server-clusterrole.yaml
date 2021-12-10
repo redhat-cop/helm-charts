@@ -5,9 +5,9 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: argocd-server
-    app.kubernetes.io/name: {{ $ns }}-argocd-server
+    app.kubernetes.io/name: {{ $ns }}-gitops-argocd-server
     app.kubernetes.io/part-of: {{ $ns }}
-  name: {{ $ns }}-argocd-server
+  name: {{ $ns }}-gitops-argocd-server
 rules:
 - apiGroups:
   - '*'
