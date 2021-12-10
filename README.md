@@ -6,7 +6,7 @@ A collection of Helm Charts to that are not available in any upstream location o
 
 For charts we know work on OpenShift but do not belong here, check out the list of Charts we've used for some ideas
 
-This libary is used to support [Open Innovation Labs Ubiquitous Journey Project](https://github.com/rht-labs/ubiquitous-journey)
+This library is used to support [Open Innovation Labs Ubiquitous Journey Project](https://github.com/rht-labs/ubiquitous-journey)
 
 Additional charts for managing an OpenShift cluster can be found in [redhat-cop/openshift-management](https://github.com/redhat-cop/openshift-management/tree/master/charts)
 
@@ -49,13 +49,16 @@ ct lint charts/jenkins
 
 ## 👩‍🏫 Chart README Files
 For more info on each chart checkout these!
+* [ansible-automation-platform](/charts/ansible-automation-platform)
 * [argocd-operator](/charts/argocd-operator)
 * [bootstrap-project](/charts/bootstrap-project)
 * [dev-ex-dashboard](/charts/dev-ex-dashboard)
 * [etherpad](/charts/etherpad)
+* [gitops-operator](/charts/gitops-operator)
 * [helper-console-links](/charts/helper-console-links)
 * [helper-sealed-secrets ](/charts/helper-sealed-secrets)
 * [jenkins](/charts/jenkins)
+* [kopf](/charts/kopf)
 * [network-policy](/charts/network-policy)
 * [operatorhub](/charts/operatorhub)
 * [owncloud](/charts/owncloud)
@@ -63,5 +66,6 @@ For more info on each chart checkout these!
 * [ploigos](/charts/ploigos)
 * [sonarqube](/charts/sonarqube)
 * [sonatype-nexus](/charts/sonatype-nexus)
+* [stackrox](/charts/stackrox)
 * [static-site](/charts/static-site)
 * [tekton-demo](/charts/tekton-demo)
