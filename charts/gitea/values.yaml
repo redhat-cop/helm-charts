@@ -1,0 +1,15 @@
+# Default values for gitea.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## You MUST specify a hostname
+# hostname: gitea.apps.mycluster.openshiftapps.com
+
+## YOU MUST SPECIFY THE DB PASSWORD!!!
+# db:
+#   password: 'S00perSekretP@ssw0rd$'
+#   name: gitea-db
+#   user: gitea
+#   imagestream_name: postgresql
+#   imagestream_namespace: openshift
+#   imagestream_tag: latest
