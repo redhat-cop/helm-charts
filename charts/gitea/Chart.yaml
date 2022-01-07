@@ -23,5 +23,6 @@ version: 0.1.0
 # It is recommended to use it with quotes.
 appVersion: latest
 home: https://github.com/redhat-cop/helm-charts
+icon: https://raw.githubusercontent.com/go-gitea/gitea/ee60f27aec0f75a34ae62841ed52579c0c20dcfa/assets/logo.svg
 maintainers:
-  - infosec812
+  - name: infosec812
