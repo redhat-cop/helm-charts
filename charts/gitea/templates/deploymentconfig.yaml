@@ -3,26 +3,20 @@ kind: DeploymentConfig
 metadata:
   generation: 1
   labels:
-    app: {{ .Values.gitea.name | default 'gitea' | quote }}
+    app: {{ .Values.name | default "gitea" | quote }}
     app.kubernetes.io/part-of: gitea
     app.openshift.io/runtime: git
-  name: {{ .Values.gitea.name | default 'gitea' | quote }}
+  name: {{ .Values.name | default "gitea" | quote }}
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
-    app: {{ .Values.gitea.name | default 'gitea' | quote }}
-    deploymentconfig: {{ .Values.gitea.name | default 'gitea' | quote }}
+    app: {{ .Values.name | default "gitea" | quote }}
+    deploymentconfig: {{ .Values.name | default "gitea" | quote }}
   strategy:
     activeDeadlineSeconds: 21600
     resources: {}
-    rollingParams:
-      intervalSeconds: 1
-      maxSurge: 25%
-      maxUnavailable: 25%
-      timeoutSeconds: 600
-      updatePeriodSeconds: 1
-    type: Rolling
+    type: Recreate
   template:
     metadata:
       creationTimestamp: null
@@ -31,7 +25,7 @@ spec:
         deploymentconfig: gitea
     spec:
       containers:
-      - image: quay.io/gpte-devops-automation/gitea:latest
+      - image: ' '
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -47,16 +41,26 @@ spec:
         ports:
         - containerPort: 3000
           protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /
-            port: 3000
-            scheme: HTTP
-          initialDelaySeconds: 5
-          periodSeconds: 20
-          successThreshold: 1
-          timeoutSeconds: 1
+        # readinessProbe:
+        #   failureThreshold: 3
+        #   httpGet:
+        #     path: /
+        #     port: 3000
+        #     scheme: HTTP
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 20
+        #   successThreshold: 1
+        #   timeoutSeconds: 1
+        # livenessProbe:
+        #   failureThreshold: 3
+        #   httpGet:
+        #     path: /
+        #     port: 3000
+        #     scheme: HTTP
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 20
+        #   successThreshold: 1
+        #   timeoutSeconds: 1
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
@@ -68,14 +72,11 @@ spec:
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
-      securityContext: {}
-      serviceAccount: gitea
-      serviceAccountName: gitea
       terminationGracePeriodSeconds: 30
       volumes:
       - name: gitea-repositories
         persistentVolumeClaim:
-          claimName: {{ .Values.gitea.name | default 'gitea' | quote }}-repositories
+          claimName: "{{ .Values.name | default "gitea" }}-repositories"
       - configMap:
           defaultMode: 420
           items:
@@ -86,4 +87,13 @@ spec:
   test: false
   triggers:
   - type: ConfigChange
-status: {}
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+        - gitea
+      from:
+        kind: ImageStreamTag
+        name: '{{ .Values.imagestream_name | default "gitea" }}:{{ .Values.imagestream_tag | default "latest" }}'
+        namespace: {{ .Release.Namespace }}
+      lastTriggeredImage: ''
+    type: ImageChange

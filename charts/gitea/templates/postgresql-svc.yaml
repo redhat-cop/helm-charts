@@ -16,5 +16,3 @@ spec:
     name: {{ .Values.db.name | default "gitea-db" | quote }}
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}

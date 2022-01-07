@@ -6,9 +6,9 @@ data:
     RUN_MODE = prod
 
     [security]
-    INTERNAL_TOKEN = {{ .Values.gitea.internal_token | default randAlpha 106 | quote }}
+    INTERNAL_TOKEN = {{ .Values.internal_token | default (randAlpha 106) | quote }}
     INSTALL_LOCK   = true
-    SECRET_KEY     = {{ .Values.gitea.secret_key | default randAlpha 8 | quote }}
+    SECRET_KEY     = {{ .Values.secret_key | default (randAlpha 8) | quote }}
     PASSWORD_COMPLEXITY = off
 
     [oauth2]
@@ -16,19 +16,19 @@ data:
 
     [database]
     DB_TYPE  = postgres
-    HOST     = {{ .Values.gitea.name | default 'gitea' | quote }}-postgresql:5432
-    NAME     = {{ .Values.gitea.db.name | default 'gitea' | quote }}
-    USER     = {{ .Values.gitea.db.user | default 'gitea' | quote }}
-    PASSWD   = {{ .Values.gitea.db.password | default 'gitea' | quote }}
+    HOST     = {{ .Values.db.name | default "gitea-db" }}:5432
+    NAME     = {{ .Values.db.name | default "gitea-db" }}
+    USER     = {{ .Values.db.user | default "gitea" }}
+    PASSWD   = {{ .Values.db.password | default "gitea" }}
     SSL_MODE = disable
 
     [repository]
     ROOT = /gitea-repositories
 
     [server]
-    ROOT_URL         = {{ required "You MUST specify the public-facing hostname" .Values.gitea.hostname }}
-    SSH_DOMAIN       = {{ .Values.gitea.hostname }}
-    DOMAIN           = {{ .Values.gitea.hostname }}
+    ROOT_URL         = https://{{ required "You MUST specify the public-facing hostname" .Values.hostname }}/
+    SSH_DOMAIN       = {{ .Values.hostname }}
+    DOMAIN           = {{ .Values.hostname }}
     HTTP_PORT        = 3000
     SSH_PORT         = 2022
     DISABLE_SSH      = true
@@ -74,6 +74,5 @@ data:
 kind: ConfigMap
 metadata:
   name: gitea-config
-  namespace: clms-devops
   labels:
-    app: {{ .Values.gitea.name | default 'gitea' | quote }}
+    app: {{ .Values.name | default "gitea" | quote }}

@@ -4,8 +4,8 @@ metadata:
   annotations:
     description: The Gitea server's http port
   labels:
-    app: {{ .Values.gitea.name | default 'gitea' | quote }}
-  name: {{ .Values.gitea.name | default 'gitea' | quote }}
+    app: {{ .Values.name | default "gitea" | quote }}
+  name: {{ .Values.name | default "gitea" | quote }}
 spec:
   ports:
   - name: 3000-tcp
@@ -13,8 +13,8 @@ spec:
     protocol: TCP
     targetPort: 3000
   selector:
-    app: {{ .Values.gitea.name | default 'gitea' | quote }}
-    deploymentconfig: {{ .Values.gitea.name | default 'gitea' | quote }}
+    app: {{ .Values.name | default "gitea" | quote }}
+    deploymentconfig: {{ .Values.name | default "gitea" | quote }}
   sessionAffinity: None
   type: ClusterIP
-status: {}
+

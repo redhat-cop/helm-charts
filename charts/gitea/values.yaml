@@ -5,8 +5,18 @@
 ## You MUST specify a hostname
 # hostname: gitea.apps.mycluster.openshiftapps.com
 
+## Override where the gitea container image is pulling from
+# imagestream_from: quay.io/gpte-devops-automation/gitea:latest
+# imagestream_name: gitea
+# imagestring_tag: latest
+
+# repository_size: 1Gi
+
+# secret_key: '8 character hard to guess alpha string'
+# internal_token: '106 character hard to guess string'
+
 ## YOU MUST SPECIFY THE DB PASSWORD!!!
-# db:
+db: {}
 #   password: 'S00perSekretP@ssw0rd$'
 #   name: gitea-db
 #   user: gitea

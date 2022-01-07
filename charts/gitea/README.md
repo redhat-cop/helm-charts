@@ -27,9 +27,12 @@ helm delete gitea
 | Parameter               | Description                               | Default Value    | Required?
 |-------------------------|-------------------------------------------|------------------|----------
 | hostname                | The public-facing FQDN for the web app    | NONE             | Yes
+| internal_token          | A 106 char token key                      | Randomly Generated | No
+| secret_key              | Secret Key                                | Randomly Generated | No
 | db.password             | The password to configure in the PostgreSQL DB | NONE        | Yes
 | db.name                 | The name of the DB resources to be created| gitea-db         | No
 | db.user                 | DB Username                               | gitea            | No
+| db.memory_limit         | The memory limit for the DB               | 512Mi            | No
 | db.imagestream_name     | The name of the imagestream container     | postgresql       | No
 | db.imagestream_namespace| The name of the imagestream namespace     | openshift        | No
 | db.imagestream_tag      | The imagestream version tag               | latest           | No

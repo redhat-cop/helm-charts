@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   annotations:
@@ -18,7 +18,7 @@ spec:
       containers:
         - resources:
             limits:
-              memory: '${MEMORY_LIMIT}'
+              memory: {{ .Values.db.memory_limit | default "512Mi" }}
           readinessProbe:
             exec:
               command:
@@ -50,9 +50,6 @@ spec:
                 secretKeyRef:
                   key: database-name
                   name: {{ .Values.db.name | default "gitea-db" | quote }}
-          securityContext:
-            capabilities: {}
-            privileged: false
           ports:
             - containerPort: 5432
               protocol: TCP
@@ -60,7 +57,6 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/pgsql/data
               name: {{ .Values.db.name | default "gitea-db" | quote }}
-          capabilities: {}
           image: ' '
       dnsPolicy: ClusterFirst
       restartPolicy: Always
@@ -80,4 +76,3 @@ spec:
         lastTriggeredImage: ''
       type: ImageChange
     - type: ConfigChange
-status: {}

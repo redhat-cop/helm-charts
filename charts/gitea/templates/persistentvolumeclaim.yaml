@@ -2,12 +2,11 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    app: {{ .Values.gitea.name | default 'gitea' | quote }}
-  name: {{ .Values.gitea.name | default 'gitea' | quote }}-repositories
+    app: {{ .Values.name | default "gitea" | quote }}
+  name: "{{ .Values.name | default "gitea" }}-repositories"
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.gitea.repository_pvc | default "5Gi" | quote }}
-status: {}
+      storage: {{ .Values.repository_size | default "5Gi" | quote }}

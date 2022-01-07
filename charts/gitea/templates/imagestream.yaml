@@ -13,13 +13,12 @@ spec:
     local: false
   tags:
   - annotations:
-      openshift.io/imported-from: quay.io/gpte-devops-automation/gitea:latest
+      openshift.io/imported-from: {{ .Values.imagestream_from | default "quay.io/gpte-devops-automation/gitea:latest" | quote }}
     from:
       kind: DockerImage
-      name: quay.io/gpte-devops-automation/gitea:latest
+      name: {{ .Values.imagestream_from | default "quay.io/gpte-devops-automation/gitea:latest" | quote }}
     generation: 2
     importPolicy: {}
     name: latest
     referencePolicy:
       type: Local
-status: {}
