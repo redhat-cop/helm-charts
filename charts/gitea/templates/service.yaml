@@ -17,4 +17,3 @@ spec:
     deploymentconfig: {{ .Values.name | default "gitea" | quote }}
   sessionAffinity: None
   type: ClusterIP
-
