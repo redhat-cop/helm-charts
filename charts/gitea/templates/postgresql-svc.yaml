@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
+  {{ template "app.labels" }}
   annotations:
     template.openshift.io/expose-uri: >-
       postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}

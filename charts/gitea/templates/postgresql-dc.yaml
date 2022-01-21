@@ -3,6 +3,7 @@ kind: DeploymentConfig
 metadata:
   annotations:
     template.alpha.openshift.io/wait-for-ready: 'true'
+  {{ template "app.labels" }}
   name: {{ .Values.db.name | default "gitea-db" | quote }}
 spec:
   replicas: 1

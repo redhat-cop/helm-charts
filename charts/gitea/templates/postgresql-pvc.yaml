@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  {{ template "app.labels" }}
   name: {{ .Values.db.name | default "gitea-db" | quote }}
 spec:
   accessModes:

@@ -16,9 +16,9 @@ data:
 
     [database]
     DB_TYPE  = postgres
-    HOST     = {{ .Values.db.name | default "gitea-db" }}:5432
-    NAME     = {{ .Values.db.name | default "gitea-db" }}
-    USER     = {{ .Values.db.user | default "gitea" }}
+    HOST     = {{- template "db.name" -}}:{{ db.port | default "5432" }}
+    NAME     = {{ .Values.db.name | default template "app.name" }}
+    USER     = {{ .Values.db.user | default template "app.name" }}
     PASSWD   = {{ .Values.db.password | default "gitea" }}
     SSL_MODE = disable
 
@@ -74,5 +74,4 @@ data:
 kind: ConfigMap
 metadata:
   name: gitea-config
-  labels:
-    app: {{ .Values.name | default "gitea" | quote }}
+  {{ template "app.labels" }}
