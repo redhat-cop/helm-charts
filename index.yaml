@@ -1034,6 +1034,21 @@ entries:
     urls:
     - https://github.com/rht-labs/helm-charts/releases/download/etherpad-0.0.1/etherpad-0.0.1.tgz
     version: 0.0.1
+  gitea:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2022-02-01T12:23:30.629530657Z"
+    description: A Helm chart for Kubernetes
+    digest: c77cf204aeddd274c3b627c8e4cf1a311c60c47b4599ba1a68cc0ddca2ac5c06
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/go-gitea/gitea/ee60f27aec0f75a34ae62841ed52579c0c20dcfa/assets/logo.svg
+    maintainers:
+    - name: infosec812
+    name: gitea
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/gitea-0.1.0/gitea-0.1.0.tgz
+    version: 0.1.0
   gitops-operator:
   - apiVersion: v2
     appVersion: v2.2.3
@@ -2752,4 +2767,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-01-24T09:33:11.199366797Z"
+generated: "2022-02-01T12:23:30.630855173Z"
