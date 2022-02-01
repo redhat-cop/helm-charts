@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  {{ template "app.labels" }}
+  name: "{{ template "app.name" }}-repositories"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.repository_size | default "5Gi" | quote }}

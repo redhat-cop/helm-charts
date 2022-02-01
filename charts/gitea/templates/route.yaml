@@ -1,0 +1,14 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    description: Gitea's HTTP route
+  {{ template "app.labels" }}
+  name: {{ template "app.name" }}
+spec:
+  host: {{ required "You MUST specify the external hostname to be used for the public-facing web page" .Values.hostname }}
+  to:
+    kind: Service
+    name: {{ template "app.name" }}
+    weight: 100
+  wildcardPolicy: None
