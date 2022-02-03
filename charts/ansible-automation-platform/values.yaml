@@ -11,7 +11,7 @@ namespace: ansible-automation-platform
 
 # Subscription and OperatorGroup
 operator:
-  version: ansible-automation-platform-operator.v2.0.0
+  version: aap-operator.v2.0.1-0.1635279521
   channel: early-access
   installPlanApproval: Automatic
   name: ansible-automation-platform-operator
