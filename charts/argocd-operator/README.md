@@ -1,5 +1,7 @@
 # ⚓️ ArgoCD Operator Helm Deploy
 
+> :warning: **DEPRECATED**: This chart is no longer maintained. You can use the functionally equivalent [gitops-operator](https://github.com/redhat-cop/helm-charts/tree/master/charts/gitops-operator) chart instead.
+
 ArgoCD Helm Chart customises and deploys the [ArgoCD](https://argoproj.github.io/argo-cd/getting_started/) project using the [Operator](https://argocd-operator.readthedocs.io/en/latest/) written by Red Hat.
 
 ## Installing the chart
