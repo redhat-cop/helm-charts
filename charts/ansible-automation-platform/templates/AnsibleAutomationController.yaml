@@ -30,16 +30,22 @@ spec:
   {{- if .Values.automationController.admin_password }}
   admin_password_secret: "ansible-automation-controller-custom-admin-password"
   {{- end }}
+  {{- if .Values.automationController.web_resource_requirements }}
   web_resource_requirements:
   {{- with .Values.automationController.web_resource_requirements }}
   {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- end }}
+  {{- if .Values.automationController.task_resource_requirements }}
   task_resource_requirements:
   {{- with .Values.automationController.task_resource_requirements }}
   {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- end }}
+  {{- if .Values.automationController.ee_resource_requirements }}
   ee_resource_requirements:
   {{- with .Values.automationController.ee_resource_requirements }}
   {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- end }}
 {{- end }}
