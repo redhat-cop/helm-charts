@@ -4,6 +4,7 @@ on:
   pull_request:
     paths-ignore:
       - '.github/**'
+      - 'README.md'
 jobs:
   lint-test:
     runs-on: ubuntu-latest

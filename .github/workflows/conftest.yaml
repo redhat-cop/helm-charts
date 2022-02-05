@@ -4,9 +4,11 @@ on:
   push:
     paths-ignore:
       - '.github/**'
+      - 'README.md'
   pull_request:
     paths-ignore:
       - '.github/**'
+      - 'README.md'
 
 jobs:
   conftest:
