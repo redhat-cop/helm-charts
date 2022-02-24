@@ -24,6 +24,8 @@ spec:
     connectivityPolicy: Online
   scanner:
     analyzer:
+      resources:
+      {{- .Values.stackrox.analyzer.resources | toYaml | nindent 8 }}
       scaling:
         autoScaling: Enabled
         maxReplicas: 5

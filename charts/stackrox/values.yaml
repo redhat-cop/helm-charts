@@ -5,3 +5,9 @@ verbose: false
 stackrox:
   clusterName: do500
   namespace: stackrox
+  analyzer:
+    resources:
+      limits:
+        cpu: 500m
+      requests:
+        cpu: 100m
