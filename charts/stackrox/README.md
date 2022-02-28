@@ -2,7 +2,7 @@
 
 Installs the ACS/Stackrox Operator, configures a Central instance and a SecuredCluster. Uses a Job for initialization work. Set `--set verbose=true` to see verbose job logs.
 ```bash
-helm upgrade --install stackrox . --namespace do500 --debug
+helm upgrade --install stackrox . --namespace tl500 --debug
 ```
 
 You can watch the logs of the init job:
