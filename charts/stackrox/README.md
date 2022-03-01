@@ -20,5 +20,5 @@ echo $(oc -n stackrox get secret central-htpasswd -o go-template='{{index .data 
 
 Stores the Admin API Token created whilst creating the SecuredCluster in a secret for later use
 ```bash
-ROX_API_TOKEN=$(oc -n stackrox get secret rox-api-token-do500 -o go-template='{{index .data "token" | base64decode}}')
+ROX_API_TOKEN=$(oc -n stackrox get secret rox-api-token-tl500 -o go-template='{{index .data "token" | base64decode}}')
 ```
