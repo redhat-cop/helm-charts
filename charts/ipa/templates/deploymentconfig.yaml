@@ -1,3 +1,4 @@
+---
 kind: DeploymentConfig
 apiVersion: apps.openshift.io/v1 
 metadata:
@@ -58,7 +59,7 @@ spec:
           protocol: TCP
         env:
         - name: IPA_SERVER_HOSTNAME
-          value: {{ .Values.hostname }}
+          value: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.{{ .Values.app_domain }}
         - name: IPA_SERVER_IP
           value: ""
         - name: IPA_SERVER_INSTALL_OPTS

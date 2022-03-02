@@ -13,21 +13,21 @@ spec:
       tags: freeipa, identity management
     from:
       kind: ImageStreamTag
-      name: fedora-33
-  - name: fedora-33
+      name: fedora-35
+  - name: fedora-35
     annotations:
-      openshift.io/display-name: FreeIPA Server on Fedora 33
+      openshift.io/display-name: FreeIPA Server on Fedora 35
       tags: freeipa, identity management
     from:
       kind: DockerImage
-      name: freeipa/freeipa-server:fedora-33
-  - name: fedora-32
+      name: freeipa/freeipa-server:fedora-35
+  - name: fedora-34
     annotations:
-      openshift.io/display-name: FreeIPA Server on Fedora 32
+      openshift.io/display-name: FreeIPA Server on Fedora 34
       tags: freeipa, identity management
     from:
       kind: DockerImage
-      name: freeipa/freeipa-server:fedora-32
+      name: freeipa/freeipa-server:fedora-34
   - name: fedora-rawhide
     annotations:
       openshift.io/display-name: FreeIPA Server on Fedora rawhide
@@ -35,13 +35,13 @@ spec:
     from:
       kind: DockerImage
       name: freeipa/freeipa-server:fedora-rawhide
-  - name: centos-8
+  - name: centos-8-stream
     annotations:
-      openshift.io/display-name: FreeIPA Server on CentOS 8
+      openshift.io/display-name: FreeIPA Server on CentOS 8 Stream
       tags: freeipa, identity management
     from:
       kind: DockerImage
-      name: freeipa/freeipa-server:centos-8
+      name: freeipa/freeipa-server:centos-8-stream
   - name: centos-7
     annotations:
       openshift.io/display-name: FreeIPA Server on CentOS 7

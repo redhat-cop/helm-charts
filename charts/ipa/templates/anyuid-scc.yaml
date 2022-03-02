@@ -12,4 +12,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name:  {{ include "ipa.fullname" . }}-user
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "ipa.namespace" . }}
