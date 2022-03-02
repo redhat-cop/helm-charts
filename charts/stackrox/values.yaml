@@ -3,5 +3,11 @@ verbose: false
 
 # stackrox configuration
 stackrox:
-  clusterName: do500
+  clusterName: tl500
   namespace: stackrox
+  analyzer:
+    resources:
+      limits:
+        cpu: 500m
+      requests:
+        cpu: 100m

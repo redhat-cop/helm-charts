@@ -1,12 +1,12 @@
 apiVersion: v2
-appVersion: 3.36.0
+appVersion: 3.37.3
 description: Sonatype Nexus is an open source repository manager
 home: https://github.com/redhat-cop/helm-charts
 name: sonatype-nexus
 sources:
 - https://github.com/sonatype/nexus-public
 icon: https://help.sonatype.com/docs/files/331022/34537964/3/1564671303641/NexusRepo_Icon.png
-version: 1.1.2
+version: 1.1.3
 maintainers:
   - name: eformat
   - name: ckavili

@@ -1,0 +1,19 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  {{ template "app.labels" }}
+  name: gitea
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - annotations:
+      openshift.io/imported-from: {{ .Values.imagestream_from | default "quay.io/gpte-devops-automation/gitea:latest" | quote }}
+    from:
+      kind: DockerImage
+      name: {{ .Values.imagestream_from | default "quay.io/gpte-devops-automation/gitea:latest" | quote }}
+    generation: 2
+    importPolicy: {}
+    name: latest
+    referencePolicy:
+      type: Local

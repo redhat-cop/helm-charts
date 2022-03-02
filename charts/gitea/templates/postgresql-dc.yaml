@@ -1,0 +1,79 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    template.alpha.openshift.io/wait-for-ready: 'true'
+  {{ template "app.labels" }}
+  name: {{ .Values.db.name | default "gitea-db" | quote }}
+spec:
+  replicas: 1
+  selector:
+    name: {{ .Values.db.name | default "gitea-db" | quote }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: {{ .Values.db.name | default "gitea-db" | quote }}
+    spec:
+      containers:
+        - resources:
+            limits:
+              memory: {{ .Values.db.memory_limit | default "512Mi" }}
+          readinessProbe:
+            exec:
+              command:
+                - /usr/libexec/check-container
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          name: postgresql
+          livenessProbe:
+            exec:
+              command:
+                - /usr/libexec/check-container
+                - '--live'
+            initialDelaySeconds: 120
+            timeoutSeconds: 10
+          env:
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: {{ .Values.db.name | default "gitea-db" | quote }}
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: {{ .Values.db.name | default "gitea-db" | quote }}
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: {{ .Values.db.name | default "gitea-db" | quote }}
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /var/lib/pgsql/data
+              name: {{ .Values.db.name | default "gitea-db" | quote }}
+          image: ' '
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+        - name: {{ .Values.db.name | default "gitea-db" | quote }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.db.name | default "gitea-db" | quote }}
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - postgresql
+        from:
+          kind: ImageStreamTag
+          name: '{{ .Values.db.imagestream_name | default "postgresql" }}:{{ .Values.db.imagestream_tag | default "latest" }}'
+          namespace: {{ .Values.db.imagestream_namespace | default "openshift" }}
+        lastTriggeredImage: ''
+      type: ImageChange
+    - type: ConfigChange

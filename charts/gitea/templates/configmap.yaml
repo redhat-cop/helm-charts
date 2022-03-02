@@ -1,0 +1,77 @@
+apiVersion: v1
+data:
+  app.ini: |
+    APP_NAME = Gitea: Git with a cup of tea
+    RUN_USER = gitea
+    RUN_MODE = prod
+
+    [security]
+    INTERNAL_TOKEN = {{ .Values.internal_token | default (randAlpha 106) | quote }}
+    INSTALL_LOCK   = true
+    SECRET_KEY     = {{ .Values.secret_key | default (randAlpha 8) | quote }}
+    PASSWORD_COMPLEXITY = off
+
+    [oauth2]
+    ENABLE = false
+
+    [database]
+    DB_TYPE  = postgres
+    HOST     = {{ .Values.db.name | default "gitea-db" }}:{{ .Values.db.port | default "5432" }}
+    NAME     = {{ .Values.db.name | default "gitea-db" }}
+    USER     = {{ .Values.db.user | default "gitea" }}
+    PASSWD   = {{ .Values.db.password | default "gitea" }}
+    SSL_MODE = disable
+
+    [repository]
+    ROOT = /gitea-repositories
+
+    [server]
+    ROOT_URL         = https://{{ required "You MUST specify the public-facing hostname" .Values.hostname }}/
+    SSH_DOMAIN       = {{ .Values.hostname }}
+    DOMAIN           = {{ .Values.hostname }}
+    HTTP_PORT        = 3000
+    SSH_PORT         = 2022
+    DISABLE_SSH      = true
+    START_SSH_SERVER = false
+    LFS_START_SERVER = false
+    OFFLINE_MODE     = false
+
+    [mailer]
+    ENABLED = false
+
+    [service]
+    REGISTER_EMAIL_CONFIRM            = false
+    ENABLE_NOTIFY_MAIL                = false
+    DISABLE_REGISTRATION              = false
+    ENABLE_CAPTCHA                    = false
+    REQUIRE_SIGNIN_VIEW               = false
+    DEFAULT_KEEP_EMAIL_PRIVATE        = false
+    DEFAULT_ALLOW_CREATE_ORGANIZATION = true
+    DEFAULT_ENABLE_TIMETRACKING       = true
+    NO_REPLY_ADDRESS                  = noreply.example.org
+
+    [picture]
+    DISABLE_GRAVATAR        = false
+    ENABLE_FEDERATED_AVATAR = true
+
+    [openid]
+    ENABLE_OPENID_SIGNIN = false
+    ENABLE_OPENID_SIGNUP = false
+
+    [session]
+    PROVIDER = file
+
+    [log]
+    MODE      = file
+    LEVEL     = Info
+    ROOT_PATH = /home/gitea/log
+
+    [markup.asciidoc]
+    ENABLED = true
+    FILE_EXTENSIONS = .adoc,.asciidoc
+    RENDER_COMMAND = "asciidoc --out-file=- -"
+    IS_INPUT_FILE = false
+kind: ConfigMap
+metadata:
+  name: gitea-config
+  {{ template "app.labels" }}

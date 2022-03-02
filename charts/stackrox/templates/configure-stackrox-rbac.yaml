@@ -66,6 +66,7 @@ rules:
       - "platform.stackrox.io"
     resources:
       - "securedclusters"
+      - "centrals"
     verbs:
       - get
       - list

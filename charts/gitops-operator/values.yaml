@@ -1,0 +1,71 @@
+---
+# name of instances
+name: argocd
+
+# this is for argo type deployments of this chart (set to true)
+ignoreHelmHooks: false
+
+# add to this list to deploy team instances to these namespaces
+namespaces:
+- labs-ci-cd
+
+# operator manages upgrades
+operator:
+  version: openshift-gitops-operator.v1.4.1
+  channel: stable
+  installPlanApproval: Automatic
+  name: openshift-gitops-operator
+  disableDefaultArgoCD: true
+
+# adding your secrets for git access or other repository credentials
+secrets: []
+# EXAMPLE ...
+# secrets:
+#   - name: git-auth
+#     username: 'user'
+#     password: 'pass1234'
+#     sshPrivateKey: ''
+
+# https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
+argocd_cr:
+  version: v2.2.5
+  rbac:
+    defaultPolicy: 'role:admin'
+    policy: |
+      g, system:cluster-admins, role:admin
+    scopes: '[groups]'
+  resourceExclusions: |
+    - apiGroups:
+        - tekton.dev
+      clusters:
+        - '*'
+      kinds:
+        - TaskRun
+        - PipelineRun
+  server:
+    route:
+      enabled: true
+      tls:
+        termination: reencrypt
+  dex:
+    openShiftOAuth: true
+
+  initialRepositories: |
+    - name: ubiquitous-journey
+      url: https://github.com/rht-labs/ubiquitous-journey.git
+    - name: redhat-cop
+      type: helm
+      url: https://redhat-cop.github.io/helm-charts
+
+  # configure your repo credential template (override this)
+  repositoryCredentials: null
+  # EXAMPLE
+  # repositoryCredentials: |
+  #   - url: https://gitlab-ce.apps.openshift-498-bd8hw.do500.redhatlabs.dev
+  #     type: git
+  #     passwordSecret:
+  #       key: password
+  #       name: git-auth
+  #     usernameSecret:
+  #       key: username
+  #       name: git-auth

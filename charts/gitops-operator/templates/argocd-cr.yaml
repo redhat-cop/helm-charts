@@ -1,0 +1,43 @@
+{{- if .Values.namespaces }}
+{{- range $ns := .Values.namespaces }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: {{ $.Values.name }}
+  labels:
+    app: {{ $.Values.name }}
+  {{- if not $.Values.ignoreHelmHooks }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "25"
+  {{- end }}
+  namespace: {{ $ns }}
+spec:
+  applicationInstanceLabelKey: rht-gitops.com/{{ $ns }}
+  {{- if $.Values.argocd_cr }}
+  {{- $.Values.argocd_cr | toYaml | trim | nindent 2 }}
+  {{- end }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: default
+  {{- if not $.Values.ignoreHelmHooks }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "25"
+  {{- end }}
+  namespace: {{ $ns }}
+spec:
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  destinations:
+    - namespace: '*'
+      server: '*'
+  sourceRepos:
+    - '*'
+status: {}
+{{- end }}
+{{- end }}

@@ -1,0 +1,10 @@
+apiVersion: v2
+appVersion: v2.2.5
+description: A Helm chart for customising the deployment of the Red Hat GitOps Operator 🔫
+name: gitops-operator
+version: 0.2.4
+home: https://github.com/redhat-cop/helm-charts
+icon: https://raw.githubusercontent.com/eformat/openshift-gitops/main/rh-gitops.png
+maintainers:
+- name: eformat
+- name: springdo

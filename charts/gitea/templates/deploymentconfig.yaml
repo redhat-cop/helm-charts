@@ -1,0 +1,96 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  generation: 1
+  {{ template "app.labels" }}
+  name: {{ template "app.name" }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: {{ template "app.name" }}
+    deploymentconfig: {{ template "app.name" }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: gitea
+        deploymentconfig: gitea
+    spec:
+      containers:
+      - image: ' '
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: gitea
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 1
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /gitea-repositories
+          name: gitea-repositories
+        - mountPath: /home/gitea/conf
+          name: gitea-config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: gitea-repositories
+        persistentVolumeClaim:
+          claimName: "{{ .Release.Name | default "gitea" }}-repositories"
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: app.ini
+            path: app.ini
+          name: gitea-config
+        name: gitea-config
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+        - gitea
+      from:
+        kind: ImageStreamTag
+        name: '{{ .Values.imagestream_name | default "gitea" }}:{{ .Values.imagestream_tag | default "latest" }}'
+        namespace: {{ .Release.Namespace }}
+      lastTriggeredImage: ''
+    type: ImageChange

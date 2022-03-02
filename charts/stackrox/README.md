@@ -2,7 +2,7 @@
 
 Installs the ACS/Stackrox Operator, configures a Central instance and a SecuredCluster. Uses a Job for initialization work. Set `--set verbose=true` to see verbose job logs.
 ```bash
-helm upgrade --install stackrox . --namespace do500 --debug
+helm upgrade --install stackrox . --namespace tl500 --debug
 ```
 
 You can watch the logs of the init job:
@@ -20,5 +20,5 @@ echo $(oc -n stackrox get secret central-htpasswd -o go-template='{{index .data 
 
 Stores the Admin API Token created whilst creating the SecuredCluster in a secret for later use
 ```bash
-ROX_API_TOKEN=$(oc -n stackrox get secret rox-api-token-do500 -o go-template='{{index .data "token" | base64decode}}')
+ROX_API_TOKEN=$(oc -n stackrox get secret rox-api-token-tl500 -o go-template='{{index .data "token" | base64decode}}')
 ```

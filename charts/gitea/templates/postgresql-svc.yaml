@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  {{ template "app.labels" }}
+  annotations:
+    template.openshift.io/expose-uri: >-
+      postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
+  name: {{ .Values.db.name | default "gitea-db" | quote }}
+spec:
+  ports:
+    - name: postgresql
+      nodePort: 0
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    name: {{ .Values.db.name | default "gitea-db" | quote }}
+  sessionAffinity: None
+  type: ClusterIP

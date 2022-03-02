@@ -4,18 +4,19 @@ on:
   pull_request:
     paths-ignore:
       - '.github/**'
+      - 'README.md'
 jobs:
   lint-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       - name: Fetch history
         run: git fetch --prune --unshallow
       
       - name: Set up Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v2.0
         with:
           version: v3.5.1
 
@@ -25,7 +26,7 @@ jobs:
 
       - name: Run chart-testing (lint)
         id: lint
-        uses: helm/chart-testing-action@v2.1.0
+        uses: helm/chart-testing-action@v2.2.0
       
       - name: Run chart-testing (list-changed)
         id: list-changed
@@ -46,7 +47,7 @@ jobs:
       #   if: steps.lint.outputs.changed == 'true'
 
       # - name: Run chart-testing (install)
-      #   uses: helm/chart-testing-action@v2.1.0
+      #   uses: helm/chart-testing-action@v2.2.0
       #   with:
       #     command: install
       #     config: ct.yaml
