@@ -1330,23 +1330,23 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/helper-sealed-secrets-1.0.0/helper-sealed-secrets-1.0.0.tgz
     version: 1.0.0
-  ipa:
+  jenkins:
   - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2022-03-03T21:51:20.469799292Z"
-    description: A Helm chart for Kubernetes
-    digest: 28ba6892cf5532710afe7d9eaf9482c8a77f19fbd1ad49621cf4f33c0b587050
+    appVersion: v2.222.1
+    created: "2022-03-03T21:53:21.236312329Z"
+    description: A Helm chart for deploying Jenkins on OpenShift with some additional
+      build agents and plugins
+    digest: eb02dcfbf7219a8e9744cba5ef1c70f0604316e4bbf7dad358a18fc07d8036b0
     home: https://github.com/redhat-cop/helm-charts
-    icon: https://www.freeipa.org/images/freeipa/freeipa-logo-small.png
+    icon: https://www.jenkins.io/images/logos/jenkins/256.png
     maintainers:
     - name: springdo
     - name: ckavili
     - name: eformat
-    name: ipa
+    name: jenkins
     urls:
-    - https://github.com/redhat-cop/helm-charts/releases/download/ipa-1.0.0/ipa-1.0.0.tgz
-    version: 1.0.0
-  jenkins:
+    - https://github.com/redhat-cop/helm-charts/releases/download/jenkins-1.0.7/jenkins-1.0.7.tgz
+    version: 1.0.7
   - apiVersion: v2
     appVersion: v2.222.1
     created: "2021-08-31T07:30:10.414445085Z"
@@ -2839,4 +2839,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-03-03T21:51:20.470675855Z"
+generated: "2022-03-03T21:53:21.237301085Z"
