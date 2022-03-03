@@ -1,6 +1,6 @@
 ---
 kind: DeploymentConfig
-apiVersion: apps.openshift.io/v1 
+apiVersion: apps.openshift.io/v1
 metadata:
   name: {{ include "ipa.fullname" . }}
   labels:
@@ -63,7 +63,7 @@ spec:
         - name: IPA_SERVER_IP
           value: ""
         - name: IPA_SERVER_INSTALL_OPTS
-          value: {{ .Values.install_opts }} {{ .Values.realm }} 
+          value: {{ .Values.install_opts }} {{ .Values.realm }}
         - name: PASSWORD
           valueFrom:
             secretKeyRef:
