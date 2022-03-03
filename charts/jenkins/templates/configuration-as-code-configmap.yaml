@@ -2,7 +2,7 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: jenkin{{ .Values.configAsCode.configMap }}
+  name: {{ .Values.configAsCode.configMap }}
 data:
   JCasC.yaml: |
 {{- .Values.configAsCode.body | nindent 4 }}
