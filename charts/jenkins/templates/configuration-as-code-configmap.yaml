@@ -1,0 +1,9 @@
+{{- if .Values.configAsCode }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.configAsCode.configMap }}
+data:
+  JCasC.yaml: |
+{{- .Values.configAsCode.body | nindent 4 }}
+{{- end }}
