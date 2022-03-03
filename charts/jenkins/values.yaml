@@ -145,12 +145,11 @@ buildconfigs:
 #             }
 #             orphanedItemStrategy {
 #               discardOldItems {
-#                 // Set to 0 to autoprune jobs once branch is deleted 
+#                 // Set to 0 to autoprune jobs once branch is deleted
 #                 numToKeep(0)
 #               }
 #             }
 #           }
-
 #           queue('clms-fe')
 #       - script: |
 #           multibranchPipelineJob('clms-api') {
@@ -186,12 +185,11 @@ buildconfigs:
 #             }
 #             orphanedItemStrategy {
 #               discardOldItems {
-#                 // Set to 0 to autoprune jobs once branch is deleted 
+#                 // Set to 0 to autoprune jobs once branch is deleted
 #                 numToKeep(0)
 #               }
 #             }
 #           }
-
 #           queue('clms-fe')
 #     unclassified:
 #       giteaServers:
