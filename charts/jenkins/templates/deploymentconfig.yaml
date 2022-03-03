@@ -45,6 +45,10 @@ spec:
           value: 'false'
         - name: JENKINS_OPTS
           value: '--sessionTimeout=180'
+        {{- if .Values.configAsCode }}
+        - name: CASC_JENKINS_CONFIG
+          value: /var/lib/jenkins/config-as-code
+        {{- end }}
         {{- range $key := .Values.deployment.env_vars }}
         {{- if .value }}
         - name: {{ .name }}
@@ -82,18 +86,33 @@ spec:
           capabilities: {}
           privileged: false
         terminationMessagePath: /dev/termination-log
-        {{- if .Values.persistence }}
+        {{- if or (.Values.persistence) (.Values.configAsCode) }}
         volumeMounts:
+        {{- end }}
+        {{- if .Values.persistence }}
         - mountPath: /var/lib/jenkins
-          name: {{ .Values.appName }}-data {{ end }}
+          name: {{ .Values.appName }}-data
+        {{- end }}
+        {{- if .Values.configAsCode }}
+        - mountPath: /var/lib/jenkins/config-as-code
+          name: config-as-code
+        {{- end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       serviceAccountName: {{ .Values.appName }}
-      {{- if .Values.persistence }}
+      {{- if or (.Values.persistence) (.Values.configAsCode) }}
       volumes:
+      {{- end }}
+      {{- if .Values.persistence }}
       - name: {{ .Values.appName }}-data
         persistentVolumeClaim:
           claimName: {{ .Values.appName }}
+      {{- end }}
+      {{- if .Values.configAsCode }}
+      - name: config-as-code
+        configMap:
+          name: {{ .Values.configAsCode.configMap }}
+          defaultMode: 420
       {{- end }}
   triggers:
   - imageChangeParams:
