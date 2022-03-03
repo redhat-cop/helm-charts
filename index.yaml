@@ -1330,6 +1330,22 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/helper-sealed-secrets-1.0.0/helper-sealed-secrets-1.0.0.tgz
     version: 1.0.0
+  ipa:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-03-03T21:51:20.469799292Z"
+    description: A Helm chart for Kubernetes
+    digest: 28ba6892cf5532710afe7d9eaf9482c8a77f19fbd1ad49621cf4f33c0b587050
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.freeipa.org/images/freeipa/freeipa-logo-small.png
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: ipa
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/ipa-1.0.0/ipa-1.0.0.tgz
+    version: 1.0.0
   jenkins:
   - apiVersion: v2
     appVersion: v2.222.1
@@ -2823,4 +2839,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-03-01T08:02:05.067339533Z"
+generated: "2022-03-03T21:51:20.470675855Z"
