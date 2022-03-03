@@ -105,7 +105,6 @@ buildconfigs:
 ##
 ## The example below shows how to automatically seed multibranch pipelines using the Gitea
 ## plugins and JobDSL.
-
 # configAsCode:
 #   configMap: jenkins-configuration-as-code
 #   body: |
