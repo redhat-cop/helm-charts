@@ -1,0 +1,26 @@
+# IPA Server must know it's own hostname to work properly....
+# These values will probs need to be overwritten or could use lookup function?
+app_domain: apps.openshift-410-kwlrb.demo.redhatlabs.dev
+admin_password: Passw0rd
+realm: "-r REDHATLABS.DEV"
+
+# sensible defaults
+image: freeipa-server:rhel-7
+install_opts: "-U --setup-dns --no-forwarders --no-ntp"
+container_args: "ipa-server-install"
+volume: 1Gi
+
+# this can be used if not using helm install to set the correct ns
+# namespaceOverride: ipa
+
+# this example is using the ldap admin user and password as the bind creds
+# and expects a group in ldap called `tl500-users`
+# disabled by default so as to not overwrite existing oauth configs in openshift-config ns
+ocp_auth:
+  enabled: false
+  bind_dn: "uid=admin,cn=users,cn=accounts,dc=REDHATLABS,dc=DEV"
+  bind_password: Passw0rd
+  base: "cn=tl500-users,cn=groups,cn=accounts,dc=REDHATLABS,dc=DEV"
+
+machineconfig:
+  ignition_version: 3.1.0

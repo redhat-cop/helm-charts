@@ -1,0 +1,18 @@
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ include "ipa.fullname" . }}
+  labels:
+    {{- include "ipa.labels" . | nindent 4 }}
+  annotations:
+    description: Route for FreeIPA server's HTTPS
+spec:
+  host: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.{{ .Values.app_domain }}
+  to:
+    kind: Service
+    name: {{ include "ipa.fullname" . }}
+  port:
+    targetPort: https
+  tls:
+    termination: passthrough

@@ -1,0 +1,56 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ include "ipa.fullname" . }}
+  labels:
+    {{- include "ipa.labels" . | nindent 4 }}
+spec:
+  ports:
+  - name: dns-tcp
+    protocol: TCP
+    port: 53
+    targetPort: 53
+  - name: dns-udp
+    protocol: UDP
+    port: 53
+    targetPort: 53
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  - name: kerberos-tcp
+    protocol: TCP
+    port: 88
+    targetPort: 88
+  - name: kerberos-udp
+    protocol: UDP
+    port: 88
+    targetPort: 88
+  - name: ntp
+    protocol: UDP
+    port: 123
+    targetPort: 123
+  - name: ldap
+    protocol: TCP
+    port: 389
+    targetPort: 389
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 443
+  - name: kpasswd-tcp
+    protocol: TCP
+    port: 464
+    targetPort: 464
+  - name: kpasswd-udp
+    protocol: UDP
+    port: 464
+    targetPort: 464
+  - name: ldaps
+    protocol: TCP
+    port: 636
+    targetPort: 636
+  clusterIP: ""
+  selector:
+    deploymentconfig: {{ include "ipa.fullname" . }}

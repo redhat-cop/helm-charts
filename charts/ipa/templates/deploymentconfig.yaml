@@ -1,0 +1,107 @@
+---
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: {{ include "ipa.fullname" . }}
+  labels:
+    {{- include "ipa.labels" . | nindent 4 }}
+    deploymentconfig: {{ include "ipa.fullname" . }}
+spec:
+  strategy:
+    type: Recreate
+    recreateParams:
+      timeoutSeconds: 1000
+  replicas: 1
+  test: false
+  selector:
+    deploymentconfig: {{ include "ipa.fullname" . }}
+  template:
+    metadata:
+      name: {{ include "ipa.fullname" . }}
+      labels:
+        deploymentconfig: {{ include "ipa.fullname" . }}
+    spec:
+      volumes:
+      - name: {{ include "ipa.fullname" . }}-data
+        persistentVolumeClaim:
+          claimName: {{ include "ipa.fullname" . }}
+      - name: {{ include "ipa.fullname" . }}-run
+        emptyDir: {}
+      - name: {{ include "ipa.fullname" . }}-tmp
+        emptyDir: {}
+      - name: {{ include "ipa.fullname" . }}-journal
+        emptyDir: {}
+      containers:
+      - name: {{ include "ipa.fullname" . }}
+        image: " "
+        ports:
+        - containerPort: 53
+          protocol: TCP
+        - containerPort: 53
+          protocol: UDP
+        - containerPort: 80
+          protocol: TCP
+        - containerPort: 88
+          protocol: TCP
+        - containerPort: 88
+          protocol: UDP
+        - containerPort: 123
+          protocol: UDP
+        - containerPort: 389
+          protocol: TCP
+        - containerPort: 443
+          protocol: TCP
+        - containerPort: 464
+          protocol: TCP
+        - containerPort: 464
+          protocol: UDP
+        - containerPort: 636
+          protocol: TCP
+        env:
+        - name: IPA_SERVER_HOSTNAME
+          value: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.{{ .Values.app_domain }}
+        - name: IPA_SERVER_IP
+          value: ""
+        - name: IPA_SERVER_INSTALL_OPTS
+          value: {{ .Values.install_opts }} {{ .Values.realm }}
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "ipa.fullname" . }}-password
+              key: admin.password
+        args:
+        - {{ .Values.container_args }}
+        resources: {}
+        volumeMounts:
+        - name: {{ include "ipa.fullname" . }}-data
+          mountPath: "/data"
+        - name: {{ include "ipa.fullname" . }}-run
+          mountPath: "/run"
+        - name: {{ include "ipa.fullname" . }}-tmp
+          mountPath: "/tmp"
+        - name: {{ include "ipa.fullname" . }}-journal
+          mountPath: "/var/log/journal"
+        readinessProbe:
+          exec:
+            command:
+            - "/usr/bin/systemctl"
+            - status
+            - ipa
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+      restartPolicy: Always
+      serviceAccountName: {{ include "ipa.fullname" . }}-user
+      securityContext: {}
+  triggers:
+  - type: ConfigChange
+  - type: ImageChange
+    imageChangeParams:
+      automatic: true
+      containerNames:
+      - {{ include "ipa.fullname" . }}
+      from:
+        kind: ImageStreamTag
+        name: {{ .Values.image }}
