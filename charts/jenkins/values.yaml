@@ -99,3 +99,105 @@ buildconfigs:
   - name: jenkins-agent-python
   - name: jenkins-agent-ruby
   - name: jenkins-agent-rust
+
+## This works with the Jenkins Configuration-as-Code plugin. You can put all sorts of declarative configuration
+## into this `body` and Jenkins will load it on start, even when using ephemeral Jenkins.
+##
+## The example below shows how to automatically seed multibranch pipelines using the Gitea
+## plugins and JobDSL.
+
+# configAsCode:
+#   configMap: jenkins-configuration-as-code
+#   body: |
+#     jenkins:
+#       systemMessage: "Controlled by Configuration as Code"
+#     jobs:
+#       - script: |
+#           multibranchPipelineJob('clms-fe') {
+#             triggers {
+#               cron('@daily')
+#             }
+#             configure {
+#               it / sources / 'data' / 'jenkins.branch.BranchSource' << {
+#                 source(class: 'org.jenkinsci.plugin.gitea.GiteaSCMSource') {
+#                   id("clms-fe")
+#                   credentialsId("clms-devops-gitea-pipeline-credentials")
+#                   repoOwner("CLMS")
+#                   repository("frontend")
+#                   serverUrl('http://gitea:3000')
+#                   traits {
+#                     originPullRequestDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.OriginPullRequestDiscoveryTrait') {
+#                       strategyId(2)
+#                     }
+#                     branchDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.BranchDiscoveryTrait') {
+#                       strategyId(1)
+#                     }
+#                     cloneOptionTrait {
+#                       extension {
+#                         noTags(true)
+#                         shallow(false)
+#                         reference("")
+#                         timeout(10)
+#                       }
+#                     }
+#                   }
+#                 }
+#               }
+#             }
+#             orphanedItemStrategy {
+#               discardOldItems {
+#                 // Set to 0 to autoprune jobs once branch is deleted 
+#                 numToKeep(0)
+#               }
+#             }
+#           }
+
+#           queue('clms-fe')
+#       - script: |
+#           multibranchPipelineJob('clms-api') {
+#             triggers {
+#               cron('@daily')
+#             }
+#             configure {
+#               it / sources / 'data' / 'jenkins.branch.BranchSource' << {
+#                 source(class: 'org.jenkinsci.plugin.gitea.GiteaSCMSource') {
+#                   id("clms-api")
+#                   credentialsId("clms-devops-gitea-pipeline-credentials")
+#                   repoOwner("CLMS")
+#                   repository("clms-api")
+#                   serverUrl('http://gitea:3000')
+#                   traits {
+#                     originPullRequestDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.OriginPullRequestDiscoveryTrait') {
+#                       strategyId(2)
+#                     }
+#                     branchDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.BranchDiscoveryTrait') {
+#                       strategyId(1)
+#                     }
+#                     cloneOptionTrait {
+#                       extension {
+#                         noTags(true)
+#                         shallow(false)
+#                         reference("")
+#                         timeout(10)
+#                       }
+#                     }
+#                   }
+#                 }
+#               }
+#             }
+#             orphanedItemStrategy {
+#               discardOldItems {
+#                 // Set to 0 to autoprune jobs once branch is deleted 
+#                 numToKeep(0)
+#               }
+#             }
+#           }
+
+#           queue('clms-fe')
+#     unclassified:
+#       giteaServers:
+#         servers:
+#         - credentialsId: "clms-devops-gitea-pipeline-credentials"
+#           displayName: "Gitea"
+#           manageHooks: true
+#           serverUrl: "http://gitea:3000"
