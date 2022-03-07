@@ -11,7 +11,7 @@ namespaces:
 
 # operator manages upgrades
 operator:
-  version: openshift-gitops-operator.v1.4.1
+  version: openshift-gitops-operator.v1.4.3
   channel: stable
   installPlanApproval: Automatic
   name: openshift-gitops-operator
@@ -28,7 +28,7 @@ secrets: []
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
-  version: v2.2.5
+  version: v2.2.6
   rbac:
     defaultPolicy: 'role:admin'
     policy: |
