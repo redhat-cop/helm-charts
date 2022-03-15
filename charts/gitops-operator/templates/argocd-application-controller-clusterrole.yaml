@@ -1,4 +1,5 @@
-{{- if .Values.namespaces }}
+{{- if and (.Values.namespaces) (.Values.teamInstancesAreClusterScoped) }}
+{{- $rules := .Values.clusterRoleRulesController }}
 {{- range $ns := .Values.namespaces }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -9,6 +10,9 @@ metadata:
     app.kubernetes.io/name: {{ $ns }}-argocd-application-controller
     app.kubernetes.io/part-of: {{ $ns }}
   name: {{ $ns }}-argocd-application-controller
+{{- if $rules }}
+{{- toYaml $rules | nindent 0 }}
+{{- else }}
 rules:
 - apiGroups:
   - '*'
@@ -20,5 +24,6 @@ rules:
   - '*'
   verbs:
   - '*'
+{{- end }}
 {{- end }}
 {{- end }}
