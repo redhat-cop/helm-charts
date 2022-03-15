@@ -41,7 +41,7 @@ namespaces:
 
 RBAC for each ArgoCD instance is `cluster-admin` scoped by default. You can create `namespaced` ArgoCD instances by specifying `teamInstancesAreClusterScoped: false`. This setting does not deploy any excess RBAC and uses the defaults from the gitops-operator.
 
-If you want fine-grained access, you will need to modify and adjust the `templates` Cluster Roles if the defaults do not suit your purpose.
+If you want fine-grained access, you may set `clusterRoleRulesController` and `clusterRoleRulesServer` with Role rules that suit your purpose.
 
 The default GitOps ArgoCD instance is _not_ deployed in the `openshift-gitops` operator project. You can enable it by setting `disableDefaultArgoCD: false`
 
