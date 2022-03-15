@@ -1,4 +1,5 @@
-{{- if .Values.namespaces }}
+{{- if and (.Values.namespaces) (.Values.teamInstancesAreClusterScoped) }}
+{{- $rules := .Values.clusterRoleRulesServer }}
 {{- range $ns := .Values.namespaces }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -8,6 +9,9 @@ metadata:
     app.kubernetes.io/name: {{ $ns }}-gitops-argocd-server
     app.kubernetes.io/part-of: {{ $ns }}
   name: {{ $ns }}-gitops-argocd-server
+{{- if $rules }}
+{{- toYaml $rules | nindent 0 }}
+{{- else }}
 rules:
 - apiGroups:
   - '*'
@@ -30,5 +34,6 @@ rules:
   - pods/log
   verbs:
   - get     # supports viewing pod logs from UI
+{{- end }}
 {{- end }}
 {{- end }}

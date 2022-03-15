@@ -16,6 +16,8 @@ spec:
     env:
     - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
       value:  {{ .Values.operator.disableDefaultArgoCD | quote }}
+{{- if and (.Values.namespaces) (.Values.teamInstancesAreClusterScoped) }}
     - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
       value: {{ join "," .Values.namespaces | quote }}
+{{- end }}
 {{- end }}

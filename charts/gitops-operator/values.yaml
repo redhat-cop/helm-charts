@@ -17,6 +17,8 @@ operator:
   name: openshift-gitops-operator
   disableDefaultArgoCD: true
 
+teamInstancesAreClusterScoped: true
+
 # adding your secrets for git access or other repository credentials
 secrets: []
 # EXAMPLE ...
