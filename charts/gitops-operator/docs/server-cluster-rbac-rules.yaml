@@ -1,0 +1,15 @@
+rules:
+  - verbs:
+      - get
+      - delete
+      - patch
+    apiGroups:
+      - '*'
+    resources:
+      - '*'
+  - verbs:
+      - list
+    apiGroups:
+      - ''
+    resources:
+      - events
