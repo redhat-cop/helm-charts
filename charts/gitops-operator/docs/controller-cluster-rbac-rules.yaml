@@ -1,0 +1,83 @@
+rules:
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - '*'
+    resources:
+      - '*'
+  - verbs:
+      - get
+      - list
+    nonResourceURLs:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - operators.coreos.com
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - operator.openshift.io
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - user.openshift.io
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - config.openshift.io
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - console.openshift.io
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - namespaces
+      - persistentvolumeclaims
+      - persistentvolumes
+      - configmaps
+  - verbs:
+      - '*'
+    apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - storage.k8s.io
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - machine.openshift.io
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - machineconfig.openshift.io
+    resources:
+      - '*'
+  - verbs:
+      - '*'
+    apiGroups:
+      - compliance.openshift.io
+    resources:
+      - scansettingbindings

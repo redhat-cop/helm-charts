@@ -60,3 +60,9 @@ Or deploying just the Operator, no helm lifecycle hooks and no team instances.
 ```bash
 helm upgrade --install foo redhat-cop/gitops-operator --set namespaces=null --set ignoreHelmHooks=true
 ```
+
+## Teams and ArgoCD
+
+Checkout the [TEAM DOCS](TEAM_DOCS.md) if you would like to understand more on how to use this chart with your teams.
+
+![docs/images/cluster-argo.png](docs/images/cluster-argo.png)
