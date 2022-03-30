@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   {{ template "app.labels" }}
   name: "{{ template "app.name" }}-repositories"
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
   - ReadWriteOnce
