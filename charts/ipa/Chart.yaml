@@ -1,14 +1,7 @@
 apiVersion: v2
 name: ipa
-description: A Helm chart for Kubernetes
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-# Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.0.1
-
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application. Versions are not expected to
-# follow Semantic Versioning. They should reflect the version the application is using.
+description: A Helm chart ti install FreeIPA
+version: 1.0.2
 appVersion: 1.16.0
 home: https://github.com/redhat-cop/helm-charts
 icon: https://www.freeipa.org/images/freeipa/freeipa-logo-small.png
