@@ -10,10 +10,10 @@ oc rsh `oc get po -l deploymentconfig=${IPA_RELEASE_NAME}-ipa -o name -n ${IPA_N
 
 # 2. on the container running IPA Server
 echo 'Passw0rd' | kinit admin
-export GROUP_NAME=tl500-users
+export GROUP_NAME=student
 ipa group-add ${GROUP_NAME} --desc "TL500 Other" || true
 # in a loop add random users to the group 
-for i in {01..10};do
+for i in {1..24};do
   export LAB_NUMBER="lab$i"
   printf "\n\nI is user login ${LAB_NUMBER}"
   PASSWD=$(ipa user-add ${LAB_NUMBER} --first=${LAB_NUMBER} --last=${LAB_NUMBER} --email=${LAB_NUMBER}@redhatlabs.dev --random | grep Random)

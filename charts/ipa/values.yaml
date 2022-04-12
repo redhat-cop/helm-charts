@@ -14,13 +14,13 @@ volume: 1Gi
 # namespaceOverride: ipa
 
 # this example is using the ldap admin user and password as the bind creds
-# and expects a group in ldap called `tl500-users`
+# and expects a group in ldap called `student`
 # disabled by default so as to not overwrite existing oauth configs in openshift-config ns
 ocp_auth:
   enabled: false
   bind_dn: "uid=admin,cn=users,cn=accounts,dc=REDHATLABS,dc=DEV"
   bind_password: Passw0rd
-  base: "cn=tl500-users,cn=groups,cn=accounts,dc=REDHATLABS,dc=DEV"
+  base: "cn=student,cn=groups,cn=accounts,dc=REDHATLABS,dc=DEV"
 
 machineconfig:
   ignition_version: 3.1.0
