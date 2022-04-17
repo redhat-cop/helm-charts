@@ -72,25 +72,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-
-{{- define "ipa.ldapIDP" -}}
-- name: FreeIPA
-  mappingMethod: claim
-  type: LDAP
-  ldap:
-    attributes:
-      id:
-      - dn
-      email:
-      - mail
-      name:
-      - displayName
-      preferredUsername:
-      - uid
-    bindDN: {{ .Values.ocp_auth.bind_dn }}
-    bindPassword:
-      name: {{ include "ipa.fullname" . }}-bind-password
-    insecure: true
-    url: ldap://{{ include "ipa.fullname" . }}.{{ include "ipa.namespace" . }}.svc.cluster.local:389/{{ .Values.ocp_auth.base }}?uid
-{{- end }}
