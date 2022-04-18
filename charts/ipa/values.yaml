@@ -2,7 +2,7 @@
 # These values will probs need to be overwritten or could use lookup function?
 app_domain: apps.openshift-410-kwlrb.demo.redhatlabs.dev
 admin_password: Passw0rd
-realm: "-r REDHATLABS.DEV"
+realm: "-r redhatlabs.dev"
 
 # sensible defaults
 image: freeipa-server:rhel-7
@@ -18,10 +18,10 @@ volume: 1Gi
 # disabled by default so as to not overwrite existing oauth configs in openshift-config ns
 ocp_auth:
   enabled: false
-  bind_dn: "uid=admin,cn=users,cn=accounts,dc=REDHATLABS,dc=DEV"
+  bind_dn: "uid=admin,cn=users,cn=accounts,dc=redhatlabs,dc=dev"
   bind_password: Passw0rd
-  base: "cn=student,cn=groups,cn=accounts,dc=REDHATLABS,dc=DEV"
-  domain: "dc=REDHATLABS,dc=DEV"
+  base: "cn=student,cn=groups,cn=accounts,dc=redhatlabs,dc=dev"
+  domain: "dc=redhatlabs,dc=dev"
 
 machineconfig:
   ignition_version: 3.1.0
