@@ -8,7 +8,7 @@ realm: "-r redhatlabs.dev"
 image: freeipa-server:rhel-7
 install_opts: "-U --setup-dns --no-forwarders --no-ntp"
 container_args: "ipa-server-install"
-volume: 1Gi
+volume: 5Gi
 
 # this can be used if not using helm install to set the correct ns
 # namespaceOverride: ipa
