@@ -1,6 +1,6 @@
 # IPA Server must know it's own hostname to work properly....
 # These values will probs need to be overwritten or could use lookup function?
-app_domain: apps.openshift-410-kwlrb.demo.redhatlabs.dev
+app_domain: apps.mycluster.example.com
 admin_password: Passw0rd
 realm: "-r redhatlabs.dev"
 
