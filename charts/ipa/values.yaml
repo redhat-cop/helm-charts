@@ -21,6 +21,7 @@ ocp_auth:
   bind_dn: "uid=admin,cn=users,cn=accounts,dc=REDHATLABS,dc=DEV"
   bind_password: Passw0rd
   base: "cn=student,cn=groups,cn=accounts,dc=REDHATLABS,dc=DEV"
+  domain: "dc=REDHATLABS,dc=DEV"
 
 machineconfig:
   ignition_version: 3.1.0

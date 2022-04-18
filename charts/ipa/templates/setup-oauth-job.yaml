@@ -27,7 +27,7 @@ spec:
             oc patch oauth/cluster --type=json -p '[{"op":"add", "path":"/spec/identityProviders/-",
               "value":{"ldap": {"attributes": {"email": ["mail"], "id": ["dn"], "name": ["displayName"], "preferredUsername": ["uid"]},
               "bindDN": {{ .Values.ocp_auth.bind_dn }}, "bindPassword": {"name": "{{ include "ipa.fullname" . }}-bind-password" },
-              "insecure": true, "url": "ldap://{{ include "ipa.fullname" . }}.{{ include "ipa.namespace" . }}.svc.cluster.local:389/{{ .Values.ocp_auth.base }}?uid"},
+              "insecure": true, "url": "ldap://{{ include "ipa.fullname" . }}.{{ include "ipa.namespace" . }}.svc.cluster.local:389/{{ .Values.ocp_auth.domain }}?uid?sub?(memberOf={{ .Values.ocp_auth.base }})"},
               "mappingMethod": "claim", "name": "FreeIPA", "type": "LDAP"}}]'
             exit 0
         image: "quay.io/openshift/origin-cli:latest"
