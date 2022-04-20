@@ -1,14 +1,14 @@
 # IPA Server must know it's own hostname to work properly....
 # These values will probs need to be overwritten or could use lookup function?
-app_domain: apps.openshift-410-kwlrb.demo.redhatlabs.dev
+app_domain: apps.mycluster.example.com
 admin_password: Passw0rd
-realm: "-r REDHATLABS.DEV"
+realm: "-r redhatlabs.dev"
 
 # sensible defaults
 image: freeipa-server:rhel-7
 install_opts: "-U --setup-dns --no-forwarders --no-ntp"
 container_args: "ipa-server-install"
-volume: 1Gi
+volume: 5Gi
 
 # this can be used if not using helm install to set the correct ns
 # namespaceOverride: ipa
@@ -18,9 +18,10 @@ volume: 1Gi
 # disabled by default so as to not overwrite existing oauth configs in openshift-config ns
 ocp_auth:
   enabled: false
-  bind_dn: "uid=admin,cn=users,cn=accounts,dc=REDHATLABS,dc=DEV"
+  bind_dn: "uid=admin,cn=users,cn=accounts,dc=redhatlabs,dc=dev"
   bind_password: Passw0rd
-  base: "cn=student,cn=groups,cn=accounts,dc=REDHATLABS,dc=DEV"
+  base: "cn=student,cn=groups,cn=accounts,dc=redhatlabs,dc=dev"
+  domain: "dc=redhatlabs,dc=dev"
 
 machineconfig:
   ignition_version: 3.1.0
