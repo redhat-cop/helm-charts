@@ -11,7 +11,7 @@ namespaces:
 
 # operator manages upgrades
 operator:
-  version: openshift-gitops-operator.v1.4.5
+  version: openshift-gitops-operator.v1.5.0
   channel: stable
   installPlanApproval: Automatic
   name: openshift-gitops-operator
