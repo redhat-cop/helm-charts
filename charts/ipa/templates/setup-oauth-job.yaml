@@ -1,0 +1,41 @@
+{{- if .Values.ocp_auth.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: config-oauth
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+          - /bin/bash
+          - -c
+          - |
+            echo "Checking if FreeIPA LDAP exists ..."
+            for name in $(oc get oauth cluster -o jsonpath='{.spec.identityProviders[*].name}'); do
+                if [ "$name" == "FreeIPA" ]; then
+                    echo "found existing FreeIPA ldap provider, exiting";
+                    exit 0
+                fi
+            done
+            echo "Patching OAuth LDAP ..."
+            oc patch oauth/cluster --type=json -p '[{"op":"add", "path":"/spec/identityProviders/-",
+              "value":{"ldap": {"attributes": {"email": ["mail"], "id": ["dn"], "name": ["displayName"], "preferredUsername": ["uid"]},
+              "bindDN": {{ .Values.ocp_auth.bind_dn | quote }}, "bindPassword": {"name": "{{ include "ipa.fullname" . }}-bind-password" },
+              "insecure": true, "url": "ldap://{{ include "ipa.fullname" . }}.{{ include "ipa.namespace" . }}.svc.cluster.local:389/{{ .Values.ocp_auth.domain }}?uid?sub?(memberOf={{ .Values.ocp_auth.base }})"},
+              "mappingMethod": "claim", "name": "FreeIPA", "type": "LDAP"}}]'
+            exit 0
+        image: "quay.io/openshift/origin-cli:latest"
+        imagePullPolicy: IfNotPresent
+        name: job
+      dnsPolicy: ClusterFirst
+      restartPolicy: OnFailure
+      serviceAccount: config-oauth
+      serviceAccountName: config-oauth
+      terminationGracePeriodSeconds: 10
+{{- end }}
