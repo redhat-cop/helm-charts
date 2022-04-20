@@ -1437,6 +1437,21 @@ entries:
   ipa:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2022-04-20T21:37:08.788116829Z"
+    description: A Helm chart ti install FreeIPA
+    digest: f372c7497070384f770b73989575ae0777d0fee8b72e108511b3f21466ba8040
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.freeipa.org/images/freeipa/freeipa-logo-small.png
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: ipa
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/ipa-1.0.3/ipa-1.0.3.tgz
+    version: 1.0.3
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2022-04-12T14:32:50.826718323Z"
     description: A Helm chart ti install FreeIPA
     digest: a6a66a5503b3853ede76d8f04419d0f6c8ad649998b13f93f26ffe3fdfb35401
@@ -2974,4 +2989,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-04-20T13:28:15.207989276Z"
+generated: "2022-04-20T21:37:08.788959403Z"
