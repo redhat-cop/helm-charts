@@ -7,6 +7,7 @@ Ansible Automation Platform Helm Chart customises and deploys the [Ansible Autom
 To install the chart from source:
 
 ```bash
+helm dep up
 helm upgrade --install ansible-automation-platform -f values.yaml . --create-namespace --namespace ansible-automation-platform
 ```
 
