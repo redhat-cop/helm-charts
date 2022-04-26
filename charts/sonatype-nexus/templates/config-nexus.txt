@@ -1,3 +1,23 @@
+{{- define "config-nexus-maven-central-only" }}
+# Maven Public Group
+echo "🦄 Adding repos to Maven Group"
+curl -s -k -X PUT "${NEXUS_URL}/service/rest/v1/repositories/maven/group/maven-public" \
+  --user "${NEXUS_USER}" \
+  -H "accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d "{ \"name\": \"maven-public\", \"format\": \"maven2\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true }, \"group\": { \"memberNames\": [\"maven-releases\", \"maven-snapshots\", \"maven-central\"]}, \"type\": \"group\"}"
+{{- end }}
+
+{{- define "config-nexus-maven-incl-redhat" }}
+# Maven Public Group
+echo "🦄 Adding repos to Maven Group"
+curl -s -k -X PUT "${NEXUS_URL}/service/rest/v1/repositories/maven/group/maven-public" \
+  --user "${NEXUS_USER}" \
+  -H "accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d "{ \"name\": \"maven-public\", \"format\": \"maven2\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true }, \"group\": { \"memberNames\": [\"{{ .Values.rhEaRepositories | default "red-hat-ea" }}\", \"{{ .Values.rhGaRepositories | default "red-hat-ga" }}\",\"maven-releases\", \"maven-snapshots\", \"maven-central\"]}, \"type\": \"group\"}"
+{{- end }}
+
 {{- define "config-nexus" }}
 #!/bin/bash
 
@@ -48,13 +68,12 @@ curl -s -k -X POST "${NEXUS_URL}/service/rest/v1/repositories/maven/proxy" \
   -H "Content-Type: application/json" \
   -d "{ \"name\": \"{{ .Values.rhEaRepositories | default "red-hat-ea" }}\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true }, \"cleanup\": { \"policyNames\": [ \"string\" ] }, \"proxy\": { \"remoteUrl\": \"https://maven.repository.redhat.com/earlyaccess/all\", \"contentMaxAge\": 1440, \"metadataMaxAge\": 1440 }, \"negativeCache\": { \"enabled\": true, \"timeToLive\": 1440 }, \"httpClient\": { \"blocked\": false, \"autoBlock\": true, \"connection\": { \"retries\": 0, \"userAgentSuffix\": \"string\", \"timeout\": 60, \"enableCircularRedirects\": false, \"enableCookies\": false, \"useTrustStore\": false }, \"authentication\": { \"type\": \"username\", \"username\": \"string\", \"password\": \"string\", \"ntlmHost\": \"string\", \"ntlmDomain\": \"string\", \"preemptive\": false } }, \"routingRule\": \"string\", \"maven\": { \"versionPolicy\": \"MIXED\", \"layoutPolicy\": \"STRICT\" }}"
 
-# Maven Public Group
-echo "🦄 Adding repos to Maven Group"
-curl -s -k -X PUT "${NEXUS_URL}/service/rest/v1/repositories/maven/group/maven-public" \
-  --user "${NEXUS_USER}" \
-  -H "accept: application/json" \
-  -H "Content-Type: application/json" \
-  -d "{ \"name\": \"maven-public\", \"format\": \"maven2\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true }, \"group\": { \"memberNames\": [\"{{ .Values.rhEaRepositories | default "red-hat-ea" }}\", \"{{ .Values.rhGaRepositories | default "red-hat-ga" }}\",\"maven-releases\", \"maven-snapshots\", \"maven-central\"]}, \"type\": \"group\"}"
+# Optionally include RedHat Repositories in maven-public
+{{- if .Values.includeRHRepositories }}
+{{- include "config-nexus-maven-incl-redhat" . }}
+{{- else }}
+{{- include "config-nexus-maven-central-only" . }}
+{{- end }}
 
 # raw hosted via rest
 echo "🐺 creating {{ .Values.rawRepository | default "labs-static" }} raw hosted repo"
@@ -72,4 +91,4 @@ oc -n ${NS} delete pod -lapp="{{- default .Chart.Name .Values.nameOverride | tru
 oc -n ${NS} wait pod -lapp="{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}" --for=condition=Ready --timeout=300s
 
 echo "Done!"
-{{- end}}
+{{- end }}
