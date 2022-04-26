@@ -55,3 +55,4 @@ The following table lists the most common configurable parameters for the Nexus 
 | `npmRepository`                                  | Name of the NPM proxy repository                             | `labs-npm`                            |
 | `rawRepository`                                  | Name of the hosted raw repository                            | `labs-static`                         |
 | `persistence.storageSize`                        | Size of the generated PVC for Nexus                          | `8Gi`                                 |
+| `includeRHRepositories`                          | Include RedHat maven repositories in maven-public            | `true`                                |
