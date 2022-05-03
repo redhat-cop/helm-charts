@@ -10,6 +10,13 @@ source_secrets:
   - name: git-auth
     username: idm-sa
     password: thisisdefinitelymypassword
+    # annotations:
+    #   build.openshift.io/source-secret-match-uri-1: 'https://gitea.*/*'
+    #   build.openshift.io/source-secret-match-uri-2: 'http://gitea:3000/*'
+    #   build.openshift.io/source-secret-match-uri-3: 'https://gitea-helm-test-devops.apps.clms.0wuq.p1.openshiftapps.com/*'
+    #   tekton.dev/git-0: 'http://gitea.clms-devops.svc.cluster.local:3000'
+    #   tekton.dev/git-1: 'http://gitea:3000'
+    #   tekton.dev/git-2: 'https://gitea.apps.clms.0wuq.p1.openshiftapps.com'
     # some token... appears in jenkins env as JSON ie {"token": "aaaaa.bbbbb.ccccc"}
   - name: my-token
     type: Opaque
