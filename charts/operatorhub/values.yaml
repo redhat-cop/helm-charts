@@ -11,6 +11,5 @@ operators:
       operatorName: operator-name
       sourceName: catalog-source
       sourceNamespace: catalog-source-namespace
-      csv: optional-catalog-source-version
     operatorgroup:
       create: true
