@@ -2017,6 +2017,23 @@ entries:
   operatorhub:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2022-05-06T21:50:38.113047566Z"
+    description: A Helm chart to create OperatorHub subscriptions
+    digest: b35b406ce0d1df6f8b17f0a13afd14e3c57337898793c370d1dd9ad6b18e1065
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://avatars3.githubusercontent.com/u/38202270?s=280&v=4
+    maintainers:
+    - name: tylerauerbeck
+    - name: springdo
+    - name: ckavili
+    - name: mabulgu
+    name: operatorhub
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operatorhub-0.0.10/operatorhub-0.0.10.tgz
+    version: 0.0.10
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2021-06-15T11:22:46.279482784Z"
     description: A Helm chart to create OperatorHub subscriptions
     digest: 0d1787147153e0ca1daeac56faa578151b59874762578a183955b89e347aaa54
@@ -3020,4 +3037,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-04-26T14:40:36.039919826Z"
+generated: "2022-05-06T21:50:38.114396766Z"
