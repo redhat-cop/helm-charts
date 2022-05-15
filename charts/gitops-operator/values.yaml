@@ -31,6 +31,7 @@ secrets: []
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
   version: v2.3.3
+  applicationSet: {}
   rbac:
     defaultPolicy: 'role:admin'
     policy: |
