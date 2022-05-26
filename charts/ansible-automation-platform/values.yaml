@@ -19,7 +19,6 @@ operatorhub:
         channel: early-access
         approval: Automatic
         operatorName: ansible-automation-platform-operator
-        csv: aap-operator.v2.0.2-0.1650535126
       operatorgroup:
         create: true
 
