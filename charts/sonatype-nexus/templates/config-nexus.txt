@@ -1,3 +1,4 @@
+# Define maven templates we use below
 {{- define "config-nexus-maven-central-only" }}
 # Maven Public Group
 echo "🦄 Adding repos to Maven Group"
@@ -18,18 +19,38 @@ curl -s -k -X PUT "${NEXUS_URL}/service/rest/v1/repositories/maven/group/maven-p
   -d "{ \"name\": \"maven-public\", \"format\": \"maven2\", \"online\": true, \"storage\": { \"blobStoreName\": \"default\", \"strictContentTypeValidation\": true }, \"group\": { \"memberNames\": [\"{{ .Values.rhEaRepositories | default "red-hat-ea" }}\", \"{{ .Values.rhGaRepositories | default "red-hat-ga" }}\",\"maven-releases\", \"maven-snapshots\", \"maven-central\"]}, \"type\": \"group\"}"
 {{- end }}
 
+# The main nexus configuration here
 {{- define "config-nexus" }}
 #!/bin/bash
-
-# a standalone script for testing - see setup-nexus-job.yaml for embedded k8s version
 
 NS=$(cat /run/secrets/kubernetes.io/serviceaccount/namespace)
 NEXUS_USER=admin:admin123
 NEXUS_URL=https://$(oc -n ${NS} get route nexus -o custom-columns=ROUTE:.spec.host --no-headers)
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
 echo "waiting for nexus pod ready..."
 oc -n ${NS} wait pod -lapp="{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}" --for=condition=Ready --timeout=600s || exit $?
-sleep 2
+
+wait_for_nexus_service() {
+    local i=0
+    HOST=${NEXUS_URL}/service/rest/v1/status
+    until [ $(curl -s -o /dev/null -w %{http_code} ${HOST}) = "200" ]
+    do
+        echo "🧅 Waiting for 200 response from ${HOST}"
+        sleep 10
+        HOST=${NEXUS_URL}/service/rest/v1/status
+        ((i=i+1))
+        if [ $i -gt 100 ]; then
+            echo -e "${RED}Failed - nexus ${HOST} never ready.${NC}"
+            exit 1
+        fi
+    done
+}
+echo "waiting for nexus api ready..."
+wait_for_nexus_service
 
 # helm hosted via rest
 echo "🐺 creating {{ .Values.helmRepository | default "helm-charts" }} helm hosted repo"
@@ -90,5 +111,5 @@ echo "😇 restarting nexus..."
 oc -n ${NS} delete pod -lapp="{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}"
 oc -n ${NS} wait pod -lapp="{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}" --for=condition=Ready --timeout=300s
 
-echo "Done!"
+echo -e "${GREEN}Done!${NC}"
 {{- end }}
