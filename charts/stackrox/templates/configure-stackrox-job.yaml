@@ -19,8 +19,11 @@ spec:
             - |
               test {{ .Values.verbose }} == true && set -x
 
-              # wait for operator
+              # wait for CRD
               while [ true ]; do oc get crd centrals.platform.stackrox.io; if [ $? -eq 0 ]; then break; fi ; sleep 5s; done
+
+              # wait for operator to spin-up
+              while test 0 == $(oc -n openshift-operators get pod -l app=rhacs-operator --no-headers 2>/dev/null | grep Running |  wc -l); do sleep 5; done
 
               # install central first
               cat <<EOF | oc apply -f-
