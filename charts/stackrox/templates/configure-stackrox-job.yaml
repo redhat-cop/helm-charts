@@ -23,7 +23,11 @@ spec:
               while [ true ]; do oc get crd centrals.platform.stackrox.io; if [ $? -eq 0 ]; then break; fi ; sleep 5s; done
 
               # wait for operator to spin-up
-              while test True != $(oc -n openshift-operators get pod -l app=rhacs-operator -o jsonpath='{.status.conditions[?(@.type == "Ready")].status}'); do sleep 5; done
+              oc -n openshift-operators wait pod -l app=rhacs-operator --for=condition=Ready --timeout=180s
+              if [ $? != 0 ]; then
+                echo "🛑 timed out waiting for operator pod, exiting 🛑";
+                exit 1;
+              fi
 
               # install central first
               cat <<EOF | oc apply -f-
