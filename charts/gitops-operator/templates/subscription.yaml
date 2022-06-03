@@ -11,7 +11,9 @@ spec:
   name: {{ .Values.operator.name }}
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+{{- if .Values.operator.version }}
   startingCSV: {{ .Values.operator.version | quote }}
+{{- end }}
   config:
     env:
     - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
