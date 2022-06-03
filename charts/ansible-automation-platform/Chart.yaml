@@ -7,6 +7,7 @@ home: https://github.com/redhat-cop/helm-charts
 maintainers:
 - name: paulbarfuss
 - name: ecda909
+- name: jfilipcz
 dependencies:
   - name: operatorhub
     version: "0.0.9"
