@@ -9,13 +9,19 @@ ignoreHelmHooks: false
 # Namespace where everything gets deployed
 namespace: ansible-automation-platform
 
-# Subscription and OperatorGroup
-operator:
-  version: aap-operator.v2.0.1-0.1635279521
-  channel: early-access
-  installPlanApproval: Automatic
-  name: ansible-automation-platform-operator
-  operatorgroup: true
+# Subscription and OperatorGroup for AAP Operator
+operatorhub:
+  enabled: true
+  namespace: ansible-automation-platform
+  operators:
+    - name: ansible-automation-platform-operator
+      subscription:
+        channel: early-access
+        approval: Automatic
+        operatorName: ansible-automation-platform-operator
+      operatorgroup:
+        create: true
+
 
 # Ansible Automation Controller Custom Resource spec
 automationController:
