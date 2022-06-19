@@ -25,7 +25,8 @@ curl -s -k -X PUT "${NEXUS_URL}/service/rest/v1/repositories/maven/group/maven-p
 
 NS=$(cat /run/secrets/kubernetes.io/serviceaccount/namespace)
 NEXUS_USER=admin:admin123
-NEXUS_URL=https://$(oc -n ${NS} get route nexus -o custom-columns=ROUTE:.spec.host --no-headers)
+# NEXUS_URL=https://$(oc -n ${NS} get route nexus -o custom-columns=ROUTE:.spec.host --no-headers)
+NEXUS_URL=http://$( oc -n ${NS} get svc/nexus -o jsonpath --template='{.metadata.name}:{.spec.ports[].port}')
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
