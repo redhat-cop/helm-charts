@@ -29,7 +29,7 @@ secrets: []
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
-  version: v2.3.4
+  version: v2.3.5
   applicationSet: {}
   rbac:
     defaultPolicy: 'role:admin'
