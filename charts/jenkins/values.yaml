@@ -1,0 +1,207 @@
+---
+appName: &name jenkins
+
+route: true
+
+# ovs this is not a real password in use.... or is it?
+# ¯\_(ツ)_/¯
+source_secrets:
+    # secret used to git clone inside of OpenShift when running s2i and possibly in a Jenkins job too
+  - name: git-auth
+    username: idm-sa
+    password: thisisdefinitelymypassword
+    # annotations:
+    #   build.openshift.io/source-secret-match-uri-1: 'https://gitea.*/*'
+    #   build.openshift.io/source-secret-match-uri-2: 'http://gitea:3000/*'
+    #   build.openshift.io/source-secret-match-uri-3: 'https://gitea.my-cluster.com/*'
+    #   tekton.dev/git-0: 'http://gitea.devops.svc.cluster.local:3000'
+    #   tekton.dev/git-1: 'http://gitea:3000'
+    #   tekton.dev/git-2: 'https://gitea.apps.my-cluster.com'
+    # some token... appears in jenkins env as JSON ie {"token": "aaaaa.bbbbb.ccccc"}
+  - name: my-token
+    type: Opaque
+    token: aaaaa.bbbbb.ccccc
+    # default password for nexus bind for jenkis - this is ovs changed.
+    # .... probably
+  - name: nexus-password
+    username: admin
+    password: admin123
+
+deployment:
+  openshiftauth: true
+  imagestream:
+    name: *name
+    tag: latest
+  limits:
+    memory_request: 2Gi
+    memory_limit: 6Gi
+    cpu_request: 500m
+    cpu_limit: 1
+  env_vars:
+    - name: SLACK_BASE_URL
+      value: ''
+    - name: SLACK_ROOM
+      value: ''
+    - name: SLACK_TOKEN_CREDENTIAL_ID
+      value: ''
+    - name: SLACK_TEAM
+      value: ''
+    - name: SHARED_LIB_REPO
+      value: ''
+    - name: SHARED_LIB_NAME
+      value: ''
+    - name: SHARED_LIB_REF
+      value: ''
+    - name: SHARED_LIB_SECRET
+      value: ''
+    - name: GITLAB_HOST
+      value: ''
+    - name: GITLAB_TOKEN
+      value: ''
+    - name: GITLAB_GROUP_NAME
+      value: rht-labs
+
+# persistence:
+#   accessModes: ReadWriteOnce
+#   volumeSize: 20Gi
+
+services:
+  - name: *name
+    port_name: web
+    port: 80
+    target_port: 8080
+    selector: *name
+    annotations: service.alpha.openshift.io/dependencies
+  - name: jenkins-jnlp
+    port_name: agent
+    port: 50000
+    target_port: 50000
+    selector: *name
+
+buildconfigs:
+  # Jenkins S2I from Red Hat Labs
+  - name: *name
+    strategy_type: "Source"
+    source_repo: https://github.com/rht-labs/s2i-config-jenkins.git
+    source_repo_ref: master
+    source_context_dir: '/'
+    builder_image_kind: "DockerImage"
+    builder_image_name: quay.io/openshift/origin-jenkins
+    builder_image_tag: "latest"
+  # Jenkins agents for running builds etc
+  # default names, versions, repo and paths set on the template
+  - name: jenkins-agent-ansible
+  - name: jenkins-agent-arachni
+  - name: jenkins-agent-argocd
+  - name: jenkins-agent-conftest
+  - name: jenkins-agent-erlang
+  - name: jenkins-agent-golang
+  - name: jenkins-agent-graalvm
+  - name: jenkins-agent-gradle
+  - name: jenkins-agent-helm
+  - name: jenkins-agent-image-mgmt
+  - name: jenkins-agent-mongodb
+  - name: jenkins-agent-mvn
+  - name: jenkins-agent-npm
+  - name: jenkins-agent-python
+  - name: jenkins-agent-ruby
+  - name: jenkins-agent-rust
+
+## This works with the Jenkins Configuration-as-Code plugin. You can put all sorts of declarative configuration
+## into this `body` and Jenkins will load it on start, even when using ephemeral Jenkins.
+##
+## The example below shows how to automatically seed multibranch pipelines using the Gitea
+## plugins and JobDSL.
+# configAsCode:
+#   configMap: jenkins-configuration-as-code
+#   body: |
+#     jenkins:
+#       systemMessage: "Controlled by Configuration as Code"
+#     jobs:
+#       - script: |
+#           multibranchPipelineJob('app-fe') {
+#             triggers {
+#               cron('@daily')
+#             }
+#             configure {
+#               it / sources / 'data' / 'jenkins.branch.BranchSource' << {
+#                 source(class: 'org.jenkinsci.plugin.gitea.GiteaSCMSource') {
+#                   id("app-fe")
+#                   credentialsId("app-devops-gitea-pipeline-credentials")
+#                   repoOwner("owners")
+#                   repository("frontend")
+#                   serverUrl('http://gitea:3000')
+#                   traits {
+#                     originPullRequestDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.OriginPullRequestDiscoveryTrait') {
+#                       strategyId(2)
+#                     }
+#                     branchDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.BranchDiscoveryTrait') {
+#                       strategyId(1)
+#                     }
+#                     cloneOptionTrait {
+#                       extension {
+#                         noTags(true)
+#                         shallow(false)
+#                         reference("")
+#                         timeout(10)
+#                       }
+#                     }
+#                   }
+#                 }
+#               }
+#             }
+#             orphanedItemStrategy {
+#               discardOldItems {
+#                 // Set to 0 to autoprune jobs once branch is deleted
+#                 numToKeep(0)
+#               }
+#             }
+#           }
+#           queue('app-fe')
+#       - script: |
+#           multibranchPipelineJob('app-api') {
+#             triggers {
+#               cron('@daily')
+#             }
+#             configure {
+#               it / sources / 'data' / 'jenkins.branch.BranchSource' << {
+#                 source(class: 'org.jenkinsci.plugin.gitea.GiteaSCMSource') {
+#                   id("app-api")
+#                   credentialsId("app-devops-gitea-pipeline-credentials")
+#                   repoOwner("owners")
+#                   repository("app-api")
+#                   serverUrl('http://gitea:3000')
+#                   traits {
+#                     originPullRequestDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.OriginPullRequestDiscoveryTrait') {
+#                       strategyId(2)
+#                     }
+#                     branchDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.BranchDiscoveryTrait') {
+#                       strategyId(1)
+#                     }
+#                     cloneOptionTrait {
+#                       extension {
+#                         noTags(true)
+#                         shallow(false)
+#                         reference("")
+#                         timeout(10)
+#                       }
+#                     }
+#                   }
+#                 }
+#               }
+#             }
+#             orphanedItemStrategy {
+#               discardOldItems {
+#                 // Set to 0 to autoprune jobs once branch is deleted
+#                 numToKeep(0)
+#               }
+#             }
+#           }
+#           queue('app-fe')
+#     unclassified:
+#       giteaServers:
+#         servers:
+#         - credentialsId: "app-devops-gitea-pipeline-credentials"
+#           displayName: "Gitea"
+#           manageHooks: true
+#           serverUrl: "http://gitea:3000"
