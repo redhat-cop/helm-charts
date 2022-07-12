@@ -13,10 +13,10 @@ source_secrets:
     # annotations:
     #   build.openshift.io/source-secret-match-uri-1: 'https://gitea.*/*'
     #   build.openshift.io/source-secret-match-uri-2: 'http://gitea:3000/*'
-    #   build.openshift.io/source-secret-match-uri-3: 'https://gitea-helm-test-devops.apps.clms.0wuq.p1.openshiftapps.com/*'
-    #   tekton.dev/git-0: 'http://gitea.clms-devops.svc.cluster.local:3000'
+    #   build.openshift.io/source-secret-match-uri-3: 'https://gitea.my-cluster.com/*'
+    #   tekton.dev/git-0: 'http://gitea.devops.svc.cluster.local:3000'
     #   tekton.dev/git-1: 'http://gitea:3000'
-    #   tekton.dev/git-2: 'https://gitea.apps.clms.0wuq.p1.openshiftapps.com'
+    #   tekton.dev/git-2: 'https://gitea.apps.my-cluster.com'
     # some token... appears in jenkins env as JSON ie {"token": "aaaaa.bbbbb.ccccc"}
   - name: my-token
     type: Opaque
@@ -119,16 +119,16 @@ buildconfigs:
 #       systemMessage: "Controlled by Configuration as Code"
 #     jobs:
 #       - script: |
-#           multibranchPipelineJob('clms-fe') {
+#           multibranchPipelineJob('app-fe') {
 #             triggers {
 #               cron('@daily')
 #             }
 #             configure {
 #               it / sources / 'data' / 'jenkins.branch.BranchSource' << {
 #                 source(class: 'org.jenkinsci.plugin.gitea.GiteaSCMSource') {
-#                   id("clms-fe")
-#                   credentialsId("clms-devops-gitea-pipeline-credentials")
-#                   repoOwner("CLMS")
+#                   id("app-fe")
+#                   credentialsId("app-devops-gitea-pipeline-credentials")
+#                   repoOwner("owners")
 #                   repository("frontend")
 #                   serverUrl('http://gitea:3000')
 #                   traits {
@@ -157,19 +157,19 @@ buildconfigs:
 #               }
 #             }
 #           }
-#           queue('clms-fe')
+#           queue('app-fe')
 #       - script: |
-#           multibranchPipelineJob('clms-api') {
+#           multibranchPipelineJob('app-api') {
 #             triggers {
 #               cron('@daily')
 #             }
 #             configure {
 #               it / sources / 'data' / 'jenkins.branch.BranchSource' << {
 #                 source(class: 'org.jenkinsci.plugin.gitea.GiteaSCMSource') {
-#                   id("clms-api")
-#                   credentialsId("clms-devops-gitea-pipeline-credentials")
-#                   repoOwner("CLMS")
-#                   repository("clms-api")
+#                   id("app-api")
+#                   credentialsId("app-devops-gitea-pipeline-credentials")
+#                   repoOwner("owners")
+#                   repository("app-api")
 #                   serverUrl('http://gitea:3000')
 #                   traits {
 #                     originPullRequestDiscoveryTrait(class: 'org.jenkinsci.plugin.gitea.OriginPullRequestDiscoveryTrait') {
@@ -197,11 +197,11 @@ buildconfigs:
 #               }
 #             }
 #           }
-#           queue('clms-fe')
+#           queue('app-fe')
 #     unclassified:
 #       giteaServers:
 #         servers:
-#         - credentialsId: "clms-devops-gitea-pipeline-credentials"
+#         - credentialsId: "app-devops-gitea-pipeline-credentials"
 #           displayName: "Gitea"
 #           manageHooks: true
 #           serverUrl: "http://gitea:3000"

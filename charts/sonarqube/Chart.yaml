@@ -1,8 +1,8 @@
 apiVersion: v2
 name: sonarqube
 description: SonarQube is an open sourced code quality scanning tool
-version: 0.1.0
-appVersion: "9.2.4-community"
+version: 0.1.1
+appVersion: "9.5-community"
 home: https://github.com/redhat-cop/helm-charts
 keywords:
   - coverage
