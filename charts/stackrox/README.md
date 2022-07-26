@@ -1,6 +1,14 @@
 # stackrox chart
 
 Installs the ACS/Stackrox Operator, configures a Central instance and a SecuredCluster. Uses a Job for initialization work. Set `--set verbose=true` to see verbose job logs.
+
+Production:
+```bash
+helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
+helm install stackrox redhat-cop/stackrox
+```
+
+Debug/Development:
 ```bash
 helm upgrade --install stackrox . --namespace tl500 --debug
 ```
