@@ -3,6 +3,14 @@ verbose: false
 
 # stackrox configuration
 stackrox:
+  operator:
+    namespace: openshift-operators
+    name: rhacs-operator
+    channel: latest
+    approval: Automatic
+    operatorName: rhacs-operator
+    sourceName: redhat-operators
+    sourceNamespace: openshift-marketplace
   clusterName: tl500
   namespace: stackrox
   analyzer:

@@ -1,0 +1,16 @@
+{{- $sub := .Values.stackrox.operator }}
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: {{ $sub.name | quote }}
+  namespace: {{ $sub.namespace | quote }}
+spec:
+  channel: {{ $sub.channel | quote }}
+  installPlanApproval: {{ $sub.approval | default "Automatic" | quote }}
+  name: {{ $sub.operatorName | quote }}
+  source: {{ $sub.sourceName | default "redhat-operators" | quote }}
+  sourceNamespace: {{ $sub.sourceNamespace | default "openshift-marketplace" | quote }}
+{{- if $sub.csv }}
+  startingCSV: {{ $sub.csv | quote }}
+{{- end }}
