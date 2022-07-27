@@ -1,20 +1,16 @@
 # turn on verbose logging for config job
 verbose: false
 
-operatorhub:
-  enabled: true
-  namespace: openshift-operators
-  operators:
-    - name: rhacs-operator
-      subscription:
-        channel: latest
-        approval: Automatic
-        operatorName: rhacs-operator
-        sourceName: redhat-operators
-        sourceNamespace: openshift-marketplace
-
 # stackrox configuration
 stackrox:
+  operator:
+     namespace: openshift-operators
+     name: rhacs-operator
+     channel: latest
+     approval: Automatic
+     operatorName: rhacs-operator
+     sourceName: redhat-operators
+     sourceNamespace: openshift-marketplace
   clusterName: tl500
   namespace: stackrox
   analyzer:
@@ -23,3 +19,4 @@ stackrox:
         cpu: 500m
       requests:
         cpu: 100m
+ 
