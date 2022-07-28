@@ -9,8 +9,8 @@ spec:
   channel: {{ .Values.operator.channel }}
   installPlanApproval: {{ .Values.operator.installPlanApproval }}
   name: {{ .Values.operator.name }}
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
+  source: {{ .Values.operator.sourceName | default "redhat-operators" | quote }}
+  sourceNamespace: {{ .Values.operator.sourceNamespace | default "openshift-marketplace" | quote }}
 {{- if .Values.operator.version }}
   startingCSV: {{ .Values.operator.version | quote }}
 {{- end }}
