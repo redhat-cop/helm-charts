@@ -11,14 +11,14 @@ namespaces:
 
 # operator manages upgrades
 operator:
-  channel: stable
+  channel: latest
   installPlanApproval: Automatic
   name: openshift-gitops-operator
   sourceName: redhat-operators
   sourceNamespace: openshift-marketplace
   disableDefaultArgoCD: true
 
-
+# see the TEAM_DOCS.md for more information
 teamInstancesAreClusterScoped: true
 
 # adding your secrets for git access or other repository credentials
@@ -32,8 +32,10 @@ secrets: []
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
-  version: v2.3.6
+  version: v2.4.7
   applicationSet: {}
+  notifications:
+    enabled: true
   rbac:
     defaultPolicy: 'role:admin'
     policy: |
