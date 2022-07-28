@@ -14,7 +14,10 @@ operator:
   channel: stable
   installPlanApproval: Automatic
   name: openshift-gitops-operator
+  sourceName: redhat-operators
+  sourceNamespace: openshift-marketplace
   disableDefaultArgoCD: true
+
 
 teamInstancesAreClusterScoped: true
 
