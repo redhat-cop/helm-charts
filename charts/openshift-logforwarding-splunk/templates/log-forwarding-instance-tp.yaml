@@ -1,0 +1,60 @@
+{{- $fullName := include "openshift-logforwarding-splunk.fullname" . -}}
+{{- if semverCompare "<1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: logging.openshift.io/v1alpha1
+kind: LogForwarding
+metadata:
+  name: instance
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: cluster-logging
+{{ include "openshift-logforwarding-splunk.labels" . | indent 4 }}
+spec:
+  disableDefaultForwarding: true
+  outputs:
+    - endpoint: "{{ $fullName }}.{{ .Release.Namespace }}.svc:{{ $.Values.forwarding.fluentd.port }}"
+      name: {{ $fullName }}
+      type: forward
+      {{- if .Values.forwarding.fluentd.ssl }}
+      secret:
+        name: {{ $fullName }}
+      {{- end }}
+    - endpoint: "elasticsearch.{{ $.Values.openshift.logging.namespace }}.svc:{{ $.Values.openshift.logging.elasticsearch.port }}"
+      name: elasticsearch
+      secret:
+        name: fluentd
+      type: elasticsearch
+  pipelines:
+      {{- if or .Values.openshift.forwarding.app.elasticsearch .Values.openshift.forwarding.app.splunk }}
+    - inputSource: logs.app
+      name: container-logs
+      outputRefs:
+      {{- if or .Values.openshift.forwarding.app.elasticsearch }}
+        - elasticsearch
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.app.splunk }}
+        - {{ $fullName }}
+      {{- end }}
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.infra.elasticsearch .Values.openshift.forwarding.infra.splunk }}
+    - inputSource: logs.infra
+      name: infra-logs
+      outputRefs:
+      {{- if or .Values.openshift.forwarding.infra.elasticsearch }}
+        - elasticsearch
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.infra.splunk }}
+        - {{ $fullName }}
+      {{- end }}
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.audit.elasticsearch .Values.openshift.forwarding.audit.splunk }}
+    - inputSource: logs.audit
+      name: audit-logs
+      outputRefs:
+      {{- if or .Values.openshift.forwarding.audit.elasticsearch }}
+        - elasticsearch
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.audit.splunk }}
+        - {{ $fullName }}
+      {{- end }}
+      {{- end }}
+{{- end }}

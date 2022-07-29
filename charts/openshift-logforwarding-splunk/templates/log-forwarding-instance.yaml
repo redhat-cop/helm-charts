@@ -1,0 +1,57 @@
+{{- $fullName := include "openshift-logforwarding-splunk.fullname" . -}}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: logging.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: instance
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: cluster-logging
+{{ include "openshift-logforwarding-splunk.labels" . | indent 4 }}
+spec:
+  outputs:
+    - url: "{{ include "openshift-logforwarding-splunk.fluentd.protocol" . }}://{{ $fullName }}.{{ .Release.Namespace }}.svc:{{ $.Values.forwarding.fluentd.port }}"
+      name: {{ $fullName }}
+      type: fluentdForward
+      {{- if .Values.forwarding.fluentd.ssl }}
+      secret:
+        name: {{ $fullName }}
+      {{- end }}
+  pipelines:
+      {{- if or .Values.openshift.forwarding.app.elasticsearch .Values.openshift.forwarding.app.splunk }}
+    - inputRefs:
+        - application
+      name: container-logs
+      outputRefs:
+      {{- if or .Values.openshift.forwarding.app.elasticsearch }}
+        - default
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.app.splunk }}
+        - {{ $fullName }}
+      {{- end }}
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.infra.elasticsearch .Values.openshift.forwarding.infra.splunk }}
+    - inputRefs:
+        - infrastructure
+      name: infra-logs
+      outputRefs:
+      {{- if or .Values.openshift.forwarding.infra.elasticsearch }}
+        - default
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.infra.splunk }}
+        - {{ $fullName }}
+      {{- end }}
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.audit.elasticsearch .Values.openshift.forwarding.audit.splunk }}
+    - inputRefs:
+        - audit
+      name: audit-logs
+      outputRefs:
+      {{- if or .Values.openshift.forwarding.audit.elasticsearch }}
+        - default
+      {{- end }}
+      {{- if or .Values.openshift.forwarding.audit.splunk }}
+        - {{ $fullName }}
+      {{- end }}
+      {{- end }}
+{{- end }}
