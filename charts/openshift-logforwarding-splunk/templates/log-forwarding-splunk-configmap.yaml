@@ -1,0 +1,65 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ template "openshift-logforwarding-splunk.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: fluentd
+{{ include "openshift-logforwarding-splunk.labels" . | indent 4 }}
+data:
+  fluentd-loglevel: {{ .Values.forwarding.fluentd.loglevel | squote }}
+  splunk-insecure: {{ .Values.forwarding.splunk.insecure | squote }}
+  splunk-hostname: {{ .Values.forwarding.splunk.hostname | squote }}
+  splunk-port: {{ .Values.forwarding.splunk.port | squote  }}
+  splunk-protocol: {{ .Values.forwarding.splunk.protocol | squote  }}
+  splunk-index: {{ .Values.forwarding.splunk.index | squote  }}
+  splunk-sourcetype: {{ .Values.forwarding.splunk.sourcetype | squote  }}
+  splunk-source: {{ .Values.forwarding.splunk.source | squote  }}
+  td-agent.conf: |
+
+    <system>
+      log_level "#{ENV['LOG_LEVEL'] }"
+    </system>
+
+    <source>
+      @type  forward
+      @id    input1
+      port  24224
+{{ if .Values.forwarding.fluentd.ssl }}
+      <transport tls>
+        cert_path /secret/fluentd/tls.crt
+        private_key_path /secret/fluentd/tls.key
+        private_key_passphrase "#{ENV['FLUENTD_SSL_PASSPHRASE'] }"
+      </transport>
+{{ end }}
+
+{{ if .Values.forwarding.fluentd.ssl }}
+      <security>
+        shared_key "#{ENV['SHARED_KEY'] }"
+        self_hostname "#{ENV['HOSTNAME']}"
+      </security>
+{{ end }}
+    </source>
+
+    <match **>
+      @type splunk_hec
+      protocol "#{ENV['SPLUNK_PROTOCOL'] }"
+      insecure_ssl "#{ENV['SPLUNK_INSECURE'] }"
+      hec_host "#{ENV['SPLUNK_HOST'] }"
+      sourcetype "#{ENV['SPLUNK_SOURCETYPE'] }"
+      source "#{ENV['SPLUNK_SOURCE'] }"
+      index "#{ENV['SPLUNK_INDEX'] }"
+      hec_port "#{ENV['SPLUNK_PORT'] }"
+      hec_token "#{ENV['SPLUNK_TOKEN'] }"
+      host "#{ENV['NODE_NAME']}"
+      {{- if and (not .Values.forwarding.splunk.insecure) .Values.forwarding.splunk.caFile }}
+      ca_file /secret/splunk/splunk-ca.crt
+      {{- end }}
+      {{- with .Values.forwarding.fluentd.buffer }}
+      <buffer>
+      {{- range $parameter, $value := . }}
+        {{ $parameter }} {{ $value }}
+      {{- end }}
+      </buffer>
+      {{- end }}
+    </match>

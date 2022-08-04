@@ -1,0 +1,89 @@
+openshift:
+  logging:
+    namespace: openshift-logging
+    elasticsearch:
+      port: 9200
+  forwarding:
+    audit:
+      elasticsearch: false
+      splunk: false
+    app:
+      elasticsearch: true
+      splunk: true
+    infra:
+      elasticsearch: true
+      splunk: true
+  # kubeVersion: v1.20
+
+forwarding:
+  fluentd:
+    port: 24224
+    sharedkey: splunkforwarding
+    passphrase: ""
+    ssl: true
+    caFile: files/default-openshift-logging-fluentd.crt
+    keyFile: files/default-openshift-logging-fluentd.key
+    loglevel: warn
+    replicas: 2
+    # Set to true when version <4.6
+    scl: false
+    persistence:
+      enabled: false
+      size: 5Gi
+      ## If defined, storageClassName: <storageClass>
+      ## If set to "-", storageClassName: "", which disables dynamic provisioning
+      ## If undefined (the default) or set to null, no storageClassName spec is
+      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+      ##   GKE, AWS & OpenStack)
+      ##
+      # storageClass: "-"
+      storageClass: ""
+      accessMode: ReadWriteOnce
+    image: registry.redhat.io/openshift4/ose-logging-fluentd:v4.6
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1024Mi
+    updateStrategy:
+      type: "RollingUpdate"
+    buffer:
+      "@type": memory
+      chunk_limit_records: 100000
+      chunk_limit_size: 200m
+      flush_interval: 5s
+      flush_thread_count: 1
+      overflow_action: block
+      retry_max_times: 3
+      total_limit_size: 600m
+  # Example configuration to support file based buffering
+      # "@type": file
+      # path: /var/log/fluentd/fluentd-buffers/buffer
+      # flush_mode: interval
+      # retry_type: exponential_backoff
+      # flush_thread_count: 2
+      # flush_interval: "5s"
+      # retry_forever:
+      # retry_max_interval: 30
+      # chunk_limit_size: "200m"
+      # total_limit_size: "600m"
+      # chunk_limit_records: 100000
+      # overflow_action: block
+  splunk:
+    # Specify Splunk HEC Token and Index
+    token:
+    index: openshift
+    protocol: https
+    hostname: splunk.splunk.svc
+    port: 8088
+    insecure: true
+    sourcetype: openshift
+    source: openshift
+
+    # Specify the CA Certificate for Splunk
+    # caFile: "files/splunk-ca.crt"
