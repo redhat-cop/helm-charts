@@ -2186,6 +2186,20 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/network-policy-1.0.0/network-policy-1.0.0.tgz
     version: 1.0.0
+  openshift-logforwarding-splunk:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2022-08-04T03:54:05.392568502Z"
+    description: Log Forwarding from OpenShift to Splunk
+    digest: 1568c370225ca49f95a7e5ee69c66aafe7aec02b8c0c47d15c442e27e391dda0
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - email: andy.block@gmail.com
+      name: sabre1041
+    name: openshift-logforwarding-splunk
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/openshift-logforwarding-splunk-0.0.1/openshift-logforwarding-splunk-0.0.1.tgz
+    version: 0.0.1
   operatorhub:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -3298,4 +3312,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-07-29T15:33:08.252843143Z"
+generated: "2022-08-04T03:54:05.393285503Z"
