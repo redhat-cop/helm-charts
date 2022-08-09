@@ -16,7 +16,7 @@ operatorhub:
   operators:
     - name: ansible-automation-platform-operator
       subscription:
-        channel: early-access
+        channel: stable-2.2-cluster-scoped
         approval: Automatic
         operatorName: ansible-automation-platform-operator
       operatorgroup:
