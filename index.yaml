@@ -3,6 +3,26 @@ entries:
   ansible-automation-platform:
   - apiVersion: v2
     appVersion: v2.0.1
+    created: "2022-08-09T20:51:56.430260805Z"
+    dependencies:
+    - condition: operatorhub.enabled
+      name: operatorhub
+      repository: https://redhat-cop.github.io/helm-charts
+      version: 0.0.10
+    description: A Helm chart for customizing the deployment of the Ansible Automation
+      Platform Operator
+    digest: 6c7dabda19799daff2be3c2442588eb4cdcad870ec8493232e8d4942c2cac0c4
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: paulbarfuss
+    - name: ecda909
+    - name: jfilipcz
+    name: ansible-automation-platform
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/ansible-automation-platform-0.0.5/ansible-automation-platform-0.0.5.tgz
+    version: 0.0.5
+  - apiVersion: v2
+    appVersion: v2.0.1
     created: "2022-06-04T21:36:45.475614168Z"
     dependencies:
     - condition: operatorhub.enabled
@@ -3312,4 +3332,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-08-04T03:54:05.393285503Z"
+generated: "2022-08-09T20:51:56.431080604Z"
