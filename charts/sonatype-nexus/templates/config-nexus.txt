@@ -25,7 +25,7 @@ curl -s -k -X PUT "${NEXUS_URL}/service/rest/v1/repositories/maven/group/maven-p
 
 NS=$(cat /run/secrets/kubernetes.io/serviceaccount/namespace)
 NEXUS_USER=admin:admin123
-NEXUS_SVC_NAME=$(oc get svc -l app=sonatype-nexus -o name)
+NEXUS_SVC_NAME=$(oc  -n ${NS} get svc -l app=sonatype-nexus -o name)
 NEXUS_URL=http://$( oc -n ${NS} get ${NEXUS_SVC_NAME} -o jsonpath --template='{.metadata.name}:{.spec.ports[].port}')
 
 RED='\033[0;31m'
