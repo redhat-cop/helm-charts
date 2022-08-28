@@ -107,7 +107,7 @@ curl -s -k -X POST "${NEXUS_URL}/service/rest/beta/repositories/raw/hosted" \
 
 # PyPi Proxy
 echo "🐍 Adding PyPi Proxy"
-curl -s -k -X PUT "${NEXUS_URL}/service/rest/v1/repositories/pypi/proxy" \
+curl -s -k -X POST "${NEXUS_URL}/service/rest/v1/repositories/pypi/proxy" \
   --user "${NEXUS_USER}" \
   -H "accept: application/json" \
   -H "Content-Type: application/json" \
