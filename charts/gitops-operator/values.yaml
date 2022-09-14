@@ -54,8 +54,9 @@ argocd_cr:
       enabled: true
       tls:
         termination: reencrypt
-  dex:
-    openShiftOAuth: true
+  sso:
+    dex:
+      openShiftOAuth: true
 
   initialRepositories: |
     - name: ubiquitous-journey
