@@ -3,11 +3,13 @@
 # Default values for cert-manager configs for Openshift APIServer, IngressController and custom routes
 namespace: cert-manager
 
-# Setup Issuer and ClusterIssuer custom resources for route53 and rfc2136 resources
+# Setup Issuer and ClusterIssuer custom resources for route53,rfc2136 resources
+# provider is mandatory for DNS01 resolver, for HTTP01 it's not applicable
 issuer:
   dns:
     enabled: true
-  provider: route53
+  solver: DNS01
+#  provider: route53
   acme:
     emailAddress: admin@example.com
     selectorZones:

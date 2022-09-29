@@ -18,7 +18,7 @@ helm repo update
 helm install \
   cert-manager jetstack/cert-manager \
   --namespace cert-manager \
-  --version v0.15.0 \
+  --version v1.9.0 \
   --set installCRDs=true \
   --set 'extraArgs={--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}'
 ```
@@ -45,7 +45,8 @@ See comments in [values.yaml](./values.yaml) for more details on configuration
 | Parameter                                        | Description                                                  | Default                               |
 | ------------------------------------------------ | -------------------------------------------------------------| ------------------------------------- |
 | `namespace` | Project name to install cert-manager | `cert-manager` |
-| `issuer.provider` | Configure an Issuer or ClusterIssuer for cert-manager | `route53` |
+| `issuer.solver` | Configure a solver (ACME Challenge) type for an Issuer or ClusterIssuer | `DNS01` |
+| `issuer.provider` | Configure an Issuer or ClusterIssuer for cert-manager, only needed for DNS01 solver | `route53` |
 | `issuer.dns.enabled` | Enable DNS provider | `true` |
 | `issuer.acme.emailAddress` | Email address for ACME account | `admin@example.com` |
 | `issuer.acme.selectorZones` | Limit DNS watch zones | `["subdomain.example.com]` |
