@@ -21,6 +21,17 @@ spec:
       labels:
         deploymentconfig: {{ include "ipa.fullname" . }}
     spec:
+      {{- if .Values.runOnInfra }}
+      nodeSelector:
+        node-role.kubernetes.io/infra: ''
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        value: reserved
+      {{- end }}
       volumes:
       - name: {{ include "ipa.fullname" . }}-data
         persistentVolumeClaim:
@@ -59,11 +70,11 @@ spec:
           protocol: TCP
         env:
         - name: IPA_SERVER_HOSTNAME
-          value: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.{{ .Values.app_domain }}
+          value: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.apps.{{ .Values.cluster_name }}.{{ .Values.domain }}
         - name: IPA_SERVER_IP
           value: ""
         - name: IPA_SERVER_INSTALL_OPTS
-          value: {{ .Values.install_opts }} {{ .Values.realm }}
+          value: {{ .Values.install_opts }} -r {{ .Values.domain }}
         - name: PASSWORD
           valueFrom:
             secretKeyRef:

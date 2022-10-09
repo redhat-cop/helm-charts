@@ -1,8 +1,11 @@
 # IPA Server must know it's own hostname to work properly....
 # These values will probs need to be overwritten or could use lookup function?
-app_domain: apps.mycluster.example.com
+# app_domain: apps.mycluster.example.com
 admin_password: Passw0rd
-realm: "-r redhatlabs.dev"
+# realm: "-r redhatlabs.dev"
+
+cluster_name: springdo.sandbox1422
+domain: opentlc.com
 
 # sensible defaults
 image: freeipa-server:rhel-7
@@ -18,10 +21,12 @@ volume: 5Gi
 # disabled by default so as to not overwrite existing oauth configs in openshift-config ns
 ocp_auth:
   enabled: false
-  bind_dn: "uid=admin,cn=users,cn=accounts,dc=redhatlabs,dc=dev"
+  bind_dn: "uid=admin,cn=users,cn=accounts"
   bind_password: Passw0rd
-  base: "cn=student,cn=groups,cn=accounts,dc=redhatlabs,dc=dev"
-  domain: "dc=redhatlabs,dc=dev"
+  base: "cn=student,cn=groups,cn=accounts"
 
 machineconfig:
   ignition_version: 3.1.0
+
+# assumes node-role.kubernetes.io/infra: "" on one or more nodes
+runOnInfra: false
