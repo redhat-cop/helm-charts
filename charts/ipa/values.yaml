@@ -1,10 +1,10 @@
 # IPA Server must know it's own hostname to work properly....
 # These values will probs need to be overwritten or could use lookup function?
-# app_domain: apps.mycluster.example.com
 admin_password: Passw0rd
 
-cluster_name: springdo.sandbox1422
-domain: opentlc.com
+# these must be set in line with whats in the cluster !!
+domain: example.com
+sub_domain: my.sandbox
 
 # sensible defaults
 image: freeipa-server:rhel-7
