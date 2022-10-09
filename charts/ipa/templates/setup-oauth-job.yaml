@@ -24,6 +24,11 @@ spec:
                 fi
             done
             echo "Patching OAuth LDAP ..."
+            oc get -o yaml oauth/cluster | grep identityProvider
+            if [ $? -ne 0 ]; then
+                echo "Setting the identityProviders property if missing"
+                oc patch oauth/cluster --type=json -p '[{"op":"add", "path":"/spec", "value":{"identityProviders":[]}}]'
+            fi
             oc patch oauth/cluster --type=json -p '[{"op":"add", "path":"/spec/identityProviders/-",
               "value":{"ldap": {"attributes": {"email": ["mail"], "id": ["dn"], "name": ["displayName"], "preferredUsername": ["uid"]},
               "bindDN": "{{ .Values.ocp_auth.bind_dn }},{{ include "ipa.ldap_domain" . }}", "bindPassword": {"name": "{{ include "ipa.fullname" . }}-bind-password" },

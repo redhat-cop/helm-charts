@@ -2,7 +2,6 @@
 # These values will probs need to be overwritten or could use lookup function?
 # app_domain: apps.mycluster.example.com
 admin_password: Passw0rd
-# realm: "-r redhatlabs.dev"
 
 cluster_name: springdo.sandbox1422
 domain: opentlc.com
