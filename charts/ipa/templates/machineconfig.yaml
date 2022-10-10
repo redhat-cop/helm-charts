@@ -4,7 +4,11 @@ apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 metadata:
   labels:
+    {{- if .Values.runOnInfra }}
+    machineconfiguration.openshift.io/role: infra
+    {{- else }}
     machineconfiguration.openshift.io/role: worker
+    {{- end }}
   name: 01-sebool
 spec:
   config:

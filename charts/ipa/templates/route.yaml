@@ -8,7 +8,7 @@ metadata:
   annotations:
     description: Route for FreeIPA server's HTTPS
 spec:
-  host: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.{{ .Values.app_domain }}
+  host: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.apps.{{ .Values.sub_domain }}.{{ .Values.domain }}
   to:
     kind: Service
     name: {{ include "ipa.fullname" . }}

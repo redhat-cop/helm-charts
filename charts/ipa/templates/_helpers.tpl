@@ -35,6 +35,13 @@ Create a release namespace such that helm template and install is happy
 {{- end }}
 
 
+{{- define "ipa.ldap_domain" -}}
+{{- $parts := split "." .Values.domain }}
+{{- $p0 := printf "%s=%s" "dc" $parts._0 | trunc 63 | trimSuffix "-"}}
+{{- $p1 := printf "%s=%s" "dc" $parts._1 | trunc 63 | trimSuffix "-"}}
+{{- printf "%s,%s" $p0 $p1 | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
 {{/*
 Create chart name and version as used by the chart label.
 */}}
