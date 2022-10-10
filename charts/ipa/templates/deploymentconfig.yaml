@@ -70,11 +70,11 @@ spec:
           protocol: TCP
         env:
         - name: IPA_SERVER_HOSTNAME
-          value: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.apps.{{ .Values.sub_domain }}.{{ .Values.domain }}
+          value: {{ include "ipa.fullname" . }}-{{ include "ipa.namespace" . }}.{{ .Values.app_domain }}
         - name: IPA_SERVER_IP
           value: ""
         - name: IPA_SERVER_INSTALL_OPTS
-          value: {{ .Values.install_opts }} -r {{ .Values.domain }}
+          value: {{ .Values.install_opts }} {{ .Values.realm }}
         - name: PASSWORD
           valueFrom:
             secretKeyRef:

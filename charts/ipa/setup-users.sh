@@ -20,3 +20,16 @@ for i in {1..24};do
   printf "My creds are ${PASSWD}\n\n"  
   ipa group-add-member ${GROUP_NAME} --users=$LAB_NUMBER
 done
+
+#######
+
+# alternative setup - provide silly passwords for users
+export GROUP_NAME=student
+ipa group-add ${GROUP_NAME} --desc "TL500 Student Group" || true
+# in a loop add random users to the group 
+for i in {1..4};do
+  export LAB_NUMBER="lab$i"
+  echo 'thisisthepassword' | ipa user-add ${LAB_NUMBER} --first=${LAB_NUMBER} --last=${LAB_NUMBER} --email=${LAB_NUMBER}@redhatlabs.dev --password
+  ipa group-add-member ${GROUP_NAME} --users=$LAB_NUMBER
+  printf "\n\n User ${LAB_NUMBER} is created"
+done
