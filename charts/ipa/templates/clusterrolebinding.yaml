@@ -1,0 +1,17 @@
+{{- if .Values.ldap_group_sync }}
+{{- range $key, $val := .Values.group_role_bindings }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $key }}-{{ $val }}-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $key }}
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: {{ $val }}
+{{- end }}
+{{- end }}
