@@ -28,3 +28,29 @@ machineconfig:
 
 # assumes node-role.kubernetes.io/infra: "" on one or more nodes
 runOnInfra: false
+
+# using predefined clusterroles to bind to ldap groups
+ldap_group_sync: false
+
+group_role_bindings:
+  admin: ocp_admins
+  edit: ocp_devs
+  view: ocp_viewers
+
+# values passed to the sync dependency must match the ones above 
+cronjob-ldap-group-sync:
+  ldap_bind_dn: 'uid=ldap_admin,cn=users,cn=accounts,dc=redhatlabs,dc=dev'
+  ldap_bind_password: 'Passw0rd'
+  ldap_group_membership_attributes: '["member"]'
+  ldap_group_name_attributes: '["cn"]'
+  ldap_group_uid_attribute: ipaUniqueID
+  # ldap_groups_filter: (&(objectclass=ipausergroup)(cn=student)) use this student is not a group of groups but just contains users 
+  ldap_groups_filter: (&(objectclass=ipausergroup)(memberOf=cn=student,cn=groups,cn=accounts,dc=redhatlabs,dc=dev))
+  ldap_groups_search_base: 'cn=groups,cn=accounts,dc=redhatlabs,dc=dev'
+  ldap_groups_whitelist: ''
+  ldap_url: 'ldap://ipa.ipa.svc.cluster.local:389'
+  ldap_user_name_attributes: '["uid"]'
+  ldap_user_uid_attribute: dn
+  ldap_users_search_base: 'cn=users,cn=accounts,dc=redhatlabs,dc=dev'
+  namespace: ipa
+  schedule: '* * * * *' # '@hourly'
