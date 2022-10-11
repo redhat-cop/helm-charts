@@ -37,14 +37,14 @@ group_role_bindings:
   edit: ocp_devs
   view: ocp_viewers
 
-# values passed to the sync dependency must match the ones above 
+# values passed to the sync dependency must match the ones above
 cronjob-ldap-group-sync:
   ldap_bind_dn: 'uid=ldap_admin,cn=users,cn=accounts,dc=redhatlabs,dc=dev'
   ldap_bind_password: 'Passw0rd'
   ldap_group_membership_attributes: '["member"]'
   ldap_group_name_attributes: '["cn"]'
   ldap_group_uid_attribute: ipaUniqueID
-  # ldap_groups_filter: (&(objectclass=ipausergroup)(cn=student)) use this student is not a group of groups but just contains users 
+  # ldap_groups_filter: (&(objectclass=ipausergroup)(cn=student)) use this student is not a group of groups but just contains users
   ldap_groups_filter: (&(objectclass=ipausergroup)(memberOf=cn=student,cn=groups,cn=accounts,dc=redhatlabs,dc=dev))
   ldap_groups_search_base: 'cn=groups,cn=accounts,dc=redhatlabs,dc=dev'
   ldap_groups_whitelist: ''
@@ -53,4 +53,4 @@ cronjob-ldap-group-sync:
   ldap_user_uid_attribute: dn
   ldap_users_search_base: 'cn=users,cn=accounts,dc=redhatlabs,dc=dev'
   namespace: ipa
-  schedule: '* * * * *' # '@hourly'
+  schedule: '* * * * *'  # '@hourly'

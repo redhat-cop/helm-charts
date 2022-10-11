@@ -14,4 +14,3 @@ dependencies:
     version: 0.0.2
     repository: https://redhat-cop.github.io/openshift-management
     condition: ldap_group_sync
-   
