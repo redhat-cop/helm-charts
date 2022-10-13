@@ -913,6 +913,23 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/bootstrap-project-0.0.1/bootstrap-project-0.0.1.tgz
     version: 0.0.1
+  cert-manager-configs:
+  - apiVersion: v1
+    appVersion: v0.1.1
+    created: "2022-10-13T11:23:59.009090037Z"
+    description: A Helm chart for installing customizations to the cert-manager deployment
+    digest: dcb7e5a472d21c13703471fcf703965007846b6771c3c321156e4339ccd564a2
+    home: https://github.com/rht-labs/helm-charts
+    icon: https://raw.githubusercontent.com/jetstack/cert-manager/master/logo/logo.png
+    maintainers:
+    - email: pbarfuss@redhat.com
+      name: paulbarfuss
+    - email: jfilipcz@redhat.com
+      name: jfilipcz
+    name: cert-manager-configs
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/cert-manager-configs-v0.1.1/cert-manager-configs-v0.1.1.tgz
+    version: v0.1.1
   dev-ex-dashboard:
   - apiVersion: v2
     appVersion: v1.0
@@ -3565,4 +3582,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-10-11T20:22:58.431035506Z"
+generated: "2022-10-13T11:23:59.009569743Z"
