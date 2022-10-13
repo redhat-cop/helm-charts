@@ -1,6 +1,6 @@
 {{- if .Values.issuer.dns.enabled }}
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: {{ .Values.issuer.acme.issuerKind }}
 metadata:
   name: "letsencrypt-{{ .Values.issuer.acme.env }}"
@@ -51,7 +51,7 @@ spec:
       {{- if eq .Values.issuer.solver "HTTP01" }}
         http01:
           ingress:
-          class: nginx
+            class: nginx
       {{- end }}
 
   {{- end }}

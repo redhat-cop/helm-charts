@@ -1,7 +1,7 @@
 {{- if .Values.certificates }}
 {{- range $certificate := .Values.certificates }}
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ $certificate.name }}

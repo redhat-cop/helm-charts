@@ -9,7 +9,7 @@ issuer:
   dns:
     enabled: true
   solver: DNS01
-#  provider: route53
+  provider: route53
   acme:
     emailAddress: admin@example.com
     selectorZones:
