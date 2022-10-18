@@ -61,6 +61,13 @@ Or deploying just the Operator, no helm lifecycle hooks and no team instances.
 helm upgrade --install foo redhat-cop/gitops-operator --set namespaces=null --set ignoreHelmHooks=true
 ```
 
+We override the ArgoCD CR version in `values.yaml` file:
+```yaml
+argocd_cr:
+  version: v2.4.15
+```
+If you wish to use the supported ArgoCD image that the operator sets, comment the version out or remove it from the `values.yaml` file.
+
 ## Teams and ArgoCD
 
 Checkout the [TEAM DOCS](TEAM_DOCS.md) if you would like to understand more on how to use this chart with your teams.
