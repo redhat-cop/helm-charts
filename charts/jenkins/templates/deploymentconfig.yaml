@@ -1,6 +1,6 @@
 {{- if .Values.deployment }}
 ---
-apiVersion: apps.openshift.io/v1 
+apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   annotations:
@@ -12,9 +12,9 @@ spec:
   selector:
     name: {{ .Values.appName }}
   strategy: {{- if .Values.persistence }}
-    type: Recreate 
+    type: Recreate
     {{ else }}
-    type: Rolling 
+    type: Rolling
     {{- end }}
   template:
     metadata:
@@ -27,7 +27,7 @@ spec:
         - name: OPENSHIFT_ENABLE_OAUTH
           value: "true"
         - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
-          value: "true" 
+          value: "true"
           {{- end }}
         - name: KUBERNETES_MASTER
           value: https://kubernetes.default:443
@@ -45,6 +45,10 @@ spec:
           value: 'false'
         - name: JENKINS_OPTS
           value: '--sessionTimeout=180'
+        - name: GIT_SSL_NO_VERIFY
+          value: "true"
+        - name: JAVA_ARGS
+          value: '-Dorg.jenkinsci.plugins.gitclient.GitClient.untrustedSSL=true'
         {{- if .Values.configAsCode }}
         - name: CASC_JENKINS_CONFIG
           value: /var/lib/jenkins/config-as-code
