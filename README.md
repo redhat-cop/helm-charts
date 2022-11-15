@@ -60,6 +60,7 @@ For more info on each chart checkout these!
 * [jenkins](/charts/jenkins)
 * [kopf](/charts/kopf)
 * [network-policy](/charts/network-policy)
+* [openshift-logforwarding-splunk](/charts/openshift-logforwarding-splunk)
 * [operatorhub](/charts/operatorhub)
 * [owncloud](/charts/owncloud)
 * [pact-broker](/charts/pact-broker)
