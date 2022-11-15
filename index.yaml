@@ -1122,6 +1122,21 @@ entries:
     version: 0.1.0
   gitops-operator:
   - apiVersion: v2
+    appVersion: v2.4.17
+    created: "2022-11-15T10:17:21.35977293Z"
+    description: "A Helm chart for customising the deployment of the Red Hat GitOps
+      Operator \U0001F52B"
+    digest: 1c4d3aec43e9087b9c93f301971c0196819d161c135a165ff3bb7f3882d864cf
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/eformat/openshift-gitops/main/rh-gitops.png
+    maintainers:
+    - name: eformat
+    - name: springdo
+    name: gitops-operator
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/gitops-operator-0.4.9/gitops-operator-0.4.9.tgz
+    version: 0.4.9
+  - apiVersion: v2
     appVersion: v2.4.15
     created: "2022-10-18T00:12:39.742746577Z"
     description: "A Helm chart for customising the deployment of the Red Hat GitOps
@@ -3597,4 +3612,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2022-10-18T00:12:39.743401982Z"
+generated: "2022-11-15T10:17:21.360286937Z"
