@@ -1,8 +1,8 @@
 apiVersion: v2
-appVersion: v2.0.1
+appVersion: v2.0.2
 description: A Helm chart for customizing the deployment of the Ansible Automation Platform Operator
 name: ansible-automation-platform
-version: 0.0.5
+version: 0.0.6
 home: https://github.com/redhat-cop/helm-charts
 maintainers:
 - name: paulbarfuss
