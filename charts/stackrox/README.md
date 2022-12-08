@@ -5,12 +5,12 @@ Installs the ACS/Stackrox Operator, configures a Central instance and a SecuredC
 Production:
 ```bash
 helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
-helm install stackrox redhat-cop/stackrox
+helm install stackrox redhat-cop/stackrox-chart
 ```
 
 Debug/Development:
 ```bash
-helm upgrade --install stackrox . --namespace tl500 --debug
+helm upgrade --install stackrox-chart . --namespace tl500 --debug
 ```
 
 You can watch the logs of the init job:
