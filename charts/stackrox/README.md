@@ -5,7 +5,7 @@ Installs the ACS/Stackrox Operator, configures a Central instance and a SecuredC
 Production:
 ```bash
 helm repo add redhat-cop https://redhat-cop.github.io/helm-charts
-helm install stackrox redhat-cop/stackrox
+helm install stackrox redhat-cop/stackrox-chart
 ```
 
 Debug/Development:
