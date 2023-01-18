@@ -85,5 +85,8 @@ forwarding:
     sourcetype: openshift
     source: openshift
 
-    # Specify the CA Certificate for Splunk
-    # caFile: "files/splunk-ca.crt"
+    # Specify the custom CA bundle for Splunk
+    # ca_bundle: |
+    #    -----BEGIN CERTIFICATE-----
+    #    ...
+    #    -----END CERTIFICATE-----
