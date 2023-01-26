@@ -2,7 +2,7 @@ apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   {{ template "app.labels" }}
-  name: gitea
+  name: {{ .Values.imagestream_name | default "gitea" | quote }}
 spec:
   lookupPolicy:
     local: false
@@ -14,6 +14,6 @@ spec:
       name: {{ .Values.imagestream_from | default "quay.io/gpte-devops-automation/gitea:latest" | quote }}
     generation: 2
     importPolicy: {}
-    name: latest
+    name: {{ .Values.imagestream_tag | default "latest" | quote }}
     referencePolicy:
       type: Local
