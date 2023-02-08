@@ -2505,6 +2505,18 @@ entries:
     version: 1.0.0
   openshift-logforwarding-splunk:
   - apiVersion: v2
+    created: "2023-02-08T10:45:31.71157129Z"
+    description: Log Forwarding from OpenShift to Splunk
+    digest: ad21d85693f19f6b123a305b0fbd4aa4dabf5b1adc2641075dcaa79d5852ccb5
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - email: andy.block@gmail.com
+      name: sabre1041
+    name: openshift-logforwarding-splunk
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/openshift-logforwarding-splunk-0.0.3/openshift-logforwarding-splunk-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
     created: "2022-10-11T17:32:35.188968631Z"
     description: Log Forwarding from OpenShift to Splunk
     digest: 4547a3c59af9bf5617e49031176047b0de94d252df8148857183ef1c2fafaced
@@ -3735,4 +3747,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2023-01-30T06:00:54.481776119Z"
+generated: "2023-02-08T10:45:31.71189929Z"
