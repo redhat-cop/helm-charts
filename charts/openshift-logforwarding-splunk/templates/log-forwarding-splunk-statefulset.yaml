@@ -22,6 +22,7 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/log-forwarding-splunk-configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/log-forwarding-splunk-secret.yaml") . | sha256sum }}
       labels:
         app: {{ $fullName }}
     spec:
