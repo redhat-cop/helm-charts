@@ -20,6 +20,9 @@ spec:
       app: {{ $fullName }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/log-forwarding-splunk-configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/log-forwarding-splunk-secret.yaml") . | sha256sum }}
       labels:
         app: {{ $fullName }}
     spec:
@@ -105,7 +108,7 @@ spec:
             {{- end }}
             - name: buffer
               mountPath: "/var/log/fluentd"
-            {{- if and (not .Values.forwarding.splunk.insecure) .Values.forwarding.splunk.caFile }}
+            {{- if and (not .Values.forwarding.splunk.insecure) .Values.forwarding.splunk.ca_bundle }}
             - mountPath: /secret/splunk
               name: splunk-certs
               readOnly: true
@@ -175,7 +178,7 @@ spec:
         - name: buffer
           emptyDir: {}
         {{- end }}
-        {{- if and (not .Values.forwarding.splunk.insecure) .Values.forwarding.splunk.caFile }}
+        {{- if and (not .Values.forwarding.splunk.insecure) .Values.forwarding.splunk.ca_bundle }}
         - name: splunk-certs
           secret:
             secretName: {{ $fullName }}-splunk
