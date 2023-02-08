@@ -10,7 +10,7 @@
 # imagestream_name: gitea
 # imagestring_tag: latest
 
-# repository_size: 1Gi
+# repository_size: 5Gi
 
 # secret_key: '8 character hard to guess alpha string'
 # internal_token: '106 character hard to guess string'
@@ -18,11 +18,21 @@
 # Set the `"helm.sh/resource-policy": keep` annotation on PVCs to prevent accidental deletion
 # pvcPolicyKeep: true
 
+# Use edge termination for the gitea route
+tlsRoute: true
+
+
 ## YOU MUST SPECIFY THE DB PASSWORD!!!
 db: {}
 #   password: 'S00perSekretP@ssw0rd$'
 #   name: gitea-db
 #   user: gitea
+#   size: 1Gi
 #   imagestream_name: postgresql
 #   imagestream_namespace: openshift
 #   imagestream_tag: latest
+#
+## Create an ImageStream to override  where the postgresql container is pulled from, for disconnected clusters which
+## for disconnected clusters which lack the default ImageStreams. Note that the value has to be indented under db:
+## (recommended to also change imagestream_name)
+#   imagestream_from: ""

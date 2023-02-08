@@ -26,7 +26,7 @@ data:
     ROOT = /gitea-repositories
 
     [server]
-    ROOT_URL         = https://{{ required "You MUST specify the public-facing hostname" .Values.hostname }}/
+    ROOT_URL         = https://{{ required "You MUST specify the external hostname to be used for the public-facing web page" .Values.hostname }}/
     SSH_DOMAIN       = {{ .Values.hostname }}
     DOMAIN           = {{ .Values.hostname }}
     HTTP_PORT        = 3000

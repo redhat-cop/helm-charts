@@ -1,0 +1,22 @@
+{{- if .Values.db.imagestream_from }}
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  {{ template "app.labels" }}
+  name: {{ .Values.db.imagestream_name | default "postgresql" | quote }}
+  namespace: {{ .Values.db.imagestream_namespace | default "openshift" | quote }}
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - annotations:
+      openshift.io/imported-from: {{ .Values.db.imagestream_from | quote }}
+    from:
+      kind: DockerImage
+      name: {{ .Values.db.imagestream_from | quote }}
+    generation: 2
+    importPolicy: {}
+    name: {{ .Values.db.imagestream_tag | default "latest" | quote }}
+    referencePolicy:
+      type: Local
+{{- end }}
