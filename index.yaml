@@ -1114,6 +1114,20 @@ entries:
   gitea:
   - apiVersion: v2
     appVersion: latest
+    created: "2023-02-08T10:47:56.987805705Z"
+    description: A Helm chart for Kubernetes
+    digest: 897d38d27a6d4fd27cb80dd70bef0f12eb6b9b6f4d2fbcfc8aa7b0cd5e4b7ab7
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/go-gitea/gitea/ee60f27aec0f75a34ae62841ed52579c0c20dcfa/assets/logo.svg
+    maintainers:
+    - name: infosec812
+    name: gitea
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/gitea-0.1.3/gitea-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: latest
     created: "2022-04-20T13:28:15.206936424Z"
     description: A Helm chart for Kubernetes
     digest: d8902a04ac00eb1dd982a3d60551f7f301454815fe3a6677ae0060d1d79aaf41
@@ -3747,4 +3761,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2023-02-08T10:45:31.71189929Z"
+generated: "2023-02-08T10:47:56.988570213Z"
