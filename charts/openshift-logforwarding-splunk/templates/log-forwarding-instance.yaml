@@ -21,6 +21,10 @@ spec:
       {{- if or .Values.openshift.forwarding.app.elasticsearch .Values.openshift.forwarding.app.splunk }}
     - inputRefs:
         - application
+      {{- if .Values.openshift.forwarding.app.labels }}
+      labels:
+        {{- toYaml .Values.openshift.forwarding.app.labels | nindent 8 }}
+      {{- end }}
       name: container-logs
       outputRefs:
       {{- if or .Values.openshift.forwarding.app.elasticsearch }}
@@ -33,6 +37,10 @@ spec:
       {{- if or .Values.openshift.forwarding.infra.elasticsearch .Values.openshift.forwarding.infra.splunk }}
     - inputRefs:
         - infrastructure
+      {{- if .Values.openshift.forwarding.infra.labels }}
+      labels:
+        {{- toYaml .Values.openshift.forwarding.infra.labels | nindent 8 }}
+      {{- end }}
       name: infra-logs
       outputRefs:
       {{- if or .Values.openshift.forwarding.infra.elasticsearch }}
@@ -45,6 +53,10 @@ spec:
       {{- if or .Values.openshift.forwarding.audit.elasticsearch .Values.openshift.forwarding.audit.splunk }}
     - inputRefs:
         - audit
+      {{- if .Values.openshift.forwarding.audit.labels }}
+      labels:
+        {{- toYaml .Values.openshift.forwarding.audit.labels | nindent 8 }}
+      {{- end }}
       name: audit-logs
       outputRefs:
       {{- if or .Values.openshift.forwarding.audit.elasticsearch }}
