@@ -7,12 +7,18 @@ openshift:
     audit:
       elasticsearch: false
       splunk: false
+      # labels:
+      #   key: audit
     app:
       elasticsearch: true
       splunk: true
+      # labels:
+      #   key: app
     infra:
       elasticsearch: true
       splunk: true
+      # labels:
+      #   key: infra
   # kubeVersion: v1.20
 
 forwarding:
@@ -61,7 +67,7 @@ forwarding:
       overflow_action: block
       retry_max_times: 3
       total_limit_size: 600m
-  # Example configuration to support file based buffering
+      # Example configuration to support file based buffering
       # "@type": file
       # path: /var/log/fluentd/fluentd-buffers/buffer
       # flush_mode: interval
