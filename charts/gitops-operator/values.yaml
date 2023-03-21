@@ -32,7 +32,7 @@ secrets: []
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
-  version: v2.5.14
+  version: v2.6.6
   applicationSet: {}
   notifications:
     enabled: true
@@ -54,8 +54,10 @@ argocd_cr:
       enabled: true
       tls:
         termination: reencrypt
-  dex:
-    openShiftOAuth: true
+  sso:
+    dex:
+      openShiftOAuth: true
+    provider: dex
 
   initialRepositories: |
     - name: ubiquitous-journey
