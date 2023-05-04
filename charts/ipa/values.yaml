@@ -5,7 +5,7 @@ admin_password: Passw0rd123
 realm: "-r redhatlabs.dev"
 
 # sensible defaults
-image: freeipa-server:rhel-7
+image: freeipa-server:latest
 install_opts: "-U --setup-dns --no-forwarders --no-ntp"
 container_args: "ipa-server-install"
 volume: 5Gi
