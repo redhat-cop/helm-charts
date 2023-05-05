@@ -187,29 +187,29 @@ spec:
             {{- with .Values.env }}
             {{- . | toYaml | trim | nindent 12 }}
             {{- end }}
-            - name: SONARQUBE_WEB_JVM_OPTS
+            - name: SONAR_WEB_JVM_OPTS
               {{- if .Values.caCerts }}
               value: {{ printf "-Djavax.net.ssl.trustStore=%s/certs/cacerts %s" .Values.sonarqubeFolder .Values.jvmOpts | trim | quote }}
               {{- else }}
               value: "{{ .Values.jvmOpts }}"
               {{- end }}
-            - name: SONARQUBE_JDBC_USERNAME
+            - name: SONAR_JDBC_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.name" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
                   key: postgresqlUsername
-            - name: SONARQUBE_JDBC_PASSWORD
+            - name: SONAR_JDBC_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.name" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
                   key: postgresqlPassword
-            - name: SONARQUBE_JDBC_DATABASE
+            - name: SONAR_JDBC_DATABASE
               valueFrom:
                 secretKeyRef:
                   name: {{- if .Values.postgresql.enabled }} {{ template "postgresql.name" .}} {{- else if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{- else }} {{ template "sonarqube.fullname" . }} {{- end }}
                   key: postgresqlDatabase
-            - name: SONARQUBE_JDBC_URL
-              value: "jdbc:postgresql://{{ template "postgresql.hostname" . }}:{{- .Values.postgresql.service.port -}}/$(SONARQUBE_JDBC_DATABASE)"
+            - name: SONAR_JDBC_URL
+              value: "jdbc:postgresql://{{ template "postgresql.hostname" . }}:{{- .Values.postgresql.service.port -}}/$(SONAR_JDBC_DATABASE)"
           livenessProbe:
             httpGet:
               path: {{ .Values.livenessProbe.sonarWebContext }}sessions/new
