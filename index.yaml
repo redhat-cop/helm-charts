@@ -3342,6 +3342,23 @@ entries:
     version: 0.0.4
   sonatype-nexus:
   - apiVersion: v2
+    appVersion: 3.43.0
+    created: "2023-05-05T09:47:37.135793696Z"
+    description: Sonatype Nexus is an open source repository manager
+    digest: 29c2298944f984e7ae2e06dfd6c3f1eca43f65bb9a173f680167b860f2c831e9
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://help.sonatype.com/docs/files/331022/34537964/3/1564671303641/NexusRepo_Icon.png
+    maintainers:
+    - name: eformat
+    - name: ckavili
+    - name: springdo
+    name: sonatype-nexus
+    sources:
+    - https://github.com/sonatype/nexus-public
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonatype-nexus-1.1.11/sonatype-nexus-1.1.11.tgz
+    version: 1.1.11
+  - apiVersion: v2
     appVersion: 3.41.1
     created: "2022-09-24T06:12:04.467242602Z"
     description: Sonatype Nexus is an open source repository manager
@@ -3883,4 +3900,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2023-05-05T09:46:54.047305675Z"
+generated: "2023-05-05T09:47:37.136550496Z"
