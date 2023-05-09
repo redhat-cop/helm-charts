@@ -30,38 +30,53 @@ spec:
               fi
 
               # install central first
-              cat <<EOF | oc apply -f-
-              apiVersion: platform.stackrox.io/v1alpha1
-              kind: Central
-              metadata:
-                namespace: {{ .Values.stackrox.namespace | quote }}
-                name: stackrox-central-services
-              spec:
-                central:
-                  exposure:
-                    loadBalancer:
-                      enabled: false
-                      port: 443
-                    nodePort:
-                      enabled: false
-                    route:
-                      enabled: true
-                  persistence:
-                    persistentVolumeClaim:
-                      claimName: stackrox-db
-                egress:
-                  connectivityPolicy: Online
-                scanner:
-                  analyzer:
-                    resources: 
-                    {{- toYaml .Values.stackrox.analyzer.resources | nindent 22 }}
-                    scaling:
-                      autoScaling: Enabled
-                      maxReplicas: 5
-                      minReplicas: 2
-                      replicas: 3
-                  scannerComponent: Enabled
+              install_central() {
+                cat <<EOF | oc apply -f-
+                apiVersion: platform.stackrox.io/v1alpha1
+                kind: Central
+                metadata:
+                    namespace: {{ .Values.stackrox.namespace | quote }}
+                    name: stackrox-central-services
+                spec:
+                    central:
+                      exposure:
+                        loadBalancer:
+                          enabled: false
+                          port: 443
+                        nodePort:
+                          enabled: false
+                        route:
+                          enabled: true
+                      persistence:
+                        persistentVolumeClaim:
+                          claimName: stackrox-db
+                    egress:
+                      connectivityPolicy: Online
+                    scanner:
+                      analyzer:
+                        resources:
+                        {{- toYaml .Values.stackrox.analyzer.resources | nindent 24 }}
+                        scaling:
+                          autoScaling: Enabled
+                          maxReplicas: 5
+                          minReplicas: 2
+                          replicas: 3
+                      scannerComponent: Enabled
               EOF
+              }
+
+              install_central
+              until [ "$?" == 0 ]
+              do
+                  echo -e "Waiting for 0 rc from oc commands - central install"
+                  ((i=i+1))
+                  if [ $i -gt 5 ]; then
+                      echo -e "Failed - oc central install never ready?"
+                      exit 1
+                  fi
+                  sleep 5
+                  install_central
+              done
 
               # wait for central
               echo "waiting for stackrox-central ..."
