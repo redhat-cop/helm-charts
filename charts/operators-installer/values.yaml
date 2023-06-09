@@ -1,0 +1,14 @@
+# Image to use for the InstallPlan Approver and Verify Jobs
+installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.10
+
+# Whether or not to create an OperatorGroup in the target release namespace
+createOperatorGroup: false
+
+# EXAMPLE: declarativly controlled operator version
+operators:
+# - channel: stable
+#   installPlanApproval: Manual
+#   name: external-secrets-operator
+#   source: community-operators
+#   sourceNamespace: openshift-marketplace
+#   csv: external-secrets-operator.v0.8.2
