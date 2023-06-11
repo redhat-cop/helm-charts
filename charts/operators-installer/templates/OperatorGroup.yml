@@ -1,0 +1,10 @@
+
+{{- if .Values.createOperatorGroup }}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: my-group
+spec:
+  targetNamespaces:
+  - {{ .Release.Namespace }}
+{{- end }}
