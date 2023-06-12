@@ -70,3 +70,4 @@ For more info on each chart checkout these!
 * [stackrox](/charts/stackrox)
 * [static-site](/charts/static-site)
 * [tekton-demo](/charts/tekton-demo)
+* [operators-installer](/charts/operators-installer)
