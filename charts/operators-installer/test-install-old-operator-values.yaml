@@ -5,3 +5,6 @@ operators:
   source: community-operators
   sourceNamespace: openshift-marketplace
   csv: external-secrets-operator.v0.8.1
+
+commonLabels:
+  test-label: xyz123

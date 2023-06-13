@@ -12,3 +12,7 @@ operators:
 #   source: community-operators
 #   sourceNamespace: openshift-marketplace
 #   csv: external-secrets-operator.v0.8.2
+
+# Common labels to add to all chart created resources.
+# Implements the same idea from Kustomize for this chart.
+commonLabels:

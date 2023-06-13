@@ -5,6 +5,8 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: installplan-complete-verifier--{{ .name }}
+  labels:
+    {{- include "operators-installer.labels" $ | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded

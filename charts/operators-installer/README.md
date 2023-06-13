@@ -22,6 +22,7 @@ For all of the Subscription parameters see
 | operators[].installPlanVerifierActiveDeadlineSeconds | `120` | No        | Total amount of time that can be spent waiting for InstallPlan to finish installing. This may need to increase of an operator takes a long time to install.
 | installPlanApproverAndVerifyJobsImage        | `registry.redhat.io/openshift4/ose-cli:v4.10` | Yes | Image to use for the InstallPlan Approver and Verify Jobs 
 | createOperatorGroup                          | `false`       | No        | Whether or not to create an OperatorGroup in the target release namespace
+| commonLabels                                 | `{}`          | No        | Common labels to add to all chart created resources. Implements the same idea from Kustomize for this chart.
 
 ## Cavieats
 
