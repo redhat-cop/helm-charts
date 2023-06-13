@@ -4,6 +4,8 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: {{ .name }}
+  labels:
+    {{- include "operators-installer.labels" $ | nindent 4 }}
 spec:
   channel: {{ .channel }}
   installPlanApproval: {{ .installPlanApproval }}
