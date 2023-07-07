@@ -1,0 +1,45 @@
+operatorGroups:
+# EXAMPLE: adding OperatorGroup to named namespace
+- name: dynatrace
+  createNamespace: true
+  targetOwnNamespace: true
+  otherTargetNamespaces:
+
+# EXAMPLE: adding OperatorGroup to Helm .Release.Namespace
+- createNamespace: false
+  targetOwnNamespace: false
+  otherTargetNamespaces:
+
+operators:
+- channel: stable
+  installPlanApproval: Manual
+  name: external-secrets-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+  csv: external-secrets-operator.v0.8.1
+  namespace: openshift-operators
+- channel: alpha
+  installPlanApproval: Manual
+  name: fake-operator
+  source: certified-operators
+  sourceNamespace: fake-operators
+  csv: fake-operator.v0.42.1
+  namespace: openshift-operators
+  createOperatorGroup: true
+- channel: alpha
+  installPlanApproval: Manual
+  name: dynatrace-operator
+  source: certified-operators
+  sourceNamespace: openshift-marketplace
+  csv: dynatrace-operator.v0.12.0
+  namespace: dynatrace
+  createOperatorGroup: true
+- channel: alpha
+  installPlanApproval: Manual
+  name: fake-operator-install-in-helm-release-namespace
+  source: fake-operators
+  sourceNamespace: openshift-marketplace
+  csv: fake-operator-install-in-helm-release-namespace.v0.42.2
+
+commonLabels:
+  test-label: xyz123

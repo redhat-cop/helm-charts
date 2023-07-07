@@ -52,3 +52,18 @@ Selector labels
 app.kubernetes.io/name: {{ include "operators-installer.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Unique namespaces from list of operators
+*/}}
+{{- define "operators-installer.uniqueNamespaces" -}}
+{{-   $uniqueNamespaces := list }}
+{{-   range .Values.operators }}
+{{-     if .namespace }}
+{{-       $uniqueNamespaces = append $uniqueNamespaces .namespace | uniq }}
+{{-     else }}
+{{-       $uniqueNamespaces = append $uniqueNamespaces $.Release.Namespace | uniq }}
+{{-     end }}
+{{-   end }}
+{{    toJson $uniqueNamespaces }}
+{{- end }}

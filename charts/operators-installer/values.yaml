@@ -1,10 +1,7 @@
 # Image to use for the InstallPlan Approver and Verify Jobs
 installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.10
 
-# Whether or not to create an OperatorGroup in the target release namespace
-createOperatorGroup: false
-
-# EXAMPLE: declarativly controlled operator version
+# EXAMPLE: declaratively controlled operator version
 operators:
 # - channel: stable
 #   installPlanApproval: Manual
@@ -12,6 +9,19 @@ operators:
 #   source: community-operators
 #   sourceNamespace: openshift-marketplace
 #   csv: external-secrets-operator.v0.8.2
+
+# configuration for control of OperatorGroups
+operatorGroups:
+# EXAMPLE: adding OperatorGroup to named namespace
+# - name:
+#   createNamespace:
+#   targetOwnNamespace:
+#   otherTargetNamespaces:
+
+# EXAMPLE: adding OperatorGroup to Helm .Release.Namespace
+# - createNamespace:
+#   targetOwnNamespace:
+#   otherTargetNamespaces:
 
 # Common labels to add to all chart created resources.
 # Implements the same idea from Kustomize for this chart.

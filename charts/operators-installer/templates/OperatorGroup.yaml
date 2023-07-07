@@ -1,0 +1,19 @@
+
+{{- range .Values.operatorGroups }}
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ .name | default $.Release.Namespace }}
+  namespace: {{ .name | default $.Release.Namespace }}
+  labels:
+    {{- include "operators-installer.labels" $ | nindent 4 }}
+spec:
+  targetNamespaces:
+  {{- if .targetOwnNamespace }}
+  - {{ .name | default $.Release.Namespace }}
+  {{- end }}
+  {{- range $otherTargetNamespace := .otherTargetNamespaces }}
+  - {{ $otherTargetNamespace }}
+  {{- end }}
+{{- end }}
