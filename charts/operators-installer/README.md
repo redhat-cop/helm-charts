@@ -1,10 +1,10 @@
 # operators-installer
 
-Installs a given list of operators either using Automatic or Manual InstallPlans. If Manual then version of operator can be controlled declarativly.
+Installs a given list of operators either using Automatic or Manual InstallPlans. If Manual then version of operator can be controlled declaratively.
 
 ## Purpose
 
-There is no native way to declarativly control the version of installed operators. If you set to Automatic, then operators will auto upgrade, breaking declraative, if set to Manual then human has to go manaully approve. This helm chart allows for setting to Manual but having the helm chart automatically approve the correct InstallPlan for the specific version, so as not to accidently approve a newer InstallPlan.
+There is no native way to declaratively control the version of installed operators. If you set to Automatic, then operators will auto upgrade, breaking declarative, if set to Manual then human has to go manually approve. This helm chart allows for setting to Manual but having the helm chart automatically approve the correct InstallPlan for the specific version, so as not to accidentally approve a newer InstallPlan.
 
 ## Configuration
 
@@ -12,6 +12,7 @@ For all of the Subscription parameters see
 
 | Parameter                                    | Default Value | Required? | Description
 |----------------------------------------------|---------------|-----------|------------
+| operators                                    | `[]`          | No        | List of operators to install.
 | operators[].channel                          |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) channel.
 | operators[].installPlanApproval              |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) installPlanApproval.
 | operators[].name                             |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) name.
@@ -20,17 +21,22 @@ For all of the Subscription parameters see
 | operators[].csv                                      |               | Yes       | The CSV to install.
 | operators[].installPlanVerifierRetries       | `10`          | No        | Number of times to check if the InstallPlan has actually been installed. This may need to increase of an operator takes a long time to install.
 | operators[].installPlanVerifierActiveDeadlineSeconds | `120` | No        | Total amount of time that can be spent waiting for InstallPlan to finish installing. This may need to increase of an operator takes a long time to install.
+| operators[].namespace                        | `.Release.Namespace` | No | Specify the namespace to install the operator into, which allows different operators to be installed into different namespaces from the same chart. If 
+| operatorGroups                               | `[]`          | No        | Optional list of configuration for OperatorGroups. If this is not supplied then it is assumed OperatorGroups are already in place in the selected `operators[].namespace`s.
+| operatorGroups[].name                        | `.Release.Namespace` | No | Name of the OperatorGroup & Namespace the OperatorGroup will be placed in.
+| operatorGroups[].createNamespace             | `false`       | No        | If `true` create the Namespace of the same name of the OperatorGroup. If `false` assumed the Namespace is already in place.
+| operatorGroups[].targetOwnNamespace          | `false`       | No        | If `true` add the OperatorGroup's Namespace as a `targetNamespaces`. If `true` then OperatorGroup will only work for Operators using `OwnNamespace` or `MultiNamespace` `installModes`. If blank and no `otherTargetNamespaces` specified then OperatorGroup will be configured to allow for operators using `installModes` `AllNamespaces`.
+| operatorGroups[].otherTargetNamespaces       | `[]`          | No        | List of additional Namespaces to target. If specified OperatorGroup will only work for operators using `SingleNamespace` or `MultiNamespace` `installModes` depending on value of `targetOwnNamespace`.
 | installPlanApproverAndVerifyJobsImage        | `registry.redhat.io/openshift4/ose-cli:v4.10` | Yes | Image to use for the InstallPlan Approver and Verify Jobs 
-| createOperatorGroup                          | `false`       | No        | Whether or not to create an OperatorGroup in the target release namespace
 | commonLabels                                 | `{}`          | No        | Common labels to add to all chart created resources. Implements the same idea from Kustomize for this chart.
 
-## Cavieats
+## Caveats
 
 ### ArgoCD / Red Hat OpenShift GitOps
 If using this helm chart with ArgoCD / Red Hat OpenShift GitOps then you will need to patch how ArgoCD does health checks on Subscriptions by default
 because the default health check will fail if there is any pending installations which is a problem for two reasons. First the approval is a post hook
 (which technically it could be made an install hook, if not for reason two), secondly if installing an older version fo an operator the Subscription will
-report there is a pending update, even though you dont wan't to update, and ArgoCD will constently say the Subscription is pending.
+report there is a pending update, even though you don't wan't to update, and ArgoCD will constantly say the Subscription is pending.
 
 Here is a sample updated health check to use which if the InstallPlan is set to Manual then will ignore pending plan approvals with a detailed message. How you patch ArgoCD with this health check depends on your version of ArgoCD so see the docs for your version.
 

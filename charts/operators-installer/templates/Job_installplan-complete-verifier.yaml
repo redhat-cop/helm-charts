@@ -1,3 +1,4 @@
+# create one installplan-complete-verifier job per manual operator
 {{- range .Values.operators }}
 {{- if eq .installPlanApproval "Manual" }}
 ---
@@ -5,6 +6,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: installplan-complete-verifier--{{ .name }}
+  namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
   annotations:

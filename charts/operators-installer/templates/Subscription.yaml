@@ -1,9 +1,11 @@
+# create one Subscription per operator
 {{- range .Values.operators }}
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: {{ .name }}
+  namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
 spec:
