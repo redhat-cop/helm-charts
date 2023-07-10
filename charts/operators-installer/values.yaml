@@ -1,3 +1,14 @@
+# `true` to create (and clean up) manual InstallPlan approval resources as part of post-install,post-upgrade helm hook
+# `false` to create  manual InstallPlan approval resources as part of normal install
+#
+# The hook method is nice to not have lingering resources needed for the manual InstallPlan approval but has the downside
+# that no CustomResources using CustomResourceDefinitions installed by the operator can be used in the same chart because
+# the operator InstallPlan wont be approved, and therefor the operator wont be installed, until the post-install,post-upgrade phase
+# which means you will never get to that phase because your CustomResources wont be able to apply because the Operator isn't installed.
+# This is is ultimately a trade off between cleaning up these resources or being able to install and configure the operator in the same
+# helm chart that has a dependency on this helm chart.
+approveManualInstallPlanViaHook: true
+
 # Image to use for the InstallPlan Approver and Verify Jobs
 installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.10
 

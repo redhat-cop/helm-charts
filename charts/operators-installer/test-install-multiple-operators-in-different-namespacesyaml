@@ -1,3 +1,5 @@
+approveManualInstallPlanViaHook: true
+
 operatorGroups:
 # EXAMPLE: adding OperatorGroup to named namespace
 - name: dynatrace

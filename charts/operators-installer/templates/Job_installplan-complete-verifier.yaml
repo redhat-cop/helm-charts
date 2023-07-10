@@ -1,18 +1,20 @@
-# create one installplan-complete-verifier job per manual operator
 {{- range .Values.operators }}
 {{- if eq .installPlanApproval "Manual" }}
 ---
+# create one installplan-complete-verifier job per manual operator
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: installplan-complete-verifier--{{ .name }}
+  name: installplan-complete-verifier--{{ .csv }}
   namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
+  {{- if $.Values.approveManualInstallPlanViaHook }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
     "helm.sh/hook-weight": "10"
+  {{- end }}
 spec:
   completions: 1
   backoffLimit: {{ .installPlanVerifierRetries | default 10 }}

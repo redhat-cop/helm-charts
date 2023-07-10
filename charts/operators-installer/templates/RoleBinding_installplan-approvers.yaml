@@ -1,6 +1,6 @@
-# create one installplan-approvers RoleBinding per unqiue namespace operators are being installed in
 {{- range $namespace := (include "operators-installer.uniqueNamespaces" $ | fromJsonArray) }}
 ---
+# create one installplan-approvers RoleBinding per unqiue namespace operators are being installed in
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -8,10 +8,12 @@ metadata:
   namespace: {{ $namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
+  {{- if $.Values.approveManualInstallPlanViaHook }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
     "helm.sh/hook-weight": "-1"
+  {{- end }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
