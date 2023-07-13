@@ -38,21 +38,24 @@ spec:
             if [ ! -z "subscriptionUID" ]; then
               # this complicated go-template finds an InstallPlan where both the .spec.clusterServiceVersionNames contains the expected CSV
               # and .metadata.ownerReferences contains the expected Subscription owner. JsonPath doesn't let you do and statements and go-templates
-              # dont seem to have a funciton for checking if a value is in an array without iterating. so here we are.
-              # NOTE: this is nested in {{` `}} so that helm doesnt try to interpriate the go template
+              # done seem to have a function for checking if a value is in an array without iterating. so here we are.
+              # NOTE 1: if for whatever reason multiple InstallPlans are found that are associated with the Subscription for the correct CSV, only the first will be approved
+              # NOTE 2: this is nested in {{` `}} so that helm doesn't try to interpret the go template
               {{`installPlanGoTemplate=$(cat << EOF
+              {{- \$installPlanName := "" -}}
               {{- range .items -}}
                 {{- \$installPlanItem := . -}}
                 {{- range .spec.clusterServiceVersionNames -}}
-                  {{- if eq . "${SUBSCRIPTION_CSV}" -}}
+                  {{- if and (eq . "${SUBSCRIPTION_CSV}") (not \$installPlanName) -}}
                     {{- range \$installPlanItem.metadata.ownerReferences -}}
                       {{- if eq .uid "${subscriptionUID}" -}}
-                        {{\$installPlanItem.metadata.name}}
+                        {{- \$installPlanName = \$installPlanItem.metadata.name -}}
                       {{- end -}}
                     {{- end -}}
                   {{- end -}}
                 {{- end -}}
               {{- end -}}
+              {{ \$installPlanName }}
             EOF
               )`}}
 
@@ -63,14 +66,18 @@ spec:
               if [ ! -z "${installPlan}" ]; then
                 echo
                 echo "Check InstallPlan (${installPlan}) approval"
-                installPlanApproved=$(oc get installplan ${installPlan} -o=jsonpath="{.spec.approved}")
-                if [ "${installPlanApproved}" == "false" ]; then
-                  echo "Approving InstallPlan (${installPlan})"
-                  oc patch installplan ${installPlan} --type=json -p='[{"op":"replace","path": "/spec/approved", "value": true}]'
+                if installPlanApproved=$(oc get installplan ${installPlan} -o=jsonpath="{.spec.approved}"); then
+                  if [ "${installPlanApproved}" == "false" ]; then
+                    echo "Approving InstallPlan (${installPlan})"
+                    oc patch installplan ${installPlan} --type=json -p='[{"op":"replace","path": "/spec/approved", "value": true}]'
+                  else
+                    echo "InstallPlan (${installPlan})already approved"
+                  fi
+                  exit 0
                 else
-                  echo "InstallPlan (${installPlan})already approved"
+                  echo "Failed to look up InstallPlan (${installPlan}) approval"
+                  exit 1
                 fi
-                exit 0
               else
                 echo
                 echo "Could not find InstallPlan for CSV (${SUBSCRIPTION_CSV}) with Subscription (${SUBSCRIPTION_CSV}) (${subscriptionUID}) owner. This can happen if InstallPlan isn't created yet. Try again."

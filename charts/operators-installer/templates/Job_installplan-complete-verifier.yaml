@@ -38,21 +38,24 @@ spec:
             if [ ! -z "subscriptionUID" ]; then
               # this complicated go-template finds an InstallPlan where both the .spec.clusterServiceVersionNames contains the expected CSV
               # and .metadata.ownerReferences contains the expected Subscription owner. JsonPath doesn't let you do and statements and go-templates
-              # dont seem to have a funciton for checking if a value is in an array without iterating. so here we are.
-              # NOTE: this is nested in {{` `}} so that helm doesnt try to interpriate the go template
+              # done seem to have a function for checking if a value is in an array without iterating. so here we are.
+              # NOTE 1: if for whatever reason multiple InstallPlans are found that are associated with the Subscription for the correct CSV, only the first will be approved
+              # NOTE 2: this is nested in {{` `}} so that helm doesn't try to interpret the go template
               {{`installPlanGoTemplate=$(cat << EOF
+              {{- \$installPlanName := "" -}}
               {{- range .items -}}
                 {{- \$installPlanItem := . -}}
                 {{- range .spec.clusterServiceVersionNames -}}
-                  {{- if eq . "${SUBSCRIPTION_CSV}" -}}
+                  {{- if and (eq . "${SUBSCRIPTION_CSV}") (not \$installPlanName) -}}
                     {{- range \$installPlanItem.metadata.ownerReferences -}}
                       {{- if eq .uid "${subscriptionUID}" -}}
-                        {{\$installPlanItem.metadata.name}}
+                        {{- \$installPlanName = \$installPlanItem.metadata.name -}}
                       {{- end -}}
                     {{- end -}}
                   {{- end -}}
                 {{- end -}}
               {{- end -}}
+              {{ \$installPlanName }}
             EOF
               )`}}
 
@@ -63,12 +66,16 @@ spec:
               if [ ! -z "${installPlan}" ]; then
                 echo
                 echo "Check InstallPlan (${installPlan}) phase"
-                installPlanPhase=$(oc get installplan ${installPlan} -o=jsonpath="{.status.phase}")
-                if [ "${installPlanPhase}" == "Complete" ]; then
-                  echo "InstallPlan (${installPlan}) complete"
-                  exit 0
+                if installPlanPhase=$(oc get installplan ${installPlan} -o=jsonpath="{.status.phase}"); then
+                  if [ "${installPlanPhase}" == "Complete" ]; then
+                    echo "InstallPlan (${installPlan}) complete"
+                    exit 0
+                  else
+                    echo "InstallPlan (${installPlan}) not yet complete: ${installPlanPhase}"
+                    exit 1
+                  fi
                 else
-                  echo "InstallPlan (${installPlan}) not yet complete: ${installPlanPhase}"
+                  echo "Failed to look up InstallPlan (${installPlan}) phase"
                   exit 1
                 fi
               else
