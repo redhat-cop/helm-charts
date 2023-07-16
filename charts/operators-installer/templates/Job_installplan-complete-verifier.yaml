@@ -9,16 +9,18 @@ metadata:
   namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
-  {{- if $.Values.approveManualInstallPlanViaHook }}
   annotations:
+    {{- if $.Values.approveManualInstallPlanViaHook }}
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-    "helm.sh/hook-weight": "10"
-  {{- end }}
+    "helm.sh/hook-weight": "30"
+    {{- else }}
+    argocd.argoproj.io/sync-wave: 30
+    {{- end }}
 spec:
   completions: 1
-  backoffLimit: {{ .installPlanVerifierRetries | default 10 }}
   parallelism: 1
+  backoffLimit: {{ .installPlanVerifierRetries | default 10 }}
   activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds | default 120 }}
   template:
     spec:

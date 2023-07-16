@@ -18,7 +18,9 @@ For all of the Subscription parameters see
 | operators[].name                             |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) name.
 | operators[].source                           |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) source.
 | operators[].sourceNamespace                  |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) sourceNamespace.
-| operators[].csv                                      |               | Yes       | The CSV to install.
+| operators[].csv                              |               | Yes       | The CSV to install.
+| operators[].installPlanApproverRetries       | `10           | No        | Number of times to try to approve the InstallPlan. This may need to be increased for unpredictable reasons about some clusters taking longer to create InstallPlans.
+| operators[].installPlanApproverActiveDeadlineSeconds | `120` | No        | Total amount of time that can be spent waiting for InstallPlan to be approved. This may need to be increased for unpredictable reasons about some clusters taking longer to create InstallPlans.
 | operators[].installPlanVerifierRetries       | `10`          | No        | Number of times to check if the InstallPlan has actually been installed. This may need to increase of an operator takes a long time to install.
 | operators[].installPlanVerifierActiveDeadlineSeconds | `120` | No        | Total amount of time that can be spent waiting for InstallPlan to finish installing. This may need to increase of an operator takes a long time to install.
 | operators[].namespace                        | `.Release.Namespace` | No | Specify the namespace to install the operator into, which allows different operators to be installed into different namespaces from the same chart. If 
@@ -51,11 +53,11 @@ if obj.status ~= nil then
     for i, condition in pairs(obj.status.conditions) do
         msg = msg .. i .. ": " .. condition.type .. " | " .. condition.status .. "\n"
         if condition.type == "InstallPlanPending" and condition.status == "True" then
-        numPending = numPending + 1
+            numPending = numPending + 1
         elseif (condition.type == "InstallPlanMissing" and condition.reason ~= "ReferencedInstallPlanNotFound") then
-        numDegraded = numDegraded + 1
+            numDegraded = numDegraded + 1
         elseif (condition.type == "CatalogSourcesUnhealthy" or condition.type == "InstallPlanFailed" or condition.type == "ResolutionFailed") and condition.status == "True" then
-        numDegraded = numDegraded + 1
+            numDegraded = numDegraded + 1
         end
     end
     if numDegraded == 0 and numPending == 0 then
@@ -68,17 +70,14 @@ if obj.status ~= nil then
         return health_status
     elseif numPending > 0 and numDegraded == 0 then
         health_status.status = "Progressing"
-        health_status.message = "An install plan for a subscription is pending installation - ian was here 1"
+        health_status.message = "An install plan for a subscription is pending installation"
         return health_status
     else
         health_status.status = "Degraded"
         health_status.message = msg
         return health_status
     end
-    end
 end
-health_status.status = "Progressing"
-health_status.message = "An install plan for a subscription is pending installation - ian was here 2"
 return health_status
 ```
 
