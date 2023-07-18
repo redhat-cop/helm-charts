@@ -21,7 +21,7 @@ spec:
   completions: 1
   parallelism: 1
   backoffLimit: {{ .installPlanVerifierRetries | default 10 }}
-  activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds | default 120 }}
+  activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds | default 240 }}
   template:
     spec:
       containers:
