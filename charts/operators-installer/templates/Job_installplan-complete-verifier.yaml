@@ -15,7 +15,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
     "helm.sh/hook-weight": "30"
     {{- else }}
-    argocd.argoproj.io/sync-wave: 30
+    argocd.argoproj.io/sync-wave: "30"
     {{- end }}
 spec:
   completions: 1
