@@ -1,0 +1,35 @@
+helm-extra-args: "--debug --timeout 20m0s"
+kubectl-timeout: "5m0s"
+skip-clean-up: false
+all: false
+
+# excluding all charts that on an intial test with ct install fail because they need some more massaging of "kind" to be able to work there (if even possible) because they have built in assumptions about OpenShift
+# included charts (can't use the included harts option with CT because then they will always run and will ignore the ct changed charts functionality)
+# - specific tests written
+#   * operators-installer
+# - using defaults, no specific tests written
+#   * argocd-operator
+#   * bootstrap-project
+#   * kopf
+#   * network-policy
+excluded-charts:
+- ansible-automation-platform
+- cert-manager-configs
+- dev-ex-dashboard
+- etherpad
+- gitea
+- gitops-operator
+- helper-console-links
+- helper-sealed-secrets
+- ipa
+- jenkins
+- openshift-logforwarding-splunk
+- operatorhub
+- owncloud
+- pact-broker
+- ploigos
+- sonarqube
+- sonatype-nexus
+- stackrox
+- static-site
+- tekton-demo

@@ -1,0 +1,86 @@
+---
+name: Install Test
+
+on:
+  pull_request:
+    paths:
+    - .github/**
+    - charts/**
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  install-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup Helm 🧰
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.5.1
+
+    - name: Setup Python 🐍
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.7
+
+    - name: Setup chart-testing 🧰
+      uses: helm/chart-testing-action@v2.4.0
+    
+    - name: Find changed Charts 🔎
+      id: changed-charts
+      run: |
+        changed=$(ct list-changed)
+        echo ${changed}
+        if [[ -n "$changed" ]]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Setup kind cluster 🧰
+      uses: helm/kind-action@v1.8.0
+      with:
+        version: v0.20.0
+      if: steps.changed-charts.outputs.changed == 'true'
+
+    # for helm charts we are testing that require installing operators 
+    - name: Setup kind cluster - Install OLM 🧰
+      run: |
+        curl -L https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.25.0/install.sh -o install.sh
+        chmod +x install.sh
+        ./install.sh v0.25.0
+      if: steps.changed-charts.outputs.changed == 'true'
+
+    # for helm charts we are testing that require ingress
+    - name: Setup kind cluster - Install ingress controller 🧰
+      run: |
+        helm repo add haproxy-ingress https://haproxy-ingress.github.io/charts
+        helm install haproxy-ingress haproxy-ingress/haproxy-ingress \
+            --create-namespace --namespace=ingress-controller \
+            --set controller.hostNetwork=true
+        kubectl apply -f - <<EOF
+        apiVersion: networking.k8s.io/v1
+        kind: IngressClass
+        metadata:
+          name: haproxy
+          annotations:
+            ingressclass.kubernetes.io/is-default-class: 'true'
+        spec:
+          controller: haproxy-ingress.github.io/controller
+        EOF
+      if: steps.changed-charts.outputs.changed == 'true'
+    
+    # for helm charts we are testing that require/expect certain default namespaces from Red Hat OpenShift
+    - name: Setup kind cluster - create expected namespaces 🧰
+      run: |
+        kubectl create namespace openshift-operators
+
+    - name: Run Chart install tests 🧪
+      run: |
+        ct install --debug --config _test/ct-config.yaml
+      if: steps.changed-charts.outputs.changed == 'true'
