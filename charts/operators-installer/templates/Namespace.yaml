@@ -7,5 +7,7 @@ metadata:
   name: {{ .name | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-60"
 {{- end }}
 {{- end }}

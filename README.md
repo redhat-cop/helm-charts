@@ -62,6 +62,7 @@ For more info on each chart checkout these!
 * [network-policy](/charts/network-policy)
 * [openshift-logforwarding-splunk](/charts/openshift-logforwarding-splunk)
 * [operatorhub](/charts/operatorhub)
+* [operators-installer](/charts/operators-installer)
 * [owncloud](/charts/owncloud)
 * [pact-broker](/charts/pact-broker)
 * [ploigos](/charts/ploigos)

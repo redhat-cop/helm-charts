@@ -8,6 +8,8 @@ metadata:
   namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-40"
 spec:
   channel: {{ .channel }}
   installPlanApproval: {{ .installPlanApproval }}
