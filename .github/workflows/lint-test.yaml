@@ -1,53 +1,36 @@
-name: Lint and Test Charts
+name: Lint Test
 
 on: 
   pull_request:
     paths-ignore:
       - '.github/**'
       - 'README.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout 🛎️
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
-      - name: Fetch history
-        run: git fetch --prune --unshallow
-      
-      - name: Set up Helm
-        uses: azure/setup-helm@v3.5
-        with:
-          version: v3.5.1
+    - name: Setup Helm 🧰
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.5.1
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.7
+    - name: Setup Python 🐍
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.7
 
-      - name: Run chart-testing (lint)
-        id: lint
-        uses: helm/chart-testing-action@v2.4.0
-      
-      - name: Run chart-testing (list-changed)
-        id: list-changed
-        run: |
-          changed=$(ct list-changed)
-          if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
-          fi
+    - name: Setup chart-testing 🧰
+      uses: helm/chart-testing-action@v2.4.0
 
-      - name: Run chart-testing (lint)
-        run: ct lint
-
-      # TODO
-      # These checks invariably fail with openshift specific features, features that need pv/pvc
-      # Need a better strategy here
-      # - name: Create kind cluster
-      #   uses: helm/kind-action@v1.0.0-rc.1
-      #   if: steps.lint.outputs.changed == 'true'
-
-      # - name: Run chart-testing (install)
-      #   uses: helm/chart-testing-action@v2.4.0
-      #   with:
-      #     command: install
-      #     config: ct.yaml
+    - name: Run Chart lint tests 🧪
+      run: ct lint

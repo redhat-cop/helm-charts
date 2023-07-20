@@ -241,7 +241,7 @@ setup_file() {
 }
 
 @test "charts/operators-installer" {
-  tmp=$(helm_template "charts/operators-installer" "-f charts/operators-installer/test-install-old-operator-values.yaml")
+  tmp=$(helm_template "charts/operators-installer" "-f charts/operators-installer/ci/test-install-old-operator-approve-via-helm-hook-values.yaml")
 
   namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
   cmd="conftest test ${tmp} --output tap ${namespaces}"
