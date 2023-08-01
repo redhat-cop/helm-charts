@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: installplan-complete-verifier--{{ .csv }}
+  name: {{ printf "%s-%s" .csv "-verifier" | trunc -63 | trimAll "-" }}
   namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
