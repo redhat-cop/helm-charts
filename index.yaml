@@ -2921,6 +2921,23 @@ entries:
     version: 0.0.1
   operators-installer:
   - apiVersion: v2
+    created: "2023-08-02T22:20:31.33558791Z"
+    description: Installs a given list of operators either using Automatic or Manual
+      InstallPlans. If Manual then version of operator can be controlled declarativly.
+    digest: 0ac586bb0260f41c56d9d797c7e05f40a9e5a20ceca447f94ce1b3ea37317a7d
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/operator-framework/olm-docs/ea9cd734aa7a6bf2d24f273322ed9aec3ffcb02a/content/en/images/logo-sm.svg
+    keywords:
+    - olm
+    - operators
+    maintainers:
+    - name: itewk
+    name: operators-installer
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operators-installer-2.3.5/operators-installer-2.3.5.tgz
+    version: 2.3.5
+  - apiVersion: v2
     created: "2023-08-01T13:14:15.451087868Z"
     description: Installs a given list of operators either using Automatic or Manual
       InstallPlans. If Manual then version of operator can be controlled declarativly.
@@ -4225,4 +4242,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2023-08-01T13:14:15.452115573Z"
+generated: "2023-08-02T22:20:31.33603381Z"
