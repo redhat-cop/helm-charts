@@ -54,16 +54,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Unique namespaces from list of operators
+Name to use for approver SA, Role, and RoleBinding
 */}}
-{{- define "operators-installer.uniqueNamespaces" -}}
-{{-   $uniqueNamespaces := list }}
-{{-   range .Values.operators }}
-{{-     if .namespace }}
-{{-       $uniqueNamespaces = append $uniqueNamespaces .namespace | uniq }}
-{{-     else }}
-{{-       $uniqueNamespaces = append $uniqueNamespaces $.Release.Namespace | uniq }}
-{{-     end }}
-{{-   end }}
-{{    toJson $uniqueNamespaces }}
+{{- define "operators-installer.approverName" -}}
+{{- printf "%s-%s" .csv "-approver" | trunc -63 | trimAll "-" }}
 {{- end }}

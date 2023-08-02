@@ -98,8 +98,8 @@ spec:
           value: {{ .name }}
       dnsPolicy: ClusterFirst
       restartPolicy: Never
-      serviceAccount: installplan-approver
-      serviceAccountName: installplan-approver
+      serviceAccount: {{ include "operators-installer.approverName" . }}
+      serviceAccountName: {{ include "operators-installer.approverName" . }}
       terminationGracePeriodSeconds: 30
 {{- end }}
 {{- end }}
