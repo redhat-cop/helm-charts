@@ -3,27 +3,30 @@ approveManualInstallPlanViaHook: true
 installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.12
 
 operatorGroups:
-- name: community-operators
-  createNamespace: true
-  targetOwnNamespace: true
-  otherTargetNamespaces:
+  community:
+    name: community-operators
+    createNamespace: true
+    targetOwnNamespace: true
+    otherTargetNamespaces:
 
 operators:
-- channel: stable
-  installPlanApproval: Manual
-  name: external-secrets-operator
-  source: operatorhubio-catalog
-  sourceNamespace: olm
-  csv: external-secrets-operator.v0.8.1
-  namespace: community-operators
-  installPlanVerifierActiveDeadlineSeconds: 1200
-- channel: alpha
-  installPlanApproval: Manual
-  name: argocd-operator
-  source: operatorhubio-catalog
-  sourceNamespace: olm
-  csv: argocd-operator.v0.6.0
-  namespace: community-operators
-  installPlanVerifierActiveDeadlineSeconds: 1200
+  eso:
+    channel: stable
+    installPlanApproval: Manual
+    name: external-secrets-operator
+    source: operatorhubio-catalog
+    sourceNamespace: olm
+    csv: external-secrets-operator.v0.8.1
+    namespace: community-operators
+    installPlanVerifierActiveDeadlineSeconds: 1200
+  argocd:
+    channel: alpha
+    installPlanApproval: Manual
+    name: argocd-operator
+    source: operatorhubio-catalog
+    sourceNamespace: olm
+    csv: argocd-operator.v0.6.0
+    namespace: community-operators
+    installPlanVerifierActiveDeadlineSeconds: 1200
 commonLabels:
   test-label: xyz123

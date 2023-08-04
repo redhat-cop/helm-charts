@@ -11,10 +11,10 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-40"
 spec:
-  channel: {{ .channel }}
-  installPlanApproval: {{ .installPlanApproval }}
-  name: {{ .name }}
-  source: {{ .source }}
-  sourceNamespace: {{ .sourceNamespace }}
-  startingCSV: {{ .csv }}
+  channel: "{{ .channel }}"
+  installPlanApproval: "{{ .installPlanApproval }}"
+  name: "{{ .name }}"
+  source: "{{ .source }}"
+  sourceNamespace: "{{ .sourceNamespace }}"
+  startingCSV: "{{ .csv }}"
 {{- end }}
