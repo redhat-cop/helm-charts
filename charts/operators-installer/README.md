@@ -47,17 +47,18 @@ Here is a sample updated health check to use which if the InstallPlan is set to 
 health_status = {}
 if obj.status ~= nil then
     if obj.status.conditions ~= nil then
-    numDegraded = 0
-    numPending = 0
-    msg = ""
-    for i, condition in pairs(obj.status.conditions) do
-        msg = msg .. i .. ": " .. condition.type .. " | " .. condition.status .. "\n"
-        if condition.type == "InstallPlanPending" and condition.status == "True" then
-            numPending = numPending + 1
-        elseif (condition.type == "InstallPlanMissing" and condition.reason ~= "ReferencedInstallPlanNotFound") then
-            numDegraded = numDegraded + 1
-        elseif (condition.type == "CatalogSourcesUnhealthy" or condition.type == "InstallPlanFailed" or condition.type == "ResolutionFailed") and condition.status == "True" then
-            numDegraded = numDegraded + 1
+        numDegraded = 0
+        numPending = 0
+        msg = ""
+        for i, condition in pairs(obj.status.conditions) do
+            msg = msg .. i .. ": " .. condition.type .. " | " .. condition.status .. "\n"
+            if condition.type == "InstallPlanPending" and condition.status == "True" then
+                numPending = numPending + 1
+            elseif (condition.type == "InstallPlanMissing" and condition.reason ~= "ReferencedInstallPlanNotFound") then
+                numDegraded = numDegraded + 1
+            elseif (condition.type == "CatalogSourcesUnhealthy" or condition.type == "InstallPlanFailed" or condition.type == "ResolutionFailed") and condition.status == "True" then
+                numDegraded = numDegraded + 1
+            end
         end
     end
     if numDegraded == 0 and numPending == 0 then
