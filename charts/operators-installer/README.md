@@ -2,6 +2,14 @@
 
 Installs a given list of operators either using Automatic or Manual InstallPlans. If Manual then version of operator can be controlled declaratively.
 
+- [Purpose](#purpose)
+- [Configuration](#configuration)
+- [Warnings](#warnings)
+  * [Can not install / upgrade different operators in same namespace independently](#can-not-install--upgrade-different-operators-in-same-namespace-independently)
+  * [ArgoCD / Red Hat OpenShift GitOps Sync Status and Health Checks](#argocd--red-hat-openshift-gitops-sync-status-and-health-checks)
+- [Caveats](#caveats)
+  * [Rollbacks](#rollbacks)
+
 ## Purpose
 
 There is no native way to declaratively control the version of installed operators. If you set to Automatic, then operators will auto upgrade, breaking declarative, if set to Manual then human has to go manually approve. This helm chart allows for setting to Manual but having the helm chart automatically approve the correct InstallPlan for the specific version, so as not to accidentally approve a newer InstallPlan.
@@ -33,9 +41,18 @@ For all of the Subscription parameters see
 | approveManualInstallPlanViaHook              | `true`        | No        | `true` to create (and clean up) manual InstallPlan approval resources as part of post-install,post-upgrade helm hook<br>`false` to create  manual InstallPlan approval resources as part of normal install<br><br>The hook method is nice to not have lingering resources needed for the manual InstallPlan approval but has the downside that no CustomResources using CustomResourceDefinitions installed by the operator can be used in the same chart because the operator InstallPlan wont be approved, and therefor the operator wont be installed, until the post-install,post-upgrade phase which means you will never get to that phase because your CustomResources wont be able to apply because the Operator isn't installed.<br><br>This is is ultimately a trade off between cleaning up these resources or being able to install and configure the operator in the same helm chart that has a dependency on this helm chart.
 | commonLabels                                 | `{}`          | No        | Common labels to add to all chart created resources. Implements the same idea from Kustomize for this chart.
 
-## Caveats
+## Warnings
 
-### ArgoCD / Red Hat OpenShift GitOps
+### Can not install / upgrade different operators in same namespace independently
+
+As documented in [How can Operators be updated independently from each other?](https://access.redhat.com/solutions/6389681) when more then one operator install or update is pending in the same namespace the Operator Lifecycle Manager (OLM) will combine those installs/updates into a single InstallPlan and there is no way to separate them. Therefor if you use this helm chart in namespace ZZZ to install operator A at v1.0 and it has a pending update to v1.1 and then update the configuration to also install operator B at v42.0 in namespace ZZZ the ZZZ v42.0 InstallPlan and the A v1.1 InstallPlan will get merged (by OLM) and this helm chart will then approve that InstallPlan as it will match on the ZZZ v42.0 pending install, which will incidentally install the A v1.1 update.
+
+There is no way for this or any helm chart, automation, or even click ops to prevent this, as documented in [How can Operators be updated independently from each other?](https://access.redhat.com/solutions/6389681) this is currently considered "a feature of OLM".
+
+Therefor if you do not want this unintentional behavior, which these helm chart righters assume you don't since you are going to the trouble of declaratively controlling your operator versions, your only current option is to only have one operator installed per namespace, which primarily means don't use the `openshift-operators` namespace, or if you do, only use it for one operator, maybe OpenShift GitOps (ArgoCD).
+
+
+### ArgoCD / Red Hat OpenShift GitOps Sync Status and Health Checks
 If using this helm chart with ArgoCD / Red Hat OpenShift GitOps then you will need to patch how ArgoCD does health checks on Subscriptions by default
 because the default health check will fail if there is any pending installations which is a problem for two reasons. First the approval is a post hook
 (which technically it could be made an install hook, if not for reason two), secondly if installing an older version fo an operator the Subscription will
@@ -82,6 +99,8 @@ end
 return health_status
 ```
 
+## Caveats
+
 ### Rollbacks
 
-This operator can not currently role operator versions back. PRs welcome.
+This helm chart can not currently role operator versions back. PRs welcome.
