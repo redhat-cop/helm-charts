@@ -11,9 +11,10 @@ fullnameOverride: sealed-secrets
 # namespace must exist
 namespace: labs-ci-cd
 # Dont touch the security context values, deployment will fail in OpenShift otherwise.
-securityContext:
-  runAsUser: ""
-  fsGroup: ""
+podSecurityContext:
+  fsGroup:
+containerSecurityContext:
+  runAsUser:
 ```
 
 #### 🗣 Mattermost
