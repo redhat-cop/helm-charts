@@ -1,7 +1,7 @@
 {{- if .Values.namespaces }}
 {{- range $ns := .Values.namespaces }}
 ---
-apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1beta1
 kind: ArgoCD
 metadata:
   name: {{ $.Values.name }}
@@ -19,7 +19,7 @@ spec:
   {{- $.Values.argocd_cr | toYaml | trim | nindent 2 }}
   {{- end }}
 ---
-apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1beta1
 kind: AppProject
 metadata:
   name: default
