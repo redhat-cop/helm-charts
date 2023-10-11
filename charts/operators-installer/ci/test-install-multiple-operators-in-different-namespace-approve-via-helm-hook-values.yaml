@@ -18,7 +18,7 @@ operators:
     sourceNamespace: olm
     csv: external-secrets-operator.v0.8.1
     namespace: community-operators
-    installPlanVerifierActiveDeadlineSeconds: 1200
+    installPlanVerifierActiveDeadlineSeconds: 1400
   argocd:
     channel: alpha
     installPlanApproval: Manual
@@ -27,6 +27,6 @@ operators:
     sourceNamespace: olm
     csv: argocd-operator.v0.6.0
     namespace: community-operators
-    installPlanVerifierActiveDeadlineSeconds: 1200
+    installPlanVerifierActiveDeadlineSeconds: 1400
 commonLabels:
   test-label: xyz123

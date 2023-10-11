@@ -16,6 +16,6 @@ operators:
   sourceNamespace: olm
   csv: external-secrets-operator.v0.8.1
   namespace: external-secrets-operator1
-  installPlanVerifierActiveDeadlineSeconds: 1200
+  installPlanVerifierActiveDeadlineSeconds: 1400
 commonLabels:
   test-label: xyz123

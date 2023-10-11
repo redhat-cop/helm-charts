@@ -18,4 +18,4 @@ operators:
     sourceNamespace: olm
     csv: costmanagement-metrics-operator.2.0.0
     namespace: costmanagement-metrics-operator
-    installPlanVerifierActiveDeadlineSeconds: 1200
+    installPlanVerifierActiveDeadlineSeconds: 1400
