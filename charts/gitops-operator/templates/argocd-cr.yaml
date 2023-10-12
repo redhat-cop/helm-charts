@@ -19,7 +19,7 @@ spec:
   {{- $.Values.argocd_cr | toYaml | trim | nindent 2 }}
   {{- end }}
 ---
-apiVersion: argoproj.io/v1beta1
+apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: default
