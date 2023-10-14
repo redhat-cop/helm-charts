@@ -20,7 +20,7 @@ operators:
   sourceNamespace: olm
   csv: external-secrets-operator.v0.8.1
   namespace: external-secrets-operator3
-  installPlanVerifierActiveDeadlineSeconds: 1200
+  installPlanVerifierActiveDeadlineSeconds: 1400
 - channel: alpha
   installPlanApproval: Manual
   name: argocd-operator
@@ -28,6 +28,6 @@ operators:
   sourceNamespace: olm
   csv: argocd-operator.v0.6.0
   namespace: argocd-operator
-  installPlanVerifierActiveDeadlineSeconds: 1200
+  installPlanVerifierActiveDeadlineSeconds: 1400
 commonLabels:
   test-label: xyz123

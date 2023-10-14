@@ -27,6 +27,14 @@ spec:
       containers:
       - name: installplan-approver
         image: {{ $.Values.installPlanApproverAndVerifyJobsImage }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
         command:
           - /bin/bash
           - -c
