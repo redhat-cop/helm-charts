@@ -32,7 +32,7 @@ secrets: []
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
-  version: v2.8.3
+  version: v2.8.6
   applicationSet: {}
   notifications:
     enabled: true
