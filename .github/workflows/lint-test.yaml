@@ -30,7 +30,7 @@ jobs:
         python-version: 3.7
 
     - name: Setup chart-testing 🧰
-      uses: helm/chart-testing-action@v2.6.0
+      uses: helm/chart-testing-action@v2.6.1
 
     - name: Run Chart lint tests 🧪
       run: ct lint
