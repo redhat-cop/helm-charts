@@ -43,6 +43,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if .Values.commonLabels }}
 {{ .Values.commonLabels | toYaml }}
 {{- end }}
+{{- if ((.Values.global).commonLabels) }}
+{{ .Values.global.commonLabels | toYaml }}
+{{- end }}
 {{- end }}
 
 {{/*

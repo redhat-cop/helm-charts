@@ -2,6 +2,13 @@ approveManualInstallPlanViaHook: false
 
 installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.12
 
+commonLabels:
+  localLabelOne: hello
+
+global:
+  commonLabels:
+    globalLabelOne: world
+
 operatorGroups:
   aqua:
     name: aqua
