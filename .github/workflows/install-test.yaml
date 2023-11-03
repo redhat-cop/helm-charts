@@ -31,7 +31,7 @@ jobs:
         python-version: 3.7
 
     - name: Setup chart-testing 🧰
-      uses: helm/chart-testing-action@v2.4.0
+      uses: helm/chart-testing-action@v2.6.0
     
     - name: Find changed Charts 🔎
       id: changed-charts
@@ -79,6 +79,7 @@ jobs:
     - name: Setup kind cluster - create expected namespaces 🧰
       run: |
         kubectl create namespace openshift-operators
+      if: steps.changed-charts.outputs.changed == 'true'
 
     - name: Run Chart install tests 🧪
       run: |
