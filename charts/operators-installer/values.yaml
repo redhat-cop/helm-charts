@@ -7,7 +7,7 @@
 # which means you will never get to that phase because your CustomResources wont be able to apply because the Operator isn't installed.
 # This is is ultimately a trade off between cleaning up these resources or being able to install and configure the operator in the same
 # helm chart that has a dependency on this helm chart.
-approveManualInstallPlanViaHook: true
+approveManualInstallPlanViaHook: false
 
 # Image to use for the InstallPlan Approver and Verify Jobs
 installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.10
