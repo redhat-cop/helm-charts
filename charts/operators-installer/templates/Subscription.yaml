@@ -12,6 +12,10 @@ metadata:
     argocd.argoproj.io/sync-wave: "-40"
 spec:
   channel: "{{ .channel }}"
+  {{- if .config }}
+  config:
+    {{ .config | toYaml | indent 4 | trim }}
+  {{- end }}
   installPlanApproval: "{{ .installPlanApproval }}"
   name: "{{ .name }}"
   source: "{{ .source }}"
