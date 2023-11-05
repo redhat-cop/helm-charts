@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ printf "%s-%s" .csv "-approver" | trunc -63 | trimAll "-" }}
+  name: {{ printf "%s-%s" .csv "approver" | trunc -63 | trimAll "-" }}
   namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
