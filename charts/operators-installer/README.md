@@ -21,11 +21,12 @@ For all of the Subscription parameters see
 | Parameter                                    | Default Value | Required? | Description
 |----------------------------------------------|---------------|-----------|------------
 | operators                                    | `[]`          | No        | List of operators to install.
-| operators[].channel                          |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) channel.
-| operators[].installPlanApproval              |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) installPlanApproval.
-| operators[].name                             |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) name.
-| operators[].source                           |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) source.
-| operators[].sourceNamespace                  |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4latest/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1) sourceNamespace.
+| operators[].channel                          |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4.14/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1.html#spec) channel.
+| operators[].installPlanApproval              |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4.14/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1.html#spec) installPlanApproval.
+| operators[].name                             |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4.14/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1.html#spec) name.
+| operators[].source                           |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4.14/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1.html#spec) source.
+| operators[].sourceNamespace                  |               | Yes       | [Subscription](https://docs.openshift.com/container-platform/4.14/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1.html#spec) sourceNamespace.
+| operators[].config                           |               | No        | [Subscription](https://docs.openshift.com/container-platform/4.14/rest_api/operatorhub_apis/subscription-operators-coreos-com-v1alpha1.html#spec-config) config.
 | operators[].csv                              |               | Yes       | The CSV to install.
 | operators[].installPlanApproverRetries       | `10           | No        | Number of times to try to approve the InstallPlan. This may need to be increased for unpredictable reasons about some clusters taking longer to create InstallPlans.
 | operators[].installPlanApproverActiveDeadlineSeconds | `120` | No        | Total amount of time that can be spent waiting for InstallPlan to be approved. This may need to be increased for unpredictable reasons about some clusters taking longer to create InstallPlans.
