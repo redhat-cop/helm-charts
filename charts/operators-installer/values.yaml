@@ -20,6 +20,16 @@ operators:
 #   source: community-operators
 #   sourceNamespace: openshift-marketplace
 #   csv: external-secrets-operator.v0.8.2
+# - channel: gitops-1.10
+#   installPlanApproval: Manual
+#   name: openshift-gitops-operator
+#   source: redhat-operators
+#   sourceNamespace: openshift-marketplace
+#   csv: openshift-gitops-operator.v1.10.1
+#   config:
+#     env:
+#     - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
+#       value: "true"
 
 # configuration for control of OperatorGroups
 operatorGroups:
