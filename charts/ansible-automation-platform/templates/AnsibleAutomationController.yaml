@@ -20,7 +20,7 @@ spec:
   projects_use_existing_claim: {{.Values.automationController.projectsUseExistingClaim }}
   image_pull_policy:  {{.Values.automationController.imagePullPolicy }}
   admin_email: {{ .Values.automationController.admin_email }}
-  task_privileged: {{.Values.automationController.taskPrivileged }}
+  task_privileged: {{ .Values.automationController.taskPrivileged }}
   projects_persistence: {{.Values.automationController.projectsPersistence }}
   replicas:  {{.Values.automationController.replicas }}
   admin_user: {{ .Values.automationController.admin_user }}
@@ -47,5 +47,8 @@ spec:
   {{- with .Values.automationController.ee_resource_requirements }}
   {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- end }}
+  {{- if .Values.automationController.extraConfig }}
+  {{- .Values.automationController.extraConfig | toYaml | nindent 2 }}
   {{- end }}
 {{- end }}
