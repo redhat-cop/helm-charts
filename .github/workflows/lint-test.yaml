@@ -20,17 +20,17 @@ jobs:
         fetch-depth: 0
 
     - name: Setup Helm 🧰
-      uses: azure/setup-helm@v3
+      uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3
       with:
         version: v3.5.1
 
     - name: Setup Python 🐍
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4
       with:
         python-version: 3.7
 
     - name: Setup chart-testing 🧰
-      uses: helm/chart-testing-action@v2.6.1
+      uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
 
     - name: Run Chart lint tests 🧪
       run: ct lint
