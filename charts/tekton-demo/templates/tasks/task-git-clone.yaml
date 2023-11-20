@@ -108,7 +108,7 @@ spec:
 
   steps:
     - name: clone
-      image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.17.1@sha256:a39b8c647d6eaf609dc04bc7b0fc0f787b3b25fd6b1c9b182066a5c29a64a18c
+      image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.17.1
       script: |
         #!/bin/sh
         set -eu -o pipefail
