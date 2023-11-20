@@ -62,7 +62,7 @@ argocd_cr:
     size: 1
   ha:
     enabled: false
-    redisProxyImage: haproxy
+    redisProxyImage: haproxy@sha256:938a990aaa19dfc1c09c5cb056e90dabddfa1c0cdf106c0246e248d7ee14219d
     redisProxyVersion: "2.0.4"
 
   rbac:
