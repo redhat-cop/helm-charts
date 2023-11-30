@@ -17,9 +17,9 @@ jobs:
     env:
       # renovate: datasource=github-releases depName=helm/helm
       HELM_VERSION: v3.13.0
-      # renovate: datasource=github-releases depName=StyraInc/regal
+      # renovate: datasource=github-tags depName=python/cpython
       PYTHON_VERSION: 3.11
-      # renovate: datasource=github-releases depName=kubernetes-sigs/kind/
+      # renovate: datasource=github-releases depName=kubernetes-sigs/kind
       KIND_VERSION: v0.20.0
       # renovate: datasource=github-releases depName=operator-framework/operator-lifecycle-manager
       OLM_VERSION: v0.25.0
