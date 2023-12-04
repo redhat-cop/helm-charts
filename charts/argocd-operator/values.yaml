@@ -62,8 +62,6 @@ argocd_cr:
     size: 1
   ha:
     enabled: false
-    redisProxyImage: haproxy
-    redisProxyVersion: "2.0.4"
 
   rbac:
     defaultPolicy: role:admin
