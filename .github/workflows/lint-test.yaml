@@ -12,6 +12,12 @@ concurrency:
 
 jobs:
   lint-test:
+    env:
+      branch_name: ${{ github.head_ref || github.ref_name }}
+      # renovate: datasource=github-releases depName=helm/helm
+      HELM_VERSION: v3.13.0
+      # renovate: datasource=github-tags depName=python/cpython
+      PYTHON_VERSION: 3.11
     runs-on: ubuntu-latest
     steps:
     - name: Checkout 🛎️
@@ -22,15 +28,43 @@ jobs:
     - name: Setup Helm 🧰
       uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3
       with:
-        version: v3.5.1
+        version: ${{ env.HELM_VERSION }}
 
     - name: Setup Python 🐍
       uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4
       with:
-        python-version: 3.7
+        python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Setup chart-testing 🧰
       uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
 
+    - name: Setup pybump
+      if: ${{ contains(env.branch_name, 'renovate') }}
+      run: |
+        pip3 install pybump
+
+    - name: Bump chart version
+      if: ${{ contains(env.branch_name, 'renovate') }}
+      id: bumped_charts
+      run: |
+        .github/renovate-bump.sh
+
     - name: Run Chart lint tests 🧪
       run: ct lint
+
+    # Use the REST API to commit changes, so we get automatic commit signing
+    - name: Push changes
+      if: ${{ contains(env.branch_name, 'renovate') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        changed_charts: ${{ steps.bumped_charts.outputs.CHARTS }}
+      run: |
+        for chart in ${changed_charts}; do
+          export SHA=$(git rev-parse origin/${branch_name}:${chart} )
+
+          gh api --method PUT /repos/:owner/:repo/contents/${chart} \
+            --field message="chore: bumped ${chart} version" \
+            --field content=@<( base64 -i ${chart} ) \
+            --field branch="${branch_name}" \
+            --field sha="$SHA"
+        done
