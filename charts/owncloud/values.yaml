@@ -10,7 +10,7 @@ image:
     healthimage: docker.io/healthcheck/redis:latest
     pullPolicy: Always
   mariadb:
-    image: docker.io/mariadb:10.4
+    image: docker.io/mariadb:10.11@sha256:547c34f1df1940bdbcd8c777ae8633392a09ec44b39f8a1f25b5488f74dbd6e2
     healthimage: docker.io/healthcheck/mysql:latest
     pullPolicy: Always
 
