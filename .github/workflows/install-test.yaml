@@ -45,7 +45,7 @@ jobs:
     - name: Find changed Charts 🔎
       id: changed-charts
       run: |
-        changed=$(ct list-changed)
+        changed=$(ct list-changed --target-branch main)
         echo ${changed}
         if [[ -n "$changed" ]]; then
           echo "changed=true" >> $GITHUB_OUTPUT
@@ -92,5 +92,5 @@ jobs:
 
     - name: Run Chart install tests 🧪
       run: |
-        ct install --debug --config _test/ct-config.yaml
+        ct install --target-branch main --debug --config _test/ct-config.yaml
       if: steps.changed-charts.outputs.changed == 'true'

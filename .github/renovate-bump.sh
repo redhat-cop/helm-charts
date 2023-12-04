@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CHARTS_CHANGED=()
-changed=$(ct list-changed)
+changed=$(ct list-changed --target-branch main)
 for chart in ${changed}; do
   echo "Chart has changes: ${chart}"
 

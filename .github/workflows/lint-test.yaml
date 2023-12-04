@@ -50,7 +50,7 @@ jobs:
         .github/renovate-bump.sh
 
     - name: Run Chart lint tests 🧪
-      run: ct lint
+      run: ct lint --target-branch main
 
     # Use the REST API to commit changes, so we get automatic commit signing
     - name: Push changes
