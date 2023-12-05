@@ -3270,6 +3270,20 @@ entries:
   owncloud:
   - apiVersion: v2
     appVersion: latest
+    created: "2023-12-05T00:34:08.6269503Z"
+    description: A Helm chart for Owncloud
+    digest: 2477f8294750f05b083ef55efe0aa1e81110af97c5fcb2ffcfac9d424c2fa354
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://alternative.me/media/256/owncloud-icon-ge0uksoxjjfyflu8-c.png
+    maintainers:
+    - name: eformat
+    name: owncloud
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/owncloud-0.0.7/owncloud-0.0.7.tgz
+    version: 0.0.7
+  - apiVersion: v2
+    appVersion: latest
     created: "2023-12-05T00:32:10.065702938Z"
     description: A Helm chart for Owncloud
     digest: 24dfd751dd952bd9da078346ca24612b5539ec6939fd3129b8211215fe9071dd
@@ -4501,4 +4515,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2023-12-05T00:32:10.066593474Z"
+generated: "2023-12-05T00:34:08.627310802Z"
