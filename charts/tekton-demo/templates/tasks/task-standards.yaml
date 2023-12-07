@@ -26,7 +26,7 @@ spec:
   steps:
 
     - name: helm-lint
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -42,7 +42,7 @@ spec:
         runAsUser: 0
 
     - name: code-prepare
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -58,7 +58,7 @@ spec:
         runAsUser: 0
 
     - name: code-audit
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
@@ -69,7 +69,7 @@ spec:
         runAsUser: 0
 
     - name: code-lint
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ["/bin/bash", "-c"]
@@ -80,7 +80,7 @@ spec:
         runAsUser: 0
 
     - name: code-test
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -94,7 +94,7 @@ spec:
         runAsUser: 0
 
     - name: code-coverage
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
