@@ -1,6 +1,7 @@
 apiVersion: v2
 name: operators-installer
-description: Installs a given list of operators either using Automatic or Manual InstallPlans. If Manual then version of operator can be controlled declarativly.
+description: Installs a given list of operators either using Automatic or Manual InstallPlans.
+  If Manual then version of operator can be controlled declarativly.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -15,7 +16,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 2.4.2
+version: 2.4.3
 
 home: https://github.com/redhat-cop/helm-charts
 
