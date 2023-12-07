@@ -91,6 +91,7 @@ jobs:
       if: steps.changed-charts.outputs.changed == 'true'
 
     - name: Run Chart install tests 🧪
+      timeout-minutes: 30
       run: |
         ct install --target-branch main --debug --config _test/ct-config.yaml
       if: steps.changed-charts.outputs.changed == 'true'
