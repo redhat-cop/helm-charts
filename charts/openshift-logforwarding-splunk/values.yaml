@@ -45,7 +45,7 @@ forwarding:
       # storageClass: "-"
       storageClass: ""
       accessMode: ReadWriteOnce
-    image: registry.redhat.io/openshift4/ose-logging-fluentd:v4.6
+    image: registry.redhat.io/openshift4/ose-logging-fluentd:v4.6@sha256:858cbcf1bb6f7e5641bd0a8914b92237190037cefdffa2c069b0ddc9a6c5ae9d
     nodeSelector: {}
     tolerations: []
     affinity: {}
