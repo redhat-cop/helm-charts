@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Declare default permissions as read only.
+permissions: read-all
+
 jobs:
   lint-test:
     env:
@@ -18,7 +21,11 @@ jobs:
       HELM_VERSION: v3.13.2
       # renovate: datasource=github-tags depName=python/cpython
       PYTHON_VERSION: v3.12.1
+      # renovate: datasource=pypi depName=pybump
+      PYBUMP_VERSION: 1.11.4
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Checkout 🛎️
       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
@@ -41,7 +48,7 @@ jobs:
     - name: Setup pybump
       if: ${{ contains(env.branch_name, 'renovate') }}
       run: |
-        pip3 install pybump
+        pip3 install pybump==${PYBUMP_VERSION}
 
     - name: Bump chart version
       if: ${{ contains(env.branch_name, 'renovate') }}

@@ -1,6 +1,9 @@
 # ⚓️ Red Hat Communities of Practice Helm Charts
 
-![Release Charts](https://github.com/redhat-cop/helm-charts/workflows/Release%20Charts/badge.svg)
+[![Install Test](https://github.com/redhat-cop/helm-charts/actions/workflows/install-test.yaml/badge.svg)](https://github.com/redhat-cop/helm-charts/actions/workflows/install-test.yaml)
+[![Lint Test](https://github.com/redhat-cop/helm-charts/actions/workflows/lint-test.yaml/badge.svg)](https://github.com/redhat-cop/helm-charts/actions/workflows/lint-test.yaml)
+[![Release Charts](https://github.com/redhat-cop/helm-charts/actions/workflows/release.yaml/badge.svg)](https://github.com/redhat-cop/helm-charts/actions/workflows/release.yaml)
+[![Scorecard supply-chain security](https://github.com/redhat-cop/helm-charts/actions/workflows/scorecard.yml/badge.svg)](https://github.com/redhat-cop/helm-charts/actions/workflows/scorecard.yml)
 
 A collection of Helm Charts to that are not available in any upstream location or customised to the point it does not make sense to support up stream chart development.
 
