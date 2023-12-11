@@ -36,7 +36,7 @@ spec:
   steps:
     # todo: use when expressions when available
     - name: validate
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       resources: {}
       script: |
         #!/bin/sh
@@ -51,7 +51,7 @@ spec:
 
     # todo: use tekton auth secrets
     - name: release-notes
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
         #!/bin/sh
@@ -88,7 +88,7 @@ spec:
         runAsUser: 0
 
     - name: release-image
-      image: registry.redhat.io/openshift4/ose-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -105,7 +105,7 @@ spec:
         fi
 
     - name: app-expose
-      image: registry.redhat.io/openshift4/ose-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -138,7 +138,7 @@ spec:
         fi
 
     - name: app-labels
-      image: registry.redhat.io/openshift4/ose-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -153,7 +153,7 @@ spec:
         oc label deployment/$appname --overwrite app.revision-author=$(inputs.params.author) -n $environment
 
     - name: app-envs
-      image: registry.redhat.io/openshift4/ose-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -168,7 +168,7 @@ spec:
         oc set env deployment/$appname --overwrite revision-type=$(inputs.params.revision-type) -n $environment
 
     - name: app-secrets
-      image: registry.redhat.io/openshift4/ose-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -179,7 +179,7 @@ spec:
           # oc set env deployment/$appname --from secret/input -n {{ .Values.application.environments.production }}
 
     - name: app-probes
-      image: registry.redhat.io/openshift4/ose-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -190,7 +190,7 @@ spec:
           oc set probe deployment/$appname --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n {{ .Values.application.environments.production }}
 
     - name: app-autoscale
-      image: registry.redhat.io/openshift4/ose-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
       script: |
         #!/bin/sh
 
@@ -214,7 +214,7 @@ spec:
         fi
 
     - name: app-triggers
-      image: registry.redhat.io/openshift4/ose-cli:latest
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -224,7 +224,7 @@ spec:
           oc set triggers deployment/$appname -n {{ .Values.application.environments.production }}
 
     - name: report
-      image: registry.redhat.io/ubi8/ubi:latest
+      image: registry.redhat.io/ubi8/ubi:latest@sha256:449da7f8f2ef6285a8445a1e31af57a97b9dae5dcf009b1629c59742c89c68c3
       env:
         - name: GITHUBTOKEN
           valueFrom:

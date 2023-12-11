@@ -17,7 +17,7 @@ spec:
   steps:
 
     - name: pull-request
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       workingDir: /workspace/source
       script: |
         #!/bin/sh

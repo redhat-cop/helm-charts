@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - master
+      - main
     paths-ignore:
       - '.github/**'
       - 'README.md'
@@ -12,9 +12,12 @@ jobs:
   release:
     concurrency: staging_environment
     runs-on: ubuntu-latest
+    env:
+      # renovate: datasource=github-releases depName=helm/helm
+      HELM_VERSION: v3.13.2
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
 
@@ -24,9 +27,9 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Install Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
         with:
-          version: latest 
+          version: ${{ env.HELM_VERSION }}
 
       - name: Add dependency chart repos
         run: |
@@ -34,6 +37,6 @@ jobs:
           helm repo add incubator https://charts.helm.sh/incubator
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.5.0
+        uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

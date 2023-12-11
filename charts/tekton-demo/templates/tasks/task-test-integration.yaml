@@ -24,7 +24,7 @@ spec:
   steps:
 
     - name: test-integration
-      image: registry.redhat.io/rhel8/nodejs-12
+      image: registry.redhat.io/rhel8/nodejs-12@sha256:3c7f0b36e4313819009df28c4b666320e0cff45041ccbc3861327054f9e1d1f6
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
@@ -35,7 +35,7 @@ spec:
 
     # todo: condition to only run in dev env
     - name: test-report
-      image: registry.redhat.io/ubi8/ubi:latest
+      image: registry.redhat.io/ubi8/ubi:latest@sha256:449da7f8f2ef6285a8445a1e31af57a97b9dae5dcf009b1629c59742c89c68c3
       env:
         - name: GITHUBTOKEN
           valueFrom:

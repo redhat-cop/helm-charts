@@ -26,7 +26,7 @@ deploymentStrategy: {}
 
 image:
   repository: *name
-  tag: 9.9.1-community
+  tag: 10.3.0-community@sha256:c9fc479ae8aca6393bc0e9852910bfdd14a001bcc37eca652290c1a5ca3b3ae6
   # If using a private repository, the name of the imagePullSecret to use
   # pullSecret: my-repo-secret
 

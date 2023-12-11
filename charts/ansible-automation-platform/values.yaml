@@ -36,6 +36,8 @@ automationController:
   replicas: 1
   admin_user: admin
   admin_email: admin@example.com
+  # extraConfig:
+  #   postgres_configuration_secret: external-postgres-configuration
   #  admin_password: admin123
   #  web_resource_requirements:
   #    limits:

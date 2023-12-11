@@ -1,0 +1,20 @@
+approveManualInstallPlanViaHook: true
+
+installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.12
+
+operators:
+- channel: gitops-1.10
+  installPlanApproval: Manual
+  name: openshift-gitops-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  csv: openshift-gitops-operator.v1.10.1
+  namespace: openshift-gitops-operator
+  config:
+    env:
+    - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
+      value: "true"
+
+operatorGroups:
+- name: openshift-gitops-operator
+  createNamespace: openshift-gitops-operator

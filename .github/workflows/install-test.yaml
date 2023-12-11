@@ -14,46 +14,55 @@ concurrency:
 jobs:
   install-test:
     runs-on: ubuntu-latest
+    env:
+      # renovate: datasource=github-releases depName=helm/helm
+      HELM_VERSION: v3.13.2
+      # renovate: datasource=github-tags depName=python/cpython
+      PYTHON_VERSION: v3.12.1
+      # renovate: datasource=github-releases depName=kubernetes-sigs/kind
+      KIND_VERSION: v0.20.0
+      # renovate: datasource=github-releases depName=operator-framework/operator-lifecycle-manager
+      OLM_VERSION: v0.26.0
     steps:
     - name: Checkout 🛎️
-      uses: actions/checkout@v3
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       with:
         fetch-depth: 0
 
     - name: Setup Helm 🧰
-      uses: azure/setup-helm@v3
+      uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3
       with:
-        version: v3.5.1
+        version: ${{ env.HELM_VERSION }}
 
     - name: Setup Python 🐍
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5
       with:
-        python-version: 3.7
+        python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Setup chart-testing 🧰
-      uses: helm/chart-testing-action@v2.6.0
+      uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
     
     - name: Find changed Charts 🔎
       id: changed-charts
       run: |
-        changed=$(ct list-changed)
+        changed=$(ct list-changed --target-branch main)
         echo ${changed}
         if [[ -n "$changed" ]]; then
           echo "changed=true" >> $GITHUB_OUTPUT
         fi
 
     - name: Setup kind cluster 🧰
-      uses: helm/kind-action@v1.8.0
+      uses: helm/kind-action@dda0770415bac9fc20092cacbc54aa298604d140 # v1.8.0
       with:
-        version: v0.20.0
+        version: ${{ env.KIND_VERSION }}
       if: steps.changed-charts.outputs.changed == 'true'
 
     # for helm charts we are testing that require installing operators 
     - name: Setup kind cluster - Install OLM 🧰
       run: |
-        curl -L https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.25.0/install.sh -o install.sh
+        curl -L https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_VERSION}/install.sh -o install.sh
         chmod +x install.sh
-        ./install.sh v0.25.0
+        ./install.sh ${OLM_VERSION}
       if: steps.changed-charts.outputs.changed == 'true'
 
     # for helm charts we are testing that require ingress
@@ -82,6 +91,7 @@ jobs:
       if: steps.changed-charts.outputs.changed == 'true'
 
     - name: Run Chart install tests 🧪
+      timeout-minutes: 30
       run: |
-        ct install --debug --config _test/ct-config.yaml
+        ct install --target-branch main --debug --config _test/ct-config.yaml
       if: steps.changed-charts.outputs.changed == 'true'
