@@ -32,7 +32,7 @@ secrets: []
 
 # https://argocd-operator.readthedocs.io/en/latest/reference/argocd/
 argocd_cr:
-  version: v2.8.6
+  version: v2.9.3
   applicationSet: {}
   notifications:
     enabled: true
@@ -50,6 +50,8 @@ argocd_cr:
         - TaskRun
         - PipelineRun
   server:
+    ingress:
+      enabled: false
     route:
       enabled: true
       tls:
