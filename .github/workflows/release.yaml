@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # renovate: datasource=github-releases depName=helm/helm
-      HELM_VERSION: v3.13.2
+      HELM_VERSION: v3.13.3
     permissions:
       contents: write
     steps:

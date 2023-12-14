@@ -18,7 +18,7 @@ jobs:
     env:
       branch_name: ${{ github.head_ref || github.ref_name }}
       # renovate: datasource=github-releases depName=helm/helm
-      HELM_VERSION: v3.13.2
+      HELM_VERSION: v3.13.3
       # renovate: datasource=github-tags depName=python/cpython
       PYTHON_VERSION: v3.12.1
       # renovate: datasource=pypi depName=pybump
