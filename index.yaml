@@ -4487,6 +4487,20 @@ entries:
   static-site:
   - apiVersion: v2
     appVersion: 1.17.9-alpine
+    created: "2023-12-18T09:10:42.517139402Z"
+    description: A Helm chart for deploying a static-site with auto-updating
+    digest: b48e151bf17a93760248f55b48792d67e3f2504a2d239a2db8d817d959f432c8
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://i.dlpng.com/static/png/6796939_preview.png
+    maintainers:
+    - name: jijiechen
+    name: static-site
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/static-site-0.0.8/static-site-0.0.8.tgz
+    version: 0.0.8
+  - apiVersion: v2
+    appVersion: 1.17.9-alpine
     created: "2023-12-11T19:29:19.034845752Z"
     description: A Helm chart for deploying a static-site with auto-updating
     digest: b2e73d09be0d1c587eeb7e157beac1b87292cb56ccd859bd4832c25b51376995
@@ -4638,4 +4652,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2023-12-11T19:31:24.711953633Z"
+generated: "2023-12-18T09:10:42.517617653Z"
