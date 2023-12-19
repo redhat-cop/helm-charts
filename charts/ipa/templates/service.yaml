@@ -53,4 +53,4 @@ spec:
     targetPort: 636
   clusterIP: ""
   selector:
-    deploymentconfig: {{ include "ipa.fullname" . }}
+    app: {{ include "ipa.fullname" . }}
