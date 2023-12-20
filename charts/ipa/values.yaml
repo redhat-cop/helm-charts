@@ -5,7 +5,7 @@ admin_password: Passw0rd123
 realm: "-r redhatlabs.dev"
 
 # sensible defaults
-image: quay.io/freeipa/freeipa-server@sha256:b7e79f8430a1d8ab7293c1f249162ca92eb5d5d2ce6a1f73c6a85e95a09c2da3
+image: quay.io/freeipa/freeipa-server@sha256:b7e79f8430a1d8ab7293c1f249162ca92eb5d5d2ce6a1f73c6a85e95a09c2da3 # freeipa-server:fedora-39
 install_opts: "-U --setup-dns --no-forwarders --no-ntp"
 container_args: "ipa-server-install"
 volume: 5Gi
