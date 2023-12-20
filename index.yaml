@@ -2174,6 +2174,26 @@ entries:
   ipa:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2023-12-20T00:32:45.206479992Z"
+    dependencies:
+    - condition: ldap_group_sync
+      name: cronjob-ldap-group-sync
+      repository: https://redhat-cop.github.io/openshift-management
+      version: 0.0.2
+    description: A Helm chart to install FreeIPA
+    digest: 760f05bba00dd0f468e069186abeba808b2b870243464afff39e3343d6cba67e
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.freeipa.org/images/freeipa/freeipa-logo-small.png
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: ipa
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/ipa-1.3.3/ipa-1.3.3.tgz
+    version: 1.3.3
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2023-12-19T20:50:26.333544372Z"
     dependencies:
     - condition: ldap_group_sync
@@ -4686,4 +4706,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2023-12-19T20:50:26.334054748Z"
+generated: "2023-12-20T00:32:45.206930893Z"
