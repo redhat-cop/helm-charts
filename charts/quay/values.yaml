@@ -27,4 +27,3 @@ registry_components:
     managed: true
   - kind: clairpostgres
     managed: true
-
