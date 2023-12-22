@@ -1,0 +1,30 @@
+infra_nodes: false
+
+quay_registry_config_bundle:
+  # REGISTRY_TITLE: My Awesome Quay
+  # add your configuration fields here
+
+registry_components:
+  - kind: clair
+    managed: true
+  - kind: postgres
+    managed: true
+  - kind: objectstorage
+    managed: true
+  - kind: redis
+    managed: true
+  - kind: horizontalpodautoscaler
+    managed: true
+  - kind: route
+    managed: true
+  - kind: mirror
+    managed: true
+  - kind: monitoring
+    managed: true
+  - kind: tls
+    managed: true
+  - kind: quay
+    managed: true
+  - kind: clairpostgres
+    managed: true
+
