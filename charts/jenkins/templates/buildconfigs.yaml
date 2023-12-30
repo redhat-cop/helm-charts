@@ -35,7 +35,7 @@ spec:
     {{- end }}
     git:
       uri: {{ .source_repo  | default "https://github.com/redhat-cop/containers-quickstarts"  | quote }}
-      ref: {{ .source_repo_ref | default "master" | quote }}
+      ref: {{ .source_repo_ref | default "main" | quote }}
     {{- if .source_context_dir }}
     contextDir: {{ .source_context_dir | quote }}
     {{- else }}
