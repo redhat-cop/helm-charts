@@ -4682,6 +4682,27 @@ entries:
   tekton-demo:
   - apiVersion: v2
     appVersion: latest
+    created: "2024-01-08T11:48:18.214211763Z"
+    description: This is an example of a pipeline developed in Tekton, the peaceful
+      cat. It contains the main steps of a continuous software delivery process. It
+      enforces a strict semantic version validation strategy, managing tag increments
+      for you. Develop, Features, releases, patches and hotfixes flows are supported.
+    digest: 4824d73c82b636ffdb9eb8ddb11a7058c4970f2d47a830494e488accc484a11d
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://cd.foundation/wp-content/uploads/sites/78/2020/04/tekton-icon-color-1-300x300.png
+    keywords:
+    - tekton
+    - pipeline
+    - nodejs
+    - github
+    maintainers:
+    - name: mvmaestri
+    name: tekton-demo
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.5/tekton-demo-0.0.5.tgz
+    version: 0.0.5
+  - apiVersion: v2
+    appVersion: latest
     created: "2023-12-07T21:18:45.068442116Z"
     description: This is an example of a pipeline developed in Tekton, the peaceful
       cat. It contains the main steps of a continuous software delivery process. It
@@ -4764,4 +4785,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2024-01-02T09:38:28.356124634Z"
+generated: "2024-01-08T11:48:18.214581222Z"
