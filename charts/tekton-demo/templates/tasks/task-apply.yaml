@@ -9,7 +9,7 @@ spec:
   - name: shared
   steps:
     - name: helm-apply
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:767a5fb58229f519ad61e4f1e78d84eb017d356702a5a16ab23b948b90db27c1
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:65e25efc152a2050be9b119e80238d5a9c3456e97b22e9eb40a835acb2f2bd79
       resources: {}
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       script: |
