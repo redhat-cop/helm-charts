@@ -20,6 +20,7 @@ jobs:
       HELM_VERSION: v3.13.3
     permissions:
       contents: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
@@ -45,3 +46,30 @@ jobs:
         uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Setup cosign
+        uses: sigstore/cosign-installer@9614fae9e5c5eddabb09f90a270fcb487c9f7149 # v3
+
+      - name: Cosign sign packaged chart and generate hashs
+        shell: bash
+        id: hash
+        run: |
+          packaged_charts=$(ls .cr-release-packages/*.tgz | xargs)
+          for chart in ${packaged_charts}; do
+            cosign sign-blob --yes ${chart}
+          done
+          
+          echo "hashes=$(sha256sum ${packaged_charts} | base64 -w0)" >> "$GITHUB_OUTPUT"
+
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
+
+  provenance:
+    needs: [release]
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    with:
+      base64-subjects: "${{ needs.release.outputs.hashes }}"
