@@ -1,0 +1,12 @@
+---
+apiVersion: quay.redhat.com/v1
+kind: QuayRegistry
+metadata:
+  name: quay-registry
+  namespace: quay-enterprise
+spec:
+  {{- if .Values.registry_components }}
+  components:
+    {{- .Values.registry_components | toYaml | trim | nindent 4 }}
+  {{- end }}
+  configBundleSecret: quay-registry-config-bundle

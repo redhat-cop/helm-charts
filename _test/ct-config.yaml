@@ -28,6 +28,7 @@ excluded-charts:
 - owncloud
 - pact-broker
 - ploigos
+- quay
 - sonarqube
 - sonatype-nexus
 - stackrox
