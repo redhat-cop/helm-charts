@@ -45,7 +45,7 @@ spec:
       description: Contains the author username
   steps:
     - name: variables
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:65e25efc152a2050be9b119e80238d5a9c3456e97b22e9eb40a835acb2f2bd79
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:043684fba1eb9153939ef0cdae5131ff6af839a98f59ee5a119414418c4821ee
       resources: {}
       workingDir: $(workspaces.source.path)
       script: |
