@@ -3386,6 +3386,20 @@ entries:
   owncloud:
   - apiVersion: v2
     appVersion: latest
+    created: "2024-01-22T17:29:53.124431319Z"
+    description: A Helm chart for Owncloud
+    digest: 2a1fbbeb6a2cdf77f0058f7fb21da934785629ac815eef914bf3b943ad7a7358
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://alternative.me/media/256/owncloud-icon-ge0uksoxjjfyflu8-c.png
+    maintainers:
+    - name: eformat
+    name: owncloud
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/owncloud-0.0.13/owncloud-0.0.13.tgz
+    version: 0.0.13
+  - apiVersion: v2
+    appVersion: latest
     created: "2024-01-15T10:37:18.90391959Z"
     description: A Helm chart for Owncloud
     digest: 6b51d1bc9897d393ef5585a54151169fc7fb0820dcf207c24cafdf7b7325f6a5
@@ -4617,6 +4631,20 @@ entries:
   static-site:
   - apiVersion: v2
     appVersion: 1.17.9-alpine
+    created: "2024-01-22T17:29:53.249479905Z"
+    description: A Helm chart for deploying a static-site with auto-updating
+    digest: c59a468b2ffe4dbceb1f02d2378e58e901e68bf9d08c7b376faea9afeab897e9
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://i.dlpng.com/static/png/6796939_preview.png
+    maintainers:
+    - name: jijiechen
+    name: static-site
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/static-site-0.0.13/static-site-0.0.13.tgz
+    version: 0.0.13
+  - apiVersion: v2
+    appVersion: 1.17.9-alpine
     created: "2024-01-15T10:36:59.296594064Z"
     description: A Helm chart for deploying a static-site with auto-updating
     digest: 0b992d0f9c960a2c0105a24ba4347a25fb0018d7bc169166b3d8e49389614541
@@ -4756,6 +4784,27 @@ entries:
   tekton-demo:
   - apiVersion: v2
     appVersion: latest
+    created: "2024-01-22T17:29:53.382131072Z"
+    description: This is an example of a pipeline developed in Tekton, the peaceful
+      cat. It contains the main steps of a continuous software delivery process. It
+      enforces a strict semantic version validation strategy, managing tag increments
+      for you. Develop, Features, releases, patches and hotfixes flows are supported.
+    digest: dd47f9118324ebc08e7f08a920e1260517358c0e71b56f0b2914aaf6e3fffeff
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://cd.foundation/wp-content/uploads/sites/78/2020/04/tekton-icon-color-1-300x300.png
+    keywords:
+    - tekton
+    - pipeline
+    - nodejs
+    - github
+    maintainers:
+    - name: mvmaestri
+    name: tekton-demo
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.6/tekton-demo-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
+    appVersion: latest
     created: "2024-01-08T11:48:18.214211763Z"
     description: This is an example of a pipeline developed in Tekton, the peaceful
       cat. It contains the main steps of a continuous software delivery process. It
@@ -4859,4 +4908,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2024-01-15T10:37:18.904405309Z"
+generated: "2024-01-22T17:29:53.382534155Z"
