@@ -1,7 +1,7 @@
 apiVersion: v2
 name: ipa
 description: A Helm chart to install FreeIPA
-version: 1.3.5
+version: 1.3.6
 appVersion: 1.16.0
 home: https://github.com/redhat-cop/helm-charts
 icon: https://www.freeipa.org/images/freeipa/freeipa-logo-small.png
@@ -10,7 +10,7 @@ maintainers:
 - name: ckavili
 - name: eformat
 dependencies:
-  - name: cronjob-ldap-group-sync
-    version: 0.0.2
-    repository: https://redhat-cop.github.io/openshift-management
-    condition: ldap_group_sync
+- name: cronjob-ldap-group-sync
+  version: 0.0.2
+  repository: https://redhat-cop.github.io/openshift-management
+  condition: ldap_group_sync
