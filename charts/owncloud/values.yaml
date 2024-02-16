@@ -6,7 +6,7 @@ image:
     repository: quay.io/eformat/owncloud-oauth
     pullPolicy: IfNotPresent
   redis:
-    image: docker.io/redis:7.2@sha256:b5ddcd52d425a8e354696c022f392fe45fca928f68d6289e6bb4a709c3a74668
+    image: docker.io/redis:7.2@sha256:f44e91787b843612a3878d8d8fae227b9db63f471214314f5b2e73576ca633d0
     healthimage: docker.io/healthcheck/redis:latest@sha256:06127d640e5c092f4707e3506e3a80c0361225b8da735b54d66e162a79d1fa38
     pullPolicy: Always
   mariadb:
