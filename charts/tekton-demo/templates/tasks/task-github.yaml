@@ -15,7 +15,7 @@ spec:
       type: string
   steps:
     - name: update-github
-      image: registry.access.redhat.com/ubi8/ubi:latest@sha256:fc88b136e97b4160a74f4a4a8fd50965a286e855ac5a221a4bfdb2c9b765397a
+      image: registry.access.redhat.com/ubi8/ubi:latest@sha256:627867e53ad6846afba2dfbf5cef1d54c868a9025633ef0afd546278d4654eac
       env:
         - name: GITHUBTOKEN
           valueFrom:
