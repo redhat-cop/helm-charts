@@ -28,6 +28,15 @@
         "pinDigest"
       ],
       "enabled": false
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "quay.io/freeipa/freeipa-server"
+      ],
+      "pinDigests": false
     }
   ]
 }
