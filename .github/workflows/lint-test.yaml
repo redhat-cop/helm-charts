@@ -20,7 +20,7 @@ jobs:
       # renovate: datasource=github-releases depName=helm/helm
       HELM_VERSION: v3.14.0
       # renovate: datasource=github-tags depName=python/cpython
-      PYTHON_VERSION: v3.12.1
+      PYTHON_VERSION: v3.12.2
       # renovate: datasource=pypi depName=pybump
       PYBUMP_VERSION: 1.11.6
     runs-on: ubuntu-latest
