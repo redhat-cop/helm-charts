@@ -21,7 +21,7 @@ spec:
       description: revision name
   steps:
     - name: test-performance
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:0bc2df86424b032cd77984edd8e481a1e1875a231fe99fd2fc8cd6d0f8e31485
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:5690a3e95f381102a9cbcf13c39c538c7d55c7ba9d4a494e2d22542b703601c7
       resources: {}
       script: |
         #!/bin/bash
