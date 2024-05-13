@@ -155,7 +155,7 @@ spec:
         echo -n "$(params.url)" > $(results.url.path)
 
     - name: variables
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:5690a3e95f381102a9cbcf13c39c538c7d55c7ba9d4a494e2d22542b703601c7
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:15da03b04318bcc842060b71e9dd6d6c2595edb4e8fdd11b0c6781eeb03ca182
       resources: {}
       script: |
         #!/bin/sh
