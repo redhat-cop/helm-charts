@@ -10,7 +10,7 @@
 approveManualInstallPlanViaHook: true
 
 # Image to use for the InstallPlan Approver and Verify Jobs
-installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.10@sha256:7804ea66ea8ca0f414148b8b3b52ae454800785e80a32bd8a5eb2db789014a00
+installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.15@sha256:f9092145b92d67a66eebcf3925c08868c5b6d67517b392ac54b96026a1e82a0c
 
 # EXAMPLE: declaratively controlled operator version
 operators:
