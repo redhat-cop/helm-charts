@@ -10,6 +10,7 @@ spec:
 {{- if .Values.tlsRoute }}
   tls:
     termination: edge
+    insecureEdgeTerminationPolicy: {{ .Values.insecureEdgeTerminationPolicy }}
 {{- end }}
   to:
     kind: Service

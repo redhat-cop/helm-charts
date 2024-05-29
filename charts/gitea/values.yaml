@@ -20,6 +20,8 @@
 
 # Use edge termination for the gitea route
 tlsRoute: true
+# Default setting for insecure connections. Override if needed
+insecureEdgeTerminationPolicy: None
 
 
 ## YOU MUST SPECIFY THE DB PASSWORD!!!
