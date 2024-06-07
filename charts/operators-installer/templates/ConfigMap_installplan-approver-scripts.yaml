@@ -1,0 +1,26 @@
+{{- range .Values.operators }}
+{{- if eq .installPlanApproval "Manual" }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: installplan-approver-scripts
+  namespace: {{ .namespace | default $.Release.Namespace }}
+  labels:
+    {{- include "operators-installer.labels" $ | nindent 4 }}
+  annotations:
+    {{- if $.Values.approveManualInstallPlanViaHook }}
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "10"
+    {{- else }}
+    argocd.argoproj.io/sync-wave: "-30"
+    {{- end }}
+data:
+  installplan_utils.py: |-
+{{ tpl ( $.Files.Get "_scripts/installplan_utils.py" ) . | indent 4 }}
+  installplan-approver.py: |-
+{{ tpl ( $.Files.Get "_scripts/installplan-approver.py" ) . | indent 4 }}
+  installplan-verifier.py: |-
+{{ tpl ( $.Files.Get "_scripts/installplan-verifier.py" ) . | indent 4 }}
+{{- end }}
+{{- end }}
