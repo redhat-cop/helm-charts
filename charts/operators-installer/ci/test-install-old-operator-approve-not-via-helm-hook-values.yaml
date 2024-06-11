@@ -1,9 +1,9 @@
 approveManualInstallPlanViaHook: false
 
-installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.12
+installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
 operatorGroups:
-- name: external-secrets-operator2
+- name: external-secrets-operator-2
   createNamespace: true
   targetOwnNamespace: false
   otherTargetNamespaces:
@@ -15,7 +15,7 @@ operators:
   source: operatorhubio-catalog
   sourceNamespace: olm
   csv: external-secrets-operator.v0.8.1
-  namespace: external-secrets-operator2
+  namespace: external-secrets-operator-2
   installPlanVerifierActiveDeadlineSeconds: 1200
 commonLabels:
   test-label: xyz123

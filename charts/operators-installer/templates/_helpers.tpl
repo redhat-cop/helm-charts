@@ -60,5 +60,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Name to use for approver SA, Role, and RoleBinding
 */}}
 {{- define "operators-installer.approverName" -}}
-{{- printf "%s-%s" .csv "-approver" | trunc -63 | trimAll "-" }}
+{{- printf "%s-%s" .csv "approver" | trunc -63 | replace "." "-" | trimAll "-" }}
+{{- end }}
+
+{{/*
+Name to use for approver SA, Role, and RoleBinding
+*/}}
+{{- define "operators-installer.scriptsName" -}}
+{{- printf "%s-%s" .csv "scripts" | trunc -63 | replace "." "-" | trimAll "-" }}
 {{- end }}

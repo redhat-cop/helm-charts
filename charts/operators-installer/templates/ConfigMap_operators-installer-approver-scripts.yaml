@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: installplan-approver-scripts
+  name: {{ include "operators-installer.scriptsName" . }}
   namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
@@ -17,10 +17,12 @@ metadata:
     {{- end }}
 data:
   installplan_utils.py: |-
-{{ tpl ( $.Files.Get "_scripts/installplan_utils.py" ) . | indent 4 }}
+{{ tpl ( $.Files.Get "_scripts/installplan_utils.py" ) $ | indent 4 }}
   installplan-approver.py: |-
-{{ tpl ( $.Files.Get "_scripts/installplan-approver.py" ) . | indent 4 }}
+{{ tpl ( $.Files.Get "_scripts/installplan-approver.py" ) $ | indent 4 }}
+  installplan-incremental-approver.py: |-
+{{ tpl ( $.Files.Get "_scripts/installplan-incremental-approver.py" ) $ | indent 4 }}
   installplan-verifier.py: |-
-{{ tpl ( $.Files.Get "_scripts/installplan-verifier.py" ) . | indent 4 }}
+{{ tpl ( $.Files.Get "_scripts/installplan-verifier.py" ) $ | indent 4 }}
 {{- end }}
 {{- end }}

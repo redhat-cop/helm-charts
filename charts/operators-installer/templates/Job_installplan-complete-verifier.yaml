@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ printf "%s-%s" .csv "verifier" | trunc -63 | trimAll "-" }}
+  name: {{ printf "%s-%s" .csv "verifier" | trunc -63 | replace "." "-" |  trimAll "-" }}
   namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
@@ -21,7 +21,7 @@ spec:
   completions: 1
   parallelism: 1
   backoffLimit: {{ .installPlanVerifierRetries | default 10 }}
-  activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds | default 240 }}
+  activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds }}
   template:
     spec:
       containers:
@@ -30,13 +30,15 @@ spec:
         command: ["/bin/sh","-c"]
         args:
           - >-
+              {{- if $.Values.installRequiredPythonLibraries }}
               python3 -m venv /tmp/venv &&
               source /tmp/venv/bin/activate &&
-              pip3 install openshift-client &&
+              python3 -m pip install openshift-client semver==2.13.0 --index-url {{ $.Values.pythonIndexURL }} --extra-index-url {{ $.Values.pythonExtraIndexURL }} &&
+              {{- end }}
               python3 /scripts/installplan-verifier.py
         imagePullPolicy: Always
         env:
-        - name: SUBSCRIPTION_CSV
+        - name: CSV
           value: {{ .csv }}
         - name: SUBSCRIPTION
           value: {{ .name }}
@@ -45,12 +47,12 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         volumeMounts:
-        - name: installplan-approver-scripts
+        - name: operators-installer-approver-scripts
           mountPath: /scripts
       volumes:
-      - name: installplan-approver-scripts
+      - name: operators-installer-approver-scripts
         configMap:
-          name: installplan-approver-scripts
+          name: {{ include "operators-installer.scriptsName" . }}
           defaultMode: 0777
       dnsPolicy: ClusterFirst
       restartPolicy: Never

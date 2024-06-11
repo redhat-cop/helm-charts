@@ -1,6 +1,6 @@
 approveManualInstallPlanViaHook: false
 
-installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.12
+installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
 operatorGroups:
   cmo:
@@ -11,11 +11,11 @@ operatorGroups:
 
 operators:
   cmo:
-    channel: stable
-    installPlanApproval: Manual
     name: costmanagement-metrics-operator
+    channel: stable
+    csv: costmanagement-metrics-operator.2.0.0
+    installPlanApproval: Manual
     source: operatorhubio-catalog
     sourceNamespace: olm
-    csv: costmanagement-metrics-operator.2.0.0
     namespace: costmanagement-metrics-operator
     installPlanVerifierActiveDeadlineSeconds: 1200

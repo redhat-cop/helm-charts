@@ -27,6 +27,7 @@ rules:
   resources:
   - installplans
   - subscriptions
+  - clusterserviceversions
   verbs:
   - get
   - list

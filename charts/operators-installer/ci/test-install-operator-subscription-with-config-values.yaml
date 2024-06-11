@@ -3,19 +3,21 @@ approveManualInstallPlanViaHook: true
 installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
 operatorGroups:
-- name: external-secrets-operator-1
+- name: argocd-operator-2
   createNamespace: true
-  targetOwnNamespace: false
+  targetOwnNamespace: true
   otherTargetNamespaces:
 
 operators:
-- channel: stable
+- name: argocd-operator
+  channel: alpha
+  csv: argocd-operator.v0.6.0
   installPlanApproval: Manual
-  name: external-secrets-operator
   source: operatorhubio-catalog
   sourceNamespace: olm
-  csv: external-secrets-operator.v0.8.1
-  namespace: external-secrets-operator-1
+  namespace: argocd-operator-2
   installPlanVerifierActiveDeadlineSeconds: 1200
-commonLabels:
-  test-label: xyz123
+  config:
+    env:
+    - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
+      value: "true"

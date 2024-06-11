@@ -4,20 +4,29 @@ import os
 import sys
 import installplan_utils
 
-namespace_name = os.environ["NAMESPACE"]
-subscription_name = os.environ["SUBSCRIPTION"]
-subscription_csv = os.environ["SUBSCRIPTION_CSV"]
+NAMESPACE_NAME = os.getenv("NAMESPACE") or installplan_utils.error_and_exit(
+    "env is missing expected value: NAMESPACE", 2
+)
+SUBSCRIPTION_NAME = os.getenv("SUBSCRIPTION") or installplan_utils.error_and_exit(
+    "env is missing expected value: SUBSCRIPTION", 2
+)
+CSV = os.getenv("CSV") or installplan_utils.error_and_exit(
+    "env is missing expected value: CSV", 2
+)
 
 print()
-print("******************************")
-print("* START InstallPlan Approver *")
-print("******************************")
+print("********************************************************************")
+print("* START InstallPlan approver")
+print(f"*\t- NAMESPACE_NAME: {NAMESPACE_NAME}")
+print(f"*\t- SUBSCRIPTION_NAME: {SUBSCRIPTION_NAME}")
+print(f"*\t- CSV: {CSV}")
+print("********************************************************************")
 
 # find the subscription uid
 print()
-print(f"Get Subscription ({subscription_name}) UID")
-subscription_uid = installplan_utils.get_subscription_uid(subscription_name)
-print(f"Subscription ({subscription_name}) UID: {subscription_uid}")
+print(f"Get Subscription ({SUBSCRIPTION_NAME}) UID")
+subscription_uid = installplan_utils.get_subscription_uid(SUBSCRIPTION_NAME)
+print(f"\t- Subscription ({SUBSCRIPTION_NAME}) UID: {subscription_uid}")
 
 # if found subscription uid find InstallPlan for given CSV with owner of the given subscription
 # else error
@@ -25,42 +34,29 @@ if subscription_uid:
     # find the InstallPlan that has expected owner subscription id and expected target CSV name
     # NOTE: if more then one InstallPlan matches, choose the first one
     print(
-        f"Get InstallPlan for CSV ({subscription_csv}) with Subscription (${subscription_uid}) owner"
+        f"Find InstallPlan in Namespace ({NAMESPACE_NAME}) for CSV ({CSV}) with Subscription (${subscription_uid}) owner"
     )
-    target_install_plan = installplan_utils.get_installplan(
-        namespace_name, subscription_csv, subscription_uid
+    target_installplan = installplan_utils.get_installplan(
+        NAMESPACE_NAME, CSV, subscription_uid
     )
-    # if found target InstallPlan, approve it
+
+    # if found target InstallPlan, approve it, and success exit
     # else fail
-    if target_install_plan:
-        target_install_plan_name = target_install_plan.model.metadata.name
-        print(
-            f"InstallPlan for CSV ({subscription_csv}) with Subscription ({subscription_name}) ({subscription_uid}): {target_install_plan.model.metadata.name}"
-        )
-        print()
-        print(
-            f"Current InstallPlan ({target_install_plan_name}) approval state: {target_install_plan.model.spec.approved}"
-        )
-        # if already approved, just notify
-        # else approve
-        if target_install_plan.model.spec.approved:
-            print(f"InstallPlan ({target_install_plan_name}) is already approved")
-        else:
-            print(f"Approving InstallPlan ({target_install_plan_name})")
-            target_install_plan.model.spec.approved = True
-            target_install_plan.apply()
-            print(f"Approved InstallPlan ({target_install_plan_name})")
+    if target_installplan:
+        print(f"\t- Found InstallPlan: {target_installplan.model.metadata.name}")
+        installplan_utils.approve_installplan(target_installplan)
         sys.exit(0)
     else:
         print()
         print(
-            f"Could not find InstallPlan for CSV ${subscription_csv}) with Subscription ({subscription_name}) ({subscription_uid}) owner."
-            + "\nThis can happen if InstallPlan isn't created yet. Try again."
+            f"ERROR: Could not find next InstallPlan to reach CSV ${CSV}) with Subscription ({SUBSCRIPTION_NAME}) ({subscription_uid}) owner."
+            + "\nThis can happen if InstallPlan isn't created yet or no valid upgrade path between current CSV and target CSV."
+            + "\nTry again."
         )
         sys.exit(1)
 else:
     print()
     print(
-        "Failed to get Subscription ({subscription_name}) UID. This really shouldn't happen."
+        f"ERROR: Failed to get Subscription ({SUBSCRIPTION_NAME}) UID. This really shouldn't happen."
     )
     sys.exit(1)

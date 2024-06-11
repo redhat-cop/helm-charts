@@ -1,6 +1,6 @@
 approveManualInstallPlanViaHook: true
 
-installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.12
+installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
 operatorGroups:
   community:

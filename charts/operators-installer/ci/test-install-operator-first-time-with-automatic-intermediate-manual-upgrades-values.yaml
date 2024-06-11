@@ -1,0 +1,28 @@
+# NOTE:
+#  this doesn't REALLY do a hard core test of the `automaticIntermediateManualUpgrades` option
+#  because the operator is not already installed, but it does at least test some of the code path
+
+approveManualInstallPlanViaHook: true
+
+installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
+
+operatorGroups:
+- name: argocd-operator-1
+  createNamespace: true
+  targetOwnNamespace: true
+  otherTargetNamespaces:
+
+operators:
+- name: argocd-operator
+  channel: alpha
+  csv: argocd-operator.v0.6.0
+  installPlanApproval: Manual
+  source: operatorhubio-catalog
+  sourceNamespace: olm
+  namespace: argocd-operator-1
+  installPlanVerifierActiveDeadlineSeconds: 1200
+  automaticIntermediateManualUpgrades: true
+  config:
+    env:
+    - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
+      value: "true"
