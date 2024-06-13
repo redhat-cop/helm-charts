@@ -1,4 +1,5 @@
 # https://access.redhat.com/solutions/4910611
+{{- if .Values.machineconfig.enabled }}
 ---
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
@@ -26,3 +27,4 @@ spec:
           WantedBy=multi-user.target
         enabled: true
         name: sebool.service
+{{- end }}

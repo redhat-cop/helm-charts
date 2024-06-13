@@ -24,6 +24,7 @@ ocp_auth:
   domain: "dc=redhatlabs,dc=dev"
 
 machineconfig:
+  enabled: true
   ignition_version: 3.2.0
 
 # assumes node-role.kubernetes.io/infra: "" on one or more nodes
