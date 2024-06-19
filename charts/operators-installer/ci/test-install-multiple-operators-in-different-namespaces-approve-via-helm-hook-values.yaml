@@ -1,9 +1,9 @@
 approveManualInstallPlanViaHook: true
 
-installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.12
+installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
 operatorGroups:
-- name: external-secrets-operator3
+- name: external-secrets-operator-3
   createNamespace: true
   targetOwnNamespace: false
   otherTargetNamespaces:
@@ -13,20 +13,20 @@ operatorGroups:
   otherTargetNamespaces:
 
 operators:
-- channel: stable
-  installPlanApproval: Manual
-  name: external-secrets-operator
-  source: operatorhubio-catalog
-  sourceNamespace: olm
+- name: external-secrets-operator
+  channel: stable
   csv: external-secrets-operator.v0.8.1
-  namespace: external-secrets-operator3
-  installPlanVerifierActiveDeadlineSeconds: 1200
-- channel: alpha
   installPlanApproval: Manual
-  name: argocd-operator
   source: operatorhubio-catalog
   sourceNamespace: olm
+  namespace: external-secrets-operator-3
+  installPlanVerifierActiveDeadlineSeconds: 1200
+- name: argocd-operator
+  channel: alpha
   csv: argocd-operator.v0.6.0
+  installPlanApproval: Manual
+  source: operatorhubio-catalog
+  sourceNamespace: olm
   namespace: argocd-operator
   installPlanVerifierActiveDeadlineSeconds: 1200
 commonLabels:

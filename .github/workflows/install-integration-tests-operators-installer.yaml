@@ -1,11 +1,16 @@
 ---
-name: Install Test
+# these integration tests need to be per operator since they don't do clean up
+#
+# NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
+
+name: Install Integration Test - operators-installer
 
 on:
   pull_request:
     paths:
     - .github/**
-    - charts/**
+    - _test/charts-integration-tests/operators-installer/**
+    - charts/operators-installer/**
 
 # Declare default permissions as read only.
 permissions: read-all
@@ -15,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  install-test:
+  install-integration-test:
     runs-on: ubuntu-latest
     env:
       # renovate: datasource=github-releases depName=helm/helm
@@ -42,23 +47,10 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Setup chart-testing 🧰
-      uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
-    
-    - name: Find changed Charts 🔎
-      id: changed-charts
-      run: |
-        changed=$(ct list-changed --target-branch main)
-        echo ${changed}
-        if [[ -n "$changed" ]]; then
-          echo "changed=true" >> $GITHUB_OUTPUT
-        fi
-
     - name: Setup kind cluster 🧰
       uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
       with:
         version: ${{ env.KIND_VERSION }}
-      if: steps.changed-charts.outputs.changed == 'true'
 
     # for helm charts we are testing that require installing operators 
     - name: Setup kind cluster - Install OLM 🧰
@@ -66,7 +58,6 @@ jobs:
         curl -L https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_VERSION}/install.sh -o install.sh
         chmod +x install.sh
         ./install.sh ${OLM_VERSION}
-      if: steps.changed-charts.outputs.changed == 'true'
 
     # for helm charts we are testing that require ingress
     - name: Setup kind cluster - Install ingress controller 🧰
@@ -85,16 +76,26 @@ jobs:
         spec:
           controller: haproxy-ingress.github.io/controller
         EOF
-      if: steps.changed-charts.outputs.changed == 'true'
-    
-    # for helm charts we are testing that require/expect certain default namespaces from Red Hat OpenShift
-    - name: Setup kind cluster - create expected namespaces 🧰
-      run: |
-        kubectl create namespace openshift-operators
-      if: steps.changed-charts.outputs.changed == 'true'
 
-    - name: Run Chart install tests 🧪
+    # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
+    - name: Run integration tests 🧪
       timeout-minutes: 30
       run: |
-        ct install --target-branch main --debug --config _test/ct-config.yaml
-      if: steps.changed-charts.outputs.changed == 'true'
+        echo "##########################################################################################################"
+        echo "# Install argo at old version                                                                            #"
+        echo "##########################################################################################################"
+        helm upgrade --install operators-installer-integration-test charts/operators-installer \
+          --namespace operators-installer-integration-test \
+          --create-namespace \
+          --wait \
+          --values charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml \
+          --debug --timeout 10m0s
+
+        echo "##########################################################################################################"
+        echo "# Upgrade argo to newer version requiring many intermediate updates along the way                        #"
+        echo "##########################################################################################################"
+        helm upgrade --install operators-installer-integration-test charts/operators-installer \
+          --namespace operators-installer-integration-test \
+          --wait \
+          --values charts/operators-installer/_integration-tests/test-install-operator-1-automatic-intermediate-manual-upgrades-values.yaml \
+          --debug --timeout 30m0s
