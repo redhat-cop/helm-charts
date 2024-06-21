@@ -3,19 +3,17 @@ approveManualInstallPlanViaHook: true
 installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
 operatorGroups:
-- name: external-secrets-operator-1
+- name: aqua-operator
   createNamespace: true
-  targetOwnNamespace: false
+  targetOwnNamespace: true
   otherTargetNamespaces:
 
 operators:
-- channel: stable
+- name: aqua
+  channel: 2022.4.0
+  csv: aqua-operator.2022.4.14
   installPlanApproval: Manual
-  name: external-secrets-operator
   source: operatorhubio-catalog
   sourceNamespace: olm
-  csv: external-secrets-operator.v0.8.1
-  namespace: external-secrets-operator-1
+  namespace: aqua-operator
   installPlanVerifierActiveDeadlineSeconds: 1200
-commonLabels:
-  test-label: xyz123

@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ printf "%s-%s" .csv "verifier" | trunc -63 | trimAll "-" }}
+  name: {{ printf "%s-%s" .csv "verifier" | trunc -63 | replace "." "-" |  trimAll "-" }}
   namespace: {{ .namespace | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
@@ -21,81 +21,39 @@ spec:
   completions: 1
   parallelism: 1
   backoffLimit: {{ .installPlanVerifierRetries | default 10 }}
-  activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds | default 240 }}
+  activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds }}
   template:
     spec:
       containers:
       - name: installplan-complete-verifier
         image: {{ $.Values.installPlanApproverAndVerifyJobsImage }}
-        command:
-          - /bin/bash
-          - -c
-          - |
-            export HOME=/tmp/approver
-
-            echo
-            echo "Get Subscription (${SUBSCRIPTION}) UID"
-            subscriptionUID=$(oc get subscriptions.operators.coreos.com --field-selector metadata.name=${SUBSCRIPTION} -o=jsonpath="{.items[0].metadata.uid}")
-            echo "Subscription (${SUBSCRIPTION}) UID: ${subscriptionUID}"
-            if [ ! -z "subscriptionUID" ]; then
-              # this complicated go-template finds an InstallPlan where both the .spec.clusterServiceVersionNames contains the expected CSV
-              # and .metadata.ownerReferences contains the expected Subscription owner. JsonPath doesn't let you do and statements and go-templates
-              # done seem to have a function for checking if a value is in an array without iterating. so here we are.
-              # NOTE 1: if for whatever reason multiple InstallPlans are found that are associated with the Subscription for the correct CSV, only the first will be approved
-              # NOTE 2: this is nested in {{` `}} so that helm doesn't try to interpret the go template
-              {{`installPlanGoTemplate=$(cat << EOF
-              {{- \$installPlanName := "" -}}
-              {{- range .items -}}
-                {{- \$installPlanItem := . -}}
-                {{- range .spec.clusterServiceVersionNames -}}
-                  {{- if and (eq . "${SUBSCRIPTION_CSV}") (not \$installPlanName) -}}
-                    {{- range \$installPlanItem.metadata.ownerReferences -}}
-                      {{- if eq .uid "${subscriptionUID}" -}}
-                        {{- \$installPlanName = \$installPlanItem.metadata.name -}}
-                      {{- end -}}
-                    {{- end -}}
-                  {{- end -}}
-                {{- end -}}
-              {{- end -}}
-              {{ \$installPlanName }}
-            EOF
-              )`}}
-
-              echo
-              echo "Get InstallPlan for CSV (${SUBSCRIPTION_CSV}) with Subscription (${SUBSCRIPTION_CSV}) (${subscriptionUID}) owner"
-              installPlan=$(oc get installplan -o=go-template="${installPlanGoTemplate}")
-              echo "InstallPlan for CSV (${SUBSCRIPTION_CSV}) with Subscription (${SUBSCRIPTION_CSV}) (${subscriptionUID}) owner: ${installPlan}"
-              if [ ! -z "${installPlan}" ]; then
-                echo
-                echo "Check InstallPlan (${installPlan}) phase"
-                if installPlanPhase=$(oc get installplan ${installPlan} -o=jsonpath="{.status.phase}"); then
-                  if [ "${installPlanPhase}" == "Complete" ]; then
-                    echo "InstallPlan (${installPlan}) complete"
-                    exit 0
-                  else
-                    echo "InstallPlan (${installPlan}) not yet complete: ${installPlanPhase}"
-                    exit 1
-                  fi
-                else
-                  echo "Failed to look up InstallPlan (${installPlan}) phase"
-                  exit 1
-                fi
-              else
-                echo
-                echo "Could not find InstallPlan for CSV (${SUBSCRIPTION_CSV}) with Subscription (${SUBSCRIPTION_CSV}) (${subscriptionUID}) owner. This can happen if InstallPlan isn't created yet. Try again."
-                exit 1
-              fi
-            else
-              echo
-              echo "Failed to get Subscription ($SUBSCRIPTION) UID. This really shouldn't happen."
-              exit 1
-            fi
+        command: ["/bin/sh","-c"]
+        args:
+          - >-
+              {{- if $.Values.installRequiredPythonLibraries }}
+              python3 -m venv /tmp/venv &&
+              source /tmp/venv/bin/activate &&
+              python3 -m pip install openshift-client semver==2.13.0 --index-url {{ $.Values.pythonIndexURL }} --extra-index-url {{ $.Values.pythonExtraIndexURL }} &&
+              {{- end }}
+              python3 /scripts/installplan-verifier.py
         imagePullPolicy: Always
         env:
-        - name: SUBSCRIPTION_CSV
+        - name: CSV
           value: {{ .csv }}
         - name: SUBSCRIPTION
           value: {{ .name }}
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - name: operators-installer-approver-scripts
+          mountPath: /scripts
+      volumes:
+      - name: operators-installer-approver-scripts
+        configMap:
+          name: {{ include "operators-installer.scriptsName" . }}
+          defaultMode: 0777
       dnsPolicy: ClusterFirst
       restartPolicy: Never
       serviceAccount: {{ include "operators-installer.approverName" . }}
