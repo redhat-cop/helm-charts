@@ -1,0 +1,25 @@
+{{- range $key, $value := .Values.operators }}
+{{ if eq ($value.enabled | toString) "true" }}
+{{- if $value.operatorgroup.create }}
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ $key | default "demo-operator-group" | quote }}
+  namespace: {{ $value.namespace.name | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: {{ $value.syncwave | default "0" | quote }}
+{{- /* Configure the operatorgroup for all Namespaces or for the "Home" namespace */ -}}
+{{- if $value.operatorgroup.notownnamespace }}
+spec: {}
+{{- else }}
+spec:
+  targetNamespaces:
+  - {{ $value.namespace.name }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

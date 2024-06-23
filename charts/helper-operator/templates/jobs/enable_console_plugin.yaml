@@ -1,0 +1,56 @@
+{{- if .Values.console_plugins }}
+{{- if eq (.Values.console_plugins.enabled | toString) "true" }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: enable-console-plugin-{{ randAlphaNum 5 | lower }}
+  namespace: {{ .Values.console_plugins.job_namespace | default "openshift-gitops" }}
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-wave: {{ .Values.console_plugins.syncwave | default 5 | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  selector: {}
+  template:
+    metadata:
+      name: enable-console-plugin
+    spec:
+      containers:
+        - name: enable-console-plugin
+          image: registry.redhat.io/openshift4/ose-cli:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              #!/usr/bin/env bash
+
+              # Patch console.operator
+              # Be sure to keep the "/-" at the end of the path
+
+              new_values=({{ join " " .Values.console_plugins.plugins }})
+
+              for value in "${new_values[@]}"; do
+
+                verify_if_plugin_is_configured=`oc get console.operator cluster -o jsonpath='{.spec.plugins}' | grep $value`
+
+                if [ $? -eq 0 ]; then
+
+                  echo "Plugin $value is already configured. (Plugins: $verify_if_plugin_is_configured)"
+
+                else
+
+                  echo "Plugin $value is not yet configured ... adding it to the list"
+
+                  oc patch console.operator cluster --type json -p '[{"op": "add", "path": "/spec/plugins/-", "value": "'$value'" }]'
+
+                  echo "Plugin $value has been added"
+                fi
+              done
+
+      restartPolicy: Never
+      serviceAccountName: enable-console-plugin-sa
+{{- end }}
+{{- end }}

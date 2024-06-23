@@ -1,0 +1,25 @@
+{{- if .Values.console_plugins }}
+{{- if eq (.Values.console_plugins.enabled | toString) "true" }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Values.console_plugins.job_service_account_role | default "enable-console-plugin-role" }}
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 5 | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+rules:
+  - apiGroups:
+      - operator.openshift.io
+    resources:
+      - consoles
+    verbs:
+      - get
+      - list
+      - update
+      - patch
+{{- end }}
+{{- end }}
