@@ -10,6 +10,7 @@ metadata:
     {{- include "operators-installer.labels" $ | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-wave: "-50"
+{{- if or .targetOwnNamespace .otherTargetNamespaces }}
 spec:
   targetNamespaces:
   {{- if .targetOwnNamespace }}
@@ -18,4 +19,5 @@ spec:
   {{- range $otherTargetNamespace := .otherTargetNamespaces }}
   - {{ $otherTargetNamespace }}
   {{- end }}
+{{- end }}
 {{- end }}
