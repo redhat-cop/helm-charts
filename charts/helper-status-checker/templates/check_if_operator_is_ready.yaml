@@ -1,0 +1,141 @@
+{{- with .Values }}
+{{ if eq ( .enabled | toString) "true" }}
+{{- range .checks }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: check-operator-status
+  namespace: {{ .namespace.name | quote }}
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 1 | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  ttlSecondsAfterFinished: 120
+  template:
+    spec:
+      containers:
+        - image: registry.redhat.io/openshift4/ose-cli
+          command:
+            - /bin/bash
+            - -c
+            - |
+             #!/usr/bin/env bash
+             sleep_timer={{ .sleeptimer | default 20 }}
+             max_timer={{ .maxretries | default 20 }}
+             counter=0
+             status=0
+
+             echo "Starting operator status checker"
+             operator={{ .operatorName }}
+             printf "\nWaiting for operator %s to appear\n" "$i";
+
+             # Wait until operator appears
+             SLEEPER_TMP=0
+             get_exact_name=`oc get clusterserviceversion -n {{ .namespace.name }} | grep $operator | awk -F" " '{print $1}'`
+             until [ "$get_exact_name" != "" ]; do
+               # do not wait forever
+               let "counter=counter+1"
+               echo "Attempt $counter of $max_timer"
+
+               if [[ $counter -eq $max_timer ]]
+               then
+                 echo "Giving up. Operator does not appear as clusterserviceversion"
+                 exit 3
+               fi
+
+               echo "Operator not yet found... Give Operator $sleep_timer seconds to create the Deployment"
+               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do
+                 echo -n "."
+                 sleep 1
+                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
+               done
+               get_exact_name=`oc get clusterserviceversion -n {{ .namespace.name }} | grep $operator | awk -F" " '{print $1}'`
+             done
+
+             # Get exact name of the operator
+             counter=0
+             SLEEPER_TMP=0
+             get_status=`oc get clusterserviceversion -n {{ .namespace.name }} $get_exact_name -o jsonpath={.status.phase}`
+             until [ "$get_status" != "" ]; do
+               # do not wait forever
+               let "counter=counter+1"
+               echo "Attempt $counter of $max_timer"
+
+               if [[ $counter -eq $max_timer ]]
+               then
+                 echo "Giving up. Operator installation failed"
+                 exit 3
+               fi
+
+               echo "Operator not yet ready ... Waiting $sleep_timer seconds"
+
+               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do
+                 echo -n "."
+                 sleep 1
+                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
+               done
+               get_status=`oc get clusterserviceversion -n {{ .namespace.name }} $get_exact_name -o jsonpath={.status.phase}`
+             done
+
+             echo "Checking status of $get_exact_name. Current status: $get_status"
+
+             # Wait until operator is ready
+             counter=0
+             SLEEPER_TMP=0
+             until [ "$get_status" == "Succeeded" ]; do
+             let "counter=counter+1"
+               echo "Attempt $counter of $max_timer"
+
+               if [[ $counter -eq $max_timer ]]
+               then
+                 echo "Giving up. Operator installation failed"
+                 exit 3
+               fi
+
+               echo "Operator deployment is ongoing. Current status: $get_status"
+               #sleep $sleep_timer
+
+               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do
+                 echo -n "."
+                 sleep 1
+                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
+               done
+
+               if [ "$get_status" == "Succeeded" ];
+               then
+                 status=$?
+               fi
+               get_status=`oc get clusterserviceversion -n {{ .namespace.name }} $get_exact_name -o jsonpath={.status.phase}`
+             done
+
+             oc get clusterserviceversion -n {{ .namespace.name }} $get_exact_name
+
+             echo "Falling to sleep"
+            
+             SLEEPER_TMP=0
+
+             while [[ $SLEEPER_TMP -le "10" ]]; do
+                 echo -n "."
+                 sleep 1
+                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
+             done
+
+             printf "\nStatus: $status\n"
+             if [ $status -eq 0 ]; then
+                  echo "Operator seems to be ready"
+             else
+                  echo "ERROR: Operator is not ready"
+                  exit 1
+             fi
+          name: check-operator
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: {{ .serviceAccount.name }}
+{{- end }}
+{{- end }}
+{{- end }}

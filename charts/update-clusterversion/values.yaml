@@ -1,0 +1,18 @@
+---
+# Example values file. This should be used by a gitOps process that triggers the clsuter update.
+
+# -- The channel that shall be used for that cluster. The available channels
+# can be found with oc get clusterversion -o yaml
+# Verify the availableUpdates to find the required channel.
+channel: your-channel
+
+# -- The desired version that the cluster shall be updated to. The available versions
+# can be found with oc get clusterversion -o yaml
+# Verify the availableUpdates to find the required version.
+desiredVersion: your-target-version
+
+# -- OPTIONAL: The desired image SHA that the cluster shall be updated to. The available SHA
+# can be found with oc get clusterversion -o yaml
+# Verify the availableUpdates to find the required SHA.
+# This option is optional and typically only used for restricted clusters.
+image: ''

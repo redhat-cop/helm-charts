@@ -1,0 +1,131 @@
+---
+# -- Configure console plugins for OpenShift.
+# @default -- ""
+console_plugins:
+
+  # -- Enable console plugin configuration.
+  # @default -- false
+  enabled: false
+
+  # -- Optional: Syncwave for console plugin configuration.
+  # @default -- 5
+  syncwave: 5
+
+  # -- List of console plugins to configure. Each list item will be added to the OpenShift UI.
+  # @default -- empty
+  plugins:
+    - console-plugin-name
+
+  # -- Optional: Namespace where kubernetes job shall be executed.
+  # @default -- openshift-gitops
+  job_namespace: kube-system
+
+  # -- Optional: Name of the service account that will execute the Job.
+  # @default -- enable-console-plugin-sa
+  job_service_account: enable-console-plugin-sa
+
+  # -- Optional: Name of the role that will be assigned to the service account.
+  # @default -- enable-console-plugin-role
+  job_service_account_role: enable-console-plugin-role
+
+  # -- Optional: Name of the ClusterRoleBinding.
+  # @default -- enable-console-plugin-crb
+  job_service_account_crb: enable-console-plugin-crb
+
+# -- Define operators that you want to deploy. A key/value setup is used here.
+# Each new operator is a new key (in this example "my-operator")
+# @default -- ""
+operators:
+  my-operator:
+    # -- Enabled yes/no
+    # @default -- false
+    enabled: false
+
+    # -- Syncwave for the operator deployment
+    # @default -- 0
+    syncwave: 0
+
+    namespace:
+      # -- The Namespace the Operator should be installed in.
+      name: openshift-operators-redhat
+
+      # -- Description of the namespace.
+      # @default -- ""
+      descr: ""
+
+      # -- Displayname of the namespace.
+      # @default -- ""
+      displayname:
+
+      # -- Create the Namespace yes/no.
+      # @default -- false
+      create: true
+
+    # -- Definition of the Operator Subscription
+    # @default -- ""
+    subscription:
+      # -- Channel of the Subscription
+      # @default -- stable
+      channel: stable
+
+      # -- Update behavior of the Operator. Manual/Automatic
+      # @default -- Automatic
+      approval: Automatic
+
+      # -- Name of the Operator
+      # @default -- "empty"
+      operatorName: loki-operator
+
+      # -- Source of the Operator
+      # @default -- redhat-operators
+      source: redhat-operators
+
+      # -- Namespace of the source
+      # @default -- openshift-marketplace
+      sourceNamespace: openshift-marketplace
+
+      # -- Optional additional configuration for the Operator subscription.
+      # @default -- ""
+      config:
+        # -- Additional environment parameter, as a list: name/value
+        # @default -- ""
+        env:
+          - name: FIRST_ENV_PARAMENTER
+            value: ThisIsRequierd
+          - name: SECOND_ENV_PARAMETER
+            value: 'true'
+
+        # -- Optionally set resources (limits/requests) for the Operator.
+        # @default -- ""
+        resources:
+          limits:
+            cpu: 100m
+            memory: 1Gi
+          requests:
+            cpu: 400m
+            memory: 300Mi
+
+        # -- Optionally set Tolerations for the Subscription.
+        # @default -- ""
+        tolerations:
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/infra
+            value: reserved
+          - effect: NoExecute
+            key: node-role.kubernetes.io/infra
+            value: reserved
+
+        # -- Optionally define a nodeSelector.
+        # @default -- ""
+        nodeSelector:
+          key: node-role.kubernetes.io/infra
+          value: ""
+
+    operatorgroup:
+      # -- Create an Operatorgroup object
+      # @default -- false
+      create: false
+
+      # -- Monitor own Namespace. For some Operators no `targetNamespaces` must be defined
+      # @default -- false
+      notownnamespace: true

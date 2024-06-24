@@ -1,0 +1,12 @@
+apiVersion: v2
+name: update-clusterversion
+description: A Helm chart to update OpenShift ClusterVersion
+home: https://github.com/redhat-cop/helm-charts
+version: 1.0.0
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+keywords:
+  - configuration
+

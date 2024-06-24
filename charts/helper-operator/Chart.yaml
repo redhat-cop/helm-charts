@@ -1,0 +1,14 @@
+apiVersion: v2
+name: helper-operator
+description: A helper Chart to reduce code repetition. This Chart should be called as a dependency by other charts in order to install Operators.
+version: 1.0.26
+home: https://github.com/redhat-cop/helm-charts
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+keywords:
+  - helper
+  - subchart
+  - operator
+

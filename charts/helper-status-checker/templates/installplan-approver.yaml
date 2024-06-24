@@ -1,0 +1,77 @@
+{{- with .Values }}
+{{ if eq ( .approver | toString) "true" }}
+{{- range .checks }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: installplan-approver
+  namespace: {{ .namespace.name | quote }}
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 0 | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+        - image: registry.redhat.io/openshift4/ose-cli
+          command:
+            - /bin/bash
+            - -c
+            - |
+              export HOME=/tmp/approver
+
+              echo "Approving operator install.  Waiting a few seconds ({{ .sleeptimer | default 20 }}) to make sure the InstallPlan gets created first."
+              sleep_timer={{ .sleeptimer | default 20 }}
+
+              SLEEPER_TMP=1
+              SLEEPER_MOD=10
+               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do   
+                 if (( $SLEEPER_TMP % 10 == 0 ))
+                 then
+                   echo -n "$SLEEPER_MOD"
+                   SLEEPER_MOD=$(($SLEEPER_MOD+10))
+                 else
+                   echo -n "."
+                 fi
+                 sleep 1
+                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
+               done
+
+              {{- if .subscriptionName }}
+              subscription={{ .subscriptionName }}
+              {{- else }}
+              subscription={{ .operatorName }}
+              {{- end }}
+
+              printf "\n\nProcessing subscription '$subscription'\n"
+
+              installplan=$(oc get subscriptions.operators.coreos.com --field-selector metadata.name=${subscription} -o jsonpath='{.items[0].status.installPlanRef.name}')
+
+              printf "\nCheck installplan approved status: "
+
+              oc get installplan $installplan -o jsonpath="{.spec.approved}"
+
+              if [ "`oc get installplan $installplan -o jsonpath="{.spec.approved}"`" == "false" ]; then
+
+                printf "\nApproving Subscription $subscription with install plan $installplan\n"
+
+                oc patch installplan $installplan --type=json -p='[{"op":"replace","path": "/spec/approved", "value": true}]'
+
+              else
+                printf "\nInstall Plan '$installplan' already approved\n"
+              fi
+          imagePullPolicy: Always
+          name: installplan-approver
+          env:
+            - name: SLEEP
+              value: "20"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: {{ .serviceAccount.name | quote }}
+{{- end }}
+{{- end }}
+{{- end }}

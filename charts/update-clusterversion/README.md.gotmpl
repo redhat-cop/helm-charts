@@ -1,0 +1,31 @@
+{{ template "doc.header" . }}
+
+This Chart can be used to start a cluster update using a GitOps approach. 
+All you need are the required channel, the version and (optionally) the image-sha.
+
+All this information can be found by `oc get clusterversion/version -o yaml`.
+
+Simply select the channel, version etc and update your values file.
+Once Argo CD syncs the changes the update process will start.
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+{{ template "doc.values" . }}
+
+## Example values
+
+Update the cluster to version 4.15.15 using the channel stable-4.15
+
+```yaml
+channel: stable-4.15
+desiredVersion: 4.15.15
+```
+
+{{ template "doc.footer" . }}

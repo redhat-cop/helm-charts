@@ -1,0 +1,12 @@
+---
+apiVersion: config.openshift.io/v1
+kind: ClusterVersion
+metadata:
+  name: version
+spec:
+  channel: {{ .Values.channel }}
+  desiredUpdate:
+    version: {{ .Values.desiredVersion }}
+    {{- if .Values.image }}
+    image: {{ .Values.image }}
+    {{- end }}
