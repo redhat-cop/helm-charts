@@ -89,6 +89,7 @@ spec:
                         maxReplicas: 5
                         minReplicas: 2
                         replicas: 3
+                      resources:
                       {{- toYaml .Values.stackrox.analyzer.resources | nindent 24 }}
               EOF
               }
