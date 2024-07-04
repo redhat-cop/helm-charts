@@ -4807,6 +4807,19 @@ entries:
     version: 0.0.1
   stackrox-chart:
   - apiVersion: v2
+    created: "2024-07-04T14:14:16.042909858Z"
+    description: Install and Configure Stackrox
+    digest: efd54b9fa9b6004ee2432f72a704d23f2caa41924b0b39ea7aa650c6d5982899
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://avatars.githubusercontent.com/u/40638982?s=200&v=4
+    maintainers:
+    - name: eformat
+    name: stackrox-chart
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/stackrox-chart-0.0.9/stackrox-chart-0.0.9.tgz
+    version: 0.0.9
+  - apiVersion: v2
     created: "2023-05-09T23:53:50.693413237Z"
     description: Install and Configure Stackrox
     digest: 272250af6086397c39feffcbde629cdc524427360690212e1948422c6cf9cce6
@@ -5414,4 +5427,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2024-06-24T06:48:35.984656704Z"
+generated: "2024-07-04T14:14:16.043401784Z"
