@@ -6,7 +6,7 @@ stackrox:
   operator:
     namespace: openshift-operators
     name: rhacs-operator
-    channel: latest
+    channel: stable
     approval: Automatic
     operatorName: rhacs-operator
     sourceName: redhat-operators
