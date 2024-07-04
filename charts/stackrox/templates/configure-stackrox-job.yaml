@@ -35,36 +35,65 @@ spec:
                 apiVersion: platform.stackrox.io/v1alpha1
                 kind: Central
                 metadata:
-                    namespace: {{ .Values.stackrox.namespace | quote }}
-                    name: stackrox-central-services
+                  name: stackrox-central-services
+                  namespace: {{ .Values.stackrox.namespace | quote }}
                 spec:
-                    central:
-                      exposure:
-                        loadBalancer:
-                          enabled: false
-                          port: 443
-                        nodePort:
-                          enabled: false
-                        route:
-                          enabled: true
+                  monitoring:
+                    openshift:
+                      enabled: true
+                  central:
+                    notifierSecretsEncryption:
+                      enabled: false
+                    exposure:
+                      loadBalancer:
+                        enabled: false
+                        port: 443
+                      nodePort:
+                        enabled: false
+                      route:
+                        enabled: true
+                    telemetry:
+                      enabled: true
+                    db:
+                      isEnabled: Default
                       persistence:
                         persistentVolumeClaim:
-                          claimName: stackrox-db
-                    egress:
-                      connectivityPolicy: Online
-                    scanner:
-                      analyzer:
-                        resources:
-                        {{- toYaml .Values.stackrox.analyzer.resources | nindent 24 }}
-                        scaling:
-                          autoScaling: Enabled
-                          maxReplicas: 5
-                          minReplicas: 2
-                          replicas: 3
-                      scannerComponent: Enabled
+                          claimName: central-db
+                    persistence:
+                      persistentVolumeClaim:
+                        claimName: stackrox-db
+                  egress:
+                    connectivityPolicy: Online
+                  scannerV4:
+                    db:
+                      persistence:
+                        persistentVolumeClaim:
+                          claimName: scanner-v4-db
+                    indexer:
+                      scaling:
+                        autoScaling: Enabled
+                        maxReplicas: 5
+                        minReplicas: 2
+                        replicas: 3
+                    matcher:
+                      scaling:
+                        autoScaling: Enabled
+                        maxReplicas: 5
+                        minReplicas: 2
+                        replicas: 3
+                    scannerComponent: Default
+                  scanner:
+                    analyzer:
+                      scaling:
+                        autoScaling: Enabled
+                        maxReplicas: 5
+                        minReplicas: 2
+                        replicas: 3
+                      resources:
+                      {{- toYaml .Values.stackrox.analyzer.resources | nindent 24 }}
               EOF
               }
-
+              
               install_central
               until [ "$?" == 0 ]
               do
@@ -122,19 +151,47 @@ spec:
                 name: {{ .Values.stackrox.clusterName }}-secured-cluster
                 namespace: {{ .Values.stackrox.namespace | quote }}
               spec:
-                admissionControl:
-                  listenOnCreates: false
-                  listenOnEvents: true
-                  listenOnUpdates: false
+                monitoring:
+                  openshift:
+                    enabled: true
                 auditLogs:
                   collection: Auto
-                centralEndpoint: 'central.{{ .Values.stackrox.namespace }}:443'
-                clusterName: {{ .Values.stackrox.clusterName | quote }}
+                admissionControl:
+                  listenOnUpdates: true
+                  bypass: BreakGlassAnnotation
+                  contactImageScanners: DoNotScanInline
+                  listenOnCreates: true
+                  replicas: 3
+                  timeoutSeconds: 20
+                  listenOnEvents: true
+                scannerV4:
+                  db:
+                    persistence:
+                      persistentVolumeClaim:
+                        claimName: scanner-v4-db
+                  indexer:
+                    scaling:
+                      autoScaling: Enabled
+                      maxReplicas: 5
+                      minReplicas: 2
+                      replicas: 3
+                  scannerComponent: Default
+                scanner:
+                  analyzer:
+                    scaling:
+                      autoScaling: Enabled
+                      maxReplicas: 5
+                      minReplicas: 2
+                      replicas: 3
+                  scannerComponent: AutoSense
                 perNode:
                   collector:
-                    collection: KernelModule
+                    collection: CORE_BPF
+                    forceCollection: false
                     imageFlavor: Regular
                   taintToleration: TolerateTaints
+                clusterName: {{ .Values.stackrox.clusterName | quote }}
+                centralEndpoint: 'central.{{ .Values.stackrox.namespace }}:443'
               EOF
               exit 0;
           imagePullPolicy: Always
