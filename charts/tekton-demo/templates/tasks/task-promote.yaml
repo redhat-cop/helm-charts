@@ -224,7 +224,7 @@ spec:
           oc set triggers deployment/$appname -n {{ .Values.application.environments.production }}
 
     - name: report
-      image: registry.redhat.io/ubi8/ubi:latest@sha256:edc34f89cf9c818c2fb28b8ea1780f384db563ce4293dc0ab8e73ec01791e5af
+      image: registry.redhat.io/ubi8/ubi:latest@sha256:44d75007b39e0e1bbf1bcfd0721245add54c54c3f83903f8926fb4bef6827aa2
       env:
         - name: GITHUBTOKEN
           valueFrom:
