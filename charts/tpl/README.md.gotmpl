@@ -1,0 +1,49 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is a library of reusable template, like tolerations or resources. 
+Instead of defining them in other Charts multiple times, it is possible to simply include the template.
+
+The template "tpl.sleeptimer" is a simple template that can be used for Job to print our a timer.
+
+{{ template "doc.deps" . }}
+
+No dependencies
+
+{{ template "doc.maintainer_and_sources" . }}
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+# Examples values file
+
+tolerations:
+  - effect: NoSchedule
+    key: infra
+    operator: Equal
+    value: reserved
+    tolerationSeconds: 600
+  - effect: NoSchedule
+    key: infra
+    operator: Equal
+    value: reserved
+    tolerationSeconds: 600
+
+resources:
+  requests:
+    cpu: 4
+    memory: 8
+    ephemeral-storage: 50
+  limits:
+    cpu: 8
+    memory: 16
+    ephemeral-storage: 500
+
+nodeSelector:
+  key: node-role.kubernetes.io/infra
+  value: ''
+```
+
+{{ template "doc.footer" . }}
