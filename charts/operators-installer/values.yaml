@@ -10,7 +10,7 @@
 approveManualInstallPlanViaHook: true
 
 # Image to use for the InstallPlan Approver and Verify Jobs
-installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.15@sha256:3f2123f42ae7358e1fece41d461bf331f144480da8b7711b9a93aca150f33f3f
+installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.15@sha256:d3aa459885adb4ae9867dd749566fe0626718e61f7285eccc5a1036245f84cb3
 
 # If `true`, install the required Python libraries (openshift-client, semver==2.13.0) dynamically
 # from the given `pythonIndexURL` and `pythonExtraIndexURL` into the `installPlanApproverAndVerifyJobsImage` at run time
