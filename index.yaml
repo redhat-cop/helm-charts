@@ -2157,6 +2157,25 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/helper-console-links-0.0.1/helper-console-links-0.0.1.tgz
     version: 0.0.1
+  helper-operator:
+  - apiVersion: v2
+    created: "2024-07-09T09:40:00.71061273Z"
+    description: A helper Chart to reduce code repetition. This Chart should be called
+      as a dependency by other charts in order to install Operators.
+    digest: 003c8051a1c50c8db0336d4095d92ec707ddb2495a77576f21c1c5050d96a7b7
+    home: https://github.com/redhat-cop/helm-charts
+    keywords:
+    - helper
+    - subchart
+    - operator
+    maintainers:
+    - email: tjungbau@redhat.com
+      name: tjungbauer
+      url: https://blog.stderr.at/
+    name: helper-operator
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/helper-operator-1.0.26/helper-operator-1.0.26.tgz
+    version: 1.0.26
   helper-sealed-secrets:
   - apiVersion: v2
     appVersion: v1
@@ -2215,6 +2234,25 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/helper-sealed-secrets-1.0.0/helper-sealed-secrets-1.0.0.tgz
     version: 1.0.0
+  helper-status-checker:
+  - apiVersion: v2
+    created: "2024-07-09T09:40:00.836273828Z"
+    description: A helper Chart that creates a job to verify if the deployments of
+      an operator are running. To do so it creates a service account with a role to
+      read the status of the Deployments.
+    digest: 614ddd26e99b57337b95cca180401847c578bd56ec70c8a8d72fb62dc46f4fee
+    home: https://github.com/redhat-cop/helm-charts
+    keywords:
+    - helper
+    - subchart
+    maintainers:
+    - email: tjungbau@redhat.com
+      name: tjungbauer
+      url: https://blog.stderr.at/
+    name: helper-status-checker
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/helper-status-checker-4.0.9/helper-status-checker-4.0.9.tgz
+    version: 4.0.9
   ipa:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -5427,4 +5465,20 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
-generated: "2024-07-04T14:14:16.043401784Z"
+  update-clusterversion:
+  - apiVersion: v2
+    created: "2024-07-09T09:40:00.995965539Z"
+    description: A Helm chart to update OpenShift ClusterVersion
+    digest: d086913b6728f61e3dd989d94569b31155ba3632fdfc78be22709307e66ba010
+    home: https://github.com/redhat-cop/helm-charts
+    keywords:
+    - configuration
+    maintainers:
+    - email: tjungbau@redhat.com
+      name: tjungbauer
+      url: https://blog.stderr.at/
+    name: update-clusterversion
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-07-09T09:40:00.99711314Z"
