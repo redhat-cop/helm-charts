@@ -1,0 +1,73 @@
+{{ template "doc.header" . }}
+
+This chart can be used to install Operators in OpenShift. 
+It is best used with a GitOps approach such as Argo CD does. For example: https://github.com/tjungbauer/openshift-clusterconfig-gitops
+
+This chart will create the objects: Namespace, Subscription, OperatorGroup and a Job, that will enable additional console plugins, if enabled.
+
+*NOTE*: It is usually used as Subchart for other Charts and it works best with the second subchart [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-status-checker)
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+{{ template "doc.values" . }}
+
+## Example
+
+Installing the Operator "Loki"
+
+TIP: Fetch the values for the subscription specification with `oc get packagemanifest advanced-cluster-management -o yaml`
+
+```yaml
+---
+console_plugins:
+  enabled: false
+  syncwave: 5
+  plugins:
+    - plugin_name
+
+  job_namespace: kube-system
+
+operators:
+  loki-operator:
+    enabled: false
+    namespace:
+      name: openshift-operators-redhat
+      create: true
+    subscription:
+      channel: stable
+      approval: Automatic
+      operatorName: loki-operator
+      source: redhat-operators
+      sourceNamespace: openshift-marketplace
+      config:
+        env:
+          - name: FIRST_ENV_PARAMENTER
+            value: ThisIsRequierd
+          - name: SECOND_ENV_PARAMETER
+            value: 'true'
+        resources:
+          limits:
+            cpu: 100m
+            memory: 1Gi
+          requests:
+            cpu: 400m
+            memory: 300Mi
+        tolerations:
+          - effect: NoSchedule
+            key: node-role.kubernetes.io/infra
+            value: reserved
+          - effect: NoExecute
+            key: node-role.kubernetes.io/infra
+            value: reserved
+        nodeSelector:
+          key: node-role.kubernetes.io/infra
+          value: ""
+    operatorgroup:
+      create: true
+      notownnamespace: true
+```
+
+{{ template "doc.footer" . }}
