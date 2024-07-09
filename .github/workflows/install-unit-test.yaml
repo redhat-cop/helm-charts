@@ -19,16 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # renovate: datasource=github-releases depName=helm/helm
-      HELM_VERSION: v3.15.0
+      HELM_VERSION: v3.15.2
       # renovate: datasource=github-tags depName=python/cpython
-      PYTHON_VERSION: v3.12.3
+      PYTHON_VERSION: v3.12.4
       # renovate: datasource=github-releases depName=kubernetes-sigs/kind
       KIND_VERSION: v0.23.0
       # renovate: datasource=github-releases depName=operator-framework/operator-lifecycle-manager
       OLM_VERSION: v0.28.0
     steps:
     - name: Checkout 🛎️
-      uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
       with:
         fetch-depth: 0
 
