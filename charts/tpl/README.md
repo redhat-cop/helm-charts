@@ -10,7 +10,7 @@
 
   ## Description
 
-  A library that shall collect certain templats to reuse them among different charts.
+  A library that shall collect certain templates to reuse them among different charts.
 
 This Helm Chart is a library of reusable template, like tolerations or resources.
 Instead of defining them in other Charts multiple times, it is possible to simply include the template.
