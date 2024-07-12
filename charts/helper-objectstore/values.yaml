@@ -1,0 +1,64 @@
+---
+######################################
+# Configures OpenShift Data Foundation
+# This will create a BackingStore, BucketClaim and BucketClass
+#
+# Documentation: https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/4.10/html-single/managing_hybrid_and_multicloud_resources/index#creating-a-local-Persistent-Volume-backed-backingstore_rhodf
+######################################
+
+# -- Enable objectstore configuration
+# @default -- false
+enabled: false
+
+# -- Syncwave for Argo CD
+# @default - 1
+syncwave: 1
+
+# -- Name of the BackingStore
+backingstore_name: backingstore
+
+# -- Size of the BackingStore that each volume shall have.
+backingstore_size: 700Gi
+
+# -- CPU Limit for the Noobaa Pod
+# @default -- 500m
+limits_cpu: 500m
+
+# -- Memory Limit for the Noobaa Pod.
+# @default -- 2Gi
+limits_memory: 2Gi
+
+pvPool:
+  # -- Number of volumes that shall be used
+  # @default -- 1
+  numOfVolumes: 1
+
+  # Type of BackingStore. Currently pv-pool is the only one supported by this Helm Chart.
+  # @default -- pv-pool
+  type: pv-pool
+
+# -- The StorageClass the BackingStore is based on
+baseStorageClass: gp3-csi
+
+# -- Name of the StorageClass that shall be created for the bucket.
+storageclass_name: bucket-storage-class
+
+# Bucket that shall be created
+bucket:
+  # -- Shall a new bucket be enabled?
+  # @default -- false
+  enabled: false
+
+  # -- Name of the bucket that shall be created
+  name: bucketname
+
+  # -- Target Namespace for that bucket.
+  namespace: target-namespace
+
+  # -- Syncwave for bucketclaim creation. This should be done very early, but it depends on ODF.
+  # @default -- 2
+  syncwave: 2
+
+  # -- Name of the storageclass for our bucket
+  # @default -- openshift-storage.noobaa.io
+  storageclass: bucket-storage-class

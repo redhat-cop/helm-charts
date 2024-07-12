@@ -1,0 +1,16 @@
+apiVersion: v2
+name: helper-loki-bucket-secret
+description: Loki requires a secret with specific keys. This Chart creates a Job that will create such a secret based on the OpenShift Data Foundation BucketClaim.
+version: 1.0.9
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/helper-loki-bucket-secret
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+keywords:
+  - helper
+  - subchart

@@ -1,0 +1,19 @@
+{{- range $key, $value := .Values.console.yamlsamples }}
+{{ if eq ($value.enabled | toString) "true" }}
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleYAMLSample
+metadata:
+  name: {{ $key | replace "_" "-" | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  targetResource:
+    kind: {{ title $value.targetresource.kind }}
+    apiVersion: {{ $value.targetresource.apiversion }}
+  title: {{ $value.title }}
+  description: {{ $value.descr }}
+  yaml: |
+    {{- $value.yamlDef | nindent 4 -}}
+{{- end }}
+{{- end }}

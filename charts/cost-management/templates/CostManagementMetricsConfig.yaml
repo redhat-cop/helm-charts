@@ -1,0 +1,46 @@
+{{- if .Values.costmgmt }}
+{{- if eq ( .Values.costmgmt.enabled | toString) "true" }}
+{{- with .Values.costmgmt }}
+---
+kind: CostManagementMetricsConfig
+apiVersion: costmanagement-metrics-cfg.openshift.io/v1beta1
+metadata:
+  name: {{ .name | default "costmanagementmetricscfg" }}
+  namespace: costmanagement-metrics-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "10" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  {{- if eq ( .airgapped | toString) "true" }}
+  authentication: {}
+  {{- else }}
+  authentication:
+    token_url: "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token"
+    type: {{ .auth_type | default "token" }}
+    secret_name: {{ .auth_secret }}
+  {{- end }}
+  packaging:
+    max_reports_to_store: {{ .max_reports_to_store | default 30 }}
+    max_size_MB: {{ .max_size_MB | default 100 }}
+  prometheus_config:
+    collect_previous_data: {{ .promconfig_collect_previous_data | default "true" }}
+    context_timeout: {{ .promconfig_context_time | default 120 }}
+    disable_metrics_collection_cost_management: {{ .promconfig_disable_metric_coll_cost_management | default "false" }}
+    disable_metrics_collection_resource_optimization: {{ .promconfig_disable_metric_coll_resource_optimization | default "false" }}
+    service_address: {{ .promconfig_service_address | default "https://thanos-querier.openshift-monitoring.svc:9091" }}
+    skip_tls_verification: {{ .promconfig_skip_tls_verification | default "false" }}
+  {{- if eq ( .airgapped | toString) "true" }}
+  source: {}
+  {{- end }}
+  upload:
+    upload_cycle: {{ .upload_cycle | default 360 }}
+    {{- if eq ( .airgapped | toString) "true" }}
+    upload_toggle: false
+    {{- else }}
+    upload_toggle: true
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

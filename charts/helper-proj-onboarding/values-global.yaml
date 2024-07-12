@@ -1,0 +1,67 @@
+---
+
+# -- Global settings
+global:
+  # -- Namespace of application scoped GitOps instance, that is responsible to deploy workload onto the clusters
+  application_gitops_namespace: gitops-application
+
+  # -- cluster environments. A list of clusters that are known in Argo CD
+  # Name and URL must be equal to what is defined in Argo CD
+  envs:
+    - name: in-cluster
+      url: https://kubernetes.default.svc
+  #  - name: production
+  #    url: https://production.cluster
+
+  # -- Repositories projects are allowed to use. These are configured on a global level and used if not specified in a _T-Shirt_ project. 
+  # Can be overwritten for projects in their specific values-file
+  allowed_source_repos: 
+    - "https://myrepo"
+    - "https://the-second-repo"
+
+  # -- T-Shirt sizes for projects, that shall help to pre-defined Quotas or Limitranges. This way, they must not be defined for each and every tenant.
+  # It is still possible to overwrite all or a specific single setting in the individual tenant-values-file. For example, when a project is using size "S" but still requires additional CPUs.
+  # <br /><br />
+  # The examples here are sizes for XL, L and S.<br />
+  # Different Quotas and/or LimitRange settings can be pre-defined here.<br />
+  # In the individual tenant-values-file the T-Shirt size is referenced as project_size.<br />
+  # Any settings that are defined in the individual tenant-values-file will overwrite the T-Shirt size.
+  tshirt_sizes:
+      # T-Shirt size XL
+    - name: XL
+      quota:
+        pods: 100
+        limits:
+          cpu: 4
+          memory: 4Gi
+        requests:
+          cpu: 1
+          memory: 2Gi
+
+      # T-Shirt size L
+    - name: L
+      quota:
+        limits:
+          cpu: 2
+          memory: 2Gi
+        requests:
+          cpu: 1
+          memory: 1Gi
+
+      # T-Shirt size S
+    - name: S
+      quota:
+        limits:
+          cpu: 1
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+      limitRanges:
+        container:
+          default:
+            cpu: 1
+            memory: 4Gi
+          defaultRequest:
+            cpu: 1
+            memory: 2Gi

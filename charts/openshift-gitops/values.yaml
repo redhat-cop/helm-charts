@@ -1,0 +1,336 @@
+---
+hostname: &hostname gitops.apps.prod.ocp.cluster
+
+# One or multiple GitOps instances can be created.
+gitopsinstances:
+  # -- Instance "gitops_application" that is created.
+  gitops_application:
+    # -- Create the instance or not.
+    # @default -- false
+    enabled: false
+
+    # -- Namespace for this application
+    namespace: gitops-application
+
+    # -- Enable cluster-admin Rolebinding. Usually only required for the main Argo CD instance.
+    # @default -- disabled
+    clusterAdmin: disabled
+
+    # -- Name of the service account the main argo CD instance is running.
+    # @default -- openshift-gitops-app-controller
+    argo_serviceaccount: openshift-gitops-app-controller
+
+    # -- Syncwave for the Argo CD Object
+    # @default -- 10
+    syncwave: 10
+
+    # -- Argo CD Server configuration options.
+    server:
+      # -- Hostname for the GitOps URL.
+      host: *hostname
+
+      # -- Replicas for Argo CD server.
+      # Can be omitted.
+      replicas: 1
+
+      # -- LogLevel refers to the log level to be used by the ArgoCD Server component.
+      # Valid options are debug, info, error, and warn.
+      # Can be omitted.
+      logLevel: "info"
+
+      # -- Set CPU Limits for server.
+      # @default -- 500m
+      cpu_limits: 500m
+
+      # -- Set Memory Limits for server.
+      # @default -- 256Mi
+      memory_limits: 256Mi
+
+      # -- Set CPU Requests for server.
+      # @default -- 125m
+      cpu_requests: 125m
+
+      # -- Set Memory Requests for server.
+      # @default -- 128Mi
+      memory_requests: 128Mi
+
+      # -- Route defines the desired state for an OpenShift Route for the Argo CD Server component.
+      route:
+        # -- Enable route or not.
+        # @default -- true
+        enabled: true
+
+        # -- TLS provides the ability to configure certificates and termination for the Route.
+        tls:
+          # -- Enable TLS settings.
+          # @default -- false
+          enabled: true
+
+          # -- Select the termination type.
+          # @default -- edfe
+          termination: edge
+
+          # -- caCertificate provides the cert authority certificate contents
+          caCertificate: |-
+            -----BEGIN CERTIFICATE-----
+            caCertificate
+            -----END CERTIFICATE-----
+
+          # -- Content of the certificate
+          certificate: |-
+            -----BEGIN CERTIFICATE-----
+            Certificate
+            -----END CERTIFICATE-----
+
+          # -- destinationCACertificate provides the contents of the ca certificate of the final destination.
+          # When using reencrypt termination this file should be provided in order to have routers use it
+          # for health checks on the secure connection. If this field is not specified,
+          # the router may provide its own destination CA and perform hostname validation using the short
+          # service name (service.namespace.svc), which allows infrastructure generated certificates to
+          # automatically verify.
+          destinationCACertificate: |-
+            -----BEGIN CERTIFICATE-----
+            destination CS Certificate
+            -----END CERTIFICATE-----
+
+          # -- Content of the key of the certificate
+          key: |-
+            -----BEGIN PRIVATE KEY -----
+            key
+            -----END PRIVATE KEY -----
+
+          # -- insecureEdgeTerminationPolicy indicates the desired behavior for insecure connections to a route.
+          # While each router may make its own decisions on which ports to expose, this is normally port 80.
+          # * Allow - traffic is sent to the server on the insecure port * Disable - no traffic is allowed on the insecure port. * Redirect - clients are redirected to the secure port.
+          # @default -- Redirect
+          insecureEdgeTerminationPolicy: Redirect
+
+    # -- Define Namespace where Application AND ApplicationSets can be stored.
+    # As of March 2024 this is a BETA feature.
+    # The list of namespaces will be configured for Applications and ApplicationSets
+    sourceNamespaces:
+      # -- Enable sourceNamespaces.
+      # @default -- false
+      enabled: true
+
+      # -- A list Namespaces where Argo CD will look for Applications and ApplicationSets
+      observedNamesapces:
+        - app1
+        - app2
+
+    # Some generic configurations for Argo CD.
+    generic_config:
+
+      # -- Disable the first administrator user.
+      # This can be done if SSO with, for example, OpenShift is configured.
+      disableAdmin: true
+
+      #  -- The metadata.label key name where Argo CD injects the app name as a tracking label.
+      #  Argo CD identifies resources it manages by setting the application instance label
+      #  to the name of the managing Application on all resources that are managed
+      #  @default -- argocd.argoproj.io/<<name of the gitopsinstance>>
+      applicationInstanceLabelKey: argocd.argoproj.io/application-instance
+
+      #  -- Object tracking method.
+      # This could either be:
+      #  * label - Argo CD uses the app.kubernetes.io/instance label
+      #  * annotation+label - Argo CD uses the app.kubernetes.io/instance label but only for informational purposes.
+      #      The label is not used for tracking purposes, and the value is still truncated if longer than 63 characters.
+      #      The annotation argocd.argoproj.io/tracking-id is used instead to track application resources.
+      #      Use this for resources that you manage with Argo CD, but still need compatibility with other tools that require the instance label.
+      #    annotation - Argo CD uses the argocd.argoproj.io/tracking-id annotation to track application resources.
+      #      Use this when you don't need to maintain both the label and the annotation.
+      #  @default -- label
+      resourceTrackingMethod: annotation
+
+      #  The build options and parameters to use with kustomize build.
+      #  @default -- empty
+      kustomizeBuildOptions: "--enable-helm"
+
+    # -- Settings for the Controller (Applications)
+    # This can set limits and requests
+    controller:
+      # -- CPU Limits for the controller.
+      # @default -- 2
+      cpu_limits: '2'
+
+      # -- Memory Limits for the controller.
+      # @default -- 2Gi
+      memory_limits: 2Gi
+
+      # -- CPU Requests for the controller.
+      # @default -- 250m
+      cpu_requests: 250m
+
+      # -- Memory Requests for the controller.
+      # @default -- 1Gi
+      memory_requests: 1Gi
+
+    ha:
+      # -- Enable HA for Argo CD
+      # @default -- false
+      enabled: false
+
+      # -- CPU Limits for the HA.
+      # @default -- 500m
+      cpu_limits: 500m
+
+      # -- Memory Limits for the HA.
+      # @default -- 256Mi
+      memory_limits: 256Mi
+
+      # -- CPU Requests for the HA.
+      # @default -- 250m
+      cpu_requests: 250m
+
+      # -- Memory Requests for the HA.
+      # @default -- 128Mi
+      memory_requests: 128Mi
+
+    redis:
+      # -- CPU Limits for the Redis controller.
+      # @default -- 500m
+      cpu_limits: 500m
+
+      # -- Memory Limits for the Redis controller.
+      # @default -- 256Mi
+      memory_limits: 256Mi
+
+      # -- CPU Requests for the Redis controller.
+      # @default -- 250m
+      cpu_requests: 250m
+
+      # -- Memory Requests for the Redis controller.
+      # @default -- 128Mi
+      memory_requests: 128Mi
+
+    repo:
+      # -- CPU Limits for the Repo controller.
+      # @default -- 1
+      cpu_limits: '1'
+
+      # -- Memory Limits for the Repo controller.
+      # @default -- 1Gi
+      memory_limits: 1Gi
+
+      # -- CPU Requests for the Repo controller.
+      # @default -- 250m
+      cpu_requests: 250m
+
+      # -- Memory Requests for the Repo controller.
+      # @default -- 256Mi
+      memory_requests: 256Mi
+
+    appset:
+      # -- CPU Limits for the ApplicationSet controller.
+      # @default -- 2
+      cpu_limits: '2'
+
+      # -- Memory Limits for the ApplicationSet controller.
+      # @default -- 1Gi
+      memory_limits: 1Gi
+
+      # -- CPU Requests for the ApplicationSet controller.
+      # @default -- 250m
+      cpu_requests: 250m
+
+      # -- Memory Requests for the ApplicationSet controller.
+      # @default -- 512Mi
+      memory_requests: 512Mi
+
+    # Settings for SSO.
+    sso:
+      # -- Set the provider for SSO. Can be "dex" or "keycloak".
+      # Currently this Helm chart supports "dex" only.
+      provider: dex
+      # Settings for DEX.
+      dex:
+        # -- Enable OpenShift Authentication
+        # @default -- true
+        openShiftOAuth: true
+
+        # -- CPU Limits for the ApplicationSet controller.
+        # @default -- 500m
+        cpu_limits: 500m
+
+        # -- Memory Limits for the ApplicationSet controller.
+        # @default -- 256Mi
+        memory_limits: 256Mi
+
+        # -- CPU Requests for the ApplicationSet controller.
+        # @default -- 250m
+        cpu_requests: 250m
+
+        # -- Memory Requests for the ApplicationSet controller.
+        # @default -- 128Mi
+        memory_requests: 128Mi
+
+    # -- Nodeplacement ... Define tolerators for Argo CD Pods.
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- RBAC settings for the Argo CD instance
+    # This will set the default role to "none" and denies access to any resource.
+    rbac:
+      # -- Default role to use
+      defaultRole: 'role:none'
+
+      # -- Default policy. Here everything will be denied, unless you are member of the group "cluster-admin"
+      policy: |-
+          # Access Control
+          g, system:cluster-admins, role:admin
+          g, cluster-admin, role:admin
+          p, role:none, applications, get, */*, deny
+          p, role:none, certificates, get, *, deny
+          p, role:none, clusters, get, *, deny
+          p, role:none, repositories, get, *, deny
+          p, role:none, projects, get, *, deny
+          p, role:none, accounts, get, *, deny
+          p, role:none, gpgkeys, get, *, deny
+      scopes: '[groups]'
+
+    # -- Define resources that should be excluded
+    # For example Tekton TaskRuns and PipelineRuns should not be observed by Argo CD.
+    # @default -- empty
+    resourceExclusions: |-
+      # resources to be excluded
+      - apiGroups:
+        - tekton.dev
+        clusters:
+        - '*'
+        kinds:
+        - TaskRun
+        - PipelineRun
+
+    # -- Enable default health checks.
+    # This will create some default health checks I usually add.
+    # * ClusterLogging, * Application (Argo CD), * Lokistack, * Subcription, * Central (ACS), InstallPlan
+    # @default -- false
+    default_resourceHealthChecks: true
+
+    # -- Default custom health checks. This must be LUA format so Argo can read it.
+    # @default -- empty
+    custom_resourceHealthChecks: |-
+        - check: |
+            hs = {}
+            hs.status = "Progressing"
+            hs.message = "Progressing ClusterLogging"
+            if obj.status ~= nil and obj.status.conditions ~= nil then
+                for i, condition in ipairs(obj.status.conditions) do
+                  if condition.type == "Ready" then
+                      hs.status = "Healthy"
+                      hs.message = "ClusterLogging is ready"
+                  end
+                end
+                return hs
+            end
+            return hs
+          group: logging.openshift.io
+          kind: ClusterLogging

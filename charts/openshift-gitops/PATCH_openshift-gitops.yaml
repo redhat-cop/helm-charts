@@ -1,0 +1,221 @@
+apiVersion: argoproj.io/v1beta1
+kind: ArgoCD
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+spec:
+  applicationInstanceLabelKey: argocd.argoproj.io/instance
+  resourceTrackingMethod: annotation
+  applicationSet: {}
+  kustomizeBuildOptions: "--enable-helm"
+  controller:
+    resources:
+      limits:
+        cpu: '2'
+        memory: 3Gi
+      requests:
+        cpu: 250m
+        memory: 2Gi
+  repo:
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1.5Gi
+      requests:
+        cpu: 250m
+        memory: 768Mi
+  redis:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+  server:
+    insecure: false
+    route:
+      enabled: true
+      tls:
+        termination: reencrypt
+        insecureEdgeTerminationPolicy: Redirect
+  resourceIgnoreDifferences:
+    resourceIdentifiers:
+      - customization:
+          jsonPointers:
+            - /webhooks/0/clientConfig/caBundle
+            - /webhooks/1/clientConfig/caBundle
+            - /webhooks/2/clientConfig/caBundle
+            - /webhooks/3/clientConfig/caBundle
+            - /webhooks/4/clientConfig/caBundle
+            - /webhooks/5/clientConfig/caBundle
+        group: admissionregistration.k8s.io
+        kind: MutatingWebhookConfiguration
+      - customization:
+          jsonPointers:
+            - /status/ingress
+        group: route.openshift.io
+        kind: Route
+  resourceHealthChecks:
+    - check: |
+        hs = {}
+        -- Default return value ... to have something
+        hs.status = "Progressing"
+        hs.message = ""
+        if obj.status ~= nil then
+          if obj.status.health ~= nil then
+            if obj.status.health.message ~= nil then
+              hs.message = obj.status.health.message
+            end
+          end
+          -- verify operationState.phase to see if PostSync has been finished
+          if obj.status.operationState ~= nil then
+            -- check if phase is Running or Terminating
+            if obj.status.operationState.phase == "Running" or obj.status.operationState.phase == "Terminating" then 
+              hs.status = "Progressing"
+            -- check if phase if Degraded or Error
+            elseif obj.status.operationState.phase == "Degraded" or obj.status.operationState.phase == "Error" or obj.status.operationState.phase == "Failed" then
+              hs.status = "Degraded"
+              if obj.status.operationState.message ~= nil then
+                hs.message = obj.status.operationState.message
+              end
+            -- check if phase (alls phases including PostSync) are Succeeded
+            elseif obj.status.operationState.phase == "Succeeded" then
+              hs.status = obj.status.health.status
+            -- everything else is Unknown
+            else
+              hs.status = "Unknown"
+            end
+          else
+            -- for the main App of Apps and ApplicationSets that does not automatically sync the Apps.
+            if obj.status.sync.status ~= nil then
+              if obj.status.sync.status == "OutOfSync" and obj.status.health.status == "Healthy" then
+                hs.status = "Missing"
+                hs.message = "Out of Sync"
+              end
+            end
+            -- Compare if status is Missing and sync.status is OutOfSync
+            if obj.status.sync.status ~= nil then
+              if obj.status.sync.status == "OutOfSync" and obj.status.health.status == "Missing" then
+                hs.status = "Missing"
+                hs.message = "Out of Sync"
+              end
+            end
+          end
+        end
+        if obj.status.sync.status == "Unknown" then
+          hs.status = "Progressing"
+          hs.message = "Unknown status. Verify the Argo CD Application"
+        end
+        return hs
+      group: argoproj.io
+      kind: Application
+    - check: |
+        hs = {}
+        if obj.status ~= nil and obj.status.conditions ~= nil then
+            for i, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Degraded" and condition.reason == "MissingObjectStorageSecret" then
+                  hs.status = "Degraded"
+                  hs.message = "Missing Bucket Secret"
+              end
+              if condition.type == "Pending" and condition.reason == "PendingComponents" and condition.status == "True" then
+                  hs.status = "Progressing"
+                  hs.message = "Some LokiStack components pending on dependencies"
+              end
+              if condition.type == "Ready" and condition.reason == "ReadyComponents" then
+                  hs.status = "Healthy"
+                  hs.message = "All components are ready"
+              end
+            end
+            return hs
+        end
+        hs.status = "Progressing"
+        hs.message = "Waiting for LokiStack to deploy."
+        return hs
+      group: loki.grafana.com
+      kind: LokiStack
+    - check: |
+        hs = {}
+        hs.status = "Progressing"
+        hs.message = "Progressing ClusterLogging"
+        if obj.status ~= nil and obj.status.conditions ~= nil then
+            for i, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Ready" then
+                  hs.status = "Healthy"
+                  hs.message = "ClusterLogging is ready"
+              end
+            end
+            return hs
+        end
+        return hs
+      group: logging.openshift.io
+      kind: ClusterLogging
+    - check: |
+        hs = {}
+        hs.status = "Progressing"
+        hs.message = ""
+        if obj.status ~= nil then
+          if obj.status.state ~= nil then
+            if obj.status.state == "AtLatestKnown" then
+              hs.message = obj.status.state .. " - " .. obj.status.currentCSV
+              hs.status = "Healthy"
+            end
+          end
+        end
+        return hs
+      group: operators.coreos.com
+      kind: Subscription
+    - check: |
+        hs = {}
+        if obj.status ~= nil and obj.status.conditions ~= nil then
+            for i, condition in ipairs(obj.status.conditions) do
+              if condition.status == "True" or condition.reason == "InstallSuccessful" or condition.reason == "UpgradeSuccessful" then
+                  hs.status = "Healthy"
+                  hs.message = "Install Successful"
+                  return hs
+              end
+            end
+        end
+        hs.status = "Progressing"
+        hs.message = "Waiting for Central to deploy."
+        return hs
+      group: platform.stackrox.io
+      kind: Central
+    - check: |
+        hs = {}
+        if obj.status ~= nil then
+          if obj.status.phase ~= nil then
+            if obj.status.phase == "Complete" then
+              hs.status = "Healthy"
+              hs.message = obj.status.phase
+              return hs
+            end
+          end
+        end
+        hs.status = "Progressing"
+        hs.message = "Waiting for InstallPlan to complete"
+        return hs
+      group: operators.coreos.com
+      kind: InstallPlan
+  resourceExclusions: |
+    - apiGroups:
+      - tekton.dev
+      clusters:
+      - '*'
+      kinds:
+      - TaskRun
+      - PipelineRun
+    - apiGroups:
+      - compliance.openshift.io
+      kinds:
+      - ComplianceCheckResult
+      - ComplianceRemediation
+  ha:
+    enabled: false
+  rbac:
+    defaultPolicy: role:readonly
+    policy: |
+      g, system:cluster-admins, role:admin
+      g, cluster-admin, role:admin
+      g, argocdusers, role:readonly
+    scopes: "[groups]"

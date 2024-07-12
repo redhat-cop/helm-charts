@@ -1,0 +1,17 @@
+apiVersion: v2
+name: helper-lokistack
+description: The only purpose of this helper chart is to provide a template for the LokiStack Custom Resource, so it must not be re-defined for multiple services.
+version: 1.0.9
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/helper-lokistack
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+keywords:
+  - helper
+  - subchart
+  - gitops

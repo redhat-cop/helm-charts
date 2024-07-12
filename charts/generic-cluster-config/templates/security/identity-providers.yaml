@@ -1,0 +1,70 @@
+{{- with .Values.idp }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  name: cluster
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+{{- if eq ( .customloginpage.enabled | toString) "true" }}
+  templates:
+    login:
+      name: {{ .customloginpage.secretname }}
+    {{- if .customloginpage.secretname_providerpage }}
+    providerSelection:
+      name: {{ .customloginpage.secretname_providerpage }}
+    {{- end }}
+{{- end }}
+{{- if .providers }}
+{{- if eq ( .providers.enabled | toString) "true" }}
+  identityProviders:
+{{- with .providers }}
+{{- range $key, $value := .ldap -}}
+{{ if eq ($value.enabled | toString) "true" }}
+  - ldap:
+      attributes:
+      {{- if .attributes }}
+        {{- toYaml .attributes | nindent 8 }}
+      {{- else }}
+        email:
+        - mail
+        id:
+        - dn
+        name:
+        - cn
+      {{- end }}
+        preferredUsername:
+        {{- range .preferredusername }}
+        - {{ . | quote }}
+        {{- end }}
+      bindDN: {{ .binddn | quote }}
+      bindPassword:
+        name: {{ .secretname | default "ldap-secret" }}
+      ca:
+        name: {{ .cmname | default "ca-config-map" }}
+      insecure: {{ .insecure | default true }}
+      url: {{ .url | quote }}
+    mappingMethod: claim
+    name: {{ .name | default "ldap" | quote }}
+    type: LDAP
+{{- end }}
+{{- end }}
+{{- end }}
+{{- with .providers }}
+{{- range $key, $value := .htpasswd -}}
+{{ if eq ($value.enabled | toString) "true" }}
+  - htpasswd:
+      fileData:
+        name: {{ .secretname | default "htpasswd-secret" }}
+    mappingMethod: claim
+    name: {{ .name | default "htpasswd" | quote }}
+    type: HTPasswd
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,9 @@
+---
+
+namespace:
+  # -- Create Namespace yes or not
+  # @default -- false
+  create: true
+
+  # -- Name of the Namespace
+  name: cyclonedx

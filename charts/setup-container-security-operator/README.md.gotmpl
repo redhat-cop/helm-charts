@@ -1,0 +1,64 @@
+{{ template "doc.header" . }}
+
+
+# Install Sealed Secrets
+
+This chart will install Quay Container Security Operator. 
+It is just the deployment of the Operator, which does not have any CRDs or further configuration, thus the usage
+of helper-status-checker could be skipped. 
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+Verify the subcharts for additional settings:
+
+* [helper-operator](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+* [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+
+{{ template "doc.values" . }}
+
+## Example
+
+```yaml
+---
+version: &version 3.10
+
+helper-operator:
+  operators:
+    security-operator:
+      enabled: true
+      syncwave: '0'
+      namespace:
+        name: openshift-operators
+        create: false
+      subscription:
+        channel: *version
+        approval: Automatic
+        operatorName: container-security-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: false
+        notownnamespace: true
+
+helper-status-checker:
+  enabled: true
+
+  checks:
+
+    - operatorName: container-security-operator
+      namespace:
+        name: openshift-operators
+      syncwave: 3
+
+      serviceAccount:
+        name: "status-security-operator"
+
+```
+
+{{ template "doc.footer" . }}

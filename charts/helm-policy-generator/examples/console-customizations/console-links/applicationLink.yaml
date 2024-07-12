@@ -1,0 +1,11 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: "applicationlink"
+spec:
+  text: "Red Hat Subscription Management"
+  location: "ApplicationMenu"
+  href: "https://access.redhat.com/management"
+  applicationMenu:
+    section: "My Subscriptions"
+    imageURL: "https://raw.githubusercontent.com/tjungbauer/helm-charts/gh-pages/images/configuration.png"

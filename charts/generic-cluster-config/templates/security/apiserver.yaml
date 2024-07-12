@@ -1,0 +1,32 @@
+{{- with .Values.apiserver  }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: config.openshift.io/v1
+kind: APIServer
+metadata:
+  annotations:
+    release.openshift.io/create-only: 'true'
+  name: cluster
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  {{- if .audit }}
+  audit:
+    profile: {{ .audit.profile | default "Default" }}
+  {{- end }}
+  {{- if eq (.etcd_encryption.enabled | toString) "true" }}
+  encryption:
+    type: {{ .etcd_encryption.encryption_type | default "aesgcm" }}
+  {{- end }}
+  {{- if eq (.custom_cert.enabled | toString) "true" }}
+  servingCerts:
+    namedCertificates:
+      - names:
+          {{- range .custom_cert.cert_names }}
+          - {{ . }}
+          {{- end }}
+        servingCertificate:
+          name: {{ .custom_cert.secretname | default "api-certificate" }}
+  {{- end }}
+{{- end }}
+{{- end }}

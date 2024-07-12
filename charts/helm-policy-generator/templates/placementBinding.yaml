@@ -1,0 +1,58 @@
+{{- if eq (.Values.policySet.enabled | toString) "true" }}
+{{- range .Values.policySet.sets }}
+{{- if .placement }}
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: {{ .name }}-placementbinding
+  namespace: {{ .namespace }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+placementRef:
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+  name: {{ .name }}-placement
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: PolicySet
+  name: {{ .name }}
+{{- end }}
+{{- end }}
+{{- else }}
+{{- range .Values.policies }}
+{{- if eq ( .enabled | toString ) "true" }}
+
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: {{ .policyname }}-placementbinding
+  namespace: {{ .namespace }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+placementRef:
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+  name: {{ .policyname }}-placement
+subjects:
+{{- if $.Values.policySet }}
+  {{- if eq ( $.Values.policySet.enabled | toString ) "true"  }}
+    {{- range $.Values.policySet.sets }}
+- apiGroup: policy.open-cluster-management.io
+  kind: PolicySet
+  name: {{ .name }}
+    {{- end }}
+  {{- else }}
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: {{ .policyname }}
+  {{- end }}
+{{- else }}
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: {{ .policyname }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

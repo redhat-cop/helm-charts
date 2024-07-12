@@ -10,7 +10,7 @@ metadata:
     argocd.argoproj.io/hook-delete-policy: HookSucceeded
     argocd.argoproj.io/sync-wave: {{ .syncwave | default 5 | quote }}
   labels:
-    {{- include "common.labels" $ | nindent 4 }}
+    {{- include "tpl.labels" $ | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

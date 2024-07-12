@@ -1,0 +1,269 @@
+---
+certManager:
+  # -- Enable pathing of the certManager resource, for the ACME provider. This is required, when the recusrive nameserver shall be changed. For example, when private and public define-domains in AWS Route 53 are
+  # used, then the DNS server must be set.
+  # Verify the documentation at: https://docs.openshift.com/container-platform/4.15/security/cert_manager_operator/cert-manager-operator-issuer-acme.html
+  # The resource itself it created automatically and is therefor patched.
+  # @default -- false
+  enable_patch: false
+
+  # -- List of arguments that should be overwritten.
+  overrideArgs:
+    - '--dns01-recursive-nameservers-only'
+    - --dns01-recursive-nameservers=ns-362.awsdns-45.com:53,ns-930.awsdns-52.net:53
+
+# List of issuers that shall be created
+issuer:
+    # Name of first issuer
+    # Multiple can be defined
+  - name: acme
+    # -- Type can be either ClusterIssuer or Issuer
+    type: ClusterIssuer
+    # -- Enable this issuer.
+    # @default -- false
+    enabled: false
+    # -- Syncewave to create this issuer
+    syncwave: 20
+
+    # -- Create ACME issuer. ACME CA servers rely on a challenge to verify that a client owns the domain names that the certificate is being requested for.
+    acme:
+      # -- Email address, Let's Encrypt will use this to contact you about expiring
+      # certificates, and issues related to your account.
+      email: your@email.com
+
+      # -- add a challenge solver. This coulr be DNS01 or HTTP01
+      # The yaml specification will be used as is
+      # Verify the official documentation for detailed information: https://cert-manager.io/docs/configuration/acme/
+      solvers:
+        - dns01:
+            route53:
+              accessKeyIDSecretRef:
+                key: access-key-id
+                name: prod-route53-credentials-secret
+              region: your-region
+              secretAccessKeySecretRef:
+                key: secret-access-key
+                name: prod-route53-credentials-secret
+          selector:
+            dnsZones:
+              - define-domains
+
+    # Name of issuer
+  - name: selfsigned
+    # -- Type can be either ClusterIssuer or Issuer
+    type: ClusterIssuer
+    # -- Enable this issuer.
+    # @default -- false
+    enabled: false
+
+    # -- Create a selfSigned issuer. The SelfSigned issuer doesn't represent a certificate authority as such, but instead denotes that certificates will "sign themselves" using a given private key.
+    # Detailed information can be found at: https://cert-manager.io/docs/configuration/selfsigned/
+    selfSigned: true
+
+    # Name of issuer
+  - name: ca
+    # -- Type can be either ClusterIssuer or Issuer
+    type: ClusterIssuer
+    # -- Enable this issuer.
+    # @default -- false
+    enabled: false
+
+    # -- Create CA issuer, CA issuers are generally either for trying cert-manager out or else for advanced users with a good idea of how to run a PKI.
+    # Detailed information can be found at: https://cert-manager.io/docs/configuration/ca/
+    ca:
+      secretName: ca-key-pair
+
+    # Name of issuer
+  - name: vault
+    # -- Type can be either ClusterIssuer or Issuer
+    type: ClusterIssuer
+    # -- Enable this issuer.
+    # @default -- false
+    enabled: false
+
+    # -- Enable Vault issuer. The Vault Issuer represents the certificate authority Vault.
+    # Detailed information can be found at: https://cert-manager.io/docs/configuration/vault/
+    vault:
+      path: pki_int/sign/example-dot-com
+      server: https://vault.local
+      caBundle: <base64 encoded caBundle PEM file>
+      auth:
+        tokenSecretRef:
+          name: cert-manager-vault-token
+          key: token
+
+    # Name of issuer
+  - name: venafi
+    # -- Type can be either ClusterIssuer or Issuer
+    type: ClusterIssuer
+    # -- Enable this issuer.
+    # @default -- false
+    enabled: false
+
+    # -- The Venafi Issuer types allows you to obtain certificates from Venafi as a Service (VaaS) and Venafi Trust Protection Platform (TPP) instances.
+    # Detailed information can be found at: https://cert-manager.io/docs/configuration/venafi/
+    venafi:
+      zone: "My Application\\My CIT"
+      cloud:
+        apiTokenSecretRef:
+          name: vaas-secret
+          key: apikey
+
+# Define a list of Certificates that shall be issues
+certificates:
+  # -- Enable ordering of certificates
+  # @default -- false
+  enabled: false
+
+  # List of certificates
+  certificate:
+      # -- Name of the certificate resource. This is not the dnsName of commonName.
+    - name: example-cert
+
+      # -- Enable ordering of this certificate
+      # @default -- false
+      enabled: false
+
+      # -- Namespace for this certificate
+      namespace: example
+
+      # -- Syncwave when the certificate shall be ordered.
+      # @default -- 1
+      syncwave: "0"
+
+      # -- Name of the Secret resource that will be created and managed by the Certificate.
+      # It will be populated with a private key and certificate, signed by the denoted issuer.
+      secretName: example-cert-tls
+
+
+      # -- The duration of the certificated (X.509 certificate's duration)
+      # Some issuers might be configured to only issue certificates with a set durationt<br />
+      # Minimum value for spec.duration is 1 hour<br />
+      # It is required that spec.duration > spec.renewBefore
+      # Value must be in units accepted by Go time.ParseDuration https://golang.org/pkg/time/#ParseDuration
+      # @default -- 2160h0m0s (90d)
+      duration: 2160h0m0s  # 90d
+
+      # -- How long before the currently issued certificate's expiry cert-manager should renew the
+      # certificate. For example, if a certificate is valid for 60 minutes, and `renewBefore=10m`,
+      # cert-manager will begin to attempt to renew the certificate 50 minutes after it was issued
+      # If unset, this defaults to 1/3 of the issued certificate's lifetime.<br />
+      # Minimum accepted value is 5 minutes.<br />
+      # Value must be in units accepted by Go time.ParseDuration https://golang.org/pkg/time/#ParseDuration
+      # @default -- 1/3 of duration if not set
+      renewBefore: 360h0m0s  # 15d
+
+      # -- secretTemplate is optional. If set, these annotations and labels will be
+      # copied to the Secret created by this Certificate.
+      # @default -- N/A
+      secretTemplate:
+        annotations:
+          my-secret-annotation-1: "foo"
+          my-secret-annotation-2: "bar"
+        labels:
+          my-secret-label: foo
+
+      # At least one of commonName (possibly through literalSubject), dnsNames, uris, emailAddresses,
+      # ipAddresses or otherNames is required.
+
+      # -- Requested set of X509 certificate subject attributes.
+      # More info: https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.6
+      # Might be replaced in the future by literalSubject
+      # @default -- N/A
+      subject:
+        # -- Countries to be used on the Certificate.
+        # @default -- N/A
+        countries:
+          - Country
+        # -- Cities to be used on the Certificate.
+        # @default -- N/A
+        localities:
+          - Cities
+        # -- Organizational Units to be used on the Certificate.
+        # @default -- N/A
+        organizationalUnits:
+          - OrganizationalUnit
+        # -- Organizations to be used on the Certificate.
+        # @default -- N/A
+        organizations:
+          - Organization
+        # -- Postal Codes to be used on the Certificate.
+        # @default -- N/A
+        postalCodes:
+          - 'PostalCode'
+        # -- States/Provinces to be used on the Certificate.
+        # @default -- N/A
+        provinces:
+          - 'State'
+        # -- Street addresses to be used on the Certificate.
+        # @default -- N/A
+        streetAddresses:
+          - StreetAddress
+        # -- Serial number to be used on the Certificate.
+        # @default -- N/A
+        serialNumber: 'SerialNumber'
+
+      # -- Requested DNS subject alternative names.
+      dnsNames:
+        - example.com
+        - www.example.com
+
+      # -- Requested URI subject alternative names.
+      uris:
+        - spiffe://cluster.local/ns/sandbox/sa/example
+
+      # -- Requested email subject alternative names.
+      emailAddresses:
+        - john.doe@cert-manager.io
+
+      # -- Requested IP address subject alternative names.
+      ipAddresses:
+        - 192.168.0.5
+
+      privateKey:
+
+        # -- Algorithm of the private key. Possible values (with default sizes if size is not provided):
+        # <br />RSA (2048), ECDSA (256) or Ed25519 (ignored)<br /><br />
+        # @default -- RSA
+        algorithm: RSA
+
+        # -- Size is the key bit size of the corresponding private key for this certificate.<br />
+        # If `algorithm` is set to `RSA`, valid values are `2048`, `4096` or `8192`, and will default to `2048` if not specified.<br />
+        # If `algorithm` is set to `ECDSA`, valid values are `256`, `384` or `521`, and will default to `256` if not specified.<br />
+        # If `algorithm` is set to `Ed25519`, Size is ignored. No other values are allowed.
+        size: 2048
+
+        # -- The private key cryptography standards (PKCS) encoding for this certificate's private key to be encoded in.
+        # Allowed values are PKCS1 an dPKCS8.
+        # @default -- PKSC1
+        encoding: PKCS1
+
+        # -- RotationPolicy controls how private keys should be regenerated when a re-issuance is being processed.
+        # Possible values are 'Never' (the private key will only be generated if it does not already exist) or
+        # 'Always' (the private key will aleays be generated whenever a re-issuance occurs.
+        # @default -- Always
+        rotationPolicy: Always
+
+      # -- Requested basic constraints isCA value.
+      # If true, this will automatically add the `cert sign` usage to the list of requested `usages`.
+      isCA: false
+
+      # -- Set usages for the certificate
+      # full list https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.KeyUsage
+      # default if not set, cert manager will set: digital signature, key encipherment, and server auth
+      usages:
+        - server auth
+        - client auth
+
+      # Reference to the issuer that shall be used.
+      issuerRef:
+        # -- Name of the Issuer that shall be used.
+        name: ca-issuer
+
+        # -- The reference can either be ClusterIssuers or Issuer
+        # @default -- Issuer
+        kind: Issuer
+
+        # -- Optional parameter that is only required when external issuers are used.
+        # @default -- UNSET (cert-manager.io)
+        group: cert-manager.io

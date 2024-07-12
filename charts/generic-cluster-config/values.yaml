@@ -1,0 +1,897 @@
+# Example Settings
+
+###################
+# ETCD ENCRYPTION #
+###################
+apiserver:
+  # -- Enable APIServer configuration in general
+  enabled: false
+
+  # audit configuration
+  audit:
+    # -- Set to Default, WriteRequestBodies, AllRequestBodies, or None. The default profile is Default
+    # @default -- Default
+    profile: Default
+
+  # Configure a custom certificate for the API server
+  custom_cert:
+    # -- custom certificate enabled?
+    # @default -- false
+    enabled: false
+
+    # -- List of names the certificate is valid
+    # @default -- N/A
+    cert_names:
+      - api.ocp.aws.ispworld.at
+
+    # -- Name of the secret that holds the certificate
+    # @default -- api-certificate
+    secretname: api-certificate
+
+  etcd_encryption:
+    # -- Enable ETCD encryption in OpenShift
+    # @default -- false
+    enabled: false
+
+    # -- The Namespace where the Pod that verifies the status of the encryption will be started.
+    # If you encrypt the ETCD on a cluster without GitOps, this namespace must be changed. For example to "kube-system"
+    namespace: openshift-gitops
+
+    # -- The service account that is used to verify the status of the encryption
+    serviceAccount:
+      create: true
+      name: "etcd-encryption-checker"
+
+    # -- Type of encryption. This can either be: <br />
+    # <ul>
+    # <li>AES-CBC - Uses AES-CBC with PKCS#7 padding and a 32 byte key to perform the encryption. The encryption keys are rotated weekly.</li>
+    # <li>AES-GCM - Uses AES-GCM with a random nonce and a 32 byte key to perform the encryption. The encryption keys are rotated weekly.</li>
+    # <ul>
+    # @default -- aesgcm
+    encryption_type: aesgcm
+
+############################
+# DISABLE SELF PROVISIONER #
+############################
+# -- This simply disables the self-provisioner
+self_provisioner:
+  deactivate: false
+
+################################
+# CONFIGURE ALLOWED REGISTRIES #
+################################
+config_allowed_registries:
+  # -- Enable configuration to limit the registries
+  # @default -- false
+  enabled: false
+
+  registry_sources:
+    # -- When pulling or pushing images, the container runtime searches the registries listed here
+    # @default -- empty
+    allowed_registries:
+    - registry.connect.redhat.com
+    - registry.redhat.io
+    - quay.io
+    - registry.access.redhat.com
+    - 'image-registry.openshift-image-registry.svc:5000'
+  # -- limits the container image registries that normal users may import images from.
+  # @default -- empty
+  allowedRegistriesForImport:
+  # -- Domainname of the registry
+  - domain: quay.io
+    # -- Validate the vertificate of not
+    # @default -- false
+    insecure: false
+  - domain: registry.connect.redhat.com
+  - domain: registry.redhat.io
+
+######################
+# IDENTITY PROVIDERS #
+######################
+idp:
+  # -- Enable IDP configuration
+  # @default -- false
+  enabled: false
+
+  # -- Besides IDP configuration, custom Login pages can be defined here as well. This requires secrets with the actual HTML.
+  # @default -- ''
+  customloginpage:
+    # -- Enable custom Login pages?
+    # @default -- false
+    enabled: false
+
+    # -- Name of the secret for the custom Login page.
+    # @default -- ''
+    secretname: customlogin
+
+    # -- Name of the secret for the custom provider page (The page where you select the oauth providers)
+    # @default -- ''
+    secretname_providerpage: customerproviderpage
+
+  # Define provider. Currently htpasswd and LDAP are supported
+  providers:
+    # -- Enable IDP configuration. You can still disable them individually.
+    # @default -- false
+    enabled: false
+
+    # -- Use HTPASSWD provider.
+    # @default -- ''
+    htpasswd:
+        # -- Provide a name for that provider. This will be visible on the login page.
+        # @default -- htpasswd
+      - name: HTPASSWD
+
+        # -- Enable htpasswd?
+        # @default -- false
+        enabled: false
+
+        # -- The name of the secret that holds the encrypted htpasswd information
+        # @default -- htpasswd-secret
+        secretname: htpasswd-secret
+
+    # -- User LDAP provider.
+    # @default -- ''
+    ldap:
+        # -- Provide a name for that provider. This will be visible on the login page.
+        # @default -- ldap
+      - name: LDAP
+
+        # -- Enable htpasswd?
+        # @default -- false
+        enabled: false
+
+        # -- URL to the LDAP server
+        # @default -- ''
+        url: 127.0.0.1
+
+        # -- Is the connection to the LDAP server insecure or not?
+        # @default -- true
+        insecure: true
+
+        # -- BindDN for the LDAP connection
+        binddn: your-bindDN
+
+        # -- Name of the secret that stores the bindPassword
+        # @default: ldap-secret
+        secretname: ldap-secret
+
+        # -- Name of the ConfigMap the stores the certificate
+        # @default -- ca-config-map
+        cmname: ca-config-map
+
+        # -- List of attributes to use as the preferred user name when provisioning a user for this identity. First non-empty attribute is used
+        # @default -- ''
+        preferredusername:
+          - sAMAccountName
+
+        # -- List of attributes to use as the identity. First non-empty attribute is used. At least one attribute is required. If none of the listed attribute have a value, authentication fails.
+        attributes:
+          email:
+            - mail
+          id:
+            - dn
+          name:
+            - cn
+
+########################
+# CONSOLE MODIFICATION #
+########################
+console:
+
+  ###################
+  # CONSOLE BANNERS #
+  ###################
+  # -- Configure banners for the WebUI. This can either be: topbanner or bottombanner
+  # @default -- ''
+  console_banners:
+    # -- Configure TOP-banner
+    # @default -- ''
+    topbanner:
+      # -- Enable bannler configuration
+      # @default -- false
+      enabled: false
+
+      # -- Set a text that shall be displayed.
+      # @default -- ''
+      text: 'MGMT Cluster'
+
+      # -- Define the location for the banner. Either BannerTop or BannerBottom
+      # @default -- ''
+      location: BannerTop
+
+      # -- Select the font colour in the banner
+      # @default -- ''
+      color: "#FFFFFF"
+
+      # -- Define the background colour for the banner
+      # @default -- ''
+      backgroundcolor: '#0088ee'
+
+      # -- Add a link to the banner with href and a text
+      # @default -- ''
+      link:
+        href: 'https://my-company'
+        text: My Company
+
+    # -- Configure BOTTOM-banner
+    # @default -- ''
+    bottombanner:
+      # -- Enable bannler configuration
+      # @default -- false
+      enabled: false
+
+      # -- Set a text that shall be displayed.
+      # @default -- ''
+      text: Copyright © 2020 Sample Company, Inc. |
+
+      # -- Define the location for the banner. Either BannerTop or BannerBottom
+      # @default -- ''
+      location: BannerBottom
+
+      # -- Select the font colour in the banner
+      # @default -- ''
+      color: "#FFFFFF"
+
+      # -- Define the background colour for the banner
+      # @default -- ''
+      backgroundcolor: '#000'
+
+      # -- Add a link to the banner with href and a text
+      # @default -- ''
+      link:
+        href: 'https://www.example.com/data-protection-policy'
+        text: Data Protection and Privacy Policy
+
+  ########################
+  # CONSOLE CUSTOM LINKS #
+  ########################
+  console_links:
+    # First example link in the UserMenu
+    userlink:
+      # -- Enable ConsoleLink ?
+      # @default -- false
+      enabled: false
+
+      # -- Text that should be shown as the link.
+      # @default -- ''
+      text: "Intranet"
+
+      # -- Location of the ConsoleLink - Create a link for a user in the appropriate location. This is the menu when you click on your name. An additional link will be added there.<br />
+      # <ul>
+      # <li>UserMenu</li>
+      # <li>NamespaceDashboard</li>
+      # <li>ApplicationMenu</li>
+      # <li>HelpMenu</li>
+      # </ul>
+      # @default -- ''
+      location: UserMenu
+
+      # -- Target of the link
+      # @default -- ''
+      href: https://intranet
+
+      # -- In case of NamespaceDashboard it is possible to define a list of specific namespace.
+      namespaces:
+        - namespace1
+        - namespace2
+
+      # -- In case of ApplicationMenu a section and a URL for the icon can be provided.
+      applicationMenu:
+        section: My Subscriptions
+        imageURL: https://raw.githubusercontent.com/tjungbauer/helm-charts/gh-pages/images/configuration.png
+
+
+    # A ConsoleLink for a list of namespaces
+    # @ignore
+    namespacedlink:
+      enabled: false
+      text: Link valid for selected namespace only
+      location: NamespaceDashboard
+      href: https://report
+      namespaces:
+        - default
+        - openshift-gitops
+
+    # A ConsoleLink for a ALL namespaces
+    # @ignore
+    namespacedlink_all_namespaces:
+      enabled: false
+      text: Report Violations
+      location: NamespaceDashboard
+      href: https://report
+
+    # # A ConsoleLink for the Help Menu
+    # @ignore
+    helplink:
+      enabled: false
+      text: Red Hat CVE Database
+      location: HelpMenu
+      href: https://access.redhat.com/security/security-updates/#/cve
+
+    # A ConsoleLink for the applicationmenu
+    # @ignore
+    applicationlink:
+      enabled: false
+      text: Red Hat Subscription Management
+      location: ApplicationMenu
+      href: https://access.redhat.com/management
+      applicationMenu:
+        section: My Subscriptions
+        imageURL: https://raw.githubusercontent.com/tjungbauer/helm-charts/gh-pages/images/configuration.png
+
+  #########################
+  # CONSOLE YAML EXAMPLES #
+  #########################
+  yamlsamples:
+    # -- Key for the ConsoleYAMLSample. Multiple keys can be defined.
+    # @default -- ''
+    secret-yaml-sample:
+      # -- Enable this ConsoleYAMLSample
+      # @default -- false
+      enabled: false
+
+      # -- Define the target resource and the api version.
+      targetresource:
+        apiversion: v1
+        kind: secret
+
+      # -- Title for the ConsoleYAMLSample
+      # @default -- ''
+      title: "Secret based on cleartext values"
+
+      # -- Description for the ConsoleYAMLSample
+      # @default -- ''
+      descr: "This is an example to create a Secret based on clear-text values"
+
+      # -- The actual example as it will be shown in the UI. This is gives as a valid YAML and will be bypassed to the template.
+      # @default -- ''
+      yamlDef: |+
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: example
+            type: Opaque
+            stringData:
+              email: youremail@address.com
+              password: YourSuperPassword
+
+##############
+# MONITORING #
+##############
+monitoring:
+  # -- Enable cluster monitoring configuration
+  # @default -- false
+  enabled: false
+
+  # -- Enable user workload monitoring
+  # @default -- false
+  enableUserWorkload: true
+
+  ################
+  # ALERTMANAGER #
+  ################
+  # Configuration for the cluster (main) Alertmanager
+  alertmanagerMain:
+    # -- Disable cluster Alertmanager.
+    # @default -- false
+    disable_local_alertmanager: false
+
+    # Add storage to Alertmanager to keep the data.
+    storage:
+      # -- StorageClass for persistent volume
+      # @default -- gp2-csi
+      class: gp2-csi
+
+      # -- Size for the storage
+      # @default -- 40Gi
+      size: 40Gi
+
+    # -- Add a list of secrets that are mounted to Alertmanager. These can have credentials or certificates to authenticat against the alert receiver
+    # @default -- empty
+    secrets:
+      - secret_with_credentials
+
+    # -- nodeSelector for Alertmanager Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Alertmanager Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Alertmanager. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ##############
+  # PROMETHEUS #
+  ##############
+  prometheusK8s:
+
+    # -- The retention time: a number directly followed by ms (milliseconds), s (seconds), m (minutes), h (hours), d (days), w (weeks), or y (years).
+    # You can also combine time values for specific times, such as 1h30m15s.
+    # A value of 0 means the cluster default value which is 15 days.
+    # @default -- 15d
+    retention: 15d
+
+    # -- The retention size: a number directly followed by B (bytes), KB (kilobytes), MB (megabytes), GB (gigabytes), TB (terabytes), PB (petabytes), and EB (exabytes).
+    # If the value is set to 0, then the cluster default setting will be used.
+    # @default -- not set
+    retentionSize: 0
+
+    # -- The name of the metrics collection profile. The available values are full or minimal
+    # @default -- full
+    collectionProfile: full
+
+    # -- nodeSelector for Prometheus Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Prometheus Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # Add storage to Prometheus to keep the data.
+    storage:
+      # -- StorageClass for persistent volume
+      # @default -- gp2-csi
+      class: gp2-csi
+
+      # -- Size for the storage
+      # @default -- 100Gi
+      size: 100Gi
+
+    # -- Resources set for the Prometheus. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ######################
+  # PROMETHEUSOPERATOR #
+  ######################
+  prometheusOperator:
+    # -- nodeSelector for Prometheus Operator Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Prometheus Operator Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Prometheus Operator. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ######################
+  # PROMETHEUS ADAPTER #
+  ######################
+  k8sPrometheusAdapter:
+    # -- nodeSelector for Prometheus Adapter Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Prometheus Adapter Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Prometheus Adapter. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  #####################
+  # KUBE-STATEMETRICS #
+  #####################
+  kubeStateMetrics:
+    # -- nodeSelector for Kube StateMetrics Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Kube StateMetrics Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Kube StateMetrics. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ###################
+  # TELEMETERCLIENT #
+  ###################
+  telemeterClient:
+    # -- nodeSelector for Telemter Client Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Telemter Client Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Telemter Client. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ################
+  # STATEMETRICS #
+  ################
+  openshiftStateMetrics:
+    # -- nodeSelector for OpenShift State Metrics Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for OpenShift State Metrics Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the OpenShift State Metrics. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ####################
+  # MONITORINGPLUGIN #
+  ####################
+  monitoringPlugin:
+    # -- nodeSelector for Monitoring Plugin Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Monitoring Plugin Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Monitoring Plugin. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  #################
+  # THANOSQUERIER #
+  #################
+  thanosQuerier:
+    # -- nodeSelector for Thanos Querier Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Thanos Querier Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Thanos Querier. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+############################
+# USER WORKLOAD MONITORING #
+############################
+user_workload_monitoring:
+  # -- Enable user workload monitoring configuration
+  # @default -- false
+  enabled: false
+
+  ################
+  # ALERTMANAGER #
+  ################
+  # Configuration for the user workload Alertmanager
+  alertmanager:
+    # -- Disable cluster Alertmanager.
+    # @default -- false
+    disable_local_alertmanager: true
+
+    # Add storage to Alertmanager to keep the data.
+    storage:
+      # StorageClass for persistent volume
+      # @default -- gp2-csi
+      class: gp2-csi
+
+      # Size for the storage
+      # @default -- 40Gi
+      size: 40Gi
+
+    # -- Add a list of secrets that are mounted to Alertmanager. These can have credentials or certificates to authenticat against the alert receiver
+    # @default -- empty
+    secrets:
+      - secret_with_credentials
+
+    # -- nodeSelector for Alertmanager Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Alertmanager Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Alertmanager. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ##############
+  # PROMETHEUS #
+  ##############
+  prometheus:
+
+    # -- The retention time: a number directly followed by ms (milliseconds), s (seconds), m (minutes), h (hours), d (days), w (weeks), or y (years).
+    # You can also combine time values for specific times, such as 1h30m15s.
+    # A value of 0 means the default value which is 24h.
+    # @default -- 24h
+    retention: 24h
+
+    # -- The retention size: a number directly followed by B (bytes), KB (kilobytes), MB (megabytes), GB (gigabytes), TB (terabytes), PB (petabytes), and EB (exabytes).
+    # If the value is set to 0, then the cluster default setting will be used.
+    # @default -- not set
+    retentionSize: 0
+
+    # -- nodeSelector for Prometheus Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Prometheus Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # Add storage to Prometheus to keep the data.
+    storage:
+      # -- StorageClass for persistent volume
+      # -- @default -- gp2-csi
+      class: gp2-csi
+
+      # Size for the storage
+      # @default -- 100Gi
+      size: 100Gi
+
+    # -- Resources set for the Prometheus. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ######################
+  # PROMETHEUSOPERATOR #
+  ######################
+  prometheusOperator:
+    # -- nodeSelector for Prometheus Operator Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Prometheus Operator Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Prometheus Operator. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+  ################
+  # THANOS RULER #
+  ################
+  thanosRuler:
+
+    # -- The retention time: a number directly followed by ms (milliseconds), s (seconds), m (minutes), h (hours), d (days), w (weeks), or y (years).
+    # You can also combine time values for specific times, such as 1h30m15s.
+    # A value of 0 means the default value which is 24h.
+    # @default -- 24h
+    retention: 24h
+
+    # Add storage to Thanos Ruler to keep the data.
+    storage:
+      # -- StorageClass for persistent volume
+      # @default -- gp2-csi
+      class: gp2-csi
+
+      # -- Size for the storage
+      # @default -- 100Gi
+      size: 100Gi
+
+    # -- nodeSelector for Prometheus Adapter Pods
+    # @default -- empty
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    # -- Tolerations for Prometheus Adapter Pods.
+    # The configuration is handed over as YAML to the template.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    # -- Resources set for the Prometheus Adapter. Set these with care. If nothing is set, then no limits or requests will be configured.
+    # @default -- empty
+    resources:
+      limits:
+        cpu: 500m
+        memory: 3Gi
+      requests:
+        cpu: 200m
+        memory: 500Mi

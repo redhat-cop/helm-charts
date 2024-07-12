@@ -1,0 +1,21 @@
+{{- range $key, $value := .Values.gitopsinstances }}
+{{ if eq ($value.enabled | toString) "true" }}
+{{ if eq ( $value.clusterAdmin | toString) "enabled" }}
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ $key | replace "_" "-" }}-crb
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $value.argo_serviceaccount | default "openshift-gitops-app-controller" }}
+    namespace: {{ $value.namespace | default "openshift-gitops" | quote }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+{{- end }}
+{{- end }}
+{{- end }}

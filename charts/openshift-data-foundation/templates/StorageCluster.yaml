@@ -1,0 +1,221 @@
+{{- with .Values.storagecluster }}
+{{ if eq ( .enabled | toString) "true" }}
+{{- with .full_deployment }}
+{{- if eq ( .enabled | toString) "true" }}  
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  name: ocs-storagecluster
+  namespace: openshift-storage
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $.Values.storagecluster.syncwave | default "3" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  storageDeviceSets:
+    {{- range $key, $value := .storageDeviceSets }}
+    - name: {{ $value.name | default "ocs-deviceset" }}
+      {{- if $value.resources }}  
+      resources:
+        {{- if $value.resources.limits }}  
+        limits:
+          {{- if $value.resources.limits.cpu }}
+          cpu: {{ $value.resources.limits.cpu | default "2" }}
+          {{- end }}
+          {{- if $value.resources.limits.memory }}
+          memory: {{ $value.resources.limits.memory | default "5Gi" }}
+          {{- end }}
+        {{- end }}
+        {{- if $value.resources.requests }}
+        requests:
+          {{- if $value.resources.requests.cpu }}
+          cpu: {{ $value.resources.requests.cpu | default "1" }}
+          {{- end }}
+          {{- if $value.resources.requests.memory }}
+          memory: {{ $value.resources.requests.memory | default "5Gi" }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- with $value.dataPVCTemplate }}
+      dataPVCTemplate:
+        {{- with .spec }}
+        spec:
+          accessModes:
+            - {{ .accessModes | default "ReadWriteOnce" }}
+          resources:
+            requests:
+              storage: {{ .resources.requests.storage }}
+          storageClassName: {{ .storageClassName }}
+          volumeMode: {{ .volumeMode | default "Block" }}
+        {{- end }}
+      {{- end }}
+      count: {{ .count | default "1" }}
+      replica: {{ .replica | default "3" }}
+    {{- end }}
+
+  {{- if .compontent_resources }}
+  {{- with .compontent_resources }} 
+  resources:
+    
+    {{- if .mds }}
+    {{- with .mds }}
+    mds:
+      {{- if .limits }}
+      limits:
+        {{- if .limits.cpu }}
+        cpu: {{- .limits.cpu | default "3" }}
+        {{- end }}
+        {{- if .limits.memory }}
+        memory: {{- .limits.memory | default "8Gi" }}
+        {{- end }}
+      {{- end }}
+      {{- if .requests }}
+      requests:
+        {{- if .requests.cpu }}
+        cpu: {{ .requests.cpu | default "2" }}
+        {{- end }}
+        {{- if .requests.memory }}
+        memory: {{ .requests.memory | default "8Gi" }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+    
+    {{- if .rgw }}
+    {{- with .rgw }}
+    rgw:
+      {{- if .limits }}
+      limits:
+        {{- if .limits.cpu }}
+        cpu: {{ .limits.cpu | default "2" }}
+        {{- end }}
+        {{- if .limits.memory }}
+        memory: {{ .limits.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}
+      {{- if .requests }}
+      requests:
+        {{- if .requests.cpu }}
+        cpu: {{ .requests.cpu | default "1" }}
+        {{- end }}
+        {{- if .requests.memory }}
+        memory: {{ .requests.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+
+    {{- if .mon }}
+    {{- with .mon }}
+    mon:
+      {{- if .limits }}
+      limits:
+        {{- if .limits.cpu }}
+        cpu: {{ .limits.cpu | default "2" }}
+        {{- end }}
+        {{- if .limits.memory }}
+        memory: {{ .limits.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}
+      {{- if .requests }}
+      requests:
+        {{- if .requests.cpu }}
+        cpu: {{ .requests.cpu | default "1" }}
+        {{- end }}
+        {{- if .requests.memory }}
+        memory: {{ .requests.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+
+    {{- if .mgr }}
+    {{- with .mgr }}
+    mgr:
+      {{- if .limits }}
+      limits:
+        {{- if .limits.cpu }}
+        cpu: {{ .limits.cpu | default "2" }}
+        {{- end }}
+        {{- if .limits.memory }}
+        memory: {{ .limits.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}
+      {{- if .requests }}
+      requests:
+        {{- if .requests.cpu }}
+        cpu: {{ .requests.cpu | default "1" }}
+        {{- end }}
+        {{- if .requests.memory }}
+        memory: {{ .requests.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+
+    {{- if index . "noobaa-core" }}
+    {{- with index . "noobaa-core" }}
+    noobaa-core:
+      {{- if .limits }}
+      limits:
+        {{- if .limits.cpu }}
+        cpu: {{ .limits.cpu | default "2" }}
+        {{- end }}
+        {{- if .limits.memory }}
+        memory: {{ .limits.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}
+      {{- if .requests }}
+      requests:
+        {{- if .requests.cpu }}
+        cpu: {{ .requests.cpu | default "1" }}
+        {{- end }}
+        {{- if .requests.memory }}
+        memory: {{ .requests.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}    
+    {{- end }}
+    {{- end }}
+
+    {{- if index . "noobaa-db" }}
+    {{- with index . "noobaa-db" }}
+    noobaa-db:
+      {{- if .limits }}
+      limits:
+        {{- if .limits.cpu }}
+        cpu: {{ .limits.cpu | default "2" }}
+        {{- end }}
+        {{- if .limits.memory }}
+        memory: {{ .limits.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}
+      {{- if .requests }}
+      requests:
+        {{- if .requests.cpu }}
+        cpu: {{ .requests.cpu | default "1" }}
+        {{- end }}
+        {{- if .requests.memory }}
+        memory: {{ .requests.memory | default "4Gi" }}
+        {{- end }}
+      {{- end }}    
+    {{- end }}
+    {{- end }}
+
+  {{- end }}
+  {{- end }}
+  {{- if eq ( .nfs | toString) "enabled" }}
+  nfs:
+    enable: true
+  {{- end }}
+  nodeTopologies:
+    labels:
+      {{- if .default_node_label }}
+      {{ printf "%s:" .default_node_label }} 
+      {{- else }}
+      cluster.ocs.openshift.io/openshift-storage: ''
+      {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

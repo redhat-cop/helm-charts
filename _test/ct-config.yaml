@@ -34,3 +34,4 @@ excluded-charts:
 - stackrox
 - static-site
 - tekton-demo
+- update-clusterversion

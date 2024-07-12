@@ -1,0 +1,32 @@
+{{- range $key, $value := .Values.aide }}
+{{- with $value }}
+{{ if eq (.enabled | toString) "true" }}
+---
+apiVersion: fileintegrity.openshift.io/v1alpha1
+kind: FileIntegrity
+metadata:
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "10" | quote }}
+spec:
+  config:
+    gracePeriod: {{ .config.gracePeriod | default "900" }}
+    maxBackups: {{ .config.maxBackups | default "5" }}
+    {{- if eq (.config.customconfig.enabled | toString) "true" }}
+    name: {{ .config.customconfig.name }}
+    namespace: {{ .config.customconfig.namespace }}
+    key: {{ .config.customconfig.key | default "config" }}
+    {{- end }}
+
+{{- /* Set tolerations */}}
+{{- if .tolerations }}
+{{ include "tpl.tolerations" .tolerations | indent 4 }}
+{{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}

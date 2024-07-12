@@ -1,0 +1,170 @@
+---
+###########################
+# Enable and configura ODF
+###########################
+storagecluster:
+
+  # -- Enable or disable StorageCluster
+  # @default -- false
+  enabled: false
+
+  # -- Syncwave for the StorageCluster object.
+  # @default -- 3
+  syncwave: 3
+
+  # -- There are two options:
+  # Either install the multicloudgateway only. This is useful if you just need S3 for Quay registry for example or do a full deployment.
+  multigateway_only:
+
+    # -- Enable MultiCloudGateway only. This will only install S3 but not the full Ceph storage.
+    # @default -- false
+    enabled: false
+
+    # -- Name of the stroageclass
+    # The class must exist upfront and is currently not created by this chart.
+    storageclass: gp3-csi
+
+  # -- Second option is a full deployment, which will provide Block, File and Object Storage
+  full_deployment:
+
+    # -- Enable full deployment of ODF (incl. Ceph, S3 etc.)
+    # @default -- false
+    enabled: false
+
+    # -- Enable NFS or not
+    # @default -- false
+    nfs: enabled
+
+    # -- The label the nodes should have to allow hosting of ODF services
+    # @default -- cluster.ocs.openshift.io/openshift-storage
+    default_node_label: cluster.ocs.openshift.io/openshift-storage
+
+    # -- Define the storage deviceSets
+    storageDeviceSets:
+
+        # -- Name of the DeviceSet
+      - name: ocs-deviceset
+
+        # -- Resources for the DeviceSets Pods.
+        # Limits and Requests can be defined
+        resources:
+          requests:
+            # -- CPU requests for the DeviceSets Pods
+            # @default -- 1
+            cpu: '1'
+            # -- Memory requests for the DeviceSets Pods
+            # @default -- 5Gi
+            memory: 5Gi
+          limits:
+            # -- CPU limits for the DeviceSets Pods
+            # @default -- 2
+            cpu: '2'
+            # -- Memory limits for the DeviceSets Pods
+            # @default -- 5Gi
+            memory: 5Gi
+
+        # -- Definitions of the PVC Template
+        dataPVCTemplate:
+          spec:
+            # -- Default AccessModes
+            # @efault -- ReadWriteOnce
+            accessModes:
+              - ReadWriteOnce
+
+            # -- Size of the Storage. Might be 512Gi, 2Ti, 4Ti
+            # @default -- 512Gi
+            resources:
+              requests:
+                storage: 512Gi
+
+            # -- Name of the stroageclass
+            # The class must exist upfront and is currently not created by this chart.
+            storageClassName: gp3-csi
+
+            # -- volumeMode defines what type of volume is required by the claim. Value of Filesystem is implied when not included in claim spec.
+            # @default -- Block
+            volumeMode: Block
+
+        # -- Replicas
+        # @default -- 3
+        replica: 3
+
+        # -- Count is the number of devices in each StorageClassDeviceSet
+        # @default -- 1
+        count: 1
+
+    # Resource settings for the different components.
+    # ONLY set this if you know what you are doing.
+    # For every component Limits and Requests can be set.
+
+    # For testing request settings might be reduced.
+    # compontent_resources:
+      # MDS Defaults
+      #   Limits: cpu 3, memory: 8Gi
+      #   Requests: cpu: 1, memory: 8Gi
+      # mds:
+      #   requests:
+      #     cpu: '1'
+      #     memory: 8Gi
+
+      # RGW Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # rgw: ...
+      # rgw:
+      #   requests:
+      #     cpu: '1'
+      #     memory: 4Gi
+
+      # MON Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # mon: ...
+
+      # MGR Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # mgr: ...
+
+      # NOOBAA-CORE Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # moobaa-core: ...
+
+      # NOOBAA-DB Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # moobaa-DB: ...
+
+# Install Operator Compliance Operator
+# Deploys Operator --> Subscription and Operatorgroup
+# Syncwave: 0
+helper-operator:
+  operators:
+    odf-operator:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: openshift-storage
+        create: false
+      subscription:
+        channel: stable-4.14
+        approval: Automatic
+        operatorName: odf-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: true
+
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: odf-operator
+      namespace:
+        name: openshift-storage
+      syncwave: 3
+
+      serviceAccount:
+        name: "status-checker-odf"

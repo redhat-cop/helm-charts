@@ -1,0 +1,70 @@
+{{- range $key, $value := .Values.namespaces }}
+{{ if eq ( .enabled | toString) "true" }}
+{{ if .networkpolicies }}
+{{- range $key_pol, $value_pol := .networkpolicies }}
+{{ if eq ( .active | toString) "true" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .name | replace "_" "-" | quote }}
+  # not to get confused with name of NetworkPolicy ... use $value.name
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  {{- if .podSelector }}
+  podSelector:
+    matchLabels:
+{{ toYaml .podSelector.matchLabels | indent 6 }}
+  {{- else }}
+  podSelector: {}
+  {{- end }}
+
+  {{- if .ingressRules }}
+  ingress:
+    {{-  range $rule := .ingressRules }}
+      {{- if $rule.selectors }}
+    - from:
+{{ toYaml $rule.selectors | indent 6 }}
+      ports:
+{{ toYaml $rule.ports | indent 8 }}
+       {{- else }}
+    - ports:
+{{ toYaml $rule.ports | indent 8 }}
+    {{- end }}
+
+    {{- end }}
+  {{- end }}
+
+  {{- if .egressRules }}
+  egress:
+    {{-  range $rule := .egressRules }}
+      {{- if $rule.selectors }}
+    - to:
+{{ toYaml $rule.selectors | indent 8 }}
+      ports:
+{{ toYaml $rule.ports | indent 8 }}
+      {{ else }}
+    - ports:
+{{ toYaml $rule.ports | indent 8 }}
+      {{- end }}
+
+    {{- end }}
+  {{- end }}
+
+  {{- if or .ingressRules .egressRules }}
+  policyTypes:
+    {{- if .ingressRules }}
+    - Ingress
+    {{- end }}
+    {{- if .egressRules }}
+    - Egress
+    {{- end }}
+  {{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

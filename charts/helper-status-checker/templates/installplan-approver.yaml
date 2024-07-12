@@ -11,7 +11,7 @@ metadata:
     argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/sync-wave: {{ .syncwave | default 0 | quote }}
   labels:
-    {{- include "common.labels" $ | nindent 4 }}
+    {{- include "tpl.labels" $ | nindent 4 }}
 spec:
   template:
     spec:
@@ -23,22 +23,9 @@ spec:
             - |
               export HOME=/tmp/approver
 
-              echo "Approving operator install.  Waiting a few seconds ({{ .sleeptimer | default 20 }}) to make sure the InstallPlan gets created first."
-              sleep_timer={{ .sleeptimer | default 20 }}
+              printf "Approving operator install.  Waiting a few seconds ({{ .sleeptimer | default 20 }}) to make sure the InstallPlan gets created first.\n"
 
-              SLEEPER_TMP=1
-              SLEEPER_MOD=10
-               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do   
-                 if (( $SLEEPER_TMP % 10 == 0 ))
-                 then
-                   echo -n "$SLEEPER_MOD"
-                   SLEEPER_MOD=$(($SLEEPER_MOD+10))
-                 else
-                   echo -n "."
-                 fi
-                 sleep 1
-                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
-               done
+              {{ include "tpl.sleeptimer" . | nindent 14 }}
 
               {{- if .subscriptionName }}
               subscription={{ .subscriptionName }}

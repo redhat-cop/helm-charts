@@ -1,0 +1,249 @@
+{{- range $key, $value := .Values.applicationsets }}
+{{ if eq ($value.enabled | toString) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ $key | replace "_" "-" }}
+  namespace: {{ $value.appsetNamespace | default "openshift-gitops" }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+    {{- if $value.labels }}
+    {{- range $key_labels, $value_labels := $value.labels }}
+    {{ $key_labels }}: {{ $value_labels }}
+    {{- end }}
+    {{- end }}
+spec:
+  {{- if .preserveResourcesOnDeletion }}
+  syncPolicy:
+    preserveResourcesOnDeletion: {{ .preserveResourcesOnDeletion }}
+  {{- end }}
+  {{- if eq (.goTemplate | toString) "true" }}
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  {{- end }}
+  generators:
+    {{- if .generatormatrix }}
+    - matrix:
+        generators:
+            {{- toYaml .generatormatrix | nindent 10 }}
+    {{- else if .generatorlist }}
+      - list:
+          elements: 
+          {{- range .generatorlist }}
+            - cluster: {{ .clustername }}
+              url: {{ .clusterurl }}
+              {{- if .chart_version }}
+              chart_version: {{ .chart_version }}
+              {{- end }}
+          {{- end }}
+
+    {{- else if .generatorgit }}
+      {{- range .generatorgit }}
+      - git:
+          files:
+            {{- range .files }}
+            - path: {{ . }}
+            {{- end }}
+          repoURL: {{ .repourl }}
+          revision: {{ .targetrevision | default "main" }}
+      {{- end }}
+    {{- else }}
+  # This does not work, since openshift-gitops keeps removing the label of the local ArgoCD secret
+    {{- if .generatorclusters }}
+      {{- range .clusters }}
+        - clusters:
+            selector:
+              matchLabels:
+                env: {{ .env }}
+      {{- end }}
+    {{- else }}
+      - clusters: {}
+    {{- end }}
+  {{- end }}
+  template:
+    metadata:
+      {{- if .generatormatrix }}
+        {{- if eq (.omitClustername | toString) "true" }}
+          name: >-
+          '{{ .targetCluster }}-{{ .path.basenameNormalized }}'
+            {{ printf "{{ .path.basenameNormalized }}" }}
+        {{- else }}
+          name: >-
+            {{ printf "{{ .targetCluster }}-{{ .path.basenameNormalized }}" }}
+        {{- end }}
+      {{- else if .generatorlist }}
+        {{- if eq (.omitClustername | toString) "true" }}
+          name: >-
+            {{ printf "%s" $key | replace "_" "-" }}
+        {{- else }}
+          name: >-
+            {{ printf "{{ cluster }}-%s" $key | replace "_" "-" }}
+        {{- end }}
+      {{- else if .generatorgit }}
+          name: >-
+            {{ printf "{{ index .path.segments 1 | normalize }}-{{ .path.basename }}" }}
+      {{- else }}
+        {{- if eq (.omitClustername | toString) "true" }}
+          name: >-
+            {{ printf "%s" $key | replace "_" "-" }}
+        {{- else }}
+          name: >-
+            {{ printf "{{ name }}-%s" $key | replace "_" "-" }} 
+        {{- end }}
+      {{- end }}
+    spec:
+      {{- if .ignoreDifferences }}
+      ignoreDifferences:
+        {{- range $idff_key, $idiff_val := .ignoreDifferences }}
+        - kind: {{ $idiff_val.kind }}
+          {{- if $idiff_val.jsonPointers }}
+          jsonPointers:
+            {{- range $idiff_val.jsonPointers }}
+            - {{ . }}
+            {{- end }}
+          {{- end }}
+          {{- if $idiff_val.name }}
+          name: {{ $idiff_val.name }}
+          {{- end }}
+          {{- if $idiff_val.namespace }}
+          namespace: {{ $idiff_val.namespace }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- if .generatorlist }}
+      project: >-
+        {{ printf "{{ cluster }}" }}
+      {{- else if .generatorgit }}
+      project: default
+      {{- else if .argocd_project }}
+      project: {{ .argocd_project }}
+      {{- else }}
+      project:  >-
+          {{ printf "{{ name }}" }}
+      {{- end }}
+      {{- if .multiple_sources }}
+      sources:
+        {{- range $source_key, $source_value := .multiple_sources }}
+        - {{- if .repoUrl }}
+          repoURL: {{ .repoUrl }}
+          {{- end }}
+          {{- if .path }}
+          path: {{ .path }}
+          {{- end }}
+          {{- if .default_version }}
+          targetRevision: {{ .default_version }}
+          {{- else }}
+          targetRevision: {{ if .targetRevision }}{{ .targetRevision }}{{ else }}'{{ printf "{{ chart_version }}" }}'{{ end }}
+          {{- end }}
+          {{- if .ref }}
+          ref: {{ .ref | default "values" }}
+          {{- end }}
+          {{- if .chart }}
+          chart: {{ .chart }}
+          {{- end }}
+          {{- if .helm }}
+          helm:
+            valueFiles:
+              - {{ .helm.default_values_file }}
+            {{- range .helm.additional_values_files }}
+              - {{ . }}
+            {{- end }}
+            {{- if $value.helm }}
+            {{- if $value.helm.per_cluster_helm_values }}
+              - '{{ printf "%s/{{ cluster }}-values.yaml" $value.helm.per_cluster_helm_values_path }}'
+            {{- end }}
+            {{- end }}      
+            {{- if .helm.helmvalues }}
+            parameters:
+            {{- range .helm.helmvalues }}
+            - name: {{ .name }}
+              value: '{{ .value }}' 
+            {{- end }}
+            {{- end }}
+            {{- if .helm.releaseName }}
+            releaseName: {{ .helm.releaseName }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- else }}
+      source:
+        repoURL: {{ .repourl | default $.Values.general.source.repourl }}
+        targetRevision: {{ .targetrevision | default $.Values.general.branch }}
+        {{- if .helm }}
+        helm:
+          {{- if or (.helm.per_cluster_helm_values) (.helm.value_files) }}
+          valueFiles: 
+            {{- range .helm.value_files }}
+            - {{ . }}
+            {{- end }}
+            {{- if .helm.per_cluster_helm_values }}
+            - '{{ printf "{{ name }}-values.yaml" }}'
+            {{- end }}
+          {{- end }}
+          {{- if .helm.releasename }}
+          releaseName: {{ .helm.releasename }}
+          {{- end }}
+          {{- if .helm.helmvalues }}
+          parameters:
+          {{- range .helm.helmvalues }}
+          - name: {{ .name }}
+            value: '{{ .value }}' 
+          {{- end }}
+          {{- end }}
+        {{- end }}
+        {{- if .generatormatrix }}
+        path: '{{ printf "{{ .path.path }}" }}'
+        {{- end }}
+        {{- if .path }}
+        path: {{.path }}
+        {{- else }}
+        {{- if .chartname }}
+        chart: {{ .chartname }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+
+      {{- if .syncPolicy }}
+      syncPolicy:
+        {{- if .syncPolicy.autosync_enabled }}
+        automated:
+          prune: {{ .syncPolicy.syncpolicy_prune | default "false"  }}
+          selfHeal: {{ .syncPolicy.syncpolicy_selfheal | default "false"  }}
+        {{- end }}
+        {{- if .syncPolicy.syncOptions }}
+        syncOptions:
+          {{- range .syncPolicy.syncOptions }}
+          - {{ .name }}={{ .value }}
+          {{- end }}
+        {{- end }}
+        {{- if .retries }}
+        retry:
+          limit: {{ .retries.limit | default "5" }}
+          backoff:
+            duration: {{ .retries.backoff.duration | default "5s" }}
+            factor: {{ .retries.backoff.factor | default "2" }}
+            maxDuration: {{ .retries.backoff.maxDuration | default "3m" }}
+        {{- end }}
+      {{- end }}
+      destination:
+      {{- if .generatormatrix }}
+        name: {{ printf "'{{ .targetCluster }}'" }}
+      {{- else if .generatorlist }}
+        server:  >-
+          {{ printf "{{ url }}" }}
+      {{- else if .generatorgit }}
+        name: {{ printf "'{{ .environment }}'" }}
+      {{- else }}
+        server:  >-
+          {{ printf "{{ server }}" }}
+      {{- end }}
+        namespace: {{ .namespace | default "default" }}
+      info:
+        - name: Description
+          value: {{ .description | default "No Description" }}
+{{- end }}
+{{- end }}

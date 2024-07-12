@@ -1,0 +1,49 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: cyclonedx-bom-repo-server
+  namespace: {{ .Values.namespace.name | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cyclonedx-bom-repo-server
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cyclonedx-bom-repo-server
+    spec:
+      containers:
+        - name: container
+          image: cyclonedx/cyclonedx-bom-repo-server
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: REPO__DIRECTORY
+              value: /repo
+            - name: ALLOWEDMETHODS__GET
+              value: 'true'
+            - name: ALLOWEDMETHODS__POST
+              value: 'true'
+            - name: ALLOWEDMETHODS__DELETE
+              value: 'true'
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

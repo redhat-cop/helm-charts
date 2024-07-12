@@ -1,0 +1,21 @@
+{{- with .Values.storagecluster }}
+{{ if eq ( .enabled | toString) "true" }}
+{{- if eq ( .multigateway_only.enabled | toString) "true" }}
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  name: ocs-storagecluster
+  namespace: openshift-storage
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "3" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  multiCloudGateway:
+    dbStorageClassName: {{ .multigateway_only.storageclass }}
+    reconcileStrategy: standalone
+
+{{- end }}
+{{- end }}
+{{- end }}
