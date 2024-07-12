@@ -5465,6 +5465,25 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/tekton-demo-0.0.1/tekton-demo-0.0.1.tgz
     version: 0.0.1
+  tpl:
+  - apiVersion: v2
+    created: "2024-07-12T11:41:05.595967622Z"
+    description: A library that shall collect certain templates to reuse them among
+      different charts.
+    digest: 9a0571fea3b828a43f1adf2d1dc1420cdfacf70b3734de18e604dd91741ba6f8
+    home: https://github.com/redhat-cop/helm-charts/tree/main/charts/tpl
+    keywords:
+    - templates
+    - helper
+    - subchart
+    maintainers:
+    - email: tjungbau@redhat.com
+      name: tjungbauer
+      url: https://blog.stderr.at/
+    name: tpl
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/tpl-1.0.7/tpl-1.0.7.tgz
+    version: 1.0.7
   update-clusterversion:
   - apiVersion: v2
     created: "2024-07-09T09:40:00.995965539Z"
@@ -5481,4 +5500,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2024-07-09T09:40:00.99711314Z"
+generated: "2024-07-12T11:41:05.596534773Z"
