@@ -22,7 +22,7 @@ jobs:
       # renovate: datasource=github-tags depName=python/cpython
       PYTHON_VERSION: v3.12.4
       # renovate: datasource=pypi depName=pybump
-      PYBUMP_VERSION: 1.12.3
+      PYBUMP_VERSION: 1.12.4
     runs-on: ubuntu-latest
     permissions:
       contents: write
