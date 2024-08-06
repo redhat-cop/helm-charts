@@ -12,7 +12,7 @@ metadata:
     argocd.argoproj.io/hook-delete-policy: HookSucceeded
     argocd.argoproj.io/sync-wave: {{ .syncwave | default 1 | quote }}
   labels:
-    {{- include "common.labels" $ | nindent 4 }}
+    {{- include "tpl.labels" $ | nindent 4 }}
 spec:
   ttlSecondsAfterFinished: 120
   template:
@@ -48,11 +48,9 @@ spec:
                fi
 
                echo "Operator not yet found... Give Operator $sleep_timer seconds to create the Deployment"
-               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do
-                 echo -n "."
-                 sleep 1
-                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
-               done
+
+               {{ include "tpl.sleeptimer" . | nindent 14 }}
+
                get_exact_name=`oc get clusterserviceversion -n {{ .namespace.name }} | grep $operator | awk -F" " '{print $1}'`
              done
 
@@ -73,11 +71,8 @@ spec:
 
                echo "Operator not yet ready ... Waiting $sleep_timer seconds"
 
-               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do
-                 echo -n "."
-                 sleep 1
-                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
-               done
+               {{ include "tpl.sleeptimer" . | nindent 14 }}
+
                get_status=`oc get clusterserviceversion -n {{ .namespace.name }} $get_exact_name -o jsonpath={.status.phase}`
              done
 
@@ -97,13 +92,8 @@ spec:
                fi
 
                echo "Operator deployment is ongoing. Current status: $get_status"
-               #sleep $sleep_timer
 
-               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do
-                 echo -n "."
-                 sleep 1
-                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
-               done
+               {{ include "tpl.sleeptimer" . | nindent 14 }}
 
                if [ "$get_status" == "Succeeded" ];
                then
@@ -116,13 +106,7 @@ spec:
 
              echo "Falling to sleep"
             
-             SLEEPER_TMP=0
-
-             while [[ $SLEEPER_TMP -le "10" ]]; do
-                 echo -n "."
-                 sleep 1
-                 SLEEPER_TMP=$(($SLEEPER_TMP+1))
-             done
+             {{ include "tpl.sleeptimer" . | nindent 14 }}
 
              printf "\nStatus: $status\n"
              if [ $status -eq 0 ]; then

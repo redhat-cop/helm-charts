@@ -1,0 +1,17 @@
+apiVersion: v2
+name: minio-configurator
+description: A Chart to automate the bucket creation and configuration for MINIO Object Storage
+version: 1.0.5
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/minio-configurator
+keywords:
+  - minio
+  - storage
+  - clusterconfig

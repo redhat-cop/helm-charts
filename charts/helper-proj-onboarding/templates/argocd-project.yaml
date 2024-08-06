@@ -1,0 +1,114 @@
+{{- range $key, $value := .Values.namespaces }}
+
+{{ range $key_approject, $value_appproject := $value.argocd_rbac_setup }}
+{{ if eq ($value_appproject.enabled | toString) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  name: {{ $value_appproject.name | replace "_" "-" }}
+  namespace: {{ $.Values.global.application_gitops_namespace }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+    argocd.argoproj.io/project-inherit: global
+spec:
+  description: {{ $value_appproject.name | replace "_" "-" }} GitOps Project
+  clusterResourceWhitelist: []
+  roles:
+    {{- range $role_key, $role_value := $value_appproject.rbac }}
+    - name: {{ .name }}
+      description: {{ .description | quote }}
+      groups:
+        {{- if .overwrite_oidc_groups }}
+          {{- range .overwrite_oidc_groups }}
+          - '{{ . }}'
+          {{- end }}
+        {{- else if $.Values.allowed_oidc_groups }}
+          {{- range $.Values.allowed_oidc_groups }}
+          - '{{ . }}'
+          {{- end }}
+        {{- else  }}
+          - dummy-group
+        {{- end }}
+      policies:
+      {{- if eq ( .fullaccess |toString) "true" }}
+        - 'p, proj:{{ $value_appproject.name }}:{{ $role_value.name }}, applications, *, {{ $value_appproject.name }}/*, allow'
+      {{- else }}
+      {{- range .policies }}
+      {{- if eq ($role_value.overwrite_appproject_name | toString) "true" }}
+        - 'p, proj:{{ .namespace }}:{{ $role_value.name }}, {{ .resource | default "applications" }}, {{ .action }}, {{ $value_appproject.name }}/{{ .object | default "*" }}, {{ .permission | default "deny" }}'
+      {{- else }}
+        - 'p, proj:{{ $value_appproject.name }}:{{ $role_value.name }}, {{ .resource | default "applications" }}, {{ .action }}, {{ $value_appproject.name }}/{{ .object | default "*" }}, {{ .permission | default "deny" }}'
+      {{- end }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
+  sourceNamespaces:
+    {{- if $value_appproject.overwrite_source_namespaces }}
+      {{- range $value_appproject.overwrite_source_namespaces }}
+      - '{{ . }}'
+      {{- end }}
+    {{- else if $.Values.allowed_source_namespace }}
+      {{- range $.Values.allowed_source_namespace }}
+      - '{{ . }}'
+      {{- end }}
+    {{- else if $.Values.global.allowed_source_namespace }}
+      {{- range $.Values.global.allowed_source_namespace }}
+      - '{{ . }}'
+      {{- end }}
+    {{- else }}
+      - '*'
+    {{- end }}
+  sourceRepos:
+    {{- if $value_appproject.overwrite_sourceRepos }}
+      {{- range $value_appproject.overwrite_sourceRepos }}
+      - '{{ . }}'
+      {{- end }}
+    {{- else if $.Values.allowed_source_repos }}
+      {{- range $.Values.allowed_source_repos }}
+      - '{{ . }}'
+      {{- end }}
+    {{- else if $.Values.global.allowed_source_repos }}
+      {{- range $.Values.global.allowed_source_repos }}
+      - '{{ . }}'
+      {{- end }}
+    {{- else }}
+      - '*'
+    {{- end }}
+
+{{- /*
+Get global values and find the URL and name of the cluster
+*/}}
+  destinations:
+{{- if $value_appproject.overwrite_allowed_envs }}
+{{- range $allowedenv_key, $allowedenv_value := $value_appproject.overwrite_allowed_envs }}
+{{- range $envs_key, $envs_value := $.Values.global.envs }}
+{{- if eq ($envs_value.name | toString) ($allowedenv_value | toString) }}
+{{- $cluster_name := $envs_value.name }}
+{{- $cluster_url := $envs_value.url }}
+      - name: {{ $cluster_name }}
+        namespace: {{ $value.name }}
+        server: {{ $cluster_url }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- else }}
+
+{{- range $allowedenv_key, $allowedenv_value := $.Values.allowed_envs }}
+{{- range $envs_key, $envs_value := $.Values.global.envs }}
+{{- if eq ($envs_value.name | toString) ($allowedenv_value | toString) }}
+{{- $cluster_name := $envs_value.name }}
+{{- $cluster_url := $envs_value.url }}
+      - name: {{ $cluster_name }}
+        namespace: {{ $value.name }}
+        server: {{ $cluster_url }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}

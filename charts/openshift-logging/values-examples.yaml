@@ -1,0 +1,134 @@
+---
+loggingConfig:
+  # -- Enable openshift logging configuration
+  # @default -- false
+  enabled: false
+
+  # -- Syncwave for the ClusterLogging resource
+  # @default -- 4
+  syncwave: '4'
+
+  # -- Indicator if the resource is 'Managed' or 'Unmanaged' by the operator
+  # @default -- Managed
+  managementState: Managed
+
+  logStore:
+    # -- The Type of Log Storage to configure.
+    # The operator currently supports either using ElasticSearch managed by elasticsearch-operator or Loki managed by loki-operator (LokiStack) as a default log store.
+    # However, Elasticsearch is deprecated and should not be used here ... it would result in an error
+    type: lokistack
+
+    # -- Name of the LokiStack resource.
+    # @default -- logging-loki
+    lokistack: logging-loki
+
+    visualization:
+      # -- The type of Visualization to configure
+      # Could be either Kibana (deprecated) or ocp-console
+      # @default -- ocp-console
+      type: ocp-console
+
+      ocpConsole:
+        # -- LogsLimit is the max number of entries returned for a query.
+        # @default -- none
+        logsLimit: 1000
+
+        # -- Timeout is the max duration before a query timeout
+        # @default -- none
+        timeout: 10s
+
+      # -- Define the tolerations the visualisation Pod will accept
+      # @default -- N/A
+      tolerations:
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: 'reserved'
+
+    collection:
+      # -- The type of Log Collection to configure
+      # Vector in case of Loki.
+      # @default -- vector
+      type: vector
+
+      # -- The resource requirements for the collector. Set this only when you know what you are doing
+      # @default -- N/A
+      resources:
+        # -- LIMITS for CPU, memory and storage
+        # @default -- N/A
+        limits:
+          cpu: '500m'
+          memory: '1Gi'
+          ephemeral-storage: '50Mi'
+        # -- REQUESTS for CPU, memory and storage
+        # @default -- N/A
+        requests:
+          cpu: '500m'
+          memory: '1Gi'
+          ephemeral-storage: '500Mi'
+
+      # -- Define the tolerations the collector Pods will accept
+      # @default -- N/A
+      tolerations:
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: 'reserved'
+
+# Install Operator Compliance Operator
+# Deploys Operator --> Subscription and Operatorgroup
+# Syncwave: 0
+# @ignore
+helper-operator:
+  operators:
+    loki-operator:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: openshift-operators-redhat
+        create: true
+      subscription:
+        channel: stable
+        approval: Automatic
+        operatorName: loki-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        # notownnamespace: true
+        create: false
+
+    cluster-logging-operator:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: openshift-logging
+        create: true
+      subscription:
+        approval: Automatic
+        operatorName: cluster-logging
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: true
+
+# @ignore
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: cluster-logging
+      namespace:
+        name: openshift-logging
+      syncwave: 3
+
+      serviceAccount:
+        name: "status-checker-logging"
+
+    - operatorName: loki-operator
+      namespace:
+        name: openshift-logging
+      syncwave: 3
+
+      serviceAccount:
+        name: "status-checker-loki"

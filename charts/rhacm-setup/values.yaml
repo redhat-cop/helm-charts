@@ -1,0 +1,68 @@
+---
+# -- Anchor for the operator version
+override-rhacm-operator-version: &rhacmversion release-2.10
+
+rhacm:
+  # Namespace, should be installed in open-cluster-management
+  # @default -- open-cluster-management
+  namespace:
+    name: open-cluster-management
+
+  # Configure MultiClusterHub
+  multiclusterhub:
+
+    # -- Enable MultiClusterHub object
+    # @default -- false
+    enabled: false
+
+    # -- Syncwave for the MultiClusterHub
+    # @default -- 3
+    syncwave: '3'
+
+    # -- Specifies deployment replication for improved availability. Options are: Basic and High
+    # @efault: -- Basic
+    availabilityConfig: Basic
+
+    # -- If you want this component to only run on specific nodes, you can
+    # configure tolerations of tainted nodes.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+# Install Operator RHACM
+# Deploys Operator --> Subscription and Operatorgroup
+# Syncwave: 0
+helper-operator:
+  operators:
+    advanced-cluster-management:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: open-cluster-management
+        create: true
+      subscription:
+        channel: *rhacmversion
+        approval: Automatic
+        operatorName: advanced-cluster-management
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: false
+        notownnamespace: false
+
+# Using sub-chart helper-status-checker
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: advanced-cluster-management
+      namespace:
+        name: open-cluster-management
+      syncwave: 3
+
+      serviceAccount:
+        name: "sa-acm-status-checker"

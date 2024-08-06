@@ -1,0 +1,26 @@
+{{ if eq (.Values.compliance.scansettingbinding.tailored.enabled | toString) "true" }}
+{{- range $key, $value := .Values.compliance.scansettingbinding.tailored.modified_profiles }}
+---
+apiVersion: compliance.openshift.io/v1alpha1
+kind: TailoredProfile
+metadata:
+  name: {{ $value.name }}
+  namespace: {{ $.Values.compliance.namespace.name | default "openshift-compliance" | quote }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $.Values.compliance.scansettingbinding.syncwave | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  description: {{ $value.description }}
+  {{ if .disableRule }}
+  disableRules:
+  {{- range $rulekey, $rulevalue := .disableRule }}
+    - name: {{ $rulevalue.name }}
+      rationale: {{ $rulevalue.rationale }}
+  {{- end }}
+  {{- end }}
+  extends: {{ $value.extends }}
+  title: {{ $value.title }}
+{{- end }}
+{{- end }}

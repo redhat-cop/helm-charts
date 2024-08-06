@@ -1,0 +1,16 @@
+apiVersion: v2
+name: generic-cluster-config
+description: This Chart is responsible for deploying generic cluster configuration, for example, etcd encryption, OAuth etc.
+version: 1.0.29
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/generic-cluster-config
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+keywords:
+  - generic
+  - clusterconfig

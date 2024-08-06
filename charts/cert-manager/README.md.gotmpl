@@ -1,0 +1,84 @@
+{{ template "doc.header" . }}
+
+This Helm Chart installs and configures the Cert-Manager Operator. It can patch the ClusterManager resource in order to override arguments (for example the list of recursive nameservers)
+ and to configure ClusterIssuer or Issuers. Moreover, it is possible to order a certificate by creating a Certificate resource.
+
+Currently, the built-in in-tree issuers are supported: https://cert-manager.io/docs/configuration/selfsigned/ 
+
+. selfSigned
+. ACME 
+. CA 
+. Venafi 
+. Vault
+
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops (see folder cluster/management-cluster/cert-manager)
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+{{ template "doc.values" . }}
+
+## Example values - for the cert manager
+
+```yaml
+---
+clusterManager:
+  enable_patch: true
+
+  overrideArgs:
+    - '--dns01-recursive-nameservers-only'
+    - --dns01-recursive-nameservers=ns-362.awsdns-45.com:53,ns-930.awsdns-52.net:53
+
+issuer:
+  - name: letsencrypt-prod
+    type: ClusterIssuer
+    enabled: true
+    syncwave: 20
+
+    acme:
+      email: <-your-email-address>
+
+      solvers:
+        - dns01:
+            route53:
+              accessKeyIDSecretRef:
+                key: access-key-id
+                name: prod-route53-credentials-secret
+              region: us-west-1
+              secretAccessKeySecretRef:
+                key: secret-access-key
+                name: prod-route53-credentials-secret
+          selector:
+            dnsZones:
+              - <list of domain zones>
+```
+
+## Example values - to order a certificate
+
+```yaml
+---
+certificates:
+  enabled: true
+
+  # List of certificates
+  certificate:
+    - name: router-certificate
+      enabled: true
+      namespace: openshift-ingress
+      syncwave: "0"
+      secretName: router-certificate
+
+      dnsNames:
+        - apps.ocp.aws.ispworld.at 
+        - '*.apps.ocp.aws.ispworld.at'
+
+      # Reference to the issuer that shall be used.
+      issuerRef:
+        name: letsencrypt-prod
+        kind: ClusterIssuer
+```
+
+{{ template "doc.footer" . }}

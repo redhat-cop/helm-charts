@@ -1,0 +1,106 @@
+{{ template "doc.header" . }}
+
+Install and configure an Argo CD instance...
+
+With this Helm chart, OpenShift Gitops can be deployed and configured. By default, the operator will deploy the first
+instance automatically, which be used and patched, but also additional instances can be deployed by this Chart.
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops 
+
+However, for the first instance, a simple shell script is used: https://github.com/tjungbauer/openshift-clusterconfig-gitops/blob/main/init_GitOps.sh
+This first instance typically deploys the Operator itself as well. Thus the dependency on helper-operator subchart. 
+Any further instance does not need to deploy the Operator and can simply configure the new Argo CD instance.
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+Verify the sub-charts for additional settings:
+
+* [helper-operator](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+* [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+
+{{ template "doc.values" . }}
+
+## Example
+
+```yaml
+---
+hostname: &hostname gitops.apps.prod.ocp.cluster
+
+openshift-gitops:
+  gitopsinstances:
+    gitops_application:
+      enabled: true
+      namespace: gitops-application
+
+      server:
+        host: *hostname
+        route: 
+          enabled: true
+
+      sourceNamespaces:
+        enabled: true
+        observedNamesapces:
+          - app1
+          - app2
+
+      generic_config:
+        disableAdmin: true
+        resourceTrackingMethod: annotation
+
+      ha:
+        enabled: false
+
+      tolerations:
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+
+      rbac:
+        defaultRole: 'role:none'
+        policy: |-
+            # Access Control
+            g, system:cluster-admins, role:admin
+            g, cluster-admin, role:admin
+            p, role:none, applications, get, */*, deny
+            p, role:none, certificates, get, *, deny
+            p, role:none, clusters, get, *, deny
+            p, role:none, repositories, get, *, deny
+            p, role:none, projects, get, *, deny
+            p, role:none, accounts, get, *, deny
+            p, role:none, gpgkeys, get, *, deny
+        scopes: '[groups]'
+
+      # This will create some default health checks I usually add.
+      # * ClusterLogging, * Application (Argo CD), * Lokistack, * Subcription, * Central (ACS), InstallPlan
+      # @default -- false
+      default_resourceHealthChecks: true
+
+      custom_resourceHealthChecks: |-
+          - check: |
+              hs = {}
+              hs.status = "Progressing"
+              hs.message = "Progressing ClusterLogging"
+              if obj.status ~= nil and obj.status.conditions ~= nil then
+                  for i, condition in ipairs(obj.status.conditions) do
+                    if condition.type == "Ready" then
+                        hs.status = "Healthy"
+                        hs.message = "ClusterLogging is ready"
+                    end
+                  end
+                  return hs
+              end
+              return hs
+            group: logging.openshift.io
+            kind: ClusterLogging      
+```
+
+{{ template "doc.footer" . }}

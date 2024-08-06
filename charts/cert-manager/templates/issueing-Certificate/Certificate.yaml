@@ -1,0 +1,112 @@
+{{- with .Values.certificates }}
+{{ if eq (.enabled | toString) "true" }}
+{{- range .certificate }}
+{{ if eq (.enabled | toString) "true" }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 1 | quote }}
+spec:
+  secretName: {{ .secretName }}
+
+  {{- if .secretTemplate }}
+  secretTemplate:
+    {{- if .secretTemplate.annotations }}
+    annotations:
+    {{- range $key, $value := .secretTemplate.annotations }}
+      {{ $key }}: {{ $value }}
+    {{- end }}
+    {{- end }}
+    {{- if .secretTemplate.labels }}
+    labels:
+    {{- range $key, $value := .secretTemplate.labels }}
+      {{ $key }}: {{ $value }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{- $privKey := .privateKey | default dict }}
+  privateKey:
+    algorithm: {{ $privKey.algorithm | default "RSA" }}
+    encoding: {{ $privKey.encoding | default "PKCS1" }}
+
+    {{- if eq ($privKey.algorithm | toString) "RSA" }}
+    {{- if not $privKey.size }}
+    size: 2048
+    {{- else }}
+    size: {{ $privKey.size }}
+    {{- end }}
+    {{- end }}
+
+    {{- if eq ($privKey.algorithm | toString) "ECDSA" }}
+    {{- if not $privKey.size }}
+    size: 256
+    {{- else }}
+    size: {{ $privKey.size }}
+    {{- end }}
+    {{- end }}
+    rotationPolicy: {{ $privKey.rotationPolicy | default "Always" }}
+  duration: {{ .duration | default "2160h0m0s" }}
+  {{- if .renewBefore }}
+  renewBefore: {{ .renewBefore }}
+  {{- end }}
+
+  {{- if eq (.isCA | toString) "true" }}
+  isCA: true
+  {{- end }}
+
+  {{- if .usages }}
+  usages:
+    {{- range .usages }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+
+  {{- if .subject }}
+  subject:
+{{ toYaml .subject | indent 4}}
+  {{- end }}
+
+  {{- if .dnsNames }}
+  dnsNames:
+  {{- range .dnsNames }}
+    - {{ . | quote }}
+  {{- end }}
+  {{- end }}
+
+  {{- if .uris }}
+  uris:
+  {{- range .uris }}
+    - {{ . }}
+  {{- end }}
+  {{- end }}
+
+  {{- if .emailAddresses }}
+  emailAddresses:
+  {{- range .emailAddresses }}
+    - {{ . }}
+  {{- end }}
+  {{- end }}
+
+  {{- if .ipAddresses }}
+  ipAddresses:
+  {{- range .ipAddresses }}
+    - {{ . }}
+  {{- end }}
+  {{- end }}
+  issuerRef:
+    name: {{ .issuerRef.name }}
+    kind: {{ .issuerRef.kind | default "Issuer" }}
+    {{- if .issuerRef.group }}
+    group: {{ .issuerRef.group }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

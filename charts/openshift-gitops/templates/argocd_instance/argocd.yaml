@@ -1,0 +1,341 @@
+{{- range $key, $value := .Values.gitopsinstances }}
+{{ if eq ($value.enabled | toString) "true" }}
+---
+apiVersion: argoproj.io/v1beta1
+kind: ArgoCD
+metadata:
+  name: {{ $key | replace "_" "-" | quote }}
+  namespace: {{ $value.namespace | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $value.syncwave | default "10" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  {{- if $value.generic_config.applicationInstanceLabelKey }}
+  applicationInstanceLabelKey: {{ $value.generic_config.applicationInstanceLabelKey }}
+  {{- else }}
+  applicationInstanceLabelKey: {{ printf "argocd.argoproj.io/%s" $key | replace "_" "-" | quote }}
+  {{- end }}
+  resourceTrackingMethod: {{ $value.generic_config.resourceTrackingMethod | default "label" }}
+  {{- if $value.generic_config.kustomizeBuildOptions }}
+  kustomizeBuildOptions: {{ $value.generic_config.kustomizeBuildOptions }}
+  {{- end }}
+  {{- if eq ($value.generic_config.disableAdmin | toString) "true" }}
+  disableAdmin: true
+  {{- end }}
+  {{- /* Set tolerations */}}
+  {{- if $value.tolerations }}  
+  nodePlacement:
+    {{- if $value.tolerations }}
+{{ include "tpl.tolerations" $value.tolerations | indent 4 }}
+    {{- end }}
+    {{- end }}
+  server:
+    {{- if $value.server.host }}
+    host: {{ $value.server.host }}
+    {{- end }}
+    {{- if $value.server.replicas }}
+    replicas: {{ $value.server.replicas }}
+    {{- end }}
+    {{- if $value.server.logLevel }}
+    logLevel: {{ $value.server.logLevel }}
+    {{- end }}
+    autoscale:
+      enabled: false
+    grpc:
+      ingress:
+        enabled: false
+    ingress:
+      enabled: false
+    resources:
+      limits:
+        cpu: {{ $value.server.cpu_limits | default "500m" }}
+        memory: {{ $value.server.memory_limits | default "256Mi" }}
+      requests:
+        cpu: {{ $value.server.cpu_requests | default "125m" }}
+        memory: {{ $value.server.memory_requests | default "128Mi" }}
+    {{- if $value.server.route }}
+    route:
+      enabled: {{ $value.server.route.enabled | default "true" }}
+      {{- if $value.server.route.tls }}
+      {{ if eq ($value.server.route.tls.enabled | toString) "true" }}
+      tls:
+        termination: {{ $value.server.route.tls.termination | default "edge" }}
+        {{- if  $value.server.route.tls.caCertificate  }}
+        caCertificate:
+          {{- $value.server.route.tls.caCertificate | toYaml | indent 8 }}
+        {{- end }}
+        {{- if  $value.server.route.tls.certificate }}
+        certificate:
+          {{- $value.server.route.tls.certificate | toYaml | indent 8 }}
+        {{- end }}
+        {{- if  $value.server.route.tls.destinationCACertificate  }}
+        destinationCACertificate:
+          {{- $value.server.route.tls.destinationCACertificate | toYaml | indent 8 }}
+        {{- end }}
+        {{- if  $value.server.route.tls.key  }}
+        key:
+          {{- $value.server.route.tls.key | toYaml | indent 8 }}
+        {{- end }}
+        insecureEdgeTerminationPolicy: {{ $value.server.route.tls.insecureEdgeTerminationPolicy | default "Redirect" }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
+    service:
+      type: ''
+  prometheus:
+    enabled: false
+    ingress:
+      enabled: false
+    route:
+      enabled: false
+  initialSSHKnownHosts: {}
+  {{- if $value.sourceNamespaces }}
+  {{- if eq ($value.sourceNamespaces.enabled | toString) "true" }}
+  sourceNamespaces:
+  {{- range $value.sourceNamespaces.observedNamesapces }}
+    - {{ . }}
+  {{- end }}
+  {{- end }}
+  {{- end }}  
+  applicationSet:
+    {{- if $value.sourceNamespaces }}
+    {{- if eq ($value.sourceNamespaces.enabled | toString) "true" }}
+    sourceNamespaces:
+    {{- range $value.sourceNamespaces.observedNamesapces }}
+      - {{ . }}
+    {{- end }}
+    {{- end }}
+    {{- end }} 
+    resources:
+      limits:
+        cpu: {{ $value.appset.cpu_limits | default "2" | quote }}
+        memory: {{ $value.appset.memory_limits | default "1Gi" }}
+      requests:
+        cpu: {{ $value.appset.cpu_requests | default "250m" }}
+        memory: {{ $value.appset.memory_requests | default "512Mi" }}
+  rbac:
+    defaultPolicy: '{{ $value.rbac.defaultRole | default "role:readonly" }}'
+    policy: |
+      {{ $value.rbac.policy | nindent 6 }}
+    scopes: '{{ $value.rbac.scopes }}'
+  repo:
+    resources:
+      limits:
+        cpu: {{ $value.repo.cpu_limits | default "1" | quote }}
+        memory: {{ $value.repo.memory_limits | default "1Gi" }}
+      requests:
+        cpu: {{ $value.repo.cpu_requests | default "250m" }}
+        memory: {{ $value.repo.memory_requests | default "256Mi" }}
+  resourceExclusions: |
+    {{ $value.resourceExclusions | nindent 4 }}
+  {{- if or (eq ($value.default_resourceHealthChecks | toString) "true") ($value.custom_resourceHealthChecks) }}
+  resourceHealthChecks:
+    {{- if $value.custom_resourceHealthChecks }}
+      {{- $value.custom_resourceHealthChecks | nindent 4 }}
+    {{- end }} 
+    {{- if eq ($value.default_resourceHealthChecks | toString) "true" }}
+    - check: |
+        hs = {}
+        -- Default return value ... to have something
+        hs.status = "Progressing"
+        hs.message = ""
+        if obj.status ~= nil then
+          if obj.status.health ~= nil then
+            if obj.status.health.message ~= nil then
+              hs.message = obj.status.health.message
+            end
+          end
+          -- verify operationState.phase to see if PostSync has been finished
+          if obj.status.operationState ~= nil then
+            -- check if phase is Running or Terminating
+            if obj.status.operationState.phase == "Running" or obj.status.operationState.phase == "Terminating" then 
+              hs.status = "Progressing"
+            -- check if phase if Degraded or Error
+            elseif obj.status.operationState.phase == "Degraded" or obj.status.operationState.phase == "Error" or obj.status.operationState.phase == "Failed" then
+              hs.status = "Degraded"
+              if obj.status.operationState.message ~= nil then
+                hs.message = obj.status.operationState.message
+              end
+            -- check if phase (alls phases including PostSync) are Succeeded
+            elseif obj.status.operationState.phase == "Succeeded" then
+              hs.status = obj.status.health.status
+            -- everything else is Unknown
+            else
+              hs.status = "Unknown"
+            end
+          else
+            -- for the main App of Apps and ApplicationSets that does not automatically sync the Apps.
+            if obj.status.sync.status ~= nil then
+              if obj.status.sync.status == "OutOfSync" and obj.status.health.status == "Healthy" then
+                hs.status = "Missing"
+                hs.message = "Out of Sync"
+              end
+            end
+            -- Compare if status is Missing and sync.status is OutOfSync
+            if obj.status.sync.status ~= nil then
+              if obj.status.sync.status == "OutOfSync" and obj.status.health.status == "Missing" then
+                hs.status = "Missing"
+                hs.message = "Out of Sync"
+              end
+            end
+          end
+        end
+        if obj.status.sync.status == "Unknown" then
+          hs.status = "Progressing"
+          hs.message = "Unknown status. Verify the Argo CD Application"
+        end
+        return hs
+      group: argoproj.io
+      kind: Application
+    - check: |
+        hs = {}
+        if obj.status ~= nil and obj.status.conditions ~= nil then
+            for i, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Degraded" and condition.reason == "MissingObjectStorageSecret" then
+                  hs.status = "Degraded"
+                  hs.message = "Missing Bucket Secret"
+              end
+              if condition.type == "Pending" and condition.reason == "PendingComponents" and condition.status == "True" then
+                  hs.status = "Progressing"
+                  hs.message = "Some LokiStack components pending on dependencies"
+              end
+              if condition.type == "Ready" and condition.reason == "ReadyComponents" then
+                  hs.status = "Healthy"
+                  hs.message = "All components are ready"
+              end
+            end
+            return hs
+        end
+        hs.status = "Progressing"
+        hs.message = "Waiting for LokiStack to deploy."
+        return hs
+      group: loki.grafana.com
+      kind: LokiStack
+    - check: |
+        hs = {}
+        hs.status = "Progressing"
+        hs.message = "Progressing ClusterLogging"
+        if obj.status ~= nil and obj.status.conditions ~= nil then
+            for i, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Ready" then
+                  hs.status = "Healthy"
+                  hs.message = "ClusterLogging is ready"
+              end
+            end
+            return hs
+        end
+        return hs
+      group: logging.openshift.io
+      kind: ClusterLogging
+    - check: |
+        hs = {}
+        hs.status = "Progressing"
+        hs.message = ""
+        if obj.status ~= nil then
+          if obj.status.state ~= nil then
+            if obj.status.state == "AtLatestKnown" then
+              hs.message = obj.status.state .. " - " .. obj.status.currentCSV
+              hs.status = "Healthy"
+            end
+          end
+        end
+        return hs
+      group: operators.coreos.com
+      kind: Subscription
+    - check: |
+        hs = {}
+        if obj.status ~= nil and obj.status.conditions ~= nil then
+            for i, condition in ipairs(obj.status.conditions) do
+              if condition.status == "True" or condition.reason == "InstallSuccessful" or condition.reason == "UpgradeSuccessful" then
+                  hs.status = "Healthy"
+                  hs.message = "Install Successful"
+                  return hs
+              end
+            end
+        end
+        hs.status = "Progressing"
+        hs.message = "Waiting for Central to deploy."
+        return hs
+      group: platform.stackrox.io
+      kind: Central
+    - check: |
+        hs = {}
+        if obj.status ~= nil then
+          if obj.status.phase ~= nil then
+            if obj.status.phase == "Complete" then
+              hs.status = "Healthy"
+              hs.message = obj.status.phase
+              return hs
+            end
+          end
+        end
+        hs.status = "Progressing"
+        hs.message = "Waiting for InstallPlan to complete"
+        return hs
+      group: operators.coreos.com
+      kind: InstallPlan
+    {{- end }}
+  {{- end }}
+  resourceIgnoreDifferences:
+    resourceIdentifiers:
+      - customization:
+          jsonPointers:
+            - /webhooks/0/clientConfig/caBundle
+            - /webhooks/1/clientConfig/caBundle
+            - /webhooks/2/clientConfig/caBundle
+            - /webhooks/3/clientConfig/caBundle
+            - /webhooks/4/clientConfig/caBundle
+            - /webhooks/5/clientConfig/caBundle
+        group: admissionregistration.k8s.io
+        kind: MutatingWebhookConfiguration
+      - customization:
+          jsonPointers:
+            - /status/ingress
+        group: route.openshift.io
+        kind: Route
+  sso:
+    {{- if $value.sso.dex }}
+    dex:
+      openShiftOAuth: {{ $value.sso.dex.openShiftOAuth | default "true" }} 
+      resources:
+        limits:
+          cpu: {{ $value.sso.dex.cpu_limits | default "500m" }}
+          memory: {{ $value.sso.dex.memory_limits | default "256Mi" }}
+        requests:
+          cpu: {{ $value.sso.dex.cpu_requests | default "250m" }}
+          memory: {{ $value.sso.dex.memory_requests | default "128Mi" }} 
+    {{- end }}   
+    provider: {{ $value.sso.provider | default "dex" }} 
+  ha:
+    enabled: {{ $value.ha.enabled | default "false" }}
+    resources:
+      limits:
+        cpu: {{ $value.ha.cpu_limits | default "500m" }}
+        memory: {{ $value.ha.memory_limits | default "256Mi" }}
+      requests:
+        cpu: {{ $value.ha.cpu_requests | default "250m" }}
+        memory: {{ $value.ha.memory_requests | default "128Mi" }}
+  tls:
+    ca: {}
+  redis:
+    resources:
+      limits:
+        cpu: {{ $value.redis.cpu_limits | default "500m" }}
+        memory: {{ $value.redis.memory_limits | default "256Mi" }}
+      requests:
+        cpu: {{ $value.redis.cpu_requests | default "250m" }}
+        memory: {{ $value.redis.memory_requests | default "128Mi" }}
+  controller:
+    processors: {}
+    resources:
+      limits:
+        cpu: {{ $value.controller.cpu_limits | default "2" | quote }}
+        memory: {{ $value.controller.memory_limits | default "2Gi" }}
+      requests:
+        cpu: {{ $value.controller.cpu_requests | default "250m" }}
+        memory: {{ $value.controller.memory_requests | default "1Gi" }}
+    sharding: {}
+{{- end }}
+{{- end }}

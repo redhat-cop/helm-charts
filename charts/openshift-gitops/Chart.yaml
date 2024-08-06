@@ -1,0 +1,23 @@
+apiVersion: v2
+name: openshift-gitops
+description: Installs and patches the Red Hat Openshift Gitops Operator
+version: 1.0.45
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/openshift-gitops
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+  - name: helper-operator
+    version: ~1.0.18
+    repository: https://redhat-cop.github.io/helm-charts
+  - name: helper-status-checker
+    version: ~4.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+    condition: helper-status-checker.enabled
+keywords:
+  - gitops
+  - management

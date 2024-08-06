@@ -1,0 +1,8 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: "userlink"
+spec:
+  text: "Intranet"
+  location: "UserMenu"
+  href: "https://intranet"
