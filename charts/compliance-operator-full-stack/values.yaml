@@ -1,0 +1,122 @@
+---
+# Using sub-chart helper-operator
+helper-operator:
+  operators:
+    compliance-operator:
+      # -- Enabled yes/no
+      # @default -- false
+      enabled: false
+      # -- Syncwave for the operator deployment
+      # @default -- 0
+      syncwave: '0'
+      namespace:
+        # -- The Namespace the Operator should be installed in.
+        # The compliance operator should be deployed into **openshift-compliance** Namepsace
+        # that must be created.
+        name: openshift-compliance
+        # -- Description of the namespace.
+        # @default -- ""
+        create: true
+      subscription:
+        # -- Channel of the Subscription
+        # @default -- stable
+        channel: stable
+        # -- Update behavior of the Operator. Manual/Automatic
+        # @default -- Automatic
+        approval: Automatic
+        # -- Name of the Operator
+        # The name for the compliance operator is **compliance-operator**
+        # @default -- "empty"
+        operatorName: compliance-operator
+        # -- Source of the Operator
+        # @default -- redhat-operators
+        source: redhat-operators
+        # -- Namespace of the source
+        # @default -- openshift-marketplace
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        # -- Create an Operatorgroup object
+        # @default -- false
+        create: true
+        # -- Monitor own Namespace. For some Operators no `targetNamespaces` must be defined
+        # @default -- false
+        notownnamespace: true
+
+# Using sub-chart helper-status-checker
+helper-status-checker:
+  # -- Enable status checker
+  # @default -- false
+  enabled: false
+
+  checks:
+
+      # -- Define the name of the operator that shall be verified.
+      # Use the value of the currentCSV (packagemanifest) but WITHOUT the version !!
+      # For the compliance operator the name should be "**compliance-operator**"
+      # @default -- ""
+    - operatorName: compliance-operator
+      # -- Define where the operator is installed
+      # For the compliance operator this should be "**openshift-compliance**"
+      # @default -- ""
+      namespace:
+        name: openshift-compliance
+      syncwave: 3
+
+      # -- Set the values of the ServiceAccount that will execute the status checker Job.
+      serviceAccount:
+        name: "sa-compliance"
+
+compliance:
+  # -- Settings for namespace where compliance operator will be installed.
+  namespace:
+    # -- Namespace of the operator
+    name: openshift-compliance
+
+  # -- Settings for the ScanSettings
+  # Here ScanSettingBinding and TailoredProfile can be configured
+  scansettingbinding:
+
+    # -- Enable ScanSetting cnofiguration
+    # @default -- false
+    enabled: false
+
+    # -- Syncwave for the ScanSetting
+    syncwave: '3'
+
+    # -- Example of a TailoredProfile
+    # With TailoredProfiles you can disable specific checks
+    tailored:
+
+      # -- Enable TailoredProfile
+      # @default -- false
+      enabled: false
+
+      modified_profiles:
+
+        # -- Name of the TailoredProfile
+      - name: tailoredprofile-ocp4-cis
+        # -- Description of the Profile
+        description: Modified ocp4-cis profile
+        # -- Title of the profile (visible in the reports)
+        title: Tailored Profile of ocp4-cis
+        # -- Which Profile is extended here. Here we are using ocp4-cis as basis.
+        # This Profile must exist.
+        extends: ocp4-cis
+        # -- A list of rules that might be disabled.
+        disableRule:
+          # -- Name of the rule that shall be disabled
+        - name: ocp4-scc-limit-container-allowed-capabilities
+          # -- A Reason why this rule is excluded.
+          rationale: Disabling CIS-OCP 5.2.8 that will always be triggered as long nutanix-csi does not provide SCC configuration
+
+    # -- A list of Profiles that shall be used for scanning
+    profiles:
+        # -- The name of the Profile
+      - name: ocp4-cis-node
+        # -- The kind of the profile. This can either be Profile or TailoredProfile
+        kind: Profile  # Could be Profile or TailedProfile
+      - name: ocp4-cis
+        kind: Profile
+
+    # -- Use the default ScanSettings that a provided by the Operator.
+    scansetting: default

@@ -1,0 +1,52 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is using OpenShift Data Foundation and will create a new ObjectStorage by rendering the objects:
+
+1. BackingStore
+2. BucketClass
+3. StorageClass
+4. BucketClaim
+
+{{ template "doc.deps" . }}
+
+This chart has no dependencies to other charts, but OpenShift Data Foundation must be deployed in order to use it. Or in other words: The CRDs like BackingStore or BucketClaim must exist on your cluster.
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops (folder clusters/management-cluster/setup-openshift-logging)
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+enabled: false
+syncwave: 1
+backingstore_name: backingstore
+backingstore_size: 700Gi
+limits_cpu: 500m
+limits_memory: 2Gi
+
+pvPool:
+  numOfVolumes: 1
+  type: pv-pool
+
+baseStorageClass: gp3-csi
+
+storageclass_name: bucket-storage-class
+
+# Bucket that shall be created
+bucket:
+  enabled: true
+  name: bucketname
+  namespace: target-namespace
+  syncwave: 2
+  storageclass: bucket-storage-class
+
+```
+
+{{ template "doc.footer" . }}

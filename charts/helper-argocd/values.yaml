@@ -1,0 +1,301 @@
+---
+# General values
+#
+# Set cluster names ...
+# https://issues.redhat.com/browse/GITOPS-1777
+# The issue that the in-cluster cannot be renamed has been resolved
+mgmt-cluster: &mgmtcluster https://kubernetes.default.svc
+mgmt-cluster-name: &mgmtclustername in-cluster
+production-cluster: &prodcluster https://api.ocp.aws.ispworld.at:6443
+production-cluster-name: &prodclustername prod
+
+repourl: &repourl 'https://github.com/tjungbauer/openshift-clusterconfig-gitops'
+repobranch: &branch main
+
+# the anchor *rev must be set to a default value, in case it is not set for the cluster
+dummy_rev: &rev 1.0.0
+
+argocd_projects:
+  - *mgmtclustername
+  - *prodclustername
+
+applicationsets:
+
+  ############################
+  # MATRIX GENERATOR EXAMPLE #
+  ############################
+  # Matrix Generator: The idea here is to walk over a folder, for example /clusters/management-cluster
+  # and take all settings from there.
+  # This way you see what is installed on which cluster and you do not need to configure the application here
+  # Instead, you just add a new configuretion to clusters/management-cluster and it will automatically takes from there.
+  #
+  # The generator config here is bypassed 1:1 to the applicationset. It uses Git and list.
+  #   Git: Walking through the specified path
+  #   List: simply defines the target cluster. This is important so that we know where to deploy :)
+  #
+  # To make it flexible create one Matrix Generator per cluster.
+  # Don't forget that the Matrix Generator supports only 2 generators at the moment.
+  mgmt-cluster:
+    # Is the ApplicationSet enabled or not
+    enabled: false
+
+    # Description - always usful
+    description: "ApplicationSet that Deploys on Management Cluster Configuration (using Matrix Generator)"
+
+    # Any labels you would like to add to the Application. Good to filter it in the Argo CD UI.
+    labels:
+      category: configuration
+      env: mgmt-cluster
+
+    # Using go text template. See: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/GoTemplate/
+    goTemplate: true
+    argocd_project: *mgmtclustername
+
+    # preserve all resources when the application get deleted. This is useful to keep that workload even if Argo CD is removed or severely changed.
+    preserveResourcesOnDeletion: true
+
+    # Definition of Matrix Generator. Only 2 generators are supported at the moment
+    generatormatrix:
+      # Git: Walking through the specific folder and take whatever is there.
+      - git:
+          directories:
+            - path: clusters/management-cluster/*
+            - path: clusters/management-cluster/waves
+              exclude: true
+          repoURL: *repourl
+          revision: *branch
+      # List: simply define the targetCluster. The name of the cluster must be known by Argo CD
+      - list:
+          elements:
+              # targetCluster is important, this will define on which cluster it will be rolled out.
+              # The cluster name must be known in Argo CD
+            - targetCluster: *mgmtclustername
+    syncPolicy:
+      autosync_enabled: false
+
+    # Retrying in case the sync failed.
+    retries:
+      # number of failed sync attempt retries; unlimited number of attempts if less than 0
+      limit: 5
+      backoff:
+        # the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
+        # Default: 5s
+        duration: 5s
+        # a factor to multiply the base duration after each failed retry
+        # Default: 2
+        factor: 2
+        # the maximum amount of time allowed for the backoff strategy
+        # Default: 3m
+        maxDuration: 3m
+
+    # Ignore specific differences in obhects. For example: the randomly generated password string in the secret for Quay.
+    ignoreDifferences:
+      - kind: Secret
+        jsonPointers:
+          - /data/password
+        name: init-user
+        namespace: quay-enterprise
+
+  ################################
+  # END MATRIX GENERATOR EXAMPLE #
+  ################################
+
+  ########################################
+  # LIST GENERATOR EXAMPLE - ALL Cluster #
+  ########################################
+  # Using the list generator to deploy on ALL clusters that are configured inside Argo CD.
+  # Install ETCD Encryption
+  enable-etcd-encryption:
+
+    # Is the ApplicationSet enabled or not
+    enabled: false
+
+    # Description for the Application.
+    description: "Enable ETCD Encryption on target cluster"
+
+    # Any labels you would like to add to the Application. Good to filter it in the Argo CD UI.
+    labels:
+      category: security
+
+    # The path where the information about etcd-encryption can be found.
+    path: clusters/all/etcd-encryption
+
+    # Empty list of clusters, means that this ApplicationSet will create an Application for ALL clusters.
+    generatorlist: []
+
+    syncPolicy:
+      autosync_enabled: false
+    targetrevision: *branch
+
+  ##############################
+  # END LIST GENERATOR EXAMPLE #
+  ##############################
+
+  # Install Base Operators
+  enable-base-operators:
+    enabled: false
+    description: "Install BASE Operators for later use. There is no Health Check in Place, be sure that the Operators have been deployed."
+    labels:
+      category: operators
+    path: clusters/all/base-operators
+    generatorlist: []
+    syncPolicy:
+      autosync_enabled: false
+    targetrevision: "main"
+
+  # separated because autosync enabled for sealed secrets
+  sealed-secrets:
+    enabled: false
+    description: "Deploy Sealed-Secrets"
+    labels:
+      category: security
+    generatorlist: []
+    project: default
+    chartname: sealed-secrets
+    helm:
+      releasename: sealed-secrets
+      helmvalues:
+        - name: sealed-secrets.enabled
+          value: 'true'
+    syncPolicy:
+      autosync_enabled: true
+      syncpolicy_prune: false
+      syncpolicy_selfheal: true
+    generatorclusters: []
+    repourl: "https://charts.stderr.at/"
+    targetrevision: 1.0.14
+
+  # Install RHACS Demo
+  rhacs-demo-app:
+    enabled: false
+    description: "Deploy a vulnerable demo application to show results in RHACS"
+    labels:
+      category: security
+      solution: rhacs
+    helm:
+      per_cluster_helm_values: false
+    generatorlist:
+      - clustername: *mgmtclustername
+        clusterurl: *mgmtcluster
+    syncPolicy:
+      autosync_enabled: false
+    path: charts/rhacs-demo-applications/
+    repourl: "https://github.com/tjungbauer/helm-charts"
+    targetrevision: "main"
+
+  # Install Pipeline Demo
+  pipeline-demo:
+    enabled: false
+    description: "Deploy a demo pipeline about linting to show possibilities"
+    labels:
+      category: cicd
+    helm:
+      per_cluster_helm_values: false
+    generatorlist:
+      - clustername: *mgmtclustername
+        clusterurl: *mgmtcluster
+    syncPolicy:
+      autosync_enabled: false
+    path: charts/pipeline-example/
+    repourl: "https://github.com/tjungbauer/helm-charts"
+    targetrevision: "main"
+
+  ######################################
+  # PROJECT ONBOARDING - GIT GENERATOR #
+  ######################################
+  # Tenant Onboarding (using Git Generator)
+  onboarding-tenant-workload:
+    # Is the ApplicationSet enabled or not
+    enabled: false
+
+    # Description - always usful
+    description: "Onboarding Workload to the cluster"
+
+    # Any labels you would like to add to the Application. Good to filter it in the Argo CD UI.
+    labels:
+      catagory: tenant-onboarding
+
+    # Path to the Git repository. The default URL and revision are defined as anchors at the beginning of the file, but could be overwritten here.
+    path: clusters/all/project-onboarding
+    repourl: *repourl
+    targetrevision: *branch
+
+    # Using go text template. See: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/GoTemplate/
+    goTemplate: true
+
+    # Helm configuration. A list of helm values files
+    helm:
+      per_cluster_helm_values: false
+      value_files:
+        - '/{{ .path.path }}/values.yaml'
+        - /tenants/values-global.yaml
+
+    # Generator: currently list, git and cluster are possible.
+    # either "generatorlist", "generatorgit" or "generatorclusters"
+    # Define the repository that shall be checked for configuration file
+    generatorgit:
+      - repourl: *repourl
+        targetrevision: *branch
+        files:
+          - tenants/**/values.yaml
+
+    # preserve all resources when the application get deleted. This is useful to keep that workload even if Argo CD is removed or severely changed.
+    preserveResourcesOnDeletion: true
+
+  ##########################################
+  # END PROJECT ONBOARDING - GIT GENERATOR #
+  ##########################################
+
+  ##########################
+  # LIST GENERATOR EXAMPLE #
+  ##########################
+  # Name of the ApplicationSet. The clustername will be appended to the Application
+  install_sonarqube:
+    # Is the ApplicationSet enabled or not
+    enabled: false
+
+    # Description - always usful
+    description: "Install Sonarqube"
+
+    # Any specific namespace to be used
+    namespace: sonarqube
+
+    # Helm settings
+    # These settings are used for single sources MAINLY.
+    #
+    # "per_cluster_helm_values" (bool, optional): Defines if every cluster known in Argo CD is using a spearate values-file. This values-file must be named <cluster-name>-values.yaml
+    # "releasename" (string, optional): Overwrites the releasename of the chart
+    # "paramters" (array, optional): Sets custom parameters for this chart. The list looks like:
+    #      - name: Name/key of the parameter
+    #      - value: value of the parameter
+    helm:
+      releasename: sonarqube
+
+    # Any labels you would like to add to the Application. Good to filter it in the Argo CD UI.
+    labels:
+      category: project
+    chartname: sonarqube
+    repourl: "https://charts.stderr.at/"
+    targetrevision: 1.0.1
+
+    # List of clusters
+    # "clustername" (string): Is the name of the cluster a defined in Argo CD
+    # "clusterurl" (string): Is the URL of the cluster API
+    # "chart_version" (string, optional): Defines which chart version shall be deployed on each cluster.
+    generatorlist:
+      - clustername: *mgmtclustername
+        clusterurl: *mgmtcluster
+    syncPolicy:
+      autosync_enabled: false
+
+  ##############################
+  # END LIST GENERATOR EXAMPLE #
+  ##############################
+
+# These define the default values.
+# It is possible to overwrite repourl and targetrevision in the Applications(Sets)
+general:
+  argocd_project: 'default'
+  source:
+    repourl: *repourl
+  branch: *branch

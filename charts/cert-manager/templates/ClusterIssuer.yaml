@@ -1,0 +1,41 @@
+{{- range .Values.issuer }}
+{{ if eq (.enabled | toString) "true" }}
+---
+apiVersion: cert-manager.io/v1
+kind: {{ .type | default "ClusterIssuer"}}
+metadata:
+  name: {{ .name }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 20 | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  {{- if .selfSigned }}
+  selfSigned: {}
+  {{- end }}
+  {{- if .ca }}
+  ca:
+    secretName: {{ .ca.secretName }}
+  {{- end }}
+  {{- if .vault }}
+  vault:
+    {{- toYaml .vault | nindent 4 }}
+  {{- end }}
+  {{- if .venafi }}
+  venafi:
+    {{- toYaml .venafi | nindent 4 }}
+  {{- end }}
+  {{- if .acme }}
+  {{- with .acme }}
+  acme:
+    email: {{ .email }}
+    privateKeySecretRef:
+      name: {{ .privKeyRef | default "letsencrypt-account-key" }}
+    server: {{ .server | default "https://acme-v02.api.letsencrypt.org/directory" }}
+    solvers:
+      {{- toYaml .solvers | nindent 6 }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}

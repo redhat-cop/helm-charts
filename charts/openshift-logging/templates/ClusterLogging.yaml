@@ -1,0 +1,54 @@
+{{- with .Values.loggingConfig }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: "logging.openshift.io/v1"
+kind: "ClusterLogging"
+metadata:
+  name: "instance" 
+  namespace: "openshift-logging"
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 4 | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  managementState: {{ .managementState | default "Managed" | quote }}
+  {{- if eq .logStore.type "lokistack" }}
+  {{- with .logStore }}
+  logStore:
+    type: {{ .type }}
+    lokistack:
+      name: {{ .lokistack | default "logging-loki" }}
+  collection:
+    type: {{ .collection.type | default "vector" }}
+
+    {{- /* Set tolerations for the COLLECTOR */}}
+    {{- if .collection.tolerations }}
+{{ include "tpl.tolerations" .collection.tolerations | indent 4 }}
+    {{- end }}
+
+    {{- /* Set resources for the COLLECTOR */}}
+    {{- if .collection.resources }}
+{{ include "tpl.resources" .collection.resources | indent 4 }}
+    {{- end }}
+  visualization:
+    type: {{ .visualization.type | default "ocp-console" }}
+    {{- if .visualization.ocpConsole }}
+    {{- if .visualization.ocpConsole.logsLimit }}
+    logsLimit: 1000
+    {{- end }}
+    {{- if .visualization.ocpConsole.timeout }}
+    timeout: 10s
+    {{- end }}
+    {{- end }}
+
+    {{- /* Set tolerations for the VISUALISATION */}}
+    {{- if .visualization.tolerations }}
+{{ include "tpl.tolerations" .visualization.tolerations | indent 4 }}
+    {{- end }}
+
+  {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+ 

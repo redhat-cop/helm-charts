@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+status:
+  phase: Pending
+  containerStatuses:
+  - state:
+      waiting:
+        reason: ErrImagePull

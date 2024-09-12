@@ -1,0 +1,184 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is installing and configuring OpenShift Data Foundation, using the following workflow:
+
+1. Create required Namespace
+2. Installing the ODF operator by applying the Subscription and OperatorGroup object. (In addition, the InstallPlan can be approved if required) 
+3. Verifying if the operator is ready to use Install and configure the compliance operator. 
+4. Apply the required storage configuration.
+
+Two options are possible. You can either configure the full ODF feature set including block, file and S3 storage based on Ceph or you deploy the MultiCloudGateway only, which provides just object storage.
+This is the easiest option to quickly provide S3 storage for example for Quay, Logging etc.
+
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops (folder: clusters/management-cluster/setup-openshift-data-foundation)
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+Verify the subcharts for additional settings:
+
+* [helper-operator](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+* [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+
+{{ template "doc.values" . }}
+
+## Example #1 - MultiCloudGateway only
+
+```yaml
+---
+###########################
+# Enable and configura ODF
+###########################
+storagecluster:
+  enabled: false
+  multigateway_only:
+    enabled: false
+    storageclass: gp3-csi
+
+# Install Operator Compliance Operator
+# Deploys Operator --> Subscription and Operatorgroup
+# Syncwave: 0
+helper-operator:
+  operators:
+    odf-operator:
+      enabled: true
+      syncwave: '0'
+      namespace:
+        name: openshift-storage
+        create: true
+      subscription:
+        channel: stable-4.14
+        approval: Automatic
+        operatorName: odf-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: true
+
+helper-status-checker:
+  enabled: true
+
+  checks:
+
+    - operatorName: odf-operator
+      namespace:
+        name: openshift-storage
+      syncwave: 3
+
+      serviceAccount:
+        name: "status-checker-odf"
+```
+
+## Example #2 - Full deployment
+
+```yaml
+---
+---
+###########################
+# Enable and configura ODF
+###########################
+storagecluster:
+  enabled: false
+
+  full_deployment:
+
+    enabled: false
+    nfs: enabled
+    default_node_label: cluster.ocs.openshift.io/openshift-storage
+
+    storageDeviceSets:
+      - name: ocs-deviceset
+        dataPVCTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 512Gi
+            storageClassName: gp3-csi
+        replica: 3
+
+    # Resource settings for the different components.
+    # ONLY set this if you know what you are doing.
+    # For every component Limits and Requests can be set.
+
+    # For testing request settings might be reduced.
+    # compontent_resources:
+      # MDS Defaults
+      #   Limits: cpu 3, memory: 8Gi
+      #   Requests: cpu: 1, memory: 8Gi
+      # mds:
+      #   requests:
+      #     cpu: '1'
+      #     memory: 8Gi
+
+      # RGW Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # rgw: ...
+      # rgw:
+      #   requests:
+      #     cpu: '1'
+      #     memory: 4Gi
+
+      # MON Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # mon: ...
+
+      # MGR Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # mgr: ...
+
+      # NOOBAA-CORE Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # moobaa-core: ...
+
+      # NOOBAA-DB Defaults
+      #   Limits: cpu 2, memory: 4Gi
+      #   Requests: cpu: 1, memory: 4Gi
+      # moobaa-DB: ...
+
+# Install Operator Compliance Operator
+# Deploys Operator --> Subscription and Operatorgroup
+# Syncwave: 0
+helper-operator:
+  operators:
+    odf-operator:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: openshift-storage
+        create: false
+      subscription:
+        channel: stable-4.14
+        approval: Automatic
+        operatorName: odf-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: true
+
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: odf-operator
+      namespace:
+        name: openshift-storage
+      syncwave: 3
+
+      serviceAccount:
+        name: "status-checker-odf"
+
+```
+
+{{ template "doc.footer" . }}

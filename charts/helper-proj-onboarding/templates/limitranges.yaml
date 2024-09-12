@@ -1,0 +1,97 @@
+{{- range $key, $value := .Values.namespaces }}
+{{ if eq ( .enabled | toString) "true" }}
+{{- if not .project_size }}
+{{ if .limitRanges }}
+{{ if eq ( .limitRanges.enabled | toString) "true" }}
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ $value.name | replace "_" "-" }}-limitrange
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  {{- if .limitRanges }}
+  limits:
+    {{- if .limitRanges.pod }}  
+    - type: "Pod" 
+      {{- if .limitRanges.pod.max }} 
+      max:
+        {{- if .limitRanges.pod.max.cpu }} 
+        cpu: {{ .limitRanges.pod.max.cpu  | quote }}
+        {{- end }}
+        {{- if .limitRanges.pod.max.memory }} 
+        memory: {{ .limitRanges.pod.max.memory | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if .limitRanges.pod.min }} 
+      min:
+        {{- if .limitRanges.pod.min.cpu }} 
+        cpu: {{ .limitRanges.pod.min.cpu | quote }}
+        {{- end }}
+        {{- if .limitRanges.pod.min.memory }} 
+        memory: {{ .limitRanges.pod.min.memory | quote }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if .limitRanges.container }} 
+    - type: "Container" 
+      {{- if .limitRanges.container.max }} 
+      max:
+        {{- if .limitRanges.container.max.cpu }} 
+        cpu: {{ .limitRanges.container.max.cpu | quote }}
+        {{- end }}
+        {{- if .limitRanges.container.max.memory }} 
+        memory: {{ .limitRanges.container.max.memory | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if .limitRanges.container.min }} 
+      min:
+        {{- if .limitRanges.container.min.cpu }} 
+        cpu: {{ .limitRanges.container.min.cpu | quote }}
+        {{- end }}
+        {{- if .limitRanges.container.min.memory }} 
+        memory: {{ .limitRanges.container.min.memory | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if .limitRanges.container.default }} 
+      default:
+        {{- if .limitRanges.container.default.cpu }} 
+        cpu: {{ .limitRanges.container.default.cpu | quote }}
+        {{- end }}
+        {{- if .limitRanges.container.default.memory }} 
+        memory: {{ .limitRanges.container.default.memory | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if .limitRanges.container.defaultRequest }} 
+      defaultRequest: 
+        {{- if .limitRanges.container.defaultRequest.cpu }} 
+        cpu: {{ .limitRanges.container.defaultRequest.cpu | quote }}
+        {{- end }}
+        {{- if .limitRanges.container.defaultRequest.memory }} 
+        memory: {{ .limitRanges.container.defaultRequest.memory | quote }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if .limitRanges.pvc }} 
+    - type: "PersistentVolumeClaim"
+      {{- if .limitRanges.pvc.min }} 
+      min:
+        {{- if .limitRanges.pvc.min.storage }} 
+        storage: {{ .limitRanges.pvc.min.storage | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if .limitRanges.pvc.max }} 
+      max:
+        {{- if .limitRanges.pvc.max.storage }} 
+        storage: {{ .limitRanges.pvc.max.storage | quote }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
