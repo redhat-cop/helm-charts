@@ -1,0 +1,3 @@
+apiVersion: v2
+name: private-registry
+version: 0.0.2
