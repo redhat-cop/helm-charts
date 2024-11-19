@@ -25,6 +25,10 @@ spec:
   activeDeadlineSeconds: {{ .installPlanApproverActiveDeadlineSeconds }}
   template:
     spec:
+      {{- if $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
+      imagePullSecrets:
+        - name: {{ $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
+      {{- end }}
       containers:
       - name: installplan-approver
         image: {{ $.Values.installPlanApproverAndVerifyJobsImage }}

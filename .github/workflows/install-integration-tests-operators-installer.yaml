@@ -19,6 +19,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  registry_user: registryuser1
+  registry_password: registrypassword1
+
 jobs:
   install-integration-test:
     runs-on: ubuntu-latest
@@ -51,6 +55,7 @@ jobs:
       uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
       with:
         version: ${{ env.KIND_VERSION }}
+        config: charts/operators-installer/_integration-tests/kind-config.yaml
 
     # for helm charts we are testing that require installing operators 
     - name: Setup kind cluster - Install OLM 🧰
@@ -77,6 +82,25 @@ jobs:
           controller: haproxy-ingress.github.io/controller
         EOF
 
+    # for testing operators-installer image from private repository
+    - name: Setup private registry in kind cluster 🧰
+      run: |
+        helm upgrade --install private-registry charts/operators-installer/_integration-tests/private-registry \
+          --namespace registry \
+          --create-namespace \
+          --wait \
+          --set registryUser=${registry_user} \
+          --set registryPassword=${registry_password}
+
+    # copies image used to install argo into local private registry
+    - name: Copy image into private repository 💿
+      run: |
+        skopeo copy \
+          --dest-creds ${registry_user}:${registry_password} \
+          --dest-tls-verify=false \
+          docker://$(awk '$1 ~/Image:/ {print $2}' charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml) \
+          docker://registry.localhost/origin-cli:5000
+
     # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
     - name: Run integration tests 🧪
       timeout-minutes: 30
@@ -92,10 +116,19 @@ jobs:
           --debug --timeout 10m0s
 
         echo "##########################################################################################################"
+        echo "# Create pull secret used in next step                                                                   #"
+        echo "##########################################################################################################"
+        oc create secret docker-registry local-registry-pullsecret \
+          --namespace operators-installer-integration-test \
+          --docker-password="${registry_user}" \
+          --docker-username="${registry_password}" \
+          --docker-server=registry.localhost
+
+        echo "##########################################################################################################"
         echo "# Upgrade argo to newer version requiring many intermediate updates along the way                        #"
         echo "##########################################################################################################"
         helm upgrade --install operators-installer-integration-test charts/operators-installer \
           --namespace operators-installer-integration-test \
           --wait \
           --values charts/operators-installer/_integration-tests/test-install-operator-1-automatic-intermediate-manual-upgrades-values.yaml \
-          --debug --timeout 30m0s
+          --debug --timeout 35m0s
