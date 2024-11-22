@@ -1,4 +1,4 @@
-FROM alpine/git:v2.43.0@sha256:5be7ad4ab6bbd7f24a66224c814aa030c2abad186d839c8b6c1210585d96e25c
+FROM alpine/git:2.45.2@sha256:5ca30914aa0217893fc1ae63c3b56ddaa0aa1626de1278d0bbfae4f4f3a61173
 RUN apk add --no-cache curl
 
 ENTRYPOINT ["/bin/sh"]
