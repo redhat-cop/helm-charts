@@ -30,7 +30,7 @@ jobs:
       # renovate: datasource=github-releases depName=kubernetes-sigs/kind
       KIND_VERSION: v0.25.0
       # renovate: datasource=github-releases depName=operator-framework/operator-lifecycle-manager
-      OLM_VERSION: v0.28.0
+      OLM_VERSION: v0.30.0
     steps:
     - name: Checkout 🛎️
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
