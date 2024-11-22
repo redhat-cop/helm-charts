@@ -4980,6 +4980,20 @@ entries:
   static-site:
   - apiVersion: v2
     appVersion: 1.17.9-alpine
+    created: "2024-11-22T09:23:04.428134319Z"
+    description: A Helm chart for deploying a static-site with auto-updating
+    digest: 9ca9ae344012c97f417a026b1c70ce86a26bbeffaf951bcd2a40906d7f25e7c7
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://i.dlpng.com/static/png/6796939_preview.png
+    maintainers:
+    - name: jijiechen
+    name: static-site
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/static-site-0.0.19/static-site-0.0.19.tgz
+    version: 0.0.19
+  - apiVersion: v2
+    appVersion: 1.17.9-alpine
     created: "2024-04-29T05:53:45.779384321Z"
     description: A Helm chart for deploying a static-site with auto-updating
     digest: e3cd8e38927420143a29056a9896396ae3970e6ae3ced04a668d718c4bb15ed4
@@ -5516,4 +5530,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2024-08-13T17:18:31.848279399Z"
+generated: "2024-11-22T09:23:04.428772514Z"
