@@ -4077,6 +4077,24 @@ entries:
   sonarqube:
   - apiVersion: v2
     appVersion: 9.9.1-community
+    created: "2024-11-22T09:30:04.681337603Z"
+    description: SonarQube is an open sourced code quality scanning tool
+    digest: 2d6e0f5f167d423ffee14081386ead747e264e1498fcee58fa377f44a1ff58d3
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    maintainers:
+    - name: eformat
+    name: sonarqube
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/sonarqube-0.1.12/sonarqube-0.1.12.tgz
+    version: 0.1.12
+  - apiVersion: v2
+    appVersion: 9.9.1-community
     created: "2024-06-19T20:09:47.037558925Z"
     description: SonarQube is an open sourced code quality scanning tool
     digest: b9ff03efab95ca47099408e9993dc2dbd73c30c679a43a29e9d25cb7618eaa04
@@ -5544,4 +5562,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2024-11-22T09:23:20.223793876Z"
+generated: "2024-11-22T09:30:04.681996355Z"
