@@ -24,13 +24,13 @@ spec:
   activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds }}
   template:
     spec:
+      {{- if $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
+      imagePullSecrets:
+        - {{ $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
+      {{- end }}
       containers:
       - name: installplan-complete-verifier
         image: {{ $.Values.installPlanApproverAndVerifyJobsImage }}
-        {{- if $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
-        imagePullSecrets:
-          - {{ $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
-        {{- end }}
         command: ["/bin/sh","-c"]
         args:
           - >-
