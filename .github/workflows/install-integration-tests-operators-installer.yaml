@@ -92,6 +92,14 @@ jobs:
           --debug --timeout 10m0s
 
         echo "##########################################################################################################"
+        echo "# Create pull secret used in next step                                                                   #"
+        echo "##########################################################################################################"
+        oc create secret docker-registry registry-redhat-io-pullsecret -n operators-installer-integration-test \
+          --docker-server=registry.redhat.io \
+          --docker-username="6340056|redhat-cop-helm-charts" \
+          --docker-password="${{ secrets.REDHAT_REGISTRY_TOKEN }}"
+
+        echo "##########################################################################################################"
         echo "# Upgrade argo to newer version requiring many intermediate updates along the way                        #"
         echo "##########################################################################################################"
         helm upgrade --install operators-installer-integration-test charts/operators-installer \
