@@ -1,6 +1,7 @@
 approveManualInstallPlanViaHook: true
 
-installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
+# default image pulls from private registry registry.redhat.io
+installPlanApproverAndVerifyJobsImagePullSecret: registry-redhat-io-pullsecret
 
 operatorGroups:
 - name: argocd-operator
