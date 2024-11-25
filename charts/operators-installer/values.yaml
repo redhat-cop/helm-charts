@@ -13,7 +13,7 @@ approveManualInstallPlanViaHook: true
 installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.15@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
 
 # If specified, this imagePullSecret will be used for pulling the `installPlanApproverAndVerifyJobsImage`.
-# Only needed when using a custom image and pulling from a private registry.  
+# Only needed when using a custom image and pulling from a private registry.
 # Accepts a single string which is the name of an existing secret. (This chart does not create or manage the secret.)
 installPlanApproverAndVerifyJobsImagePullSecret:
 
