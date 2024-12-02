@@ -25,7 +25,7 @@ spec:
       type: string
   steps:
     - name: app-create
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -51,7 +51,7 @@ spec:
         fi
 
     - name: app-docs
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -72,7 +72,7 @@ spec:
         fi
 
     - name: app-expose
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -130,7 +130,7 @@ spec:
         fi
 
     - name: app-labels
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -151,7 +151,7 @@ spec:
         fi
 
     - name: app-envs
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -180,7 +180,7 @@ spec:
         fi
 
     - name: app-probes
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -203,7 +203,7 @@ spec:
         fi
 
     - name: app-autoscale
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
 
@@ -235,7 +235,7 @@ spec:
         fi
 
     - name: app-triggers
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
