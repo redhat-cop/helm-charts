@@ -1,0 +1,28 @@
+{{- range $key, $value := .Values.console.console_links }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: {{ $key | replace "_" "-" | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  text: {{ $value.text | quote }}
+  location: {{ $value.location | quote }} 
+  href: "{{ $value.href }}"
+  {{- if $value.namespaces }}
+  namespaceDashboard:
+    namespaces:
+      {{- range $value.namespaces }}
+      - {{ . }}
+      {{- end }}
+  {{- end }}
+  {{- if $value.applicationMenu }}
+  applicationMenu:
+    section: {{ $value.applicationMenu.section | quote }}
+    imageURL: {{ $value.applicationMenu.imageURL | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}
+

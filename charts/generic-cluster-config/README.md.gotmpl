@@ -1,0 +1,562 @@
+{{ template "doc.header" . }}
+
+
+
+Configure your cluster with basic settings. Any generic and repeatable configuration goes in here. This helps me to quickly deploy Lab environments and demonstrate features. 
+
+It is best used with a GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops
+
+Multiple Argo CD applications are using this Chart as a dependency to enable different aspects of the cluster (i.e., etcd encryption).
+
+Currently, the following settings can be done:
+
+- Encrypt ETCD
+- Disable Self-Provisioner
+- Configure Identity Providers (LDAP or htpasswd)
+- Limit Allowed Registries
+- Configure Monitoring and User-Workload Monitoring
+- Add Console Banner (Top and Bottom)
+- Add Console Links
+- Add YAML Samples into the console
+
+{{ template "doc.deps" . }}
+
+None
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+*TIP*: Verify the values.yaml to see possible additional settings. 
+
+{{ template "doc.values" . }}
+
+## Example ETCD Encryption & Disabling Self-Provisioner
+
+The following example will encrypt the ETCD database, configure the audit-profile, set a custom certificate and disable the self-provisioner. For the ETCD encryption, a Job will be started, that will check and verify the status of the encryption. This might run very long.
+
+```yaml
+apiserver:
+  enabled: false
+
+  audit:
+    profile: Default
+
+  custom_cert:
+    enabled: true
+    cert_names:
+      - api.ocp.aws.ispworld.at    
+    secretname: api-certificate
+
+  etcd_encryption:
+    enabled: false
+    namespace: openshift-gitops
+    serviceAccount:
+      create: true
+      name: "etcd-encryption-checker"
+    encryption_type: aesgcm  
+
+self_provisioner:
+  deactivate: false
+```
+
+## Example Limit Registry to only trusted ones
+
+One security configuration is to limit the allowed registries, so that only trusted registries are allowed.
+Typically, and especially on clusters that can connect to the internet, quay.io and redhat.io/com should be allowed.
+
+```yaml
+config_allowed_registries:
+  enabled: true
+
+  registry_sources:
+    allowed_registries:
+    - registry.connect.redhat.com
+    - registry.redhat.io
+    - quay.io
+    - registry.access.redhat.com
+    - 'image-registry.openshift-image-registry.svc:5000'
+  allowedRegistriesForImport:
+  - domain: quay.io
+    insecure: false
+  - domain: registry.connect.redhat.com
+  - domain: registry.redhat.io
+```
+## Example Console Customizations 
+
+### Adding Banners
+
+### Example Console Modifications
+
+#### Banners 
+
+Banner in the WebUI can be added to the top (topbanner) and bottom (bottombanner).
+
+The following settings will add console banners at the top and the bottom.
+
+```yaml
+console:
+  console_banners:
+    topbanner:
+      enabled: true
+      text: 'MGMT Cluster'
+      location: BannerTop
+      color: "#FFFFFF"
+      backgroundcolor: '#0088ee'
+
+    bottombanner:
+      enabled: true
+      text: Copyright © 2020 Sample Company, Inc. |
+      location: BannerBottom
+      color: "#FFFFFF"
+      backgroundcolor: '#000'
+      link:
+        href: 'https://www.example.com/data-protection-policy'
+        text: Data Protection and Privacy Policy
+```
+
+### Adding YAML Samples
+
+YAML Samples can be added to specific Kubernetes manifests, to allow customization of the help that will be shown in the WebUI. 
+
+The following example will add such a Sample for the Secret resource:
+
+```yaml
+  yamlsamples:
+    secret-yaml-sample:
+      enabled: true
+      targetresource:
+        apiversion: v1
+        kind: secret
+      title: "Secret based on cleartext values"
+      descr: "This is an example to create a Secret based on clear-text values"
+      yamlDef: |+
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: example
+            type: Opaque
+            stringData:
+              email: youremail@address.com
+              password: YourSuperPassword
+```
+
+Whenever somebody wants to create a new Secret, the Samples can be "tried" or downloaded.
+
+![YAML Sample](images/YAMLSample.png "ConsoleYAMLSample")
+
+### Added a custom link
+
+Custom links can be added throughout the WebUI. Possible locations are: HelpMenu, UserMenu, ApplicationMenu, and NamespaceDashboard
+
+#### UserMenu
+
+The UserMenu is the popup that is shown when you click on your name in the WebUI. A link can be added like:
+
+```yaml
+console:
+  console_links:
+    userlink:
+      enabled: true
+      text: "Intranet"
+      location: UserMenu
+      href: https://intranet
+```
+
+The created link will appear at:
+
+![ConsoleLink UserMenu](images/ConsoleLink-UserMenu.png "UserMenu")
+
+#### NamespaceDashboard
+
+In case you would like to add custom links to the dashboard of namespaces, you can select the location = NamespaceDashboard.
+The list "namespaces" limits this link to these namespaces only. If this list is not provided, then the link will be visible for all namespaces.
+
+```yaml
+    namespacedlink:
+      enabled: true
+      text: Link valid for selected namespace only
+      location: NamespaceDashboard
+      href: https://report
+      namespaces:
+        - default
+        - openshift-gitops
+```
+
+In the dashboard, the following link is added to the right part of the screen.
+
+![ConsoleLink NamespaceDashboard](images/ConsoleLink-NamespaceDashboard.png "NamespaceDashboard")
+
+#### HelpMenu
+
+Similar to the UserMenu a link can be added to the HelpMenu. For example, a link to the Red Hat CVE database:
+
+```yaml
+    helplink:
+      enabled: true
+      text: Red Hat CVE Database
+      location: HelpMenu
+      href: https://access.redhat.com/security/security-updates/#/cve
+```
+
+![ConsoleLink HelpMenu](images/ConsoleLink-HelpMenu.png "HelpMenu")
+
+#### ApplicationMenu
+
+The Application menu is the next place where a custom link can be added. In this example, I have added a link the the Red Hat Subscription Management into the section "My Subscriptions". The icon I am fetching from GitHub.
+
+```yaml
+    applicationlink:
+      enabled: true
+      text: Red Hat Subscription Management
+      location: ApplicationMenu
+      href: https://access.redhat.com/management
+      applicationMenu:
+        section: My Subscriptions
+        imageURL: https://raw.githubusercontent.com/tjungbauer/helm-charts/gh-pages/images/configuration.png
+```
+
+![ConsoleLink ApplicationMenu](images/ConsoleLink-ApplicationMenu.png "ApplicationMenu")
+
+
+## Identity Provider and Custom Login Page
+
+In the IDP section, it is possible to configure IdentityProviders (currently **HTPasswd** and **LDAP**) as well as a custom login page.
+
+**NOTE**: Be sure that the secrets exist.
+
+The following example configures everything:
+
+```yaml
+idp:
+  enabled: true
+  
+  customloginpage:
+    enabled: true
+    secretname: customlogin
+    secretname_providerpage: customerproviderpage
+
+  providers:
+    enabled: true
+
+    htpasswd:
+      - name: HTPASSWD
+        enabled: true
+        secretname: htpasswd-secret
+
+    ldap:
+      - name: LDAP
+        enabled: true
+        url: 127.0.0.1
+        insecure: true
+        binddn: your-bindDN
+        secretname: ldap-secret
+        cmname: ca-config-map
+        preferredusername: 
+          - sAMAccountName
+```
+
+## Example Monitoring
+
+The following configuration will configure OpenShift cluster monitoring. It will assign 40Gi of storage to the Alertmanager and 100Gi of storage to Prometheus.
+Also, ALL components are configured with a nodeSelector and with tolerations to move the workload to infrastructure nodes. As retention for Prometheus, the default value (15d) is used.
+No resource limits are configured.
+
+```yaml
+---
+monitoring:
+  enabled: true
+  enableUserWorkload: true
+
+  ################
+  # ALERTMANAGER #
+  ################
+  alertmanagerMain:
+    disable_local_alertmanager: false
+
+    storage:
+      class: gp2-csi
+      size: 40Gi
+
+    secrets: 
+      - secret_with_credentials
+
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+  ##############
+  # PROMETHEUS #
+  ##############
+  prometheusK8s:
+    retention: 15d
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+    storage:
+      class: gp2-csi
+      size: 100Gi
+
+  ######################
+  # PROMETHEUSOPERATOR #
+  ######################
+  prometheusOperator:
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+  ######################
+  # PROMETHEUS ADAPTER #
+  ######################
+  k8sPrometheusAdapter:
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+  #####################
+  # KUBE-STATEMETRICS #
+  #####################
+  kubeStateMetrics:
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+  ###################
+  # TELEMETERCLIENT #
+  ###################
+  telemeterClient:
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+  ################
+  # STATEMETRICS #
+  ################
+  openshiftStateMetrics:
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+  ####################
+  # MONITORINGPLUGIN #
+  ####################
+  monitoringPlugin:
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+
+  #################
+  # THANOSQUERIER #
+  #################
+  thanosQuerier:
+    nodeSelector:
+      node-role.kubernetes.io/infra: ""
+
+    tolerations:
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+      - effect: NoSchedule
+        key: infra
+        operator: Equal
+        value: reserved
+```
+
+## Example USER-WORKLOAD Monitoring
+
+The configuration of the **USER WORKLOAD monitoring** works identically as for the cluster monitoring, except that there are fewer and renamed components, plus the new component ThanosRuler.
+The following configuration will configure OpenShift **USER-WORKLOAD** monitoring. It will assign 40Gi of storage to the Alertmanager, 100Gi of storage to the ThanosRuler 
+and 100Gi of storage to Prometheus.
+Also, ALL components are configured with a nodeSelector and with tolerations to move the workload to infrastructure nodes. 
+As retention for Prometheus and ThanosRuler, the default value (24h) is used.
+No resource limits are configured.
+
+```yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-workload-monitoring-config
+  namespace: openshift-user-workload-monitoring
+  labels:
+    helm.sh/chart: generic-cluster-config-1.0.23
+    app.kubernetes.io/name: generic-cluster-config
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+data:
+  config.yaml: |  
+    alertmanager:
+      enabled: true
+      secrets:
+        - secret_with_credentials
+      nodeSelector:
+        node-role.kubernetes.io/infra: ""
+      tolerations:
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp2-csi
+          resources:
+            requests:
+              storage: "40Gi"
+      resources:
+        limits:
+          cpu: 500m
+          memory: 3Gi
+        requests:
+          cpu: 200m
+          memory: 500Mi
+    prometheus:
+      nodeSelector:
+        node-role.kubernetes.io/infra: ""
+      tolerations:
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+      retention: 24h
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp2-csi
+          resources:
+            requests:
+              storage: "100Gi"
+      resources:
+        limits:
+          cpu: 500m
+          memory: 3Gi
+        requests:
+          cpu: 200m
+          memory: 500Mi
+    prometheusOperator:
+      nodeSelector:
+        node-role.kubernetes.io/infra: ""
+      tolerations:
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+      resources:
+        limits:
+          cpu: 500m
+          memory: 3Gi
+        requests:
+          cpu: 200m
+          memory: 500Mi
+    thanosRuler:
+      nodeSelector:
+        node-role.kubernetes.io/infra: ""
+      tolerations:
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+      retention: 24h
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp2-csi
+          resources:
+            requests:
+              storage: "100Gi"
+      resources:
+        limits:
+          cpu: 500m
+          memory: 3Gi
+        requests:
+          cpu: 200m
+          memory: 500Mi
+```
+
+{{ template "doc.footer" . }}

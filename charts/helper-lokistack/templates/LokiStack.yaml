@@ -1,0 +1,185 @@
+{{- with .Values }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: loki.grafana.com/v1
+kind: LokiStack
+metadata:
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "3" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  {{- if .limits }}
+  limits:
+    {{- if .limits.global }}
+    global:
+      retention:
+        {{- if .limits.global.retention_days }}
+        days: {{ .limits.global.retention_days | default "7" }}
+        {{- end }}
+        {{- if .limits.global.streams }}
+        streams:
+          {{- range .limits.global.streams }}
+          - days: {{ .days }}
+            priority: {{ .priority }}
+            selector: {{ .days }}
+          {{- end }}
+        {{- end }}
+    {{- end }}
+
+    {{- if .limits.tenants }}
+    tenants:
+      {{- if .limits.tenants.application }}
+      application:
+        retention:
+          {{- if .limits.tenants.application.retention }}
+          days: {{ .limits.tenants.application.retention.days | default "7" }}
+         {{- end }}
+          {{- if .limits.tenants.application.retention.streams }}
+          streams:
+            {{- range .limits.tenants.application.retention.streams }}
+            - days: {{ .days }}
+              priority: {{ .priority }}
+              selector: {{ .selector }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+
+      {{- if .limits.tenants.infrastructure }}
+      infrastructure:
+        retention:
+          {{- if .limits.tenants.infrastructure.retention }}
+          days: {{ .limits.tenants.infrastructure.retention.days | default "7" }}
+         {{- end }}
+          {{- if .limits.tenants.infrastructure.retention.streams }}
+          streams:
+            {{- range .limits.tenants.infrastructure.retention.streams }}
+            - days: {{ .days }}
+              priority: {{ .priority }}
+              selector: {{ .selector }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+
+      {{- if .limits.tenants.audit }}
+      audit:
+        retention:
+          {{- if .limits.tenants.audit.retention }}
+          days: {{ .limits.tenants.audit.retention.days | default "7" }}
+         {{- end }}
+          {{- if .limits.tenants.audit.retention.streams }}
+          streams:
+            {{- range .limits.tenants.audit.retention.streams }}
+            - days: {{ .days }}
+              priority: {{ .priority }}
+              selector: {{ .selector }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+
+    {{- end }}
+
+  {{- end }}
+  size: {{ .storage.size | default "1x.extra-small" | quote }}
+  storage:
+    tls:
+      caKey: service-ca.crt
+      caName: openshift-service-ca.crt
+    {{- if .storage.schemas }}
+    schemas:
+    {{- range .storage.schemas  }}
+    - version: {{ .version }}
+      effectiveDate: {{ .effectiveDate | quote }}
+    {{- end }}
+    {{- else }}
+    schemas:
+    - version: v12
+      effectiveDate: '2022-06-01'
+    {{- end }}
+    secret:
+      name: {{ .storage.secret.name }}
+      type: {{ .storage.secret.type | default "s3" }}
+  storageClassName: {{ .storageclassname | default "gp3-csi" }}
+  tenants:
+    mode: {{ .mode | default "static" }}
+    {{- if .admin_groups }}
+    openshift:
+      adminGroups:
+        {{- range .admin_groups }}
+        - {{ . }}
+        {{- end }}
+    {{- end }}
+
+  {{- if .podPlacements }}
+  template:
+    {{- /* Set tolerations for the compactor */}}
+    {{- if .podPlacements.compactor }}
+    compactor:
+      {{- if .podPlacements.compactor.tolerations }}
+{{ include "tpl.tolerations" .podPlacements.compactor.tolerations | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* Set tolerations for the distributor */}}
+    {{- if .podPlacements.distributor }}
+    distributor:
+      {{- if .podPlacements.distributor.tolerations }}
+{{ include "tpl.tolerations" .podPlacements.distributor.tolerations | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* Set tolerations for the gateway */}}
+    {{- if .podPlacements.gateway }}
+    gateway:
+      {{- if .podPlacements.gateway.tolerations }}
+{{ include "tpl.tolerations" .podPlacements.gateway.tolerations | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* Set tolerations for the indexGateway */}}
+    {{- if .podPlacements.indexGateway }}
+    indexGateway:
+      {{- if .podPlacements.indexGateway.tolerations }}
+{{ include "tpl.tolerations" .podPlacements.indexGateway.tolerations | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* Set tolerations for the ingester */}}
+    {{- if .podPlacements.ingester }}
+    ingester:
+      {{- if .podPlacements.ingester.tolerations }}
+{{ include "tpl.tolerations" .podPlacements.ingester.tolerations | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* Set tolerations for the querier */}}
+    {{- if .podPlacements.querier }}
+    querier:
+      {{- if .podPlacements.querier.tolerations }}
+{{ include "tpl.tolerations" .podPlacements.querier.tolerations | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* Set tolerations for the queryFrontend */}}
+    {{- if .podPlacements.queryFrontend }}
+    queryFrontend:
+      {{- if .podPlacements.queryFrontend.tolerations }}
+{{ include "tpl.tolerations" .podPlacements.queryFrontend.tolerations | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* Set tolerations for the ruler */}}
+    {{- if .podPlacements.ruler }}
+    ruler:
+      {{- if .podPlacements.ruler.tolerations }}
+{{ include "tpl.tolerations" .podPlacements.ruler.tolerations | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+  {{- end }}
+
+{{- end }}
+{{- end }}

@@ -1,0 +1,80 @@
+{{- range $key, $value := .Values.applications }}
+{{ if eq ($value.enabled | toString) "true" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "0" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    gitops.ownedBy: cluster-config
+    {{- if eq ($value.ignore_argocd_labels | toString) "true" }}
+    {{- else }}
+    {{- include "tpl.labels" $ | nindent 4 }}
+    {{- end }}
+    {{- if $value.labels }}
+    {{- range $key_labels, $value_labels := $value.labels }}
+    {{ $key_labels }}: {{ $value_labels }}
+    {{- end }}
+    {{- end }}
+  name: {{ $key | replace "_" "-" }}
+  namespace: {{ $value.appNamespace | default "openshift-gitops" }}
+spec:
+  destination:
+    {{- if .namespace }}
+    namespace: {{ .namespace.name }}
+    {{- else }}
+    namespace: "openshift-gitops"
+    {{- end }}
+    server: {{ .server | default $.Values.general.server }}
+  project: {{ .project | default "default" }}
+  {{- if .syncPolicy }}
+  syncPolicy:
+    {{- if .syncPolicy.autosync_enabled }}
+    automated:
+      {{ if eq (.syncPolicy.syncpolicy_prune | toString) "true" }}
+      prune: {{ .syncPolicy.syncpolicy_prune  }}
+      {{- end }}
+      {{ if eq (.syncPolicy.syncpolicy_selfheal | toString) "true" }}
+      selfHeal: {{ .syncPolicy.syncpolicy_selfheal }}
+      {{- end }}
+    {{- end }}
+    {{- if .syncPolicy.syncOptions }}
+    syncOptions:
+    {{- range .syncPolicy.syncOptions }}
+      - {{ .name }}={{ .value }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
+  source:
+    {{- if .source.path }}
+    path: {{ .source.path }}
+    {{- else }}
+    chart: {{ .source.chartname }}
+    {{- end }}
+    {{- if .source.helm }}
+    helm:
+      {{- if .source.helm.valuesfiles }}
+      {{- range .source.helm.valuesfiles }}
+      valueFiles: 
+        - {{ .name }}
+      {{- end }}
+      {{- end }}
+      {{- if .source.helm.releasename }}
+      releaseName: {{ .source.helm.releasename }}
+      {{- end }}
+      parameters:
+    {{- range .source.helm.helmvalues }}
+        - name: {{ .name }}
+          value: '{{ .value }}' 
+    {{- end }}
+    {{- end }}
+    repoURL: {{ .source.repourl | default $.Values.general.source.repourl }}
+    targetRevision: {{ .source.targetrevision | default $.Values.general.branch }}
+  info:
+    - name: Description
+      value: {{ .description | default "No Description" }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,108 @@
+---
+# Settings for File Integrity Operator
+aide:
+  # Settings the are applicable for Worker nodes.
+  worker:
+    # -- Enable worker node fileintegrity check
+    # @default -- false
+    enabled: false
+
+    # -- Syncwave when this object is created
+    syncwave: 5
+
+    # -- Name of this object
+    name: worker-fileintegrity
+
+    # -- Namespace, typically openshift-file-integrity
+    namespace: openshift-file-integrity
+
+    # -- nodeSelector as key/value
+    selector:
+      key: node-role.kubernetes.io/worker
+      value: ""
+    nodeSelector:
+      key: node-role.kubernetes.io/worker
+      value: ""
+
+    # -- FileIntegrity configuration
+    config:
+
+      # -- Time between individual aide scans
+      # @default -- 900
+      gracePeriod: 900
+
+      # -- The maximum number of AIDE database and log backups (leftover from the re-init process) to keep on a node. Older backups beyond this number are automatically pruned by the daemon.
+      # @default -- 5
+      maxBackups: 5
+
+      # -- Enable a custom configuration. This is usefull for control planes. If not defined a configuration will be created.
+      customconfig:
+
+        # -- Enable custom configuration
+        # @default -- false
+        enabled: false
+
+        # name: myconfig
+        # namespace: openshift-file-integrity
+        # key: "config"
+
+    # -- If you want this component to only run on specific nodes, you can
+    # configure tolerations of tainted nodes.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/worker
+        operator: Exists
+
+  # Settings that are applicable for Control Plane nodes.
+  controlplane:
+    # -- Enable worker node fileintegrity check
+    # @default -- false
+    enabled: false
+
+    # -- Syncwave when this object is created
+    syncwave: 10
+
+    # -- Name of this object
+    name: controlplane-fileintegrity
+
+    # -- Namespace, typically openshift-file-integrity
+    namespace: openshift-file-integrity
+
+    # -- nodeSelector as key/value
+    selector:
+      key: node-role.kubernetes.io/master
+      value: ""
+
+    # -- FileIntegrity configuration
+    config:
+      # -- Time between individual aide scans
+      # @default -- 900
+      gracePeriod: 900
+
+      # -- The maximum number of AIDE database and log backups (leftover from the re-init process) to keep on a node. Older backups beyond this number are automatically pruned by the daemon.
+      # @default -- 5
+      maxBackups: 5
+
+      # -- Enable a custom configuration. This is usefull for control planes. If not defined a configuration will be created.
+      customconfig:
+        # -- Enable custom configuration
+        # @default -- false
+        enabled: true
+
+        # Name of a configMap that contains custom AIDE configuration. A default configuration would be created if omitted.
+        name: controlplane-aide-conf
+
+        # -- Namespace of a configMap that contains custom AIDE configuration. A default configuration would be created if omitted.
+        namespace: openshift-file-integrity
+
+        # -- The key that contains the actual AIDE configuration in a configmap specified by Name and Namespace. Defaults to aide.conf
+        key: "controlplane-aide.conf"
+
+    # -- If you want this component to only run on specific nodes, you can
+    # configure tolerations of tainted nodes.
+    # @default -- empty
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists

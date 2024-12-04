@@ -9,7 +9,7 @@ metadata:
   name: {{ $value.namespace.name | quote }}
   labels:
     openshift.io/cluster-monitoring: "true"
-    {{- include "common.labels" $ | nindent 4 }}
+    {{- include "tpl.labels" $ | nindent 4 }}
   {{- if or ($value.namespace.descr) ($value.namespace.displayname) }}
   annotations:
     {{- if $value.namespace.descr }}

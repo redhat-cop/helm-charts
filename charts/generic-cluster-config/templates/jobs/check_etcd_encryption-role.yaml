@@ -1,0 +1,27 @@
+{{ if eq ( .Values.apiserver.enabled | toString) "true" }}
+{{- with .Values.apiserver.etcd_encryption }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 0 | quote }}
+  name:  {{ include "tpl.serviceAccount" .serviceAccount }}-clusterrole
+  namespace: {{ .namespace | quote }}
+rules:
+- verbs:
+  - get
+  - list
+  apiGroups:
+  - operator.openshift.io
+  resources:
+  - openshiftapiservers
+  - kubeapiservers
+{{- end }}
+{{- end }}
+{{- end }}

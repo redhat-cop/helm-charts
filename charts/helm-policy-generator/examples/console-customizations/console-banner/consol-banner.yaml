@@ -1,0 +1,12 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: consolebanner
+spec:
+  backgroundColor: '{{ fromConfigMap "policies-hub" "hub-cluster-config" "topbanner.backgroundcolor" }}'
+  color: '{{ fromConfigMap "policies-hub" "hub-cluster-config" "topbanner.fontcolor" }}'
+  link:
+    href: 'https://console.redhat.com/openshift/details/{{fromClusterClaim "id.openshift.io" }}'
+    text: '{{ fromConfigMap "policies-hub" "hub-cluster-config" "topbanner.linkname" }}'
+  location: BannerTop
+  text: 'Name: {{ fromClusterClaim "name" }}, Version: {{ fromClusterClaim "version.openshift.io"}}'

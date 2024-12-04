@@ -1,0 +1,70 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is installing and configuring the Cost Management operator, using the following workflow:
+
+1. Create required Namespace
+2. Installing the Compliance operator by applying the Subscription and OperatorGroup object. (In addition, the InstallPlan can be approved if required) 
+3. Verifying if the operator is ready to use Install and configure the compliance operator. 
+4. Apply a ScanSettingBinding and, optionally, a TailoredProfile.
+
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+:bulb: **TIP**: See README files of sub Charts for additional possible settings: [helper-operator](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator) and [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator).
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+cost-management:
+  costmgmt:
+    enabled: false
+    name: costmanagementmetricscfg
+    airgapped: true
+    max_reports_to_store: 60
+    upload_cycle: 360
+
+# Using sub-chart helper-operator
+helper-operator:
+  operators:
+    cost-management-operator:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: costmanagement-metrics-operator
+        create: true
+      subscription:
+        channel: stable
+        approval: Automatic
+        operatorName: costmanagement-metrics-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: false
+        notownnamespace: false
+
+# Using sub-chart helper-status-checker
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: costmanagement-metrics-operator
+      namespace:
+        name: costmanagement-metrics-operator
+      syncwave: 3
+
+      serviceAccount:
+        name: "sa-costmanagement-metrics"
+```
+
+{{ template "doc.footer" . }}

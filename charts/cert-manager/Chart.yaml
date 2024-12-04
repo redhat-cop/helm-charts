@@ -1,0 +1,20 @@
+apiVersion: v2
+name: cert-manager
+description: Install and configure the Cert-Manager
+version: 1.0.5
+home: https://github.com/redhat-cop/helm-charts/tree/main/charts/cert-manager
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+sources:
+  - https://github.com/tjungbauer/helm-charts
+  - https://charts.stderr.at/
+  - https://github.com/tjungbauer/openshift-clusterconfig-gitops
+keywords:
+  - generic
+  - clusterconfig

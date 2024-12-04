@@ -1,0 +1,10 @@
+---
+# Emtpy example, verify values-files.yaml
+provisioning:
+  enabled: false
+
+# Specifies whether a ServiceAccount should be created
+serviceAccount:
+  create: false
+  name: "minio-provisioner"
+  automountServiceAccountToken: false

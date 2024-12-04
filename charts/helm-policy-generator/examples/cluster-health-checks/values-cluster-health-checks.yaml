@@ -1,0 +1,100 @@
+namespace: &namespace policies-hub
+
+policyDefaults:
+    categories:
+      - CM Configuration Management
+    controls:
+      - CM-3 Configuration Change Control
+      - Health Checks
+    standards:
+      - NIST SP 800-53 Rev 5.1.1
+      - Baseline 2024v1
+    description: "Cluster Health Checks"
+    globalRemediationAction: inform
+
+policySet:
+  enabled: true
+  sets:
+    - name: generic-cluster-health-checks
+      description: "Performing generic health checks"
+      namespace: *namespace
+      placement:
+        lableSelectors:
+          - key: name
+            operator: In
+            values:
+              - local-cluster
+
+policies:
+  - policyname: pods-healthcheck
+    namespace: *namespace
+    disabled: 'false'
+    policy_templates:
+      - name: pods-healthcheck
+        name_use_template_filename: "true"
+        path: "examples/cluster-health-checks/pods-health-check"
+        complianceType: mustnothave
+        namespaceSelector:
+          include:
+            - "*"
+          exclude:
+            - default
+
+  - policyname: terminating-namespace
+    namespace: *namespace
+    disabled: 'false'
+    policy_templates:
+      - name: terminating-namespace-healthcheck
+        path: "examples/cluster-health-checks/terminating-namespaces"
+        complianceType: mustnothave
+        namespaceSelector:
+          include:
+            - "*"
+          exclude:
+            - default
+
+  - policyname: cluster-operators-healthcheck
+    namespace: *namespace
+    disabled: 'false'
+    policy_templates:
+      - name: cluster-operators-healthcheck
+        path: "examples/cluster-health-checks/cluster-operators-healthcheck"
+        raw: "true"
+
+  - policyname: openshift-certificate-expiration-check
+    namespace: *namespace
+    disabled: 'false'
+    policy_templates:
+      - name: openshift-ingress-controller
+        kind: CertificatePolicy
+        minimumDuration: 24h
+        minimumCADuration: 400h
+        namespaceSelector:
+          include:
+            - openshift-ingress
+      - name: penshift-csrs
+        kind: CertificatePolicy
+        minimumDuration: 24h
+        minimumCADuration: 400h
+        namespaceSelector:
+          include:
+            - openshift-kube-apiserver-operator
+            - openshift-kube-controller-manager-operator
+      - name: openshift-internal-certs
+        kind: CertificatePolicy
+        minimumDuration: 24h
+        namespaceSelector:
+          include:
+            - openshift-config-managed
+            - openshift-kube-apiserver
+            - openshift-kube-scheduler
+            - openshift-kube-controller-manager
+
+  - policyname: openshift-data-foundation-healthcheck
+    namespace: *namespace
+    disabled: 'false'
+    policy_templates:
+      - name: odf-healthcheck
+        name_use_template_filename: "true"
+        path: "examples/cluster-health-checks/openshift-data-foundation-healthcheck"
+        complianceType: musthave

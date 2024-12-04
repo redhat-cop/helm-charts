@@ -1,0 +1,12 @@
+apiVersion: operator.openshift.io/v1
+kind: Console
+metadata:
+  name: cluster
+spec:
+  logLevel: Normal
+  plugins:
+  - acm
+  - mce
+  - odf-console
+  - gitops-plugin
+  - logging-view-plugin

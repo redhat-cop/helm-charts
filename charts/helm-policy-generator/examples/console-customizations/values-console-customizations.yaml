@@ -1,0 +1,63 @@
+namespace: &namespace policies-hub
+
+policyDefaults:
+    categories:
+      - CM Configuration Management
+    controls:
+      - CM Console Customizations
+    standards:
+      - Baseline 2024v1
+    description: "Console Customizations"
+    globalRemediationAction: enforce
+
+policySet:
+  enabled: true
+  sets:
+    - name: console-customizations
+      description: "Contains console customizations"
+      namespace: *namespace
+      policies:
+        - console-plugins
+        - console-banner
+        - console-links
+      placement:
+        lableSelectors:
+          - key: name
+            operator: In
+            values:
+              - local-cluster
+
+policies:
+  - policyname: console-plugins
+    namespace: *namespace
+    disabled: 'false'
+    policy_templates:
+      - name: console-plugins
+        path: "examples/console-customizations/console-plugins"
+        remediationAction: enforce
+        complianceType: musthave
+        severity: low
+        pruneObjectBehavior: "DeleteIfCreated"
+
+  - policyname: console-banner
+    namespace: *namespace
+    disabled: 'false'
+    policy_templates:
+      - name: console-banner
+        path: "examples/console-customizations/console-banner"
+        remediationAction: enforce
+        complianceType: musthave
+        severity: low
+        pruneObjectBehavior: "DeleteIfCreated"
+
+  - policyname: console-links
+    namespace: *namespace
+    disabled: 'false'
+    policy_templates:
+      - name: console-links
+        path: "examples/console-customizations/console-links"
+        randomizer: "true"
+        remediationAction: enforce
+        complianceType: musthave
+        severity: low
+        pruneObjectBehavior: "DeleteIfCreated"

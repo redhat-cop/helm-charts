@@ -1,0 +1,77 @@
+{{ if eq (.Values.rhacs.central.enabled | toString) "true" }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.rhacs.basic_acs_settings.syncwave | quote |default 5 }}
+  name: basic-acs-configuration
+  namespace: {{ .Values.rhacs.namespace.name | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+        - image: 'registry.redhat.io/ansible-automation-platform-21/ee-supported-rhel8:1.0'
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: central-htpasswd
+                  key: password
+          command:
+            - /bin/bash
+            - -c
+            - |
+              #!/usr/bin/env bash
+
+              echo "the following would be better with ansible :)"
+
+              printf "Push basic configuration to ACS via API\n"
+
+              curl -k -X POST -u "admin:$PASSWORD" -H 'Content-Type: application/json' -d '{"name":{{ .Values.rhacs.basic_acs_settings.auth_provider | quote }},"type":"{{ .Values.rhacs.basic_acs_settings.auth_provider_type }}","active":true,"uiEndpoint":"central","enabled":true}' https://central/v1/authProviders
+              printf "Authentication Provider with the name {{ .Values.rhacs.basic_acs_settings.auth_provider }} has been created\n"
+
+              printf "Get Id of created Auth Provider\n"
+              ID=`curl -k -u "admin:$PASSWORD" https://central/v1/authProviders?name=OpenShift | python3 -c "import sys, json; print(json.load(sys.stdin)['authProviders'][0]['id'])"`
+              printf "Found ID: %s" $ID
+              
+              printf "Set Default Role for auth Provider\n"
+              curl -k -X POST -u "admin:$PASSWORD" -H 'Content-Type: application/json' https://central/v1/groupsbatch --data-binary @- <<DATA
+              {
+                "previous_groups": [],
+                "required_groups": [
+                  {
+                    "props": {
+                    "authProviderId": "$ID"
+                    },
+                    "roleName": {{ .Values.rhacs.basic_acs_settings.min_access_role | quote }}
+                  }
+                ]
+              }
+              DATA
+
+              printf "Set Basic Mapping\n"
+              curl -k -X POST -u "admin:$PASSWORD" -H 'Content-Type: application/json' https://central/v1/groupsbatch --data-binary @- <<DATA
+              {
+                "previous_groups": [],
+                "required_groups": [
+                  {
+                    "props": {
+                      "authProviderId": "$ID",
+                      "key": "name",
+                      "value": "kube:admin"
+                    },
+                    "roleName": "Admin"
+                  }
+                ]
+              }
+              DATA
+          imagePullPolicy: Always
+          name: create-cluster-init-bundle
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      serviceAccountName: {{ include "tpl.serviceAccountName" $ }}
+      terminationGracePeriodSeconds: 30
+{{- end }}

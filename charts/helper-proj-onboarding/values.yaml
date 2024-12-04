@@ -1,0 +1,542 @@
+# Example values file for a tenant onboarding
+# It is a huge file and can help you creating:
+#   - one or more namespaces including labels etc.
+#   - local project admin group (in case groups are not created by other mechnics like LDAP Group Sync)
+#   - GitOps (ArgoCD) Project, that limits allowed repos, clusters, permissions etc.
+#   - Resource Quotas
+#   - Limit Ranges
+#   - Creation of default Network Policies (same namespace, OpenShift Monitoring & API Server, OpenShift Ingress, Egress Deny All)
+#   - Creation of custom Network Policies
+#
+# This values file shows all possible settings. Most probably, you do not need to use everything.
+# I tried to make is as configuratble as possible and most settings are working with defaults values and all can be disabled by setting "enabled" to false
+
+# -- Allowed environments that this tenant can use. This list is mandatory to explicitly set the destination clusters.
+# The name here must be equal to the configured environments in the Global-Values
+# **THIS IS FROM CLUSTER POV.**
+# Important: If there is a separate Argo CD instance per cluster, the developers still need access to the management cluster (typically in-cluster), since they need to be able
+# to create Argo CD Applications<br />
+# **NOTE**: This list will be ignored, if overwrite_allowed_envs is set in the AppProject definition.
+# @default -- none
+allowed_envs:
+  - in-cluster
+
+# -- Allowed repositorie for this tenant. This setting might be later overwritten by namespaces.[].argocd_rbac_setup.{}.overwrite_sourceRepos.
+# The allowed source repositories can be defined either (sorted by lowest priority, to highest priority)
+# <ul></li>
+#   <li>allow any repository</li>
+#   <li>global.allowed_source_repos</li>
+#   <li>allowed_source_repos</li>
+#   <li>namespaces.[].argocd_rbac_setup.{}.overwrite_sourceRepos</li>
+# </ul>
+# Note: If nothing is set, then ANY source repository will be allowed.
+# @default -- *
+allowed_source_repos:
+  - https://my-git-repo.com/super-repo
+
+# -- Administrators can define a list of namespaces where Application or ApplicationSet resources may be created, updated and reconciled in.
+# As of Argo CD 2.10 this is still a BETA feature. <br />
+# **NOTE**: This list will be ignored, if overwrite_source_namespaces is set in the AppProject definition.
+allowed_source_namespace:
+  - my-allows-source-namespace
+
+# -- Groups that are allowed in RBAC configuration of the AppProject resource of Argo CD.
+# This group can either be created using this Helm Chart (it will be named as <namespace>-admin) or must be known (for example synced via LDAP Group Sync)
+# **NOTE**: if either allowed_oidc_groups nor overwrite_oidc_groups are defined, then a dummy value will be set
+# **NOTE**: This list will be ignored, if overwrite_oidc_groups is set in the AppProject definition.
+# @default -- dummy-group
+allowed_oidc_groups:
+  - admin-group-1
+  - admin-group-2
+
+# -- List of namespaces this tenant shall manage.
+# A tenant or project may consist of multiple namespace
+# @default -- ''
+namespaces:
+
+  # -- Name of the first Namespace
+  # @default -- ''
+  - name: &name my-main-app-project-1
+
+    # -- Is this Namespace configuration enabled or not?
+    # @default -- false
+    enabled: false
+
+    # -- Set the T-Shirt size that is defined in the global-values file. There some predefined configurations (i.e. Quota) cen be prepared, so you do not need to configure them
+    # here for each separate tenant.
+    # This will also set the label project_size to the Namespace resource.
+    # **NOTE**: the T-Shirt sizes must be defined in the globals variables as tshirt_sizes.name
+    # @default -- empty
+    project_size: "S"
+
+    # -- Additional labels for Podsecurity and Monitoring for the Namespace
+    # @default -- ''
+    additional_settings:
+      # -- Pod Security Standards
+      # https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+      # Possible values: Privileged, Baseline, Restricted
+      # Privileged: Unrestricted policy, providing the widest possible level of permissions. This policy allows for known privilege escalations.
+      # Baseline: Minimally restrictive policy which prevents known privilege escalations. Allows the default (minimally specified) Pod configuration.
+      # Restricted: Heavily restricted policy, following current Pod hardening best practices.
+      # Policy violations will trigger the addition of an audit annotation to the event recorded in the audit log, but are otherwise allowed.
+      # @default -- N/A
+      podsecurity_audit: restricted
+
+      # -- Policy violations will trigger a user-facing warning, but are otherwise allowed.
+      # @default -- N/A
+      podsecurity_warn: restricted
+
+      # -- Policy violations will cause the pod to be rejected.
+      # @default -- N/A
+      podsecurity_enforce: restricted
+
+      # Set the label enable_cluster_monitoring
+      # @default -- true
+      enable_cluster_monitoring: true
+
+    # -- List of additional custom Labels that should be added to the Namespace resource, stored as a key/value pair
+    # @default -- empty
+    labels:
+      # -- Example of an additional label
+      my_additional_label: my_label
+      another_label: another_label
+
+    # -- Create a local Group with Admin users for this project and the required rolebinding
+    # If other systems, like LDAP Group sync is used, you will probaably not need this and can either disable it or remove the whole block.
+    # @default -- ''
+    local_admin_group:
+      # -- Is creation of local admin group enabled of not.
+      # @default -- false
+      enabled: false
+
+      # -- Name of the group the shall be created.
+      # @default -- "namespace-name-admins"
+      group_name: my_group_name
+
+      # -- Set the cluster role for the group.
+      # @default -- admin
+      clusterrole: admin
+
+      # -- List of users
+      # @default -- []
+      users:
+        - mona
+        - peter
+
+    # -- EgressIPs for this Namespace
+    # Be sure that nodes are labells with: k8s.ovn.org/egress-assignable: ""
+    # **NOTE**: Curently only Namespace EgressIPs are supported (not pod)
+    # @default -- ''
+    egressIPs:
+      # -- Enable or disable egressIPs.
+      # @default -- false
+      enabled: false
+
+      # -- List of IP addresses that you want to assign the namespace
+      ips:
+        - 10.100.60.130
+
+    # -- Creation of Argo CD Project
+    # @default -- ''
+    argocd_rbac_setup:
+      # This is required to build the rbac rules correctly.
+      # Theoretically, you can create multiple RBAC rules, but usually you create one per project/tenant
+      argocd_project_1:
+        # Enable this AppProject or not.
+        # @default -- false
+        enabled: false
+
+        # -- Name of the AppProject.
+        # @default -- ''
+        name: *name
+
+        # -- **OVERWRITE** Destination clusters (Optional). This list will replace the list defined at 'allowed_envs' and defines the allowed target clusters.
+        # The clusters here must exist in Argo CD and must be defined on the global-values file.
+        # @default -- empty
+        overwrite_allowed_envs:
+          - in-cluster
+
+        # -- **OVERWRITE** sourceNamespaces (Optional). This will replace the list defined at 'source_namespaces'
+        # @default -- empty
+        overwrite_source_namespaces:
+          - overwritten-source-namespace
+
+        # -- **OVERWRITE** List of allowed repositories. If the tenant tries to use a different repo, Argo CD will deny it. * can be used to allow all.
+        # Typically not required, since global list can be defined and allowed_source_repos list can be defined too.
+        # @default -- '*'
+        overwrite_sourceRepos:
+          - 'https://git-repo-com/overwrites-other-lists'
+
+        # RBAC configuration for the AppProject object. This typically consists of one or multiple definitions with policies.
+        rbac:
+            # -- Name of the RBAC rule
+            # @default -- empty
+          - name: write
+
+            # -- Description of the RBAC rule
+            # @default -- ''
+            description: "Group to deploy on DEV environment"
+
+            # -- **OVERWRITE** List of OCP groups that is allowed to manage objects in this project. This will replace settings defined in allowed_oidc_groups.
+            # @default -- empty
+            overwrite_oidc_groups:
+              - overwrite-admin-group
+
+            # -- Project policies <br />
+            # This will limit a project to specific actions <br />
+            # Parameters:
+            # <ul>
+            #   <li>action: Mandatory, either get, create, update, delete, sync or override</li>
+            #   <li>permissions: allow or deny (Default: deny)</li>
+            #   <li>resource: i.e applications (Default: applications)</li>
+            #   <li>object: Which kind of objects can be managed, default "*" (all) inside the namespace</li>
+            # </ul>
+            # @default -- ''
+
+            # -- **HINT**: You can use _fullaccess: true_ to simply provide full access to the aplication, without defining all actions manually in a list
+            # This will automatically set "allow" permissions to all actions (create, get, update, delete, sync and override) for all objects.
+            # If this is set to true, all definition at policies[] will be ignored.
+            # @default -- false
+            fullaccess: false
+
+            # -- For better granularity, you can define the policies in such a list:
+            # @default -- []
+            policies:
+                # -- Action: possible values are: <br />
+                # <ul>
+                # <li>get</li>
+                # <li>create</li>
+                # <li>update</li>
+                # <li>delete</li>
+                # <li>sync</li>
+                # <li>override</li>
+                # </ul>
+                # @default -- ''
+              - action: get
+                # -- Permission: Possible values are: <br />
+                # <ul>
+                # <li>allow</li>
+                # <li>deny</li>
+                # </ul>
+                # @default -- deny
+                permission: allow  # allow or deny
+                # -- Object: which kind of objects can be managed.
+                # @default -- '*'
+                object: '*'
+              - action: create
+                permission: allow
+              - action: update
+                permission: allow
+              - action: delete
+                permission: allow
+              - action: sync
+                permission: allow
+              - action: override
+                permission: allow
+
+    # -- Configure ResourceQuotas
+    # limits of Pods, CPU, Memory, storage, secrets... etc. etc. <br />
+    # Here are a lot of examples, typically, you do not need all of these. cpu/memory is a good start for most use cases.<br />
+    # Byte values will be replace: gi -> Gi, mi -> Mi<br />
+    # If a value is omitted, that means that no limit is set for the object.
+    # @default -- ''
+    resourceQuotas:
+      # -- Enable Quotas or not. This is mandatory.
+      # @default -- false
+      enabled: false
+
+      # -- Limit the maximum number of Pods.
+      # @default -- N/A
+      pods: 4
+
+      # -- The sum of CPU requests across all pods in a non-terminal state cannot exceed this value. cpu and requests.cpu are the same value and can be used interchangeably.
+      # @default -- N/A
+      cpu: 4
+
+      # -- The sum of memory requests across all pods in a non-terminal state cannot exceed this value. memory and requests.memory are the same value and can be used interchangeably.
+      # @default -- N/A
+      memory: 4Gi
+
+      # The sum of local ephemeral storage requests across all pods in a non-terminal state cannot exceed this value.
+      # ephemeral-storage and requests.ephemeral-storage are the same value and can be used interchangeably.
+      # @default -- N/A
+      ephemeral_storage: 4Gi
+
+      # -- Maximum number of ReplicationControllers that can be configured
+      # @default -- N/A
+      replicationcontrollers: 20
+
+      # -- Maximum number of ResourceQuotas that can be configured
+      # @default -- N/A
+      resourcequotas: 20
+
+      # -- Maximum number of Services that can be configured
+      # @default -- N/A
+      services: 100
+
+      # -- Maximum number of Secrets that can be configured
+      # @default -- N/A
+      secrets: 100
+
+      # -- Maximum number of ConfigMaps that can be configured
+      # @default -- N/A
+      configmaps: 100
+
+      # -- Maximum number of PersistentVolumeClaims that can be configured
+      # @default -- N/A
+      persistentvolumeclaims: 10
+
+      limits:
+        # -- The sum of CPU limits across all pods in a non-terminal state cannot exceed this value.
+        # @default -- N/A
+        cpu: 4
+
+        # -- The sum of memory limits across all pods in a non-terminal state cannot exceed this value.
+        # @default -- N/A
+        memory: 4gi  # lower case will be automatically replaced
+
+        # The sum of ephemeral storage limits across all pods in a non-terminal state cannot exceed this value.
+        # @default -- N/A
+        ephemeral_storage: 4mi  # lower case will be automatically replaced
+
+      requests:
+        # -- The sum of CPU requests across all pods in a non-terminal state cannot exceed this value. cpu and requests.cpu are the same value and can be used interchangeably.
+        # @default -- N/A
+        cpu: 1
+
+        # -- The sum of memory requests across all pods in a non-terminal state cannot exceed this value. memory and requests.memory are the same value and can be used interchangeably.
+        # @default -- N/A
+        memory: 2Gi
+
+        # -- The sum of storage requests across all persistent volume claims in any state cannot exceed this value.
+        # @default -- N/A
+        storage: 50Gi
+
+        # The sum of local ephemeral storage requests across all pods in a non-terminal state cannot exceed this value.
+        # ephemeral-storage and requests.ephemeral-storage are the same value and can be used interchangeably.
+        # @default -- N/A
+        ephemeral_storage: 2Gi
+
+      # -- A list of your storage classes that you would like to limit as well, can be configured here too. The storageClass (in this example "bronze") must exist.
+      # @default -- ''
+      storageclasses:
+        # -- For example: Storageclass "bronze" has a request limit of 10 Gi
+        # @default -- N/A
+        bronze.storageclass.storage.k8s.io/requests.storage: "10Gi"
+        # -- and a maximum number of 10 PVCs can be created
+        # @default -- N/A
+        bronze.storageclass.storage.k8s.io/persistentvolumeclaims: "10"
+
+    # -- Limit Ranges, are optional and restrict resource consumption in a project
+    # They can be disabled completely by settings **enabled** to false
+    # @default -- ''
+    limitRanges:
+      # -- Enable LimitRanges or not. You can either disable it or remove the whole block
+      # @default -- false
+      enabled: false
+
+      # -- To create a Pod in the project, the CPU and memory requests in the Pod spec must comply with the values set
+      # @default -- ''
+      pod:
+        max:
+          # -- The maximum amount of CPU that a pod can request across all containers.
+          # @default -- N/A
+          cpu:
+
+          # -- The maximum amount of memory that a pod can request across all containers.
+          # @default -- N/A
+          memory: 4Gi
+
+        min:
+          # -- The minimum amount of CPU that a pod can request across all containers.
+          # @default -- N/A
+          cpu: 500m
+
+          # -- The minimum amount of memory that a pod can request across all containers.
+          # @default -- N/A
+          memory: 500Mi
+
+      # -- To create a container in the project, the CPU and memory requests in the Pod spec must comply with the values set
+      # @default -- ''
+      container:
+        max:
+          # -- The maximum amount of CPU that a single container in a pod can request.
+          # @default -- N/A
+          cpu: 4
+
+          # -- The maximum amount of memory that a single container in a pod can request.
+          # @default -- N/A
+          memory: 4Gi
+
+        min:
+          # -- The minimum amount of CPU that a single container in a pod can request.
+          # @default -- N/A
+          cpu: 500m
+
+          # -- The minimum amount of CPU that a single container in a pod can request.
+          # @default -- N/A
+          memory: 500Mi
+
+        default:
+          # -- The default amount of CPU that a container can use if not specified in the Pod spec.
+          # @default -- N/A
+          cpu: 1
+
+          # -- The default amount of memory that a container can use if not specified in the Pod spec.
+          # @default -- N/A
+          memory: 4Gi
+
+        defaultRequest:
+          # -- The default amount of CPU that a container can request if not specified in the Pod spec.
+          # @default -- N/A
+          cpu: 1
+
+          # -- The default amount of memory that a container can request if not specified in the Pod spec.
+          # @default -- N/A
+          memory: 2Gi
+
+      pvc:
+        min:
+          # -- The minimum amount of storage that can be requested in a persistent volume claim.
+          # @default -- N/A
+          storage: 1Gi
+        max:
+          # -- The maximum amount of storage that can be requested in a persistent volume claim.
+          # @default -- N/A
+          storage: 20Gi
+
+    # -- A set of **default** network policies will be created everytime, unless you choose to disable them here
+    # You can remove this whole block to have the policies created or you can select specific policies
+    # which shall be disabled/enabled.
+    # The default policies are:
+    # <ul>
+    # <li>   allow_from_ingress: Allow Ingress traffic from the OpenShift Router</li>
+    # <li>   allow_from_monitoring: Allow OpenShift Monitoring to access and fetch metrics</li>
+    # <li>   deny_all_ingress: Deny inner namespace communication (pod to pod of the same Namespace)</li>
+    # <li>   allow_kube_apiserver: Allow Kube API Server</li>
+    # <li>   deny_all_egress: Forbid ANY Egress traffic</li>
+    # <li>   allow_from_same_namespace: allow inner namespace communication</li>
+    # <li>   allow_to_dns: Allow openshift DNS</li>
+    # <ul>
+    # <br /> <br />
+    # **WARNING**: Per default the project role admin/edit (the project or namespace owner) can modify the Network Policies.
+    # If you do not want this, you need to create a custom role and assign this to the users.<br />
+    # @default -- ''
+    default_policies:
+      # -- Allow traffic from the IngressController (OpenShift Router) into the namespace. Must be enabled explicitly.
+      # @default -- false
+      allow_from_ingress: false
+
+      # -- Allow traffic from OpenShift Monitoring. This should typically be allowed.
+      # @default -- true
+      allow_from_monitoring: false
+
+      # -- Allow traffic from OpenShift API server. This should typically be allowed.
+      # @default -- true
+      allow_kube_apiserver: false
+
+      # -- Allow traffic to OpenShift DNS services. This should be better allowed
+      # @default -- true
+      allow_to_dns: false
+
+      # -- Per default deny all outgoing traffic. Default would be false, to allow egress traffic without restriction.
+      # @default -- false
+      deny_all_egress: false
+
+      # -- Deny any ingress connection to this namespace. This is very restrictive and if **allow_from_same_namespace** is set to false
+      # it means that also namespace inner connections are not possible unless they are explicitely permitted.
+      # @default -- false
+      deny_all_ingress: false
+
+      # -- Allow traffic inside the own namespace between the Pods. This is usually allowed to make things easier.
+      # @default -- true
+      allow_from_same_namespace: false
+
+    # -- Additional custom Network Policies<br />
+    # More or less the definition of Network Policies is always the same<br />
+    # <ol>
+    # <li>Define a PodsSelect (or use all pods see example 2)</li>
+    # <li>Define Ingress rules with selectors and ports or IP addresses</li>
+    # <li>Optionally define egress Rules</li>
+    # </ol>
+    # <br /> The following are a few examples.
+    # @default -- ''
+    networkpolicies:
+        # -- Name of NetworkPolicy. It is recommended to create a human readable name.
+        # This example will allow for pods with the labels: app & app2:<br />
+        # Ingress:<br />
+        # &nbsp;&nbsp;FROM:
+        # &nbsp;&nbsp;&nbsp;&nbsp;Pods with labels app=myapplication, version=1.0<br />
+        # &nbsp;&nbsp;&nbsp;&nbsp;Namespace with label: testnamespace=true<br />
+        # &nbsp;&nbsp;&nbsp;&nbsp;Port: 443<br />
+        # Egress:<br />
+        # &nbsp;&nbsp;TO:<br />
+        # &nbsp;&nbsp;&nbsp;&nbsp;Pods with labels: app=myapplication, version=1.0<br />
+        # &nbsp;&nbsp;&nbsp;&nbsp;Ports: 443<br />
+        # @default -- []
+      - name: example-combined-ingress-egress
+        # -- Activate Networkpolicy
+        # @default -- false
+        active: false
+
+        # -- The PodSelector of the pods in the Namespace based on matchLabels. Could be empty as well, which means to set it to {}
+        # -- Pod must have the labels app & app2
+        podSelector:
+          matchLabels:
+            app: myapplication
+            app2: myapplication2
+
+        # -- Incoming Rules, based on Port and Selectors (Pod and Namespace)
+        # Ingress FROM definition.
+        # Ingress from podselector, based on matchLabels. These labels must be set on the source Pod that opens the connection.
+        # Could be empty {} as well. In this example app & version must be set.
+        # Ingress from namespace selector. These labels (here testnamespace) must be set on the source Namespace.
+        # Allowingress from specific CIDR blocks (10.1.1.1), except 10.1.1.50
+        ingressRules:
+          - selectors:
+              - podSelector:
+                  matchLabels:
+                    app: myapplication
+                    version: '1.0'
+              - namespaceSelector:
+                  matchLabels:
+                    testnamespace: "true"
+              - ipBlock:
+                  cidr: 10.1.1.1/24
+                  except:
+                    - 10.1.1.50/32
+            ports:
+              - protocol: TCP
+                port: 443
+
+        # -- Outgoing Rules, based on Port and Selectors<br />
+        # Allow outgoing ports (here UDP port 2) from any pod (empty selector)<br />
+        # Allow outgoing port 443 FROM your local pods with the appropriate labels<br />
+        # Allow outgoing to specific CIDR blocks
+        egressRules:
+          - selectors: []
+            ports:
+              - port: 2
+                protocol: UDP
+          - ports:
+              - port: 443
+                protocol: TCP
+            selectors:
+              - podSelector:
+                  matchLabels:
+                    app: myapplication
+                    version: '1.0'
+          - ports:
+              - port: 443
+                protocol: TCP
+            selectors:
+              - ipBlock:
+                  cidr: 10.0.0.1/24
+              - ipBlock:
+                  cidr: 171.16.0.0/16
+
+###############################
+  #  Name of the 2nd Namespace, with only Namespace creation
+  - name: my-main-app-project-2
+    # shall namespace be created of not
+    enabled: false
