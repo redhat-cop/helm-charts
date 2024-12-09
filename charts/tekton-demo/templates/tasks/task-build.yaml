@@ -38,7 +38,7 @@ spec:
   steps:
 
     - name: image-build
-      image: registry.redhat.io/rhel8/buildah@sha256:1674c155e63cfdf945f1ae9a70218ae94ae2245962998627141bbaf73edbf2c7
+      image: registry.redhat.io/rhel8/buildah@sha256:e8d73e7318001564f2fe48d2b9ad706605d95fc49f4cacaace7a985d1d9b1607
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}
       command: ['buildah', 'bud', '--tls-verify=$(inputs.params.TLSVERIFY)', '--layers', '-f', 'Dockerfile', '-t', 'image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)', '.']
       resources: {}
@@ -51,7 +51,7 @@ spec:
         privileged: true
 
     - name: image-push
-      image: registry.redhat.io/rhel8/buildah@sha256:1674c155e63cfdf945f1ae9a70218ae94ae2245962998627141bbaf73edbf2c7
+      image: registry.redhat.io/rhel8/buildah@sha256:e8d73e7318001564f2fe48d2b9ad706605d95fc49f4cacaace7a985d1d9b1607
       command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLSVERIFY)', '--digestfile', '$(workspaces.source.path)/image-digest', 'image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)', 'docker://image-registry.openshift-image-registry.svc:5000/{{ .Values.application.environments.development }}/{{ .Values.application.name }}-development:$(inputs.params.revision-name)']
       volumeMounts:
         - name: varlibcontainers
