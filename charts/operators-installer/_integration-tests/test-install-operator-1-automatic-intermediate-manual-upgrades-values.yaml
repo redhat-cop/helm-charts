@@ -1,7 +1,8 @@
 approveManualInstallPlanViaHook: true
 
-# default image pulls from private registry registry.redhat.io
-installPlanApproverAndVerifyJobsImagePullSecret: registry-redhat-io-pullsecret
+# use pull secret to pull image from local private registry
+installPlanApproverAndVerifyJobsImage: registry.registry.svc.cluster.local/origin-cli
+installPlanApproverAndVerifyJobsImagePullSecret: local-registry-pullsecret
 
 operatorGroups:
 - name: argocd-operator

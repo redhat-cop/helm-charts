@@ -19,6 +19,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  registry_user: registryuser1
+  registry_password: registrypassword1
+
 jobs:
   install-integration-test:
     runs-on: ubuntu-latest
@@ -77,6 +81,23 @@ jobs:
           controller: haproxy-ingress.github.io/controller
         EOF
 
+    # for testing operators-installer image from private repository
+    - name: Setup private registry in kind cluster 🧰
+      run: |
+        helm upgrade --install privateRegistry charts/operators-installer/_integration-tests/privateRegistry_chart \
+          --namespace registry \
+          --create-namespace \
+          --wait \
+          --set registryUser=${registry_user} \
+          --set registryPassword=${registry_password}
+
+    # copies image used to install argo into local private registry
+    - name: Copy image into private repository 💿
+      run: |
+        skopeo copy --dest-creds ${registry_user}:${registry_password} \
+          docker://$(awk '$1 ~/Image:/ {print $2}' charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml) \
+          docker://registry.registry.svc.cluster.local/origin-cli
+
     # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
     - name: Run integration tests 🧪
       timeout-minutes: 30
@@ -94,11 +115,11 @@ jobs:
         echo "##########################################################################################################"
         echo "# Create pull secret used in next step                                                                   #"
         echo "##########################################################################################################"
-        oc create secret docker-registry registry-redhat-io-pullsecret \
+        oc create secret docker-registry local-registry-pullsecret \
           --namespace operators-installer-integration-test \
-          --docker-password="${{ secrets.REDHAT_REGISTRY_TOKEN }}" \
-          --docker-server=registry.redhat.io \
-          --docker-username="6340056|redhat-cop-helm-charts"
+          --docker-password="${registry_user}" \
+          --docker-username="${registry_password}" \
+          --docker-server=registry.registry.svc.cluster.local
 
         echo "##########################################################################################################"
         echo "# Upgrade argo to newer version requiring many intermediate updates along the way                        #"
