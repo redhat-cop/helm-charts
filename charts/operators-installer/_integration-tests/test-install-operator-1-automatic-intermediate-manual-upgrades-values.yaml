@@ -1,7 +1,7 @@
 approveManualInstallPlanViaHook: true
 
 # use pull secret to pull image from local private registry
-installPlanApproverAndVerifyJobsImage: registry.registry.svc.cluster.local/origin-cli
+installPlanApproverAndVerifyJobsImage: registry.localhost/origin-cli
 installPlanApproverAndVerifyJobsImagePullSecret: local-registry-pullsecret
 
 operatorGroups:

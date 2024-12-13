@@ -96,7 +96,7 @@ jobs:
       run: |
         skopeo copy --dest-creds ${registry_user}:${registry_password} \
           docker://$(awk '$1 ~/Image:/ {print $2}' charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml) \
-          docker://registry.registry.svc.cluster.local/origin-cli
+          docker://registry.localhost/origin-cli
 
     # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
     - name: Run integration tests 🧪
@@ -119,7 +119,7 @@ jobs:
           --namespace operators-installer-integration-test \
           --docker-password="${registry_user}" \
           --docker-username="${registry_password}" \
-          --docker-server=registry.registry.svc.cluster.local
+          --docker-server=registry.localhost
 
         echo "##########################################################################################################"
         echo "# Upgrade argo to newer version requiring many intermediate updates along the way                        #"
