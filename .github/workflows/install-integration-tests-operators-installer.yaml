@@ -84,7 +84,7 @@ jobs:
     # for testing operators-installer image from private repository
     - name: Setup private registry in kind cluster 🧰
       run: |
-        helm upgrade --install privateRegistry charts/operators-installer/_integration-tests/privateRegistry_chart \
+        helm upgrade --install private-registry charts/operators-installer/_integration-tests/private-registry \
           --namespace registry \
           --create-namespace \
           --wait \
