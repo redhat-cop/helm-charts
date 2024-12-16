@@ -5,7 +5,7 @@ metadata:
   namespace: registry
 spec:
   rules:
-  - host: registry.localhost
+  - host: {{ .Values.registryIngressHost }}
     http:
       paths:
       - path: /

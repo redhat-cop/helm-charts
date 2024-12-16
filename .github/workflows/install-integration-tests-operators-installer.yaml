@@ -3,13 +3,12 @@
 #
 # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
 
-name: Install Integration Test - operators-installer
+name: Install Integration Tests - operators-installer
 
 on:
   pull_request:
     paths:
     - .github/**
-    - _test/charts-integration-tests/operators-installer/**
     - charts/operators-installer/**
 
 # Declare default permissions as read only.
@@ -19,87 +18,20 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  registry_user: registryuser1
-  registry_password: registrypassword1
-
 jobs:
-  install-integration-test:
+  test-install-and-multi-stage-upgrade:
     runs-on: ubuntu-latest
     env:
-      # renovate: datasource=github-releases depName=helm/helm
-      HELM_VERSION: v3.16.3
-      # renovate: datasource=github-tags depName=python/cpython
-      PYTHON_VERSION: v3.13.0
-      # renovate: datasource=github-releases depName=kubernetes-sigs/kind
-      KIND_VERSION: v0.25.0
-      # renovate: datasource=github-releases depName=operator-framework/operator-lifecycle-manager
-      OLM_VERSION: v0.30.0
+      TEST_NAMESPACE: 'operators-installer-integration-test'
     steps:
     - name: Checkout 🛎️
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         fetch-depth: 0
-
-    - name: Setup Helm 🧰
-      uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4
-      with:
-        version: ${{ env.HELM_VERSION }}
-
-    - name: Setup Python 🐍
-      uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-
-    - name: Setup kind cluster 🧰
-      uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
-      with:
-        version: ${{ env.KIND_VERSION }}
-        config: charts/operators-installer/_integration-tests/kind-config.yaml
-
-    # for helm charts we are testing that require installing operators 
-    - name: Setup kind cluster - Install OLM 🧰
-      run: |
-        curl -L https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_VERSION}/install.sh -o install.sh
-        chmod +x install.sh
-        ./install.sh ${OLM_VERSION}
-
-    # for helm charts we are testing that require ingress
-    - name: Setup kind cluster - Install ingress controller 🧰
-      run: |
-        helm repo add haproxy-ingress https://haproxy-ingress.github.io/charts
-        helm install haproxy-ingress haproxy-ingress/haproxy-ingress \
-            --create-namespace --namespace=ingress-controller \
-            --set controller.hostNetwork=true
-        kubectl apply -f - <<EOF
-        apiVersion: networking.k8s.io/v1
-        kind: IngressClass
-        metadata:
-          name: haproxy
-          annotations:
-            ingressclass.kubernetes.io/is-default-class: 'true'
-        spec:
-          controller: haproxy-ingress.github.io/controller
-        EOF
-
-    # for testing operators-installer image from private repository
-    - name: Setup private registry in kind cluster 🧰
-      run: |
-        helm upgrade --install private-registry charts/operators-installer/_integration-tests/private-registry \
-          --namespace registry \
-          --create-namespace \
-          --wait \
-          --set registryUser=${registry_user} \
-          --set registryPassword=${registry_password}
-
-    # copies image used to install argo into local private registry
-    - name: Copy image into private repository 💿
-      run: |
-        skopeo copy \
-          --dest-creds ${registry_user}:${registry_password} \
-          --dest-tls-verify=false \
-          docker://$(awk '$1 ~/Image:/ {print $2}' charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml) \
-          docker://registry.localhost/origin-cli:5000
+    
+    # set up kind cluster (using re-usable local composite action)
+    - name: Setup Kind Cluster for Helm Chart Testing 🧰
+      uses: ./.github/actions/setup-kind-cluster-for-helm-chart-testing
 
     # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
     - name: Run integration tests 🧪
@@ -108,27 +40,69 @@ jobs:
         echo "##########################################################################################################"
         echo "# Install argo at old version                                                                            #"
         echo "##########################################################################################################"
-        helm upgrade --install operators-installer-integration-test charts/operators-installer \
-          --namespace operators-installer-integration-test \
+        helm upgrade --install install-and-multi-stage-upgrade charts/operators-installer \
+          --namespace ${TEST_NAMESPACE} \
           --create-namespace \
           --wait \
           --values charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml \
           --debug --timeout 10m0s
 
         echo "##########################################################################################################"
-        echo "# Create pull secret used in next step                                                                   #"
-        echo "##########################################################################################################"
-        oc create secret docker-registry local-registry-pullsecret \
-          --namespace operators-installer-integration-test \
-          --docker-password="${registry_user}" \
-          --docker-username="${registry_password}" \
-          --docker-server=registry.localhost
-
-        echo "##########################################################################################################"
         echo "# Upgrade argo to newer version requiring many intermediate updates along the way                        #"
         echo "##########################################################################################################"
-        helm upgrade --install operators-installer-integration-test charts/operators-installer \
-          --namespace operators-installer-integration-test \
+        helm upgrade --install install-and-multi-stage-upgrade charts/operators-installer \
+          --namespace ${TEST_NAMESPACE} \
           --wait \
           --values charts/operators-installer/_integration-tests/test-install-operator-1-automatic-intermediate-manual-upgrades-values.yaml \
-          --debug --timeout 35m0s
+          --debug --timeout 30m0s
+
+  test-approver-job-image-from-authenticated-registry:
+    runs-on: ubuntu-latest
+    env:
+      TEST_NAMESPACE: 'external-secrets-operator'
+      LOCAL_REGISTRY_USER: registryuser1
+      LOCAL_REGISTRY_PASSWORD: registrypassword1
+      LOCAL_REGISTRY_URI: registry.localhost
+      LOCAL_REGISTRY_IMAGES: "quay.io/openshift/origin-cli:4.15" # space separated
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      with:
+        fetch-depth: 0
+    
+    # set up kind cluster (using re-usable local composite action)
+    - name: Setup Kind Cluster for Helm Chart Testing 🧰
+      uses: ./.github/actions/setup-kind-cluster-for-helm-chart-testing
+      with:
+        local-registry-enabled: true
+        local-registry-user: ${{ env.LOCAL_REGISTRY_USER }}
+        local-registry-password: ${{ env.LOCAL_REGISTRY_PASSWORD }}
+        local-registry-uri: ${{ env.LOCAL_REGISTRY_URI }}
+        local-registry-images: "quay.io/openshift/origin-cli:4.15" # space separated
+
+    # create test namespace
+    - name: Setup kind cluster - create test namespace 🧰
+      run: |
+        kubectl create namespace ${TEST_NAMESPACE}
+
+    # create pull secret for pulling images
+    - name: Setup kind cluster - create pull secret for private registry 🧰
+      run: |
+        kubectl create secret docker-registry local-registry-pullsecret \
+          --namespace ${TEST_NAMESPACE} \
+          --docker-username="${LOCAL_REGISTRY_USER}" \
+          --docker-password="${LOCAL_REGISTRY_PASSWORD}" \
+          --docker-server=${LOCAL_REGISTRY_URI}
+
+    # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
+    - name: Run integration tests 🧪
+      timeout-minutes: 10
+      run: |
+        echo "##########################################################################################################"
+        echo "# Install operator using approver job image from private authenticated registry                          #"
+        echo "##########################################################################################################"
+        helm upgrade --install approver-from-authed-registry charts/operators-installer \
+          --namespace ${TEST_NAMESPACE} \
+          --wait \
+          --values charts/operators-installer/_integration-tests/test-install-operator-with-approver-image-from-private-registry.yaml \
+          --debug --timeout 9m0s

@@ -1,8 +1,6 @@
 approveManualInstallPlanViaHook: true
 
-# use pull secret to pull image from local private registry
-installPlanApproverAndVerifyJobsImage: registry.localhost/origin-cli
-installPlanApproverAndVerifyJobsImagePullSecret: local-registry-pullsecret
+installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
 operatorGroups:
 - name: argocd-operator
