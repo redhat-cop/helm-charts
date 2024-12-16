@@ -96,7 +96,7 @@ jobs:
       run: |
         skopeo copy --dest-creds ${registry_user}:${registry_password} \
           docker://$(awk '$1 ~/Image:/ {print $2}' charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml) \
-          docker://registry.localhost/origin-cli
+          docker://registry.localhost/origin-cli:5000
 
     # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
     - name: Run integration tests 🧪
