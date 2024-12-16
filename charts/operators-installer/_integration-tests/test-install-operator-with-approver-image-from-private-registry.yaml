@@ -1,10 +1,12 @@
-approveManualInstallPlanViaHook: false
+approveManualInstallPlanViaHook: true
 
-installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
+# use pull secret to pull image from local private registry
+installPlanApproverAndVerifyJobsImage: registry.localhost/origin-cli:4.15
+installPlanApproverAndVerifyJobsImagePullSecret: local-registry-pullsecret
 
 operatorGroups:
 - name: external-secrets-operator
-  createNamespace: true
+  createNamespace: false
   targetOwnNamespace: false
   otherTargetNamespaces:
 

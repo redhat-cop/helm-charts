@@ -1,0 +1,168 @@
+name: 'Setup Kind Cluster for Helm Chart Testing'
+description: 'Setup Kind cluster for testing Helm Charts that expect to run with OLM and ingress'
+inputs:
+  # renovate: datasource=github-releases depName=helm/helm
+  helm-version:
+    description: helm version to install
+    required: true
+    default: 'v3.16.3'
+  
+  # renovate: datasource=github-tags depName=python/cpython
+  python-version:
+    description: python version to install
+    required: true
+    default: 'v3.13.0'
+
+  # renovate: datasource=github-releases depName=kubernetes-sigs/kind
+  kind-version:
+    description: kind version to install
+    required: true
+    default: 'v0.25.0'
+
+  # renovate: datasource=github-releases depName=operator-framework/operator-lifecycle-manager
+  olm-version:
+    description: olm version to install
+    required: true
+    default: 'v0.30.0'
+
+  local-registry-enabled:
+    description: whether to enable local authenticated registry
+    required: true
+    type: boolean
+    default: false
+
+  local-registry-user:
+    description: local authenticated registry username
+    required: false
+    default: 'registryuser1'
+
+  local-registry-password: 
+    description: local authenticated registry password
+    required: false
+    default: 'registrypassword1'
+
+  local-registry-uri:
+    description: local authenticated registry uri
+    required: false
+    default: 'registry.localhost'
+
+  local-registry-images:
+    description: space separated list of remote container images to seed into the local private registry
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+  - name: Setup Helm 🧰
+    uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4
+    with:
+      version: ${{ inputs.helm-version }}
+
+  - name: Setup Python 🐍
+    uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5
+    with:
+      python-version: ${{ inputs.python-version }}
+
+  - name: Setup kind cluster 🧰
+    uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
+    with:
+      version: ${{ inputs.kind-version }}
+      config: _test/kind-config.yaml
+
+  # for helm charts we are testing that require installing operators 
+  - name: Setup kind cluster - Install OLM 🧰
+    env:
+      OLM_VERSION: ${{ inputs.olm-version }}
+    shell: bash
+    run: |
+      curl -L https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_VERSION}/install.sh -o install.sh
+      chmod +x install.sh
+        ./install.sh ${OLM_VERSION}
+
+  # for helm charts we are testing that require ingress
+  - name: Setup kind cluster - Install ingress controller 🧰
+    shell: bash
+    run: |
+      helm repo add haproxy-ingress https://haproxy-ingress.github.io/charts
+      helm install haproxy-ingress haproxy-ingress/haproxy-ingress \
+          --create-namespace --namespace=ingress-controller \
+          --set controller.hostNetwork=true
+      kubectl apply -f - <<EOF
+      apiVersion: networking.k8s.io/v1
+      kind: IngressClass
+      metadata:
+        name: haproxy
+        annotations:
+          ingressclass.kubernetes.io/is-default-class: 'true'
+      spec:
+        controller: haproxy-ingress.github.io/controller
+      EOF
+
+  # for helm charts we are testing that require/expect certain default namespaces from Red Hat OpenShift
+  - name: Setup kind cluster - create expected namespaces 🧰
+    shell: bash
+    run: |
+      kubectl create namespace openshift-operators
+
+  # install private registry for those that need it
+  - name: Setup kind cluster - install private registry 🧰
+    env:
+      LOCAL_REGISTRY_USER: ${{ inputs.local-registry-user }}
+      LOCAL_REGISTRY_PASSWORD: ${{ inputs.local-registry-password }}
+      LOCAL_REGISTRY_URI: ${{ inputs.local-registry-uri }}
+    shell: bash
+    run: |
+      helm upgrade --install private-registry _test/private-registry \
+        --namespace registry \
+        --create-namespace \
+        --wait \
+        --set registryUser=${LOCAL_REGISTRY_USER} \
+        --set registryPassword=${LOCAL_REGISTRY_PASSWORD} \
+        --set registryIngressHost=${LOCAL_REGISTRY_URI}
+    if: inputs.local-registry-enabled == 'true'
+  
+  # copy images needed by CT tests that use private registry to the private registry
+  - name: Setup kind cluster - Copy images into private registry 🔺
+    env:
+      LOCAL_REGISTRY_USER: ${{ inputs.local-registry-user }}
+      LOCAL_REGISTRY_PASSWORD: ${{ inputs.local-registry-password }}
+      LOCAL_REGISTRY_URI: ${{ inputs.local-registry-uri }}
+      LOCAL_REGISTRY_IMAGES: ${{ inputs.local-registry-images }}
+    shell: bash
+    run: |
+      for image in ${LOCAL_REGISTRY_IMAGES}; do
+          image_name_regex='.*\/(.*$)'
+          if [[ "${image}" =~ ${image_name_regex} ]]; then
+              image_name="${BASH_REMATCH[1]}"
+              remote_image="docker://${image}"
+              local_image="docker://${LOCAL_REGISTRY_URI}/${image_name}"
+
+              echo "Copy image (${remote_image}) to local registry (${local_image})"
+              skopeo copy \
+                --dest-creds ${LOCAL_REGISTRY_USER}:${LOCAL_REGISTRY_PASSWORD} \
+                --dest-tls-verify=false \
+                ${remote_image} \
+                ${local_image}
+          else
+              echo "ERROR: parsing image name from source image uri: ${image}"
+              exit 1
+          fi
+      done
+    if: inputs.local-registry-enabled == 'true'
+
+  # SOURCE: https://kind.sigs.k8s.io/docs/user/local-registry/
+  - name: Setup kind cluster - Add the registry config to the nodes 🧰
+    env:
+      LOCAL_REGISTRY_URI: ${{ inputs.local-registry-uri }}
+      CLUSTER_NAME: chart-testing
+    shell: bash
+    run: |
+      REGISTRY_DIR="/etc/containerd/certs.d/${LOCAL_REGISTRY_URI}"
+      for node in $(kind get nodes -n "${CLUSTER_NAME}"); do
+        docker exec "${node}" mkdir -p "${REGISTRY_DIR}"
+        cat <<EOF | docker exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/hosts.toml"
+      [host."http://${LOCAL_REGISTRY_URI}"]
+      EOF
+      done
+    if: inputs.local-registry-enabled == 'true'

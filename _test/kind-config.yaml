@@ -10,3 +10,8 @@ nodes:
     hostPort: 80
     protocol: TCP
 
+# SOURCE: https://kind.sigs.k8s.io/docs/user/local-registry/
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry]
+    config_path = "/etc/containerd/certs.d"
