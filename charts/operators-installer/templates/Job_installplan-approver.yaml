@@ -34,7 +34,7 @@ spec:
         image: {{ $.Values.installPlanApproverAndVerifyJobsImage }}
         {{- if $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
         imagePullSecrets:
-          - {{ $.Values. installPlanApproverAndVerifyJobsImagePullSecret }}
+          - {{ $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
         {{- end }}
         command: ["/bin/sh","-c"]
         args:
