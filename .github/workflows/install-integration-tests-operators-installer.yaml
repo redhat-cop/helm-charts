@@ -99,7 +99,7 @@ jobs:
           --dest-creds ${registry_user}:${registry_password} \
           --dest-tls-verify=false \
           docker://$(awk '$1 ~/Image:/ {print $2}' charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml) \
-          http://registry.localhost/origin-cli:5000
+          docker://registry.localhost/origin-cli:5000
 
     # NOTE: can't use chart-testing because `ct` does not allow for a fixed release so you can't run two different tests that affect the same resources
     - name: Run integration tests 🧪
