@@ -27,7 +27,7 @@ spec:
     spec:
       {{- if $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
       imagePullSecrets:
-        - {{ $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
+        - name: {{ $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
       {{- end }}
       containers:
       - name: installplan-approver
