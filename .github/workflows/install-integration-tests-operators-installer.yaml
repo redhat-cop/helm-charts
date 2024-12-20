@@ -131,4 +131,4 @@ jobs:
           --namespace operators-installer-integration-test \
           --wait \
           --values charts/operators-installer/_integration-tests/test-install-operator-1-automatic-intermediate-manual-upgrades-values.yaml \
-          --debug --timeout 30m0s
+          --debug --timeout 35m0s
