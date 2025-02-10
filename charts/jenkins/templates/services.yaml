@@ -15,7 +15,7 @@ spec:
       protocol: TCP
       targetPort: {{ .target_port }}
   selector:
-    name: {{ .selector }}
+    app.kubernetes.io/name: {{ .selector }}
   sessionAffinity: None
   type: ClusterIP
 {{ end }}

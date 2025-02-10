@@ -60,7 +60,7 @@ The following table lists the configurable parameters of the Jenkins chart and t
 | `buildconfigs.name.builder_image_name`           | Builder image name for custom build                                         | `''`                                                 |
 | `buildconfigs.name.builder_image_tag`            | Builder image tag for custom build                                          | `''`                                                 |
 | `role`                                           | The value of role value for Jenkins Agent ImageStream. It is used for Jenkins sync plugin to discover agents automatically | `jenkins-slave` |
-| `configAsCode.configMap`                         | The name of the ConfigMap to create and associate with the Jenkins DeploymentConfig in order to be used for Configuration-as-Code | `null` |
+| `configAsCode.configMap`                         | The name of the ConfigMap to create and associate with the Jenkins Deployment in order to be used for Configuration-as-Code | `null` |
 | `configAsCode.body`                              | The body content of the configuration-as-code which will be stored in the ConfigMap, mounted in the Jenkins pod, and read in as Configuration by the Configuration-as-Code plugin | `null` |
 
 ### Environment Variables
