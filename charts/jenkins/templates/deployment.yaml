@@ -1,6 +1,6 @@
 {{- if .Values.deployment }}
 ---
-apiVersion: apps.openshift.io/v1 
+apiVersion: apps/v1 
 kind: DeploymentConfig
 metadata:
   annotations:
@@ -10,16 +10,17 @@ metadata:
 spec:
   replicas: 1
   selector:
-    name: {{ .Values.appName }}
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.appName }}
   strategy: {{- if .Values.persistence }}
     type: Recreate 
     {{ else }}
-    type: Rolling 
+    type: RollingUpdate
     {{- end }}
   template:
     metadata:
       labels:
-        name: {{ .Values.appName }}
+        app.kubernetes.io/name: {{ .Values.appName }}
     spec:
       containers:
       - name: {{ .Values.appName }}
