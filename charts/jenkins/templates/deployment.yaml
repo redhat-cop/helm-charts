@@ -47,14 +47,14 @@ spec:
           value: 'false'
         - name: JENKINS_OPTS
           value: '--sessionTimeout=180'
-        {{- if .Values.configAsCode }}
-        - name: CASC_JENKINS_CONFIG
-          value: /var/lib/jenkins/config-as-code
         - name: GITLAB_TOKEN
           valueFrom:
             secretKeyRef:
               name: git-auth
               key: password
+        {{- if .Values.configAsCode }}
+        - name: CASC_JENKINS_CONFIG
+          value: /var/lib/jenkins/config-as-code
         {{- end }}
         {{- range $key := .Values.deployment.env_vars }}
         {{- if .value }}
