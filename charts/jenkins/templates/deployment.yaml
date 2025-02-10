@@ -50,6 +50,11 @@ spec:
         {{- if .Values.configAsCode }}
         - name: CASC_JENKINS_CONFIG
           value: /var/lib/jenkins/config-as-code
+        - name: GITLAB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: git-auth
+              key: password
         {{- end }}
         {{- range $key := .Values.deployment.env_vars }}
         {{- if .value }}
