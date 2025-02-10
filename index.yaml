@@ -2492,6 +2492,22 @@ entries:
   jenkins:
   - apiVersion: v2
     appVersion: v2.222.1
+    created: "2025-02-10T09:52:18.624804406Z"
+    description: A Helm chart for deploying Jenkins on OpenShift with some additional
+      build agents and plugins
+    digest: bc2dadba1a8e849728a4a50b3b437ee4c1ef2eafa8d6cbf679bddaddb09f2bb0
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://www.jenkins.io/images/logos/jenkins/256.png
+    maintainers:
+    - name: springdo
+    - name: ckavili
+    - name: eformat
+    name: jenkins
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/jenkins-1.0.12/jenkins-1.0.12.tgz
+    version: 1.0.12
+  - apiVersion: v2
+    appVersion: v2.222.1
     created: "2024-08-13T17:18:31.847577375Z"
     description: A Helm chart for deploying Jenkins on OpenShift with some additional
       build agents and plugins
@@ -5624,4 +5640,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2025-02-05T10:58:32.487252736Z"
+generated: "2025-02-10T09:52:18.626072132Z"
