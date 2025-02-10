@@ -1,7 +1,7 @@
 {{- if .Values.deployment }}
 ---
 apiVersion: apps/v1 
-kind: DeploymentConfig
+kind: Deployment
 metadata:
   annotations:
   name: {{ .Values.appName }}
