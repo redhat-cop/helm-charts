@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
+    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"jenkins:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"jenkins\")].image"}]'
   name: {{ .Values.appName }}
   labels:
     app: {{ .Values.appName }}
