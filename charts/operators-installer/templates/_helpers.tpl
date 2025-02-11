@@ -64,7 +64,7 @@ Name to use for approver SA, Role, and RoleBinding
 {{- end }}
 
 {{/*
-Name to use for approver SA, Role, and RoleBinding
+Name to use for the ConfigMap that will store the scripts for installPlan approval, verification, etc.
 */}}
 {{- define "operators-installer.scriptsName" -}}
 {{- printf "%s-%s" .csv "scripts" | trunc -63 | replace "." "-" | trimAll "-" }}
