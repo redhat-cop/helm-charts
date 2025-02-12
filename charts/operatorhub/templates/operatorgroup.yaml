@@ -8,7 +8,7 @@
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: {{ $op.name | quote }} 
+  name: {{ $op.name | quote }}
   namespace: {{ $namespace | quote }}
 spec:
   {{- if $og.namespaceSelector }}
