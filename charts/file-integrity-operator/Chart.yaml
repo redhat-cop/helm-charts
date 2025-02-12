@@ -1,0 +1,17 @@
+apiVersion: v2
+name: file-integrity-operator
+description: Setup the FileIntegrity Operator (based on AIDE)
+version: 1.0.11
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/file-integrity-operator
+icon: https://github.com/tjungbauer/helm-charts/raw/gh-pages/images/file-integrity-operator-icon.png
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+keywords:
+  - security
+  - clusterconfig

@@ -1,0 +1,23 @@
+apiVersion: v2
+name: cost-management
+description: Setup and configure cost-management Operator
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/network-observability
+version: 1.0.10
+dependencies:
+  - name: helper-operator
+    version: ~1.0.21
+    repository: https://redhat-cop.github.io/helm-charts
+  - name: helper-status-checker
+    version: ~4.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+    condition: helper-status-checker.enabled
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+keywords:
+  - configuration
+  - cost-management

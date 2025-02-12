@@ -1,0 +1,30 @@
+{{- with .Values }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: noobaa.io/v1alpha1
+kind: BackingStore
+metadata:
+  name: {{ .backingstore_name }}
+  namespace: openshift-storage
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+    app: noobaa
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "1" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  {{- if .pvPool }}
+  pvPool:
+    numVolumes: {{ .pvPool.numOfVolumes | default "1" }}
+    resources:
+      requests:
+        storage: {{ .backingstore_size }}
+      limits:
+        cpu: {{ .limits_cpu | default "500m" }}
+        memory: {{ .limits_memory | default "2Gi" }}
+    secret: {}
+    storageClass: {{ .baseStorageClass }}
+  type: {{ .pvPool.type | default "pv-pool" }}
+  {{- end }}
+{{- end }}
+{{- end }}

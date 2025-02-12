@@ -1,0 +1,228 @@
+---
+
+# -- Enable or disable LokiStack configuration
+# @default -- false
+enabled: false
+
+# -- Name of the LokiStack object
+name: logging-loki
+
+# -- Namespace of the LokiStack object
+namespace: openshift-logging
+
+# -- Syncwave for the LokiStack object.
+# @default -- 3
+syncwave: 3
+
+limits:
+  global:
+    # -- This is for log streams only, not the retention of the object store. Data retention must be configured on the bucket.
+    # @default -- 7
+    retention_days: 7
+
+    # -- Sets retention policy for all log streams. Note: This field does not impact the retention period for stored logs in object storage.
+    # Be sure to keep the correct syntax to the selector
+    # @default -- N/A
+    streams:
+      - days: 4
+        priority: 1
+        selector: "'{kubernetes_namespace_name=~\"test.+\"}'"
+      - days: 1
+        priority: 1
+        selector: "'{log_type=\"infrastructure\"}'"
+
+  # -- Sets retention policy by tenant. Valid tenant types are application, audit, and infrastructure.
+  # @default -- N/A
+  tenants:
+    # -- Type Application
+    # @default -- N/A
+    application:
+      # -- Set retention time for application logs
+      # @default -- none
+      retention:
+        days: 1
+        # -- Set specific streams for the applications logs
+        # @default -- N/A
+        streams:
+            # -- Retention time for the selector namespace =~test.
+            # Be sure to keep the correct syntax to the selector
+          - days: 4
+            selector: "'{kubernetes_namespace_name=~\"test.+\"}'"
+
+    # -- Type Infrastructure
+    # @default -- N/A
+    infrastructure:
+      # -- Set retention time for infrastructure logs
+      # @default -- none
+      retention:
+        days: 5
+        # -- Set specific streams for the infrastructure logs
+        # @default -- N/A
+        streams:
+            # -- Retention time for the selector namespace starting with openshift-cluster.
+            # Be sure to keep the correct syntax to the selector
+          - days: 1
+            selector: "'{kubernetes_namespace_name=~\"openshift-cluster.+\"}'"
+
+    # -- Type Audit
+    # @default -- N/A
+    audit:
+      # -- Set retention time for audit logs
+      # @default -- none
+      retention:
+        days: 5
+        # -- Set specific streams for the audit logs
+        # @default -- N/A
+        streams:
+            # -- Retention time for the selector namespace starting with openshift-cluster.
+            # Be sure to keep the correct syntax to the selector
+          - days: 1
+            selector: "'{kubernetes_namespace_name=~\"openshift-cluster.+\"}'"
+
+# Setting for storage
+storage:
+
+  # -- Size defines one of the supported Loki deployment scale out sizes.
+  # Can be either:
+  #   - 1x.demo
+  #   - 1x.extra-small (Default)
+  #   - 1x.small
+  #   - 1x.medium
+  # @default -- 1x.extra-small
+  size: 1x.extra-small
+
+  # Secret for object storage authentication. Name of a secret in the same namespace as the LokiStack custom resource.
+  secret:
+
+    # -- Name of a secret in the namespace configured for object storage secrets.
+    name: logging-loki-s3
+
+    # Type of object storage that should be used
+    # Can bei either:
+    #  - swift
+    #  - azure
+    #  - s3 (default)
+    #  - alibabacloud
+    #  - gcs
+    # -- Type of object storage that should be used
+    # @default -- s3
+    type: s3
+
+  # Schemas for reading and writing logs.
+  schemas:
+     # -- Version for writing and reading logs.
+     # Can be v11 or v12
+     # @default -- v12
+    - version: v12
+      # -- EffectiveDate is the date in UTC that the schema will be applied on. To ensure readibility of logs, this date should be before the current date in UTC.
+      # @default -- 2022-06-01
+      effectiveDate: "2022-06-01"
+
+# -- Storage class name defines the storage class for ingester/querier PVCs.
+# @default -- gp3-csi
+storageclassname: gp3-csi
+
+# -- Mode defines the mode in which lokistack-gateway component will be configured.
+# Can be either: static (default), dynamic, openshift-logging, openshift-network
+# @default -- static
+mode: openshift-logging
+
+# -- AdminGroups defines a list of groups, whose members are considered to have admin-privileges by the Loki Operator. Setting this to an empty array disables admin groups.
+# By default the following groups are considered admin-groups: - system:cluster-admins - cluster-admin - dedicated-admin
+# @default -- none
+admin_groups:
+  - cluster-admins
+
+# -- Control pod placement for LokiStack components. You can define a list of tolerations for the following components:
+# compactor, distributer, gateway, indexGateway, ingester, querier, queryFrontend, ruler
+podPlacements: {}
+
+# podPlacements:
+#  # Pod placement of compactor
+#  compactor:
+#    tolerations:
+#      - effect: NoSchedule
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#      - effect: NoExecute
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#  # Pod placement of distributor
+#  distributor:
+#    tolerations:
+#      - effect: NoSchedule
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#      - effect: NoExecute
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#  # Pod placement of gateway
+#  gateway:
+#    tolerations:
+#      - effect: NoSchedule
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#      - effect: NoExecute
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#  # Pod placement of indexGateway
+#  indexGateway:
+#    tolerations:
+#      - effect: NoSchedule
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#      - effect: NoExecute
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#  # Pod placement of ingester
+#  ingester:
+#    tolerations:
+#      - effect: NoSchedule
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#      - effect: NoExecute
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#  # Pod placement of querier
+#  querier:
+#    tolerations:
+#      - effect: NoSchedule
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#      - effect: NoExecute
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#  # Pod placement of queryFrontend
+#  queryFrontend:
+#    tolerations:
+#      - effect: NoSchedule
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#      - effect: NoExecute
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#  # Pod placement of ruler
+#  ruler:
+#    tolerations:
+#      - effect: NoSchedule
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved
+#      - effect: NoExecute
+#        key: node-role.kubernetes.io/infra
+#        operator: Equal
+#        value: reserved

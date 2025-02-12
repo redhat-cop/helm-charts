@@ -1,0 +1,45 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is installing and configuring OpenShift Logging
+
+**NOTE**: OpenShift Logging using EFK stack (Elasticsearch, Kibana and Fluentd) is considered as deprecated and has been removed from this Chart. Instead, LokiStack with Vector 
+should be used.
+
+**NOTE**: ClusterLogForwarder is currently not configured with this Chart. This can be set using in the GitOps Chart/Kustomize that is using this chart as a dependency.
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops (for example in the folder clusters/management-cluster/setup-openshift-logging)
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+Verify the subcharts for additional settings:
+
+* [helper-operator](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+* [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+* [helper-lokistack](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-lokistack)
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+loggingConfig:
+  enabled: true
+
+  logStore:
+    type: lokistack
+    lokistack: logging-loki
+
+    visualization:
+      type: ocp-console    
+
+    collection:
+      type: vector
+```
+
+{{ template "doc.footer" . }}

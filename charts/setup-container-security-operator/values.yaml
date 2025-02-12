@@ -1,0 +1,31 @@
+---
+helper-operator:
+  operators:
+    security-operator:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: openshift-operators
+        create: false
+      subscription:
+        channel: stable-3.10
+        approval: Automatic
+        operatorName: container-security-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: false
+        notownnamespace: true
+
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: container-security-operator
+      namespace:
+        name: openshift-operators
+      syncwave: 3
+
+      serviceAccount:
+        name: "status-security-operator"

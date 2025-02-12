@@ -1,0 +1,28 @@
+{{- if .Values.policySet }}
+{{- if .Values.policySet.enabled }}
+{{- if eq ( .Values.policySet.enabled | toString ) "true"  }}
+{{- range .Values.policySet.sets }}
+---
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  description: {{ .description }}
+  policies:
+  {{- if .policies }}
+    {{- range .policies }}
+  - {{ . }}
+    {{- end }}
+  {{- else }}
+    {{- range $.Values.policies }}
+  - {{ .policyname }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

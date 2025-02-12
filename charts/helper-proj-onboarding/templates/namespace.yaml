@@ -1,0 +1,36 @@
+{{- range $key, $value := .Values.namespaces }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .name | replace "_" "-" | quote }}
+  labels:
+    argocd.argoproj.io/managed-by: {{ $.Values.global.application_gitops_namespace }}
+    {{- include "common.labels" $ | nindent 4 }}
+    {{- if .labels -}}
+    {{ toYaml .labels | nindent 4 }}
+    {{- end }}
+    {{- if .additional_settings }}
+    {{- with .additional_settings }}
+    {{- if .podsecurity_audit }}
+    pod-security.kubernetes.io/audit: {{ .podsecurity_audit }}
+    {{- end }}
+    {{- if .podsecurity_warn }}
+    pod-security.kubernetes.io/warn: {{ .podsecurity_warn }}
+    {{- end }}
+    {{- if .podsecurity_enforce }}
+    pod-security.kubernetes.io/enforce: {{ .podsecurity_enforce }}
+    {{- end }}
+    {{- if .enable_cluster_monitoring }}
+    openshift.io/cluster-monitoring: {{ .enable_cluster_monitoring | quote }}
+    {{- end }}
+    {{- end }}
+    {{- else }}
+    openshift.io/cluster-monitoring: 'true'
+    {{- end }}
+    {{- if .project_size }}
+    namespace-size: {{ .project_size | quote }}
+    {{- end }}
+{{- end }}
+{{- end }}

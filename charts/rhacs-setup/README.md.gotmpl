@@ -1,0 +1,411 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is installing and configuring Advanced Cluster Security, using the following workflow:
+
+1. Create required Namespace for the operator.
+2. Installing the ACS operator by applying the Subscription and OperatorGroup object. (In addition, the InstallPlan can be approved if required) 
+3. Verifying if the operator is ready to use Install and configure the compliance operator. 
+4. Create the Namespace for Stackrox instance.
+5. Deploy the Central
+6. Create an init-Bundle for the Secured Cluster
+7. Deploy the Secured Cluster instance on the Central cluster.
+8. Job: Create a ConsoleLink for eady access of ACS.
+9. Job: Configure ACS with OpenShift Authentication for the user kubeadmin
+
+The whole process has multiple hooks and waves, which are illustrated in the image: 
+
+![GitOps Flow](docs/img/RHACS-Deployment-Waves.png)
+
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops (folder: clusters/management-cluster/setup-acs)
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+Verify the subcharts for additional settings:
+
+* [helper-operator](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+* [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+
+{{ template "doc.values" . }}
+
+## Example
+
+```yaml
+---
+override-rhacs-operator-version: &rhacsversion stable
+operatornamespace: &operatornamespace rhacs-operator
+clustername: &clustername local-cluster
+
+rhacs-setup:
+  rhacs:
+
+    job_vars:
+      max_attempts: 20  # How otften shall the status of the operator be checked (Default 20)
+
+    # Namespace where ACS shall be deployed
+    namespace:
+      name: stackrox
+      syncwave: '0'
+      descr: 'Red Hat Advanced Cluster Security'
+
+    ################
+    # CENTRAL
+    ################
+    # Settings for the Central of ACS
+    central:
+
+      # Enabled yes or no ... typically yes
+      enabled: true
+      syncwave: '3'
+
+      # Configures monitoring endpoint for Central.
+      # The monitoring endpoint allows other services to collect metrics from
+      # Central, provided in Prometheus compatible format.
+      # Can bei either:
+      #  - Enabled
+      #  - Disabled (default)
+      # monitoring: Enabled
+
+      # EXPOSURE
+      # Here you can configure if you want to expose central through a node port,
+      # a load balancer, or an OpenShift route.
+      # Per default OpenShift route will be used.
+      # Expose Central through a load balancer service.
+      # loadBalancer:
+      #  enabled: false
+      #  port: 443
+      #  ip: 127.0.0.1
+
+      # Expose Central through a node port.
+      # nodePort:
+      #  enabled: false
+
+      # Expose Central through an OpenShift route.
+      # This is the default setting
+      # route:
+      #  enabled: true
+
+      # DEFAULTTLSSECRET
+      # By default, Central will only serve an internal TLS certificate,
+      # which means that you will need to handle TLS termination at the
+      # ingress or load balancer level.
+      # If you want to terminate TLS in Central and serve a custom server
+      # certificate, you can specify a secret containing the certificate
+      # and private key here.
+      #
+      # Define here the name of the secret If you would like to set it.
+      # defaultsslsecret: secretname
+
+      # ADMINISTRATOR PASSWORD
+      # Specify a secret that contains the administrator password in the
+      # "password" data item. If omitted, the operator will auto-generate a
+      # password and store it in the "password" item in the "central-htpasswd" secret.
+      # Default: omitted
+      # adminPasswordSecret: secretname
+
+      # Configures whether Red Hat Advanced Cluster Security should run in online or
+      # offline (disconnected) mode. In offline mode, automatic updates of
+      # vulnerability definitions and kernel modules are disabled.
+      # Default: Online
+      # This parameter is MANDATORY
+      egress:
+        connectivityPolicy: Online
+
+      # PERSISTENCE
+      # The name of the PVC to manage persistent data. If no PVC with the given name
+      # exists, it will be created. Defaults to "stackrox-db" if not set.
+      # Default: stackrox-db
+      # pvc: stackrox-db
+
+      # The size of the persistent volume when created through the claim.
+      # If a claim was automatically created, this can be used after the initial
+      # deployment to resize (grow) the volume (only supported by some storage class
+      # controllers).
+      # pvc_size: 100
+
+      # The name of the storage class to use for the PVC. If your cluster is not
+      # configured with a default storage class, you must select a value here.
+      # Default: default storage class will be used
+      # pvc_storageclass: storageclass
+
+      # CENTRAL RESOURCES
+      # Allows overriding the default resource settings for the central
+      # You can set requests and limits.
+      # Parameters (examples):
+      #   - requests:
+      #        - cpu: 500m
+      #        - memory: 50Mi
+      #        - ephemeral-storage: 50Mi
+      #   - limits:
+      #        - cpu: 500m
+      #        - memory: 50Mi
+      #        - ephemeral-storage: 50Mi
+
+      # ONLY set this if you know what you are doing.
+      # per default this block can be omitted.
+      # Default values are:
+      #   - limits cpu 4, memory 8Gi
+      #   - requests: cpu: 1500m, memory 4Gi
+      # resources:
+      #   requests:
+      #     cpu: 500m
+      #     memory: 1Gi
+      #     ephemeral-storage: 50Mi
+      #   limits:
+      #     cpu: 500m
+      #     memory: 10Gi
+      #     ephemeral-storage: 500Mi
+
+      # If you want this component to only run on specific nodes, you can
+      # configure tolerations of tainted nodes.
+      tolerations:
+        - effect: NoSchedule
+          key: infra
+          operator: Equal
+          value: reserved
+
+      ###############
+      # CENTRAL DB
+      ###############
+      # Settings for Central DB, which is responsible for data persistence.
+      db:
+
+        # ADMINISTRATOR PASSWORD FOR CENTRAL DATABASE
+        # Specify a secret that contains the password in the "password" data item.
+        # This can only be used when specifying a connection string manually.
+        # When omitted, the operator will auto-generate a DB password and store it
+        # in the "password" item in the "central-db-password" secret.
+        # Default: omitted
+        # passwordSecret: secretname
+
+        # PERSISTENCE
+        # Configures how Central DB should store its persistent data.
+        # The name of the PVC to manage persistent data.
+        # If no PVC with the given name exists, it will be created. Defaults
+        # to "central-db" if not set.
+        # pvc: central-db
+
+        # The size of the persistent volume when created through the claim.
+        # If a claim was automatically created, this can be used after the initial
+        # deployment to resize (grow) the volume (only supported by some storage
+        # class controllers).
+        # pvc_size: 100
+
+        # The name of the storage class to use for the PVC. If your cluster is not
+        # configured with a default storage class, you must select a value here.
+        # pvc_storageclass: storageclass
+
+        # resources for Central DB ...
+        # Default values are:
+        #   - limits cpu 8, memory 16Gi
+        #   - requests: cpu: 4, memory 8Gi
+        # limit it to have more resourcen on demo systems (not suitable for production environments)
+
+        resources:
+          requests:
+            cpu: '1'
+            memory: '1Gi'
+      #      ephemeral-storage: 500Mi
+      #    limits:
+      #      cpu: '1'
+      #      memory: '1Gi'
+      #      ephemeral-storage: 500Mi
+
+        # If you want this component to only run on specific nodes, you can
+        # configure tolerations of tainted nodes.
+        tolerations:
+          - effect: NoSchedule
+            key: infra
+            operator: Equal
+            value: reserved
+
+    ###############
+    # SCANNER
+    ###############
+    scanner:
+      # If you do not want to deploy the Red Hat Advanced Cluster Security Scanner,
+      # you can disable it here (not recommended). By default, the scanner is enabled.
+      # If you do so, all the settings in this section will have no effect.
+      enabled: true
+
+      # Expose the monitoring endpoint. A new service, "monitoring", with port 9090,
+      # will be created as well as a network policy allowing inbound connections to
+      # the port.
+      # monitoring: Disabled
+
+      analyzer:
+        # Controls the number of analyzer replicas and autoscaling.
+        # If nothing is set, the operator will create a default configuration
+        # Parameters:
+        #   - status: Enabled
+        #   - min: 2
+        #   - max: 5
+        #   - replicas: 3
+
+        # The following settings are not suitable for a production environment
+        autoscaling:
+          status: "Disabled"
+          max: 1
+          min: 1
+          # When autoscaling is disabled, the number of replicas will always be
+          # configured to match this value.
+          replicas: 1
+
+        # If you want this component to only run on specific nodes, you can
+        # configure tolerations of tainted nodes.
+        tolerations:
+          - effect: NoSchedule
+            key: infra
+            operator: Equal
+            value: reserved
+
+        # ONLY set this if you know what you are doing.
+        # per default this block can be omitted.
+        # Default values are:
+        #   - limits cpu 2, memory 4Gi
+        #   - requests: cpu: 1, memory 1500Mi
+        # resources:
+        #  requests:
+        #    cpu: 500m
+        #    memory: 1Gi
+        #    ephemeral-storage: 50Mi
+        #  limits:
+        #    cpu: 500m
+        #    memory: 10Gi
+        #    ephemeral-storage: 500Mi
+
+      ###############
+      # SCANNER DB
+      ###############
+      db:
+        # If you want this component to only run on specific nodes, you can
+        # configure tolerations of tainted nodes.
+        tolerations:
+          - effect: NoSchedule
+            key: infra
+            operator: Equal
+            value: reserved
+
+        # ONLY set this if you know what you are doing.
+        # per default this block can be omitted.
+        # Default values are:
+        #   - limits cpu 2, memory 4Gi
+        #   - requests: cpu: 200m, memory 200Mi
+        # resources:
+        #  requests:
+        #    cpu: 1
+        #    memory: 1Gi
+        #    ephemeral-storage: 50Mi
+        #  limits:
+        #    cpu: 500m
+        #    memory: 10Gi
+        #    ephemeral-storage: 500Mi
+
+    # Run the Job to initialze an ACS secrued cluster
+    job_init_bundle:
+      enabled: true
+      syncwave: '3'
+
+    # Create a console link in OpenShift
+    consolelink:
+      enabled: true
+      syncwave: '4'
+      location: ApplicationMenu
+      text: Advanced Cluster Security
+      section: Observability
+
+    #################
+    # SECURED CLUSTER
+    #################
+    secured_cluster:
+      # Enabled yes or no ... typically yes
+      enabled: true
+      syncwave: '4'
+      clustername: *clustername
+
+      # in case tolerations are required
+      sensor:
+        # If you want this component to only run on specific nodes, you can
+        # configure tolerations of tainted nodes.
+        tolerations:
+          - effect: NoSchedule
+            key: infra
+            operator: Equal
+            value: reserved
+
+      admissioncontrol:
+        listenOn:
+          # Set this to 'true' to enable preventive policy enforcement for object creations.
+          creates: true
+          # Set this to 'true' to enable monitoring and enforcement for Kubernetes events (port-forward and exec).
+          events: true
+          # Set this to 'true' to enable preventive policy enforcement for object updates.
+          # Note: this will not have any effect unless 'Listen On Creates' is set to 'true' as well.
+          updates: true
+
+        # If you want this component to only run on specific nodes, you can
+        # configure tolerations of tainted nodes.
+        tolerations:
+          - effect: NoSchedule
+            key: infra
+            operator: Equal
+            value: reserved
+
+    basic_acs_settings:
+      auth_provider: 'OpenShift'
+      auth_provider_type: 'openshift'
+      min_access_role: 'None'
+      syncwave: 5
+
+# Service account name used in Jobs
+serviceAccount:
+  create: true
+  name: "create-cluster-init"
+
+# Subchart helper-operator
+# Simply installs the operator
+# Install Operator RHACS
+# Deploys Operator --> Subscription and Operatorgroup
+# Syncwave: 0
+helper-operator:
+  operators:
+    rhacs-operator:
+      enabled: true
+      syncwave: '0'
+      namespace:
+        name: *operatornamespace
+        create: true
+      subscription:
+        channel: *rhacsversion
+        approval: Automatic
+        operatorName: rhacs-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: true
+        # rhacs does not support to monitor own namespace,
+        # therefor the spec in the OperatorGroup must be empty
+        notownnamespace: true
+
+# Subchart helper-status-checker
+# checks if ACS operator is ready
+helper-status-checker:
+  enabled: true
+
+  # use the value of the currentCSV (packagemanifest) but WITHOUT the version !!
+  operatorName: rhacs-operator
+
+  # where operator is installed
+  namespace:
+    name: rhacs-operator
+
+  serviceAccount:
+    create: true
+    name: "status-checker-acs"
+```
+
+{{ template "doc.footer" . }}

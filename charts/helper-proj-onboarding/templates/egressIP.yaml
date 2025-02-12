@@ -1,0 +1,21 @@
+{{- range $key, $value := .Values.namespaces }}
+{{ if eq ( .enabled | toString) "true" }}
+{{- if .egressIPs }}
+{{- if eq ( .egressIPs.enabled | toString) "true" }}
+---
+apiVersion: k8s.ovn.org/v1
+kind: EgressIP
+metadata:
+  name: {{ .name | replace "_" "-" | quote }}
+spec:
+  egressIPs:
+    {{- range .egressIPs.ips }}
+    - {{ . }}
+    {{- end }}
+  namespaceSelector:
+    matchLabels:
+      env: {{ .name | replace "_" "-" | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

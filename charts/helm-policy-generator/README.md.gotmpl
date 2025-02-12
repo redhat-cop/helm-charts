@@ -1,0 +1,101 @@
+{{ template "doc.header" . }}
+
+This very specialised Helm Chart enabled you to create Policy definitions for Advanced Cluster Security.
+It can use PolicySets (if defined) and will render the one or multiple Policy objects. 
+Currently, *ConfigurationPolicy* and *CertificationPolicy* are supported. 
+
+Since the actual definition of ConfigurationPolicies can be quite complex, the idea was to configure the policy as usual with the values-file,
+but store the actual yaml object the policy is touching in a sub-folder. 
+
+For example, in the folder console-banner, you will find the *console-banner.yaml*
+This yaml defines the actual settings the ACM-Policy will try to set, including possible placeholders.
+
+For example:
+
+```yaml
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: consolebanner
+spec:
+  backgroundColor: "#CCCCCC"
+  color: "#000000"
+  link:
+    href: >-
+      {{ printf "https://console.redhat.com/openshift/details/{{fromClusterClaim \"%s\" }}" "id.openshift.io"}}
+    text: RedHat Console
+  location: BannerTop
+  text: >-
+    {{ printf "Name: {{ fromClusterClaim \"%s\" name }}, Version: {{fromClusterClaim \"%s\" }}" "name" "version.openshift.io"}}
+```
+
+This yaml will be integrated into the policy and will configure a banner for the OpenShift console.
+
+Other examples can be found in the folder *console-links* and *examples*. The `examples` folder also contains a values-cluster-health-checks.yaml so you can compare how to configure cluster health checks.
+
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+*TIP*: Verify the values.yaml to see possible additional settings. 
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+namespace: &namespace policy-hub
+create_policy_namespace: true
+
+policyDefaults:
+    categories:
+      - CM Configuration Management
+    controls:
+      - CM Console Customizations
+    standards:
+      - Baseline 2023v1
+    description: "Console Customizations"
+
+    globalRemediationAction: inform
+
+policySet:
+  enabled: true
+
+  # Define PolicySets
+  sets:
+    - name: console-customizations
+      description: "Contains console customizations"
+      namespace: *namespace
+
+      policies:
+        - console-banner
+      placement:
+        lableSelectors:
+          - key: name
+            operator: In
+            values:
+              - local-cluster
+
+policies:
+  - policyname: console-banner
+    enabled: true
+    namespace: *namespace
+    disabled: 'false'
+    remediationAction: inform
+
+    policy_templates:
+      - name: console-banner
+        name_use_template_filename: "true"
+        remediationAction: enforce
+        complianceType: musthave
+        severity: low
+```
+
+{{ template "doc.footer" . }}

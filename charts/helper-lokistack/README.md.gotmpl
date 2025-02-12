@@ -1,0 +1,160 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is configuring the LokiStack object. This is for example required for OpenShift Logging and Network Observability.
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+enabled: true
+
+name: logging-loki
+namespace: openshift-logging
+syncwave: 3
+
+# This is for log streams only, not the retention of the object store
+global_retention_days: 4
+
+# storage settings
+storage:
+
+  # Size defines one of the support Loki deployment scale out sizes.
+  # Can be either:
+  #   - 1x.extra-small (Default)
+  #   - 1x.small
+  #   - 1x.medium
+  # size: 1x.extra-small
+
+  # Secret for object storage authentication. Name of a secret in the same namespace as the LokiStack custom resource.
+  secret:
+
+    # Name of a secret in the namespace configured for object storage secrets.
+    name: logging-loki-s3
+
+    # Type of object storage that should be used
+    # Can bei either:
+    #  - swift
+    #  - azure
+    #  - s3 (default)
+    #  - alibabacloud
+    #  - gcs
+    # type: s3
+
+  # Schemas for reading and writing logs.
+  # schemas:
+  #  # Version for writing and reading logs.
+  #  # Can be v11 or v12
+  #  #
+  #  # Default: v12
+  #  - version: v12
+  #    # EffectiveDate is the date in UTC that the schema will be applied on. To ensure readibility of logs, this date should be before the current date in UTC.
+  #    # Default: 2022-06-01
+  #    effectiveDate: "2022-06-01"
+
+# Storage class name defines the storage class for ingester/querier PVCs.
+storageclassname: thin-csi
+
+# Mode defines the mode in which lokistack-gateway component will be configured.
+# Can be either:
+#   - static (default)
+#   - dynamic
+#   - openshift-logging
+#   - openshift-network
+mode: openshift-logging
+
+# Control pod placement for LokiStack components
+podPlacements:
+  compactor:
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+  distributor:
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+  gateway:
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+  indexGateway:
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+  ingester:
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+  querier:
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+  queryFrontend:
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+  ruler:
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+      - effect: NoExecute
+        key: node-role.kubernetes.io/infra
+        operator: Equal
+        value: reserved
+```
+
+{{ template "doc.footer" . }}
