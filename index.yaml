@@ -3169,6 +3169,23 @@ entries:
   operatorhub:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-02-12T12:54:12.298115498Z"
+    description: A Helm chart to create OperatorHub subscriptions
+    digest: ca302fe2fce9275db48df4f82fa0b981c02eb10b94818896e6448e6ce89b0bb7
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://avatars3.githubusercontent.com/u/38202270?s=280&v=4
+    maintainers:
+    - name: tylerauerbeck
+    - name: springdo
+    - name: ckavili
+    - name: mabulgu
+    name: operatorhub
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operatorhub-0.0.11/operatorhub-0.0.11.tgz
+    version: 0.0.11
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2022-05-06T21:50:38.113047566Z"
     description: A Helm chart to create OperatorHub subscriptions
     digest: b35b406ce0d1df6f8b17f0a13afd14e3c57337898793c370d1dd9ad6b18e1065
@@ -5656,4 +5673,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2025-02-10T11:01:15.932891774Z"
+generated: "2025-02-12T12:54:12.298677318Z"
