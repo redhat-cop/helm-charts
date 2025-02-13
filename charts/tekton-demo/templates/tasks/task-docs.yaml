@@ -42,7 +42,7 @@ spec:
     description: digest of the image just built
 
   steps:
-          
+
     - name: image-build
       image: registry.redhat.io/rhel8/buildah@sha256:9df8dc1af3a3b701165b3660dc44429b12347d6bbab55b64b97de651d083baf8
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
@@ -59,7 +59,7 @@ spec:
         #   mountPath: /gen-source
       securityContext:
         privileged: true
-        
+
     - name: image-push
       image: registry.redhat.io/rhel8/buildah@sha256:9df8dc1af3a3b701165b3660dc44429b12347d6bbab55b64b97de651d083baf8
       script: |

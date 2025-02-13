@@ -34,7 +34,7 @@ spec:
     description: url of the image just built
   - name: digest
     description: digest of the image just built
-    
+
   steps:
 
     - name: image-build

@@ -40,7 +40,7 @@ spec:
     contextDir: {{ .source_context_dir | quote }}
     {{- else }}
     contextDir: "jenkins-agents/{{ .name }}"
-    {{- end }}      
+    {{- end }}
   strategy:
 {{- if .strategy_type }}
     type: {{ .strategy_type }}

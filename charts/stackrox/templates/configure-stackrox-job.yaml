@@ -93,7 +93,7 @@ spec:
                       {{- toYaml .Values.stackrox.analyzer.resources | nindent 24 }}
               EOF
               }
-              
+
               install_central
               until [ "$?" == 0 ]
               do

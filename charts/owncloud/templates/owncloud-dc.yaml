@@ -69,7 +69,7 @@ spec:
         - name: OWNCLOUD_SKIP_CHOWN
           value: "true"
         - name: OWNCLOUD_TOKEN_AUTH_ENFORCED
-          value: "true"    
+          value: "true"
         image: ' '
         imagePullPolicy: {{ .Values.image.owncloud.pullPolicy }}
         livenessProbe:
@@ -124,4 +124,4 @@ spec:
         name: "{{ include "owncloud.fullname" . }}:{{ .Chart.AppVersion }}"
       lastTriggeredImage: ""
     type: ImageChange
-  - type: ConfigChange  
+  - type: ConfigChange

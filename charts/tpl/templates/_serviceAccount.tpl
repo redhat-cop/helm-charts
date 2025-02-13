@@ -1,6 +1,6 @@
 {{/*
 Create the name of the service account to use.
-If not set use "temp-serviceaccount" to ensure 
+If not set use "temp-serviceaccount" to ensure
 that templating works and does not break at some point
 */}}
 {{- define "tpl.serviceAccountName" -}}
@@ -14,7 +14,7 @@ that templating works and does not break at some point
 
 {{/*
 Create the name of the service account to use.
-If not set use "temp-serviceaccount" to ensure 
+If not set use "temp-serviceaccount" to ensure
 that templating works and does not break at some point
 */}}
 {{- define "tpl.serviceAccount" -}}

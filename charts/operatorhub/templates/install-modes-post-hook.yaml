@@ -60,7 +60,7 @@ spec:
         command:
           - /bin/bash
           - -c
-          - | #TODO: Get the CSV from the cluster instead from a var? 
+          - | #TODO: Get the CSV from the cluster instead from a var?
               oc -n {{ $op.namespace }} patch csv {{ $op.subscription.csv }} --type=merge -p '{"spec":{"installModes":[{"supported": {{ $im.OwnNamespace }}, "type":"OwnNamespace"},{"supported": {{ $im.SingleNamespace }}, "type":"SingleNamespace"},{"supported": {{ $im.MultiNamespace }}, "type":"MultiNamespace"},{"supported": {{ $im.AllNamespaces }}, "type":"AllNamespaces"}]}}'
 {{- end }}
 {{- end }}

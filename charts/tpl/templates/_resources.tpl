@@ -11,7 +11,7 @@ Example for resources in the values-file:
           cpu: 8
           memory: 16Gi
           ephemeral-storage: 500Mi
-     
+
 {{ include "tpl.resources" . -}}
 */}}
 

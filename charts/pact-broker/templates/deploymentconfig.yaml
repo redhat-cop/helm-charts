@@ -1,5 +1,5 @@
 ---
-apiVersion: apps.openshift.io/v1 
+apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   annotations:
@@ -13,7 +13,7 @@ spec:
   selector:
     name: {{ .Values.appName }}
   strategy: {{- if .Values.persistence.enabled }}
-    type: Recreate 
+    type: Recreate
     {{ else }}
     rollingParams:
       intervalSeconds: {{ .Values.deployment.rollingParams.intervalSeconds | default "1" }}
@@ -21,7 +21,7 @@ spec:
       maxUnavailable: {{ .Values.deployment.rollingParams.maxUnavailable | default "25%" }}
       timeoutSeconds: {{ .Values.deployment.rollingParams.timeoutSeconds | default "600" }}
       updatePeriodSeconds: {{ .Values.deployment.rollingParams.updatePeriodSeconds | default "1" }}
-    type: Rolling 
+    type: Rolling
     {{- end }}
     activeDeadlineSeconds: {{ .Values.deployment.activeDeadlineSeconds | default "21600" }}
   template:
@@ -78,7 +78,7 @@ spec:
             httpGet:
               path: {{ .Values.deployment.livenessProbe.path | default "/diagnostic/status/heartbeat" }}
               port: {{ .Values.service.port | default "8080" }}
-              scheme: {{ .Values.deployment.livenessProbe.scheme | default "HTTP" }} 
+              scheme: {{ .Values.deployment.livenessProbe.scheme | default "HTTP" }}
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
