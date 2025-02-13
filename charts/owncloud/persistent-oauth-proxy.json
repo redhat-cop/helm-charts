@@ -16,7 +16,7 @@
        "apiVersion": "v1",
        "kind": "ServiceAccount",
        "metadata": {
-           "annotations": {             
+           "annotations": {
              "serviceaccounts.openshift.io/oauth-redirectreference.primary": "{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"owncloud\"}}"
            },
            "name": "owncloud"
@@ -154,7 +154,7 @@
                   }
                 },
                 "serviceAccount" : "owncloud",
-                "serviceAccountName" : "owncloud",	  
+                "serviceAccountName" : "owncloud",
                 "env": [
                   {
                     "name": "OWNCLOUD_DOMAIN",

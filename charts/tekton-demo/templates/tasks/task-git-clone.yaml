@@ -203,7 +203,7 @@ spec:
 
         if [ ! -f $package ]; then
             echo "Missing package.json"
-            exit 1 
+            exit 1
         fi
 
         # verify if it's not a tag webhook event
@@ -226,7 +226,7 @@ spec:
         | head -1 \
         | awk -F: '{ print $2 }' \
         | sed 's/[",]//g')
-        
+
         before=$(echo -e $before)
         # hack for first version to be upgraded as major
         if [ "$before" == "0.0.0" ]; then

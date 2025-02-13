@@ -28,7 +28,7 @@ jobs:
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         fetch-depth: 0
-    
+
     # set up kind cluster (using re-usable local composite action)
     - name: Setup Kind Cluster for Helm Chart Testing 🧰
       uses: ./.github/actions/setup-kind-cluster-for-helm-chart-testing
@@ -69,7 +69,7 @@ jobs:
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         fetch-depth: 0
-    
+
     # set up kind cluster (using re-usable local composite action)
     - name: Setup Kind Cluster for Helm Chart Testing 🧰
       uses: ./.github/actions/setup-kind-cluster-for-helm-chart-testing

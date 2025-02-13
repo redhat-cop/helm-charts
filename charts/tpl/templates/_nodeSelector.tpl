@@ -5,7 +5,7 @@ Example for resources in the values-file:
       nodeSelector:
         key: node-role.kubernetes.io/infra
         value: ''
-     
+
 {{ include "tpl.nodeSelector" . -}}
 */}}
 

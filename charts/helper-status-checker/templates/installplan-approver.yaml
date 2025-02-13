@@ -28,7 +28,7 @@ spec:
 
               SLEEPER_TMP=1
               SLEEPER_MOD=10
-               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do   
+               while [[ $SLEEPER_TMP -le "$sleep_timer" ]]; do
                  if (( $SLEEPER_TMP % 10 == 0 ))
                  then
                    echo -n "$SLEEPER_MOD"

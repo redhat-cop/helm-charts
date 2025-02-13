@@ -370,7 +370,7 @@ We use a helm chart that deploys:
 Everyone will need to be given `edit` access to the `openshift-gitops` namespace e.g. as a `cluster-admin` user:
 
 ```bash
-# allow labs-admin group edit access to 
+# allow labs-admin group edit access to
 oc adm policy add-role-to-group edit labs-admins -n openshift-gitops
 ```
 

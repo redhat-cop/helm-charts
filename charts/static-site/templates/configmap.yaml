@@ -106,7 +106,7 @@ data:
       echo 'exec echo $GIT_PASSWORD' > /tmp/git-askpass.sh
       chmod +x /tmp/git-askpass.sh
       export GIT_ASKPASS=/tmp/git-askpass.sh
-      
+
       if [ ! -z "${REPO_URL##*@*}" ] ; then
         REPO_URL=$(echo $REPO_URL | sed 's;//;//{{ .Values.repo.credential.username }}@;')
       fi
@@ -123,7 +123,7 @@ data:
     CURRENT=$(git rev-parse --verify HEAD 2>/dev/null || true)
     if [ "$CURRENT" != "$GIT_REVISION" ]; then
       git fetch --no-tags --progress -- $REPO_URL +refs/heads/$BRANCH:refs/remotes/origin/$BRANCH
-      
+
       git config advice.detachedHead false
       git checkout -f $GIT_REVISION
       git branch -D $BRANCH 2>/dev/null || true
