@@ -6,7 +6,7 @@ name: sonatype-nexus
 sources:
 - https://github.com/sonatype/nexus-public
 icon: https://help.sonatype.com/docs/files/331022/34537964/3/1564671303641/NexusRepo_Icon.png
-version: 1.1.12
+version: 1.1.13
 maintainers:
   - name: eformat
   - name: ckavili
