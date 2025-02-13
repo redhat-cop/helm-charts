@@ -2,7 +2,7 @@ apiVersion: v2
 name: quay
 description: Create quay registry
 type: application
-version: 0.0.1
+version: 0.0.2
 icon: https://avatars1.githubusercontent.com/u/68044996?s=200&v=4
 maintainers:
   - name: willsparker

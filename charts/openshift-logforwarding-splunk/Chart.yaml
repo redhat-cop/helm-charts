@@ -1,7 +1,7 @@
 apiVersion: v2
 name: openshift-logforwarding-splunk
 description: Log Forwarding from OpenShift to Splunk
-version: 0.0.5
+version: 0.0.6
 maintainers:
 - email: andy.block@gmail.com
   name: sabre1041

@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: "v0.0.1"
 description: A Helm chart for deploying and managing Openshift projects 🦆
 name: bootstrap-project
-version: 1.0.1
+version: 1.0.2
 home: https://github.com/redhat-cop/helm-charts
 icon: https://www.iconpacks.net/icons/1/free-rocket-icon-1206-thumb.png
 maintainers:
