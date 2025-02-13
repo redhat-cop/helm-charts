@@ -6,7 +6,7 @@
 
   ![Version: 1.0.26](https://img.shields.io/badge/Version-1.0.26-informational?style=flat-square)
 
- 
+
 
   ## Description
 

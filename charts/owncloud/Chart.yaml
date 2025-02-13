@@ -2,7 +2,7 @@ apiVersion: v2
 name: owncloud
 description: A Helm chart for Owncloud
 type: application
-version: 0.0.21
+version: 0.0.23
 appVersion: latest
 home: https://github.com/redhat-cop/helm-charts
 icon: https://alternative.me/media/256/owncloud-icon-ge0uksoxjjfyflu8-c.png

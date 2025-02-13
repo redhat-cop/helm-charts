@@ -62,7 +62,7 @@ spec:
         | grep version \
         | head -1 \
         | awk -F: '{ print $2 }' \
-        | sed 's/[",]//g')        
+        | sed 's/[",]//g')
         before=$(echo -e $before)
 
         git config --global user.name "$(params.author)"
@@ -71,7 +71,7 @@ spec:
         git fetch --all --tags > /dev/null 2>&1
         git checkout -b $(params.revision-type)/$(params.revision-name) > /dev/null 2>&1
         git log master..$(params.revision-type)/$(params.revision-name) --oneline --no-merges --decorate > release-v$(params.revision-name).md > /dev/null 2>&1
-        
+
         # hack for first version to be upgraded as major
         if [ "$before" == "0.0.0" ]; then
           npm version major > /dev/null 2>&1
@@ -112,7 +112,7 @@ spec:
         revisionName=${replace//./-}
         hostname=v$revisionName-{{ .Values.application.environments.production }}.{{ .Values.cluster }}
         appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
-        
+
         sleep 10
         oc get svc/$appname -n {{ .Values.application.environments.production }}
         if [[ $? -ne 0 ]]; then
@@ -124,7 +124,7 @@ spec:
         fi
 
         sleep 10
-        
+
         oc get route/$appname -n {{ .Values.application.environments.production }}
         if [[ $? -ne 0 ]]; then
           echo "Creating routes"

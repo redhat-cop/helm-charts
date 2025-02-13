@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-case-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-json
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://gitlab.cee.redhat.com/infosec-public/developer-workbench/tools.git
+    rev: rh-pre-commit-2.3.2
+    hooks:
+      # If you have not run this hook on your system before, it may prompt you to
+      # log in for patterns, and you will need to try again.
+      #
+      # Docs: https://source.redhat.com/departments/it/it-information-security/leaktk/leaktk_components/rh_pre_commit
+      - id: rh-pre-commit
+      - id: rh-pre-commit.commit-msg # Optional for commit-msg attestation

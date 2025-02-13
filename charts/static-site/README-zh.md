@@ -22,6 +22,3 @@ helm install my-cool-site ./ --set "repo.location=https://git-location-of-your-s
 | `site.enableDirectoryListing` | 是否启用目录浏览功能                         | `false`         |  否                |
 | `replicas`           | 部署时，要生成的副本数目                              | `2`             |  否                |
 | `autoUpdateCron`     | 用以设定检测自动更新频率的 CRON 表达式 | `* * * * *`, 即每分钟检查 |  否                |
-
-
-

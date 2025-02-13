@@ -7,7 +7,7 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: Prune=false
-data: 
+data:
   conf: |
     {{- .Values.config | toYaml | nindent 4 }}
 {{- end }}

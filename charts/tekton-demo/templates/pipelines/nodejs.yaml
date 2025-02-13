@@ -175,7 +175,7 @@ spec:
           value: $(tasks.git.results.revision-type)
         - name: revision-name
           value: $(tasks.git.results.revision-name)
-          
+
     - name: test-stress
       taskRef:
         name: test-performance

@@ -6,7 +6,7 @@ inputs:
     description: helm version to install
     required: true
     default: 'v3.16.3'
-  
+
   # renovate: datasource=github-tags depName=python/cpython
   python-version:
     description: python version to install
@@ -36,7 +36,7 @@ inputs:
     required: false
     default: 'registryuser1'
 
-  local-registry-password: 
+  local-registry-password:
     description: local authenticated registry password
     required: false
     default: 'registrypassword1'
@@ -70,7 +70,7 @@ runs:
       version: ${{ inputs.kind-version }}
       config: _test/kind-config.yaml
 
-  # for helm charts we are testing that require installing operators 
+  # for helm charts we are testing that require installing operators
   - name: Setup kind cluster - Install OLM 🧰
     env:
       OLM_VERSION: ${{ inputs.olm-version }}
@@ -121,7 +121,7 @@ runs:
         --set registryPassword=${LOCAL_REGISTRY_PASSWORD} \
         --set registryIngressHost=${LOCAL_REGISTRY_URI}
     if: inputs.local-registry-enabled == 'true'
-  
+
   # copy images needed by CT tests that use private registry to the private registry
   - name: Setup kind cluster - Copy images into private registry 🔺
     env:

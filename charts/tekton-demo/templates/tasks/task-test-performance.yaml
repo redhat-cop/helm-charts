@@ -27,7 +27,7 @@ spec:
         #!/bin/bash
 
         replace=$(inputs.params.revision-name)
-        revisionName=${replace//./-} # replace . to / 
+        revisionName=${replace//./-} # replace . to /
         appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
 
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -40,7 +40,7 @@ spec:
         fi
 
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
-          
+
           echo Endpoint: $endpoint
           DURATION=10       # how long should load be applied ? - in seconds
           TPS=200           # number of requests per second

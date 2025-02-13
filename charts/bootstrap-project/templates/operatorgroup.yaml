@@ -8,7 +8,7 @@ metadata:
   name: {{ .name }}-og
   namespace: {{ .name | quote }}
 spec:
-  targetNamespaces: 
+  targetNamespaces:
   - {{ .name }}
 {{- end }}
 {{- end }}

@@ -37,7 +37,7 @@ While the cert-manager install can be done with mostly default values, these con
 ```bash
 helm template cert-manager-configs -f charts/cert-manager-configs/values.yaml ./charts/cert-manager-configs | oc apply -f -
 ```
- 
+
 ### Configuration
 
 See comments in [values.yaml](./values.yaml) for more details on configuration
@@ -72,4 +72,3 @@ See comments in [values.yaml](./values.yaml) for more details on configuration
 | `cluster.apiServer.tlsSecret` | APIServer secret name created in `certificates.apiServer.name` | `api-letsencrypt-cert` |
 | `cluster.ingressController.enabled` | Enable ACME wildcard IngressController certificates | `false` |
 | `cluster.caBundle` | Get latest Let's Encrypt CA and drop it here | `''` |
-

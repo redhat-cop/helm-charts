@@ -1,7 +1,7 @@
 {{- if .Values.enabled }}
 {{ $labels := include "network-policy.labels" . }}
 {{ $all_policies := .Values.policies }}
-{{ if ne 0 (len .Values.multitenant_policies) }} 
+{{ if ne 0 (len .Values.multitenant_policies) }}
 {{ $all_policies = concat .Values.policies .Values.multitenant_policies }}
 {{ end }}
 {{- range $all_policies }}
@@ -13,7 +13,7 @@ metadata:
   labels:
     {{- $labels | nindent 4 }}
   name: {{ .name }}
-spec: 
+spec:
 {{ toYaml .spec | indent 2 }}
 {{ end }}
 {{ end }}

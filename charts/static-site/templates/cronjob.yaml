@@ -62,7 +62,7 @@ data:
         fi
 
         PATCH="{\"spec\": { $PATCH_REPLICA \"template\": {\"metadata\": { \"labels\": {  \"git_revision\": \"$LATEST\"}}}}}"
-        
+
         curl --cacert $CACERT -X PATCH -H "Authorization: Bearer $TOKEN" \
           -H 'Content-Type: application/strategic-merge-patch+json' --data "$PATCH" \
           $K8S_URL/apis/apps/v1/namespaces/$NAMESPACE/${RES_TYPE}s/static-site-{{ .Release.Name }}

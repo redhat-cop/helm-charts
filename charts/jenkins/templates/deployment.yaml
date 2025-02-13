@@ -1,6 +1,6 @@
 {{- if .Values.deployment }}
 ---
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
@@ -14,7 +14,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ .Values.appName }}
   strategy: {{- if .Values.persistence }}
-    type: Recreate 
+    type: Recreate
     {{ else }}
     type: RollingUpdate
     {{- end }}
@@ -29,7 +29,7 @@ spec:
         - name: OPENSHIFT_ENABLE_OAUTH
           value: "true"
         - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
-          value: "true" 
+          value: "true"
           {{- end }}
         - name: KUBERNETES_MASTER
           value: https://kubernetes.default:443
