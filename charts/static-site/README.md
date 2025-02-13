@@ -24,5 +24,3 @@ The following table lists the settings of the chart and their default values.
 | `site.enableDirectoryListing` | Whether enable directory listing for the site     | `false`         |  N                |
 | `replicas`           | Number of replicas of the deployment                       | `2`             |  N                |
 | `autoUpdateCron`     | The CRON expression scheduling the auto update polling job | `* * * * *`, which means every minute |  N                |
-
-

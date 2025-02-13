@@ -72,4 +72,3 @@ See comments in [values.yaml](./values.yaml) for more details on configuration
 | `cluster.apiServer.tlsSecret` | APIServer secret name created in `certificates.apiServer.name` | `api-letsencrypt-cert` |
 | `cluster.ingressController.enabled` | Enable ACME wildcard IngressController certificates | `false` |
 | `cluster.caBundle` | Get latest Let's Encrypt CA and drop it here | `''` |
-
