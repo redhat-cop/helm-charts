@@ -3,7 +3,7 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-case-conflict
-      #- id: check-shebang-scripts-are-executable
+      - id: check-shebang-scripts-are-executable
       - id: check-json
       #- id: end-of-file-fixer
       #- id: trailing-whitespace
