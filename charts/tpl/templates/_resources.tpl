@@ -63,4 +63,3 @@ Append the unit Gi if it is not set for memory or storage
     {{ $val -}}
   {{- end -}}
 {{- end -}}
-

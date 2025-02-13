@@ -47,4 +47,3 @@ containers:
         cpu: 50m
         memory: "100Mi"
 {{- end -}}
-
