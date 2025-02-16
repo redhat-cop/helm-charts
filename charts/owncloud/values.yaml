@@ -10,7 +10,7 @@ image:
     healthimage: docker.io/healthcheck/redis:latest@sha256:06127d640e5c092f4707e3506e3a80c0361225b8da735b54d66e162a79d1fa38
     pullPolicy: Always
   mariadb:
-    image: docker.io/mariadb:11.5@sha256:2d50fe0f77dac919396091e527e5e148a9de690e58f32875f113bef6506a17f5
+    image: docker.io/mariadb:11.6@sha256:0a620383fe05d20b3cc7510ebccc6749f83f1b0f97f3030d10dd2fa199371f07
     healthimage: docker.io/healthcheck/mysql:latest@sha256:b7a7b38485b0d93bfc12a42f870dcf8b27c9ba854c9a28d4d26ed941a113ee20
     pullPolicy: Always
 
