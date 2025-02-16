@@ -35,7 +35,7 @@ spec:
 
     # todo: condition to only run in dev env
     - name: test-report
-      image: registry.redhat.io/ubi8/ubi:latest@sha256:d497966ce214138de5271eef321680639e18daf105ae94a6bff54247d8a191a3
+      image: registry.redhat.io/ubi8/ubi:latest@sha256:79d46e7029c2b13a713b2089650fd235aadb3e6e449c79f6741d6c9381ab41a1
       env:
         - name: GITHUBTOKEN
           valueFrom:
