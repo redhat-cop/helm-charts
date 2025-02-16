@@ -88,7 +88,7 @@ spec:
         runAsUser: 0
 
     - name: release-image
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -105,7 +105,7 @@ spec:
         fi
 
     - name: app-expose
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -138,7 +138,7 @@ spec:
         fi
 
     - name: app-labels
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -153,7 +153,7 @@ spec:
         oc label deployment/$appname --overwrite app.revision-author=$(inputs.params.author) -n $environment
 
     - name: app-envs
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
         replace=$(inputs.params.revision-name)
@@ -168,7 +168,7 @@ spec:
         oc set env deployment/$appname --overwrite revision-type=$(inputs.params.revision-type) -n $environment
 
     - name: app-secrets
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -179,7 +179,7 @@ spec:
           # oc set env deployment/$appname --from secret/input -n {{ .Values.application.environments.production }}
 
     - name: app-probes
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       command: ["/bin/bash", "-c"]
       args:
         - |-
@@ -190,7 +190,7 @@ spec:
           oc set probe deployment/$appname --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n {{ .Values.application.environments.production }}
 
     - name: app-autoscale
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       script: |
         #!/bin/sh
 
@@ -214,7 +214,7 @@ spec:
         fi
 
     - name: app-triggers
-      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:7ea824531b593b2ec0da05557d5cd2565c3525c51c9007f85e9510b27f38b13f
+      image: registry.redhat.io/openshift4/ose-cli:latest@sha256:3b288bdf503733042786c07ab23ba344c8ad98a38717c192584d0e1926ae9758
       command: ["/bin/bash", "-c"]
       args:
         - |-
