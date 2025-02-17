@@ -1,0 +1,18 @@
+{{- if .Values.route.enabled -}}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ include "botpress.fullname" . }}
+  labels:
+    {{- include "botpress.labels" . | nindent 4 }}
+spec:
+  to:
+    kind: Service
+    name: {{ include "botpress.fullname" . }}
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+{{- end }}
