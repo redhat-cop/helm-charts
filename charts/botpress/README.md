@@ -34,7 +34,6 @@ The purpose of this project is to generate the kubernetes objects based on the n
 | Parameter                     | Value                                   | Default                        |
 |-----------------------------|-----------------------------------------------------|------------------------------------|
 | env.EXTERNAL_URL              | https://my-botpress-NAMESPACE-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com                                               | https://botpress-server-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com               |
-| route.host            | my-botpress-NAMESPACE-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com                                               | botpress-server-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com |
 | image.repository        | botpress/server                                               | quay.io/maximilianopizarro/botpress-server-v12         |
 
 
@@ -47,12 +46,12 @@ helm repo add botpress https://redhat-cop.github.io/helm-charts
 ## Install Chart with parameters
 
 ```bash
-helm install botpress botpress/botpress --version VERSION --set route.host="Your-WilcardDNS-hostname",env.EXTERNAL_URL="Your-WilcardDNS-with-https"
+helm install botpress botpress/botpress --version VERSION --set env.EXTERNAL_URL="Your-WilcardDNS-with-https"
 ```
 
 ```bash
 Example:
-helm install botpress botpress/botpress --version 0.1.1 --set route.host="my-botpress-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com",env.EXTERNAL_URL="https://my-botpress-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com"
+helm install botpress botpress/botpress --version 0.1.1 --set env.EXTERNAL_URL="https://my-botpress-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com"
 ```
 
 

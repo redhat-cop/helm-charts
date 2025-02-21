@@ -59,9 +59,6 @@ service:
   type: ClusterIP
   port: 3000
 
-route:
-  enabled: true  
-  host: botpress-server-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
 
 ingress:
   enabled: false
