@@ -1,33 +1,30 @@
 apiVersion: v2
 name: botpress
-description: A Botpress Community Helm chart for OpenShift
+description: "A Botpress Community Helm chart for OpenShift"
 
-# A chart can be either an 'application' or a 'library' chart.
-#
-# Application charts are a collection of templates that can be packaged into versioned archives
-# to be deployed.
-#
-# Library charts provide useful utilities or functions for the chart developer. They're included as
-# a dependency of application charts to inject those utilities and functions into the rendering
-# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+kubeVersion: ">=1.20.0"
+
 type: application
 
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-# Versions are expected to follow Semantic Versioning (https://semver.org/)
 version: 0.1.1
 
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application. Versions are not expected to
-# follow Semantic Versioning. They should reflect the version the application is using.
-# It is recommended to use it with quotes.
+sources:
+  - https://github.com/maximilianoPizarro/botpress-helm-chart
+
+keywords:
+  - botpress
+  - nodejs
+
 appVersion: "botpress-server-v12"
 
 home: https://maximilianopizarro.github.io/botpress-helm-chart/
 
-maintainers: # (optional)
+maintainers:
   - name: Maximiliano Pizarro
     email: maximiliano.pizarro.5@gmail.com
     url: http://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it
 
 icon: https://raw.githubusercontent.com/maximilianoPizarro/botpress-helm-chart/main/botpress_fabicon.png
+
+annotations:
+  charts.openshift.io/name: Botpress Server v12
