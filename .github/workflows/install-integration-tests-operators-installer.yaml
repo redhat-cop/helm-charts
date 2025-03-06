@@ -38,16 +38,29 @@ jobs:
     - name: Run integration tests 🧪
       timeout-minutes: 30
       run: |
+        echo
         echo "##########################################################################################################"
         echo "# Install argo at old version                                                                            #"
         echo "##########################################################################################################"
+        helm_exit_status=0
         helm upgrade --install install-and-multi-stage-upgrade charts/operators-installer \
           --namespace ${TEST_NAMESPACE} \
           --create-namespace \
           --wait \
           --values charts/operators-installer/_integration-tests/test-install-operator-0-automatic-intermediate-manual-upgrades-values.yaml \
-          --debug --timeout 10m0s
+          --debug --timeout 10m0s \
+          || helm_exit_status=$?
 
+        # debug logging
+        ./_test/helm-install-debug-logging.sh ${TEST_NAMESPACE}
+
+        if [ ${helm_exit_status} -ne 0 ]; then
+          echo
+          echo "ERROR: failed to install helm chart. see above logs"
+          exit ${helm_exit_status}
+        fi
+
+        echo
         echo "##########################################################################################################"
         echo "# Upgrade argo to newer version requiring many intermediate updates along the way                        #"
         echo "##########################################################################################################"
@@ -55,7 +68,17 @@ jobs:
           --namespace ${TEST_NAMESPACE} \
           --wait \
           --values charts/operators-installer/_integration-tests/test-install-operator-1-automatic-intermediate-manual-upgrades-values.yaml \
-          --debug --timeout 30m0s
+          --debug --timeout 30m0s \
+          || helm_exit_status=$?
+
+        # debug logging
+        ./_test/helm-install-debug-logging.sh ${TEST_NAMESPACE}
+
+        if [ ${helm_exit_status} -ne 0 ]; then
+          echo
+          echo "ERROR: failed to install helm chart. see above logs"
+          exit ${helm_exit_status}
+        fi
 
   test-approver-job-image-from-authenticated-registry:
     runs-on: ubuntu-latest
@@ -99,6 +122,7 @@ jobs:
     - name: Run integration tests 🧪
       timeout-minutes: 10
       run: |
+        echo
         echo "##########################################################################################################"
         echo "# Install operator using approver job image from private authenticated registry                          #"
         echo "##########################################################################################################"
@@ -106,4 +130,14 @@ jobs:
           --namespace ${TEST_NAMESPACE} \
           --wait \
           --values charts/operators-installer/_integration-tests/test-install-operator-with-approver-image-from-private-registry.yaml \
-          --debug --timeout 9m0s
+          --debug --timeout 9m0s \
+          || helm_exit_status=$?
+
+        # debug logging
+        ./_test/helm-install-debug-logging.sh ${TEST_NAMESPACE}
+
+        if [ ${helm_exit_status} -ne 0 ]; then
+          echo
+          echo "ERROR: failed to install helm chart. see above logs"
+          exit ${helm_exit_status}
+        fi
