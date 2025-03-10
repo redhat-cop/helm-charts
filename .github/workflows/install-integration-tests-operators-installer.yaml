@@ -6,6 +6,7 @@
 name: Install Integration Tests - operators-installer
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
     - .github/**
