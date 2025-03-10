@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import os
-import sys
 import installplan_utils
 
 NAMESPACE_NAME = os.getenv("NAMESPACE") or installplan_utils.error_and_exit(
@@ -35,7 +34,7 @@ if subscription_uid:
     # find the InstallPlan that has expected owner subscription id and expected target CSV name
     # NOTE: if more then one InstallPlan matches, choose the first one
     print(
-        f"\tFind InstallPlan in Namespace ({NAMESPACE_NAME}) for CSV ({CSV}) with Subscription (${subscription_uid}) owner"
+        f"\tFind InstallPlan in Namespace ({NAMESPACE_NAME}) for CSV ({CSV}) with Subscription ({subscription_uid}) owner"
     )
     target_installplan = installplan_utils.get_installplan(
         NAMESPACE_NAME, CSV, subscription_uid
@@ -52,28 +51,20 @@ if subscription_uid:
             1,
         )
         if installplan_installed:
-            print()
-            print(
-                f"InstallPlan ({target_installplan.model.metadata.name}) installation verified"
+            installplan_utils.success_and_exit(
+                f"InstallPlan ({target_installplan.model.metadata.name}) installed"
             )
-            sys.exit(0)
         else:
-            print()
-            print(
+            installplan_utils.error_and_exit(
                 f"InstallPlan ({target_installplan.model.metadata.name}) not yet installed. Suggest retry verification."
             )
-            sys.exit(1)
     else:
-        print()
-        print(
-            f"ERROR: Could not find next InstallPlan to reach CSV ${CSV}) with Subscription ({SUBSCRIPTION_NAME}) ({subscription_uid}) owner."
+        installplan_utils.error_and_exit(
+            f"ERROR: Could not find next InstallPlan to reach CSV {CSV}) with Subscription ({SUBSCRIPTION_NAME}) ({subscription_uid}) owner."
             + "\nThis can happen if InstallPlan isn't created yet or no valid upgrade path between current CSV and target CSV."
             + "\nTry again."
         )
-        sys.exit(1)
 else:
-    print()
-    print(
+    installplan_utils.error_and_exit(
         f"ERROR: Failed to get Subscription ({SUBSCRIPTION_NAME}) UID. This really shouldn't happen."
     )
-    sys.exit(1)

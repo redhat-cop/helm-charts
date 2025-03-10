@@ -109,6 +109,8 @@ def get_next_installplan(
 def approve_installplan(installplan: oc.APIObject):
     """Approves a given install plan"""
     installplan_name = installplan.model.metadata.name
+    applied_change = False
+    print()
     print(
         "Approve InstallPlan:"
         + f"\n\t- name: {installplan_name}"
@@ -121,10 +123,21 @@ def approve_installplan(installplan: oc.APIObject):
         print(
             f"\t- InstallPlan ({installplan_name}) is already approved, nothing to do."
         )
+        applied_change = True
     else:
         print(f"\t- Approving InstallPlan ({installplan_name})")
-        installplan.modify_and_apply(installplan_approve_modify_and_apply, 4)
-        print(f"\t- Approved InstallPlan ({installplan_name})")
+        (
+            result,  # type: oc.Result
+            applied_change,  # type: bool
+        ) = installplan.modify_and_apply(installplan_approve_modify_and_apply, 4)
+
+        # verify change applied
+        if applied_change:
+            print(f"\t- Approved InstallPlan ({installplan_name})")
+        else:
+            print(f"\t- Failed to approve InstallPlan ({installplan_name}): {result}")
+
+    return applied_change
 
 
 def installplan_approve_modify_and_apply(installplan: oc.APIObject):
@@ -148,6 +161,7 @@ def verify_installplan_and_csv_installed(
 ):
     """Wait until a given InstallPlan and its associated ClusterServiceVersions are installed"""
     installplan_name = installplan.model.metadata.name
+    print()
     print(
         "Verify InstallPlan and CSV installed:"
         + f"\n\t- InstallPlan name: {installplan_name}"
@@ -181,29 +195,41 @@ def verify_installplan_and_csv_installed(
             for csv_name in installplan.model.spec.clusterServiceVersionNames:
                 # get the CSV and check if installed
                 csv = get_csv(csv_name)
-                csvs_installed = csv.model.status.conditions.can_match(
-                    {
-                        "reason": "InstallSucceeded",
-                        "phase": "Succeeded",
-                    }
-                )
-                if csvs_installed:
-                    print(
-                        f"\t- Verify CSV ({csv_name}) installed attempt ({attempt} of {backoffLimit}) success, current phase: {csv.model.status.phase}"
+                if csv:
+                    csvs_installed = csv.model.status.conditions.can_match(
+                        {
+                            "reason": "InstallSucceeded",
+                            "phase": "Succeeded",
+                        }
                     )
+                    if csvs_installed:
+                        print(
+                            f"\t- Verify CSV ({csv_name}) installed attempt ({attempt} of {backoffLimit}) success, csv is installed. Current phase: {csv.model.status.phase}"
+                        )
+                    else:
+                        print(
+                            f"\t- Verify CSV ({csv_name}) installed attempt ({attempt} of {backoffLimit}) failed, csv found but not installed. Current phase: {csv.model.status.phase}"
+                        )
                 else:
                     print(
-                        f"\t- Verify CSV ({csv_name}) installed attempt ({attempt} of {backoffLimit}) failed, current phase: {csv.model.status.phase}"
+                        f"\t- Verify CSV ({csv_name}) installed attempt ({attempt} of {backoffLimit}) failed, csv not found."
                     )
 
         sys.stdout.flush()
         if installplan_installed and csvs_installed:
             break
 
-    return installplan_installed and csvs_installed
+    return installplan_installed, csvs_installed
 
 
-def error_and_exit(message: str, code: int):
+def success_and_exit(message: str):
+    """Print success message and exit"""
+    print()
+    print(f"SUCCESS: {message}")
+    sys.exit(0)
+
+
+def error_and_exit(message: str, code: int = 1):
     """Print and error and exit"""
     print()
     print(f"ERROR: {message}")
