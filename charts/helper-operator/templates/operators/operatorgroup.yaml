@@ -8,7 +8,7 @@ metadata:
   name: {{ $key | default "demo-operator-group" | quote }}
   namespace: {{ $value.namespace.name | quote }}
   labels:
-    {{- include "common.labels" $ | nindent 4 }}
+    {{- include "tpl.labels" $ | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: {{ $value.syncwave | default "0" | quote }}

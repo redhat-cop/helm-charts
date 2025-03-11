@@ -1,0 +1,9 @@
+{{ if eq ( .Values.config_allowed_registries.enabled | toString) "true" }}
+---
+apiVersion: samples.operator.openshift.io/v1
+kind: Config
+metadata:
+  name: cluster
+spec:
+  samplesRegistry: registry.redhat.io
+{{- end }}

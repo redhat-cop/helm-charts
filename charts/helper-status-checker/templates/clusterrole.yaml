@@ -12,7 +12,7 @@ metadata:
   name: {{ .serviceAccount.name }}-{{ .namespace.name }}
   namespace: {{ .namespace.name | quote }}
   labels:
-    {{- include "common.labels" $ | nindent 4 }}
+    {{- include "tpl.labels" $ | nindent 4 }}
 rules:
   - apiGroups:
       - operators.coreos.com

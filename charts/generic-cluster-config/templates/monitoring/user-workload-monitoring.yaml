@@ -1,0 +1,129 @@
+{{ if .Values.user_workload_monitoring }}
+{{ if eq ( .Values.user_workload_monitoring.enabled | toString) "true" }}
+{{- with .Values.user_workload_monitoring }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-workload-monitoring-config
+  namespace: openshift-user-workload-monitoring
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+data:
+  config.yaml: |
+    {{- /* ALERTMANAGER CONFIGURATION */}}
+    {{- with .alertmanager }}  
+    alertmanager:
+      {{- if .disable_local_alertmanager }}
+      {{- if or ( eq (.disable_local_alertmanager | toString) "true") (eq (.disable_local_alertmanager | toString) "false") }}
+      enabled: {{.disable_local_alertmanager }}
+      {{- end }}
+      {{- end }}
+
+      {{- if .secrets }}
+      secrets:
+        {{- range .secrets }}
+        - {{.}}
+        {{- end }}
+      {{- end }}
+
+      {{- if .nodeSelector }}
+      nodeSelector:
+        {{- toYaml .nodeSelector | nindent 8 }}
+      {{- end }}
+
+      {{- if .tolerations }}
+{{ include "tpl.tolerations" .tolerations | indent 6 }}
+      {{- end }}
+
+      {{- if .storage }}
+      volumeClaimTemplate:
+        spec:
+          storageClassName: {{ .storage.class | default "gp2-csi" }}
+          resources:
+            requests:
+              storage: {{ .storage.size | quote | default "40Gi" }}
+      {{- end }}
+
+      {{- if .resources }}
+{{ include "tpl.resources" .resources | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* PROMETHEUS CONFIGURATION */}}
+    {{- with .prometheus }}
+    prometheus:
+      {{- if .nodeSelector }}
+      nodeSelector:
+        {{- toYaml .nodeSelector | nindent 8 }}
+      {{- end }}
+
+      {{- if .tolerations }}
+{{ include "tpl.tolerations" .tolerations | indent 6 }}
+      {{- end }}
+      retention: {{ .retention | default "24h" }}
+      {{- if eq (.retentionSize | toString) "0"}}
+      {{- else }}
+      retentionSize: {{ .retentionSize }}
+      {{- end }}
+
+      {{- if .storage }}
+      volumeClaimTemplate:
+        spec:
+          storageClassName: {{ .storage.class | default "gp2-csi" }}
+          resources:
+            requests:
+              storage: {{ .storage.size | quote | default "100Gi" }}
+      {{- end }}
+
+      {{- if .resources }}
+{{ include "tpl.resources" .resources | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* PROMETHEUS OPERATOR */}}
+    {{- with .prometheusOperator }}
+    prometheusOperator:
+      {{- if .nodeSelector }}
+      nodeSelector:
+        {{- toYaml .nodeSelector | nindent 8 }}
+      {{- end }}
+
+      {{- if .tolerations }}
+{{ include "tpl.tolerations" .tolerations | indent 6 }}
+      {{- end }}
+
+      {{- if .resources }}
+{{ include "tpl.resources" .resources | indent 6 }}
+      {{- end }}
+    {{- end }}
+
+    {{- /* THANOS RULER */}}
+    {{- with .thanosRuler }}
+    thanosRuler:
+      {{- if .nodeSelector }}
+      nodeSelector:
+        {{- toYaml .nodeSelector | nindent 8 }}
+      {{- end }}
+
+      {{- if .tolerations }}
+{{ include "tpl.tolerations" .tolerations | indent 6 }}
+      {{- end }}
+      retention: {{ .retention | default "24h" }}
+
+      {{- if .storage }}
+      volumeClaimTemplate:
+        spec:
+          storageClassName: {{ .storage.class | default "gp2-csi" }}
+          resources:
+            requests:
+              storage: {{ .storage.size | quote | default "100Gi" }}
+      {{- end }}
+
+      {{- if .resources }}
+{{ include "tpl.resources" .resources | indent 6 }}
+      {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

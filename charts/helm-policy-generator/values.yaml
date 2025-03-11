@@ -1,0 +1,470 @@
+---
+namespace: &namespace policy-hub
+
+# -- Create Namespace for the policy Yes/No
+# @default -- false
+create_policy_namespace: true
+
+# -- Default annotation settings. These will overwrite the individual settings in the Policy
+# and are used by all policies that are defined here.
+policyDefaults:
+    # -- A security control category represent specific requirements
+    # for one or more standards. For example, a System and Information Integrity category
+    # might indicate that your policy contains a data transfer protocol
+    # to protect personal information, as required by the HIPAA and PCI standards.
+    #
+    # Optional
+    # @default -- empty
+    categories:
+    - CM Configuration Management
+
+    # -- A security control category represent specific requirements
+    # for one or more standards. For example, a System and Information Integrity category
+    # might indicate that your policy contains a data transfer protocol
+    # to protect personal information, as required by the HIPAA and PCI standards.
+    #
+    # Optional
+    # @default -- empty
+    controls:
+    - CM Console Customizations
+
+    # -- The name or names of security standards the policy is related to.
+    # For example, National Institute of Standards and Technology (NIST)
+    # and Payment Card Industry (PCI).
+    #
+    # Optional
+    # @default -- empty
+    standards:
+    - Baseline 2023v1
+
+    # -- Description of the policy. Simply adds an annotation.
+    #
+    # Optional
+    # @default -- empty
+    description: "Console Customizations"
+
+    # -- Specifies the remediation of your policy. Must either be set here or inside the policy.
+    # Overrides other remediationAction settings!!
+    #
+    # Optional
+    # The parameter values are:
+    #   - inform
+    #   - enforce
+    globalRemediationAction: inform
+
+    # -- DEPRECATED: Globally activate the policy-template name randomizer. It will add an alpha-nummeric string
+    # to the policy-templates.
+    # This WAS required if there are multiple policy-templates in one policy
+    # This option is deprecated. Use name_use_template_filename instead
+    # @default -- empty
+    # randomizer: "true"
+
+# The policy set controller aggregates the policy status scoped to policies that are defined in the same namespace.
+policySet:
+    # -- Enable of disable policySets.
+    # If disabled, the PlaceMentBinding will use the name of the policy
+    # @default -- false
+    enabled: true
+
+    # Define PolicySets
+    sets:
+    # -- The name for identifying the policySet resource.
+    - name: console-customizations
+
+      # -- The descrption for identifying the policySet resource.
+      description: "Contains console customizations"
+
+      # -- The namespace of policySet resource.
+      namespace: *namespace
+
+      # -- The list of policies that you want to group together in the policy set.
+      # If defined, it will take the list. If Not defined it will automatically take the names
+      # of the policies defined below.
+      # @default -- empty
+      policies:
+      - console-banner
+
+      # -- Places a policySET to a cluster with selected labels and or clusterSet
+      placement:
+          # -- a clusterSet the policy to bind to. The clusterSet must exist.
+          # Optional
+          # @default -- N/A
+          clusterSets:
+          - hub
+
+          # required cluster selectors
+          # Selects a cluster based on its labels. For example: name euqals to "local-cluster"
+
+          # -- multiple selectors can be defined, which must all be true
+          lableSelectors:
+          - key: name
+            operator: In
+            values:
+            - local-cluster
+
+# Specification of the Policies
+policies:
+# -- The name for identifying the policy resource.
+- policyname: console-banner
+
+  # -- Enable this policy in this Chart or not.
+  # @default -- false
+  enabled: true
+
+  # -- Namespace of the policy. This namespace must exist!
+  namespace: *namespace
+
+  # -- The disabled parameter provides the ability to enable and
+  # disable your policies in the context of ACM.
+  #
+  # Set the value to true or false
+  # explicitly set the value to false to activate the policy
+  # @default -- true
+  disabled: 'false'
+
+  # -- Specifies the remediation of your policy. The possible parameter values are
+  # enforce and inform. If specified, the spec.remediationAction
+  # value overrides any remediationAction
+  # parameter defined in the child policies in the policy-templates
+  # section. For example, if the spec.remediationAction value
+  # is set to enforce, then the remediationAction in the
+  # policy-templates section is set to enforce during runtime.
+  # Important: Some policy kinds might not support the enforce feature.
+  #
+  # Optional
+  # Values:
+  #   - inform
+  #   - enforce
+  remediationAction: inform
+
+  policy_templates:
+      - name: console-banner
+
+        # -- Optional: only required when CertificatePolicy shall be defined
+        # Currently two are defined: ConfigurationPolicy and CertificationPolicy
+        # @default -- ConfigurationPolicy
+        kind: ConfigurationPolicy
+
+        # -- Path the Kubernetes objects in yaml format. (They must be fully defined)
+        # Here the policy object in yaml format is found.
+        path: "console-banner"
+
+        # -- DEPRECATED - use name_use_template_filename instead
+        # Activate the policy-template name randomizer for this template.
+        # It will add an alpha-nummeric string to the policy-templates.
+        # This is required if there are multiple policy-templates in one policy
+        #
+        # Optional:
+        # @default -- empty
+        # randomizer: "true"
+
+        # -- In case multiple policy_templates are used, you can either use the "randomizer"
+        # do set unique names, or use the name of the file where the policy_template is defined.
+        # For example: file/myfile.yaml would name the policy_template as "myfile"
+
+        # Optional
+        # @efault -- empty
+        name_use_template_filename: "true"
+
+        # -- Specifies the action to take when the policy is non-compliant. Use
+        # the following parameter values:
+        #   - inform
+        #   - InformOnly
+        #   - enforce
+        #
+        # Important: the policy-template.spec.remediationAction is overridden by the
+        # preceding parameter value for spec.remediationAction (if defined)
+        #
+        # @default -- inform
+        remediationAction: enforce
+
+        # -- Used to define the desired state of the Kubernetes object on the
+        # managed clusters. You must use one of the following verbs as the parameter value:
+        # mustonlyhave: Indicates that an object must exist with the exact fields and values as
+        #               defined in the objectDefinition.
+        # musthave: Indicates an object must exist with the same fields as specified in the objectDefinition.
+        #           Any existing fields on the object that are not specified in the object-template
+        #           are ignored. In general, array values are appended. The exception for the array to be
+        #           patched is when the item contains a name key with a value that matches an existing item. Use a
+        #           fully defined objectDefinition using the mustonlyhave compliance type, if you want to
+        #           replace the array.
+        # mustnothave: Indicates that an object with the same fields as specified in the objectDefinition
+        #              cannot exist.
+        # @default -- musthave
+        complianceType: musthave
+
+        # -- Specifies the severity when the policy is non-compliant. Use the
+        # following parameter values: low, medium, high, or critical.
+        #
+        # @efault -- low
+        severity: low
+
+        # -- Determines whether to clean up resources related to the policy
+        # when the policy is removed from a managed cluster.
+        #
+        # Values:
+        #    - DeleteIfCreated: Cleans up any resources created by the policy.
+        #    - DeleteAll: Cleans up all resources managed by the policy.
+        #    - None: This is the default value and maintains the same behavior
+        #            from previous releases, where no related resources are deleted.
+        # @default -- None
+        pruneObjectBehavior: "DeleteIfCreated"
+
+        # -- Used to define how often the policy is evaluated when it is in the compliant state.
+        # The values must be in the format of a duration which is a sequence of numbers
+        # with time unit suffixes. For example, 12h30m5s represents 12 hours, 30 minutes, and 5
+        # seconds. It can also be set to never so that the policy is not reevaluated on the compliant
+        # cluster, unless the policy spec is updated.
+        # By default, the minimum time between evaluations for configuration policies is
+        # approximately 10 seconds. (This can be longer if the configuration policy
+        # controller is saturated on the managed cluster.)
+        # Optional
+        evaluationInterval:
+            compliant: 45m
+            noncompliant: 45s
+
+        # -- For policy templates, this is used to create a list of dependency
+        # objects detailed with extra considerations for compliance.
+        extraDependencies:
+        # -- The name of the object being depended on.
+        - name: ""
+
+          # -- The namespace of the object being depended on. The default is
+          # the namespace of policies set for the Policy Generator.
+          namespace: ""
+
+          # -- The compliance state the object needs to be in. The default value is Compliant.
+          compliance: "Compliant"
+
+          # -- The kind of the object. By default, the kind is set to Policy, but can
+          # also be other kinds that have compliance state, such as ConfigurationPolicy.
+          kind: "Policy"
+
+          # -- The API version of the object. The default value is policy.opencluster-management.io/v1
+          apiVersion: "policy.open-cluster-management.io/v1"
+
+        # -- Determines the list of namespaces to check on the cluster for the given manifest. If a namespace is
+        # specified in the manifest, the selector is not necessary. This defaults to no selectors.
+        namespaceSelector:
+            include: []
+            exclude: []
+            matchExpressions:
+            - key: name
+              operator: In
+              values:
+              - local-cluster
+            matchLabels:
+                component: redis
+                env: test
+
+        ###########################
+        # CertificatePolicy
+        ###########################
+        # -- Set the value to CertificatePolicy to indicate the type of policy.
+        # Optional: only required when CertificatePolicy shall be defined
+        # @default -- ConfigurationPolicy
+        # kind: CertificatePolicy
+
+        # -- Only if CertificatePolicy! When a value is not specified, the default value is 100h. This
+        # parameter specifies the smallest duration (in hours) before a
+        # certificate is considered noncompliant.
+        #
+        # Required
+        # @default -- 100h
+        minimumDuration: 100h
+
+        # -- Only if CertificatePolicy! Set a value to identify signing certificates that might expire
+        # soon with a different value from other certificates. If the
+        # parameter value is not specified, the CA certificate expiration is the
+        # value used for the minimumDuration.
+        #
+        # Optional
+        minimumCADuration: 400h
+
+        # -- Only if CertificatePolicy! Set a value to identify certificates that have been created with a
+        # duration that exceeds your desired limit.
+        #
+        # Optional
+        maximumDuration: 100h
+
+        # -- Only if CertificatePolicy! Set a value to identify signing certificates that have been
+        # created with a duration that exceeds your defined limit.
+        #
+        # Optional
+        maximumCADuration: 100h
+
+        # -- Only if CertificatePolicy! A regular expression that must match every SAN entry that you
+        # have defined in your certificates.
+        # This parameter checks DNS names against patterns.
+        #
+        # Optional
+        allowedSANPattern: ""
+
+        # -- Only if CertificatePolicy! A regular expression that must not match any SAN entries you
+        # have defined in your certificates.
+        # This parameter checks DNS names against patterns.
+        # Note: To detect wild-card certificate, use the following SAN
+        # pattern:
+        #    disallowedSANPattern: "[\\*]"
+        #
+        # Optional
+        disallowedSANPattern: ""
+
+        ###########################
+        # END CertificatePolicy
+        ###########################
+
+  # -- Places a policy to a cluster with selected labels and or clusterSet
+  # This is used when the PolicySet does NOT define a placement
+  # @default -- empty
+  placement:
+      # -- A clusterSet the policy to bind to. The clusterSet must exist.
+      # Optional
+      # @default -- empty
+      clusterSets:
+      - hub
+
+      # -- Required cluster selectors
+      # Selects a cluster based on its labels. For example: name euqals to "local-cluster"
+      # multiple selectors can be defined, which must all be true
+      # @default -- empty
+      lableSelectors:
+      - key: name
+        operator: In
+        values:
+        - local-cluster
+
+  # -- Local description of the policy. Simply adds an annotation.
+  # This is only set when policyDefaults.desciption is NOT set.
+  # @default -- empty
+  description: ''
+
+  # -- A security control category represent specific requirements
+  # for one or more standards. For example, a System and Information Integrity category
+  # might indicate that your policy contains a data transfer protocol
+  # to protect personal information, as required by the HIPAA and PCI standards.
+  # This is used only when policyDefaults.catagories is not set.
+  # @default -- empty
+  categories:
+  - CM Configuration Management
+
+  # -- The name of the security control that is being checked. For
+  # example, Access Control or System and Information Integrity.
+  # This is used only when policyDefaults.catagories is not set.
+  # @default -- empty
+  controls:
+  - CM Console Customizations
+
+  # -- The name or names of security standards the policy is related to.
+  # For example, National Institute of Standards and Technology (NIST)
+  # and Payment Card Industry (PCI).
+  # This is used only when policyDefaults.catagories is not set.
+  # @default -- empty
+  standards:
+  - Baseline 2023v1
+
+  # -- Dependencies are used to create a list of dependency objects detailed with
+  # extra considerations for compliance.
+  dependencies:
+    # The name of the object being depended on.
+      - name: ""
+        # The namespace of the object being depended on.
+        # @default -- the namespace of policies set for the Policy Generator.
+
+        namespace: ""
+        # The compliance state the object needs to be in.
+        # @default -- Compliant
+        compliance: "Compliant"
+
+        # The kind of the object. By default, the kind is set to Policy, but can
+        # also be other kinds that have compliance state, such as ConfigurationPolicy.
+        # @default -- Policy
+        kind: "Policy"
+
+        # The API version of the object.
+        # @default -- policy.opencluster-management.io/v1
+        apiVersion: "policy.open-cluster-management.io/v1"
+
+  # -- Used to mark a policy template as compliant until the dependency
+  # criteria is verified.
+  # Values:
+  #   - true
+  #   - false
+  # @default -- empty
+  ignorePending: false
+
+  # 2nd Example of a policy
+  # - policyname: console-links
+  #   disabled: 'false'
+  #   remediationAction: inform
+  #   policy_templates:
+  #     - name: console-links
+  #       path: "console-links"
+
+  #   placement:
+  #     lableSelectors:
+  #       - key: name
+  #         operator: In
+  #         values:
+  #           - local-cluster
+
+# @ignore
+- policyname: console-banner
+  enabled: false
+  namespace: *namespace
+  disabled: true
+  remediationAction: inform
+  policy_templates:
+  - name: cert-checker
+    kind: CertificationPolicy
+    path: "console-banner"
+    name_use_template_filename: "true"
+
+      # -- Only if CertificatePolicy! When a value is not specified, the default value is 100h. This
+      # parameter specifies the smallest duration (in hours) before a
+      # certificate is considered noncompliant.
+      #
+      # Required
+      # @default -- 100h
+      # minimumDuration: 100h
+
+      # -- Only if CertificatePolicy! Set a value to identify signing certificates that might expire
+      # soon with a different value from other certificates. If the
+      # parameter value is not specified, the CA certificate expiration is the
+      # value used for the minimumDuration.
+      #
+      # Optional
+      # minimumCADuration: 400h
+
+      # -- Only if CertificatePolicy! Set a value to identify certificates that have been created with a
+      # duration that exceeds your desired limit.
+      #
+      # Optional
+      # maximumDuration: 100h
+
+      # -- Only if CertificatePolicy! Set a value to identify signing certificates that have been
+      # created with a duration that exceeds your defined limit.
+      #
+      # Optional
+      # maximumCADuration: 100h
+
+      # -- Only if CertificatePolicy! A regular expression that must match every SAN entry that you
+      # have defined in your certificates.
+      # This parameter checks DNS names against patterns.
+      #
+      # Optional
+      # allowedSANPattern: ""
+
+      # -- Only if CertificatePolicy! A regular expression that must not match any SAN entries you
+      # have defined in your certificates.
+      # This parameter checks DNS names against patterns.
+      # Note: To detect wild-card certificate, use the following SAN
+      # pattern:
+      #    disallowedSANPattern: "[\\*]"
+      #
+      # Optional
+      # disallowedSANPattern: ""
+
+      ###########################
+      # END CertificatePolicy
+      ###########################

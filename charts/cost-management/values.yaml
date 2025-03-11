@@ -1,0 +1,124 @@
+---
+costmgmt:
+  # -- Enable or disable the configuration of the cost management operator
+  # @default -- false
+  enabled: false
+
+  # -- Name of the cost manager CRD
+  # @default -- costmanagementmetricscfg
+  name: costmanagementmetricscfg
+
+  # -- Is the cluster running in an airgapped or disconnected environment, we cannot upload the cost management data.
+  # @default -- false
+  airgapped: true
+
+  # -- Represents the maximum number of reports to store. The default is 30 reports which corresponds to approximately 7 days worth of data given the other default values.
+  # @default -- 30
+  max_reports_to_store: 30
+
+  # -- Represents the max file size in megabytes that will be compressed for upload to Ingress. Must be less or euqal 100.
+  # @default -- 100
+  max_size_MB: 100
+
+  # -- Represents the number of minutes between each upload schedule.
+  # @default -- 360
+  upload_cycle: 360
+
+  # -- If `false`, the operator will not upload to console.redhat.com or check/create sources.
+  # @default -- true
+  upload_toggle: false
+
+  # -- Authentication: Valid values are:
+  #  - "basic" (deprecated) : Enables authentication using user and password from authentication secret.
+  #  - "service-account" : Enables authentication using client_id and client_secret from the secret containing service account information.
+  #  - "token" (default): Uses cluster token for authentication.
+  # If the cluster is running in airgapped mode, then these settings can be ignored.
+  # @default -- token
+  auth_type: token
+
+  # -- The secret with the user and password used for uploads.
+  auth_secret: mysecret
+
+  # Prometheus Configuration
+  # -- Represents whether or not the operator will gather previous data upon CostManagementMetricsConfig creation.
+  # This toggle only changes operator behavior when a new CostManagementMetricsConfig is created. When `true`, the operator will gather all existing Prometheus data for the current month.
+  # @default -- true
+  promconfig_collect_previous_data: "true"
+
+  # -- How long a query to prometheus should run in seconds before timing out.
+  # @default -- 120
+  promconfig_context_time: 120
+
+  # -- Whether or not the operator will generate reports for cost-management metrics.
+  # @default -- false
+  promconfig_disable_metric_coll_cost_management: "false"
+
+  # -- Whether or not the operator will generate reports for resource-optimization metrics.
+  # @default -- false
+  promconfig_disable_metric_coll_resource_optimization: "false"
+
+  # -- Service addess to prometheus. For development only.
+  # @default -- "https://thanos-querier.openshift-monitoring.svc:9091"
+  promconfig_service_address: "https://thanos-querier.openshift-monitoring.svc:9091"
+
+  # -- Skip TLS verification to thanos-querier endpoint.
+  # @default -- false
+  promconfig_skip_tls_verification: "false"
+
+# Using sub-chart helper-operator
+helper-operator:
+  operators:
+    cost-management-operator:
+      # -- Enabled yes/no
+      # @default -- false
+      enabled: false
+      # -- Syncwave for the operator deployment
+      # @default -- 0
+      syncwave: '0'
+      namespace:
+        # -- The Namespace the Operator should be installed in.
+        # The cost-management operator should be deployed into **costmanagement-metrics-operator** Namepsace
+        # that must be created.
+        name: costmanagement-metrics-operator
+        # -- Description of the namespace.
+        # @default -- ""
+        create: true
+      subscription:
+        # -- Channel of the Subscription
+        # @default -- stable
+        channel: stable
+        # -- Update behavior of the Operator. Manual/Automatic
+        # @default -- Automatic
+        approval: Automatic
+        # -- Name of the Operator
+        # The name for the cost-management operator is **costmanagement-metrics-operator**
+        # @default -- "empty"
+        operatorName: costmanagement-metrics-operator
+        # -- Source of the Operator
+        # @default -- redhat-operators
+        source: redhat-operators
+        # -- Namespace of the source
+        # @default -- openshift-marketplace
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        # -- Create an Operatorgroup object
+        # @default -- false
+        create: false
+        # -- Monitor own Namespace. For some Operators no `targetNamespaces` must be defined
+        # @default -- false
+        notownnamespace: false
+
+
+# Using sub-chart helper-status-checker
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: costmanagement-metrics-operator
+      namespace:
+        name: costmanagement-metrics-operator
+      syncwave: 3
+
+      serviceAccount:
+        name: "sa-costmanagement-metrics"

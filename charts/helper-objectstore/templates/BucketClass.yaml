@@ -1,0 +1,21 @@
+{{- with .Values }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: noobaa.io/v1alpha1
+kind: BucketClass
+metadata:
+  name: {{ .backingstore_name }}-class
+  namespace: openshift-storage
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+    app: noobaa
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "1" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  placementPolicy:
+    tiers:
+      - backingStores:
+          - {{ .backingstore_name }}
+{{- end }}
+{{- end }}

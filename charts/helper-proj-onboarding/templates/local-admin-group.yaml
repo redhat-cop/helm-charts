@@ -1,0 +1,19 @@
+{{- range $key, $value := .Values.namespaces }}
+{{ if eq ( .enabled | toString) "true" }}
+{{ if .local_admin_group }}
+{{ if eq ( .local_admin_group.enabled | toString) "true" }}
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: {{ if .local_admin_group.group_name }}{{ .local_admin_group.group_name | replace "_" "-" }}{{- else }}{{ .name | replace "_" "-" }}-admins{{- end }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+users:
+  {{- range .local_admin_group.users }}
+  - {{ . }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,98 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is installing and configuring the File Integrity Operator, which uses AIDE to check if any files have been changed
+on the operating system. 
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops (for example in the folder clusters/management-cluster/setup-file-integrity-operator)
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+Verify the subcharts for additional settings:
+
+* [helper-operator](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+* [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+# Deploy operator using helper-operator sub chart
+helper-operator:
+  operators:
+    quay-operator:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: openshift-file-integrity
+        create: true
+      subscription:
+        channel: stable
+        approval: Automatic
+        operatorName: file-integrity-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: true
+        notownnamespace: true
+
+# Verify if operator has been deployed using helper-status-checker sub-chart
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: file-integrity-operator
+      namespace:
+        name: openshift-file-integrity
+      syncwave: 3
+
+      serviceAccount:
+        name: "sa-file-integrity-checker"
+
+aide:
+  worker:
+    enabled: true
+    syncwave: 5
+    name: worker-fileintegrity
+    namespace: openshift-file-integrity
+    selector:
+      key: node-role.kubernetes.io/worker
+      value: ""
+
+    config:
+      gracePeriod: 900
+      maxBackups: 5
+
+  controlplane:
+    enabled: false
+    syncwave: 10
+    name: controlplane-fileintegrity
+    namespace: openshift-file-integrity
+    selector:
+      key: node-role.kubernetes.io/master
+      value: ""
+
+    config:
+      gracePeriod: 900
+      maxBackups: 5
+
+      customconfig:
+        enabled: true
+        name: controlplane-aide-conf
+        namespace: openshift-file-integrity
+        key: "controlplane-aide.conf"
+
+    tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+```
+
+{{ template "doc.footer" . }}

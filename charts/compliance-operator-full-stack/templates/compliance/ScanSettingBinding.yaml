@@ -1,0 +1,23 @@
+{{ if eq (.Values.compliance.scansettingbinding.enabled | toString) "true" }}
+---
+apiVersion: compliance.openshift.io/v1alpha1
+kind: ScanSettingBinding
+metadata:
+  name: cis-compliance
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.compliance.scansettingbinding.syncwave | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  namespace: {{ .Values.compliance.namespace.name | default "openshift-compliance" | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+profiles:
+{{- range $key, $value := .Values.compliance.scansettingbinding.profiles }}
+  - name: {{ $value.name }} 
+    kind: {{ $value.kind }}
+    apiGroup: compliance.openshift.io/v1alpha1
+{{- end }}
+settingsRef:
+  name: {{ .Values.compliance.scansettingbinding.scansetting }}  
+  kind: ScanSetting
+  apiGroup: compliance.openshift.io/v1alpha1
+{{- end }}

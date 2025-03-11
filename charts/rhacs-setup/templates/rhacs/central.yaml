@@ -1,0 +1,171 @@
+{{ if eq (.Values.rhacs.central.enabled | toString) "true" }}
+apiVersion: platform.stackrox.io/v1alpha1
+kind: Central
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.rhacs.central.syncwave | default "3" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: central
+  namespace: {{ .Values.rhacs.namespace.name | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  {{- if eq (.Values.rhacs.central.monitoring | toString | lower) "enabled" }}
+  monitoring:
+    openshift:
+      enabled: true
+  {{- end }}
+  central:
+    exposure:
+    {{- /* exposure settings. per default OpenShift route will be set */}}
+      loadBalancer:
+        {{- if .Values.rhacs.central.loadBalancer }}
+        enabled: {{ .Values.rhacs.central.loadBalancer.enabled }}
+        port: {{ .Values.rhacs.central.loadBalancer.port }}
+        ip: {{ .Values.rhacs.central.loadBalancer.ip }}
+        {{- else }}
+        enabled: false
+        port: 443
+        {{- end }}
+      nodePort:
+        {{- if .Values.rhacs.central.nodePort }}
+        enabled: {{ .Values.rhacs.central.nodePort.enabled }}
+        {{- else }}
+        enabled: false
+        {{- end }}
+      route:
+        {{- if .Values.rhacs.central.hostname }}
+        host: {{ .Values.rhacs.central.hostname }}
+        {{- end }}
+        {{- if .Values.rhacs.central.route }}
+        enabled: {{ .Values.rhacs.central.route.enabled }}
+        {{- else }}
+        enabled: true
+        {{- end }}
+    {{- if eq (.Values.rhacs.central.monitoring | toString | lower) "enabled" }}
+    monitoring:
+      exposeEndpoint: Enabled
+    {{- end }}
+    {{- if .Values.rhacs.central.defaultsslsecret }}
+    defaultTLSSecret:
+      name: {{ .Values.rhacs.central.defaultsslsecret }}
+    {{- end }}
+    {{- /* custom admin password */}}
+    {{- if .Values.rhacs.central.adminPasswordSecret }}
+    adminPasswordSecret:
+      name: {{ .Values.rhacs.central.adminPasswordSecret }}
+    {{- end }}
+    {{- /* PVC settings */}}
+    persistence:
+      persistentVolumeClaim:
+        claimName: {{ .Values.rhacs.central.pvc | quote | default "stackrox-db" }}
+        {{- if .Values.rhacs.central.pvc_storageclass }}
+        storageClassName: {{ .Values.rhacs.central.pvc_storageclass }}
+        {{- end }}
+        {{- if .Values.rhacs.central.pvc_size }}
+        size: {{ .Values.rhacs.central.pvc_size }}
+        {{- end }}
+{{- /* Set resources for the central */}}
+{{- if .Values.rhacs.central.resources }}
+{{ include "tpl.resources" .Values.rhacs.central.resources | indent 4 }}
+{{- end }}
+
+{{- /* Set tolerations for the central */}}
+{{- if .Values.rhacs.central.tolerations }}
+{{ include "tpl.tolerations" .Values.rhacs.central.tolerations | indent 4 }}
+{{- end }}
+
+    {{- /* central database */}}
+    {{- if .Values.rhacs.central.db }}
+    {{- with .Values.rhacs.central.db }}
+    db:
+      isEnabled: Default
+
+      {{- /* custom admin password for database */}}
+      {{- if .passwordSecret }}
+      passwordSecret:
+        name: {{ .passwordSecret }}
+      {{- end }}
+
+      {{- /* PVC settings for central database */}}
+      persistence:
+        persistentVolumeClaim:
+          claimName: {{ .pvc | quote | default "central-db" }}
+          {{- if .pvc_storageclass }}
+          storageClassName: {{ .pvc_storageclass }}
+          {{- end }}
+          {{- if .pvc_size }}
+          size: {{ .pvc_size }}
+          {{- end }}
+
+{{- /* Set resources for the central DATABASE */}}
+{{- if .resources }}
+{{ include "tpl.resources" .resources | indent 6 }}
+{{- end }}
+
+{{- /* Set tolerations for the central database */}}
+{{- if .tolerations }}
+{{ include "tpl.tolerations" .tolerations | indent 6 }}
+{{- end }}
+
+    {{- end }}
+    {{- end }}
+
+
+  {{- /* Let ACS run on online or offline mode */}}
+  egress:
+    connectivityPolicy: {{ .Values.rhacs.central.egress.connectivityPolicy | default "Online" }}
+
+  {{- /* SCANNER */}}
+  {{- if eq (.Values.rhacs.scanner.enabled | toString ) "true" }}
+  scanner:
+    monitoring:
+      {{- if .Values.rhacs.scanner.monitoring }}
+      exposeEndpoint: Enabled
+      {{- else }}
+      exposeEndpoint: Disabled
+      {{- end }}
+    {{- if .Values.rhacs.scanner.analyzer }}
+    analyzer:
+      {{- if .Values.rhacs.scanner.analyzer.autoscaling }}
+      scaling:
+        autoScaling: {{ .Values.rhacs.scanner.analyzer.autoscaling.status | default "Enabled" }}
+        maxReplicas: {{ .Values.rhacs.scanner.analyzer.autoscaling.max | default "5" }}
+        minReplicas: {{ .Values.rhacs.scanner.analyzer.autoscaling.min | default "2" }}
+        replicas: {{ .Values.rhacs.scanner.analyzer.autoscaling.replicas | default "3"}}
+      {{- end }}
+
+{{- /* Set tolerations for the scanner */}}
+{{- if .Values.rhacs.scanner.analyzer.tolerations }}
+{{ include "tpl.tolerations" .Values.rhacs.scanner.analyzer.tolerations | indent 6 }}
+{{- end }}
+
+{{- /* Set resources for the SCANNER */}}
+{{- if .Values.rhacs.scanner.analyzer.resources }}
+{{ include "tpl.resources" .Values.rhacs.scanner.analyzer.resources | indent 6 }}
+{{- end }}
+
+    {{- end }}
+
+    {{- /* SCANNER  DB*/}}
+    {{- if .Values.rhacs.scanner.db }}
+    db:
+{{- /* Set resources for the SCANNER  DB*/}}
+{{- if .Values.rhacs.scanner.db.resources  }}
+{{ include "tpl.resources" .Values.rhacs.scanner.db.resources  | indent 6 }}
+{{- end }}
+
+
+{{- /* Set tolerations for the SCANNER DB */}}
+{{- if .Values.rhacs.scanner.db.tolerations }}
+{{ include "tpl.tolerations" .Values.rhacs.scanner.db.tolerations  | indent 6 }}
+{{- end }}
+
+    {{- end }}
+    {{- end }}
+    {{- if eq (.Values.rhacs.scanner.enabled | toString ) "true" }}
+    scannerComponent: Enabled
+    {{- else }}
+    scannerComponent: Disabled
+    {{- end }}
+{{- end }}
