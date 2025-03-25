@@ -38,7 +38,7 @@ jobs:
         version: ${{ env.HELM_VERSION }}
 
     - name: Setup Python 🐍
-      uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5
+      uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
