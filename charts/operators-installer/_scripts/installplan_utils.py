@@ -126,10 +126,19 @@ def approve_installplan(installplan: oc.APIObject):
         applied_change = True
     else:
         print(f"\t- Approving InstallPlan ({installplan_name})")
-        (
-            result,  # type: oc.Result
-            applied_change,  # type: bool
-        ) = installplan.modify_and_apply(installplan_approve_modify_and_apply, 4)
+
+        # NOTE: using patch and not modify_and_apply because in some cases we get the following error:
+        #
+        #       Warning: resource installplans/install-kwgwp is missing the kubectl.kubernetes.io/last-applied-configuration annotation
+        #       which is required by oc apply. oc apply should only be used on resources created declaratively by either
+        #       oc create --save-config or oc apply. The missing annotation will be patched automatically.\nThe InstallPlan \"install-kwgwp\" is invalid:
+        #       metadata.annotations: Too long: must have at most 262144 bytes\n",
+        #
+        # which translated means, dont do an apply, do a patch, since you wont be applying again anyway
+        result = installplan.patch(
+            {"spec": {"approved": True}}, strategy="merge", cmd_args=["-o=yaml"]
+        )
+        applied_change = result.status() == 0
 
         # verify change applied
         if applied_change:
@@ -138,11 +147,6 @@ def approve_installplan(installplan: oc.APIObject):
             print(f"\t- Failed to approve InstallPlan ({installplan_name}): {result}")
 
     return applied_change
-
-
-def installplan_approve_modify_and_apply(installplan: oc.APIObject):
-    """Helper function for oc.APIObject.modify_and_apply to approve an InstallPlan"""
-    installplan.model.spec.approved = True
 
 
 def get_csv_semver(

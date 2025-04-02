@@ -109,7 +109,7 @@ if subscription_uid:
                         installplan_utils.error_and_exit(error_message)
                 else:
                     installplan_utils.error_and_exit(
-                        f"Unrecoverable unexpected issue with unknown resolution, see logs. Failed to approve InstallPlan ({target_installplan_name}): {target_installplan}"
+                        f"Unrecoverable unexpected issue with unknown resolution, see logs. Failed to approve InstallPlan ({target_installplan_name}): {target_installplan.as_dict()}"
                     )
             else:
                 attempt += 1
