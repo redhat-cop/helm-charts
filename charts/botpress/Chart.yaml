@@ -3,7 +3,7 @@ name: botpress
 description: A Botpress Community Helm chart for OpenShift
 kubeVersion: ">=1.20.0"
 type: application
-version: 0.1.1
+version: 0.1.2
 sources:
   - https://github.com/maximilianoPizarro/botpress-helm-chart
 keywords:
