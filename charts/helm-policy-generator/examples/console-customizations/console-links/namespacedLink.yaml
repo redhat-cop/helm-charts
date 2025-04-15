@@ -1,0 +1,12 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: "namespacedlink"
+spec:
+  text: "Link valid for selected namespace only"
+  location: "NamespaceDashboard"
+  href: "https://report"
+  namespaceDashboard:
+    namespaces:
+      - default
+      - openshift-gitops

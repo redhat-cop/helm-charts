@@ -1,0 +1,32 @@
+{{ template "doc.header" . }}
+
+CycloneDX provides advanced, supply chain capabilities for cyber risk reduction. We are using the Software Bill of Material (SBOM) parts. 
+SBOM is a complete and accurate inventory of all first-party and third-party components is essential for risk identification.
+
+This chart will install CycloneDX BOM Repo server, which enables you to store SBOM inventories on your cluster.
+
+For detailed information check: [CycloneDX SBOM](https://cyclonedx.org/capabilities/sbom/)
+
+For an example of how to use it during a pipeline run check: [Generating an SBOM](https://blog.stderr.at/securesupplychain/2023-06-22-securesupplychain-step7/)
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+namespace:
+  create: true
+  name: cyclonedx
+```
+
+{{ template "doc.footer" . }}

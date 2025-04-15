@@ -1,0 +1,24 @@
+{{- with .Values.certManager }}
+{{ if eq (.enable_patch | toString) "true" }}
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: CertManager
+metadata:
+  name: cluster
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 10 | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  logLevel: Normal
+  managementState: Managed
+  observedConfig: null
+  operatorLogLevel: Normal
+  controllerConfig:
+    overrideArgs:
+      {{- range .overrideArgs }}
+      - {{ . }}
+      {{- end }}
+{{- end }}
+{{- end }}

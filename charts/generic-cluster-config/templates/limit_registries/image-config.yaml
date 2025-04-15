@@ -1,0 +1,26 @@
+{{ if eq ( .Values.config_allowed_registries.enabled | toString) "true" }}
+---
+apiVersion: config.openshift.io/v1
+kind: Image
+metadata:
+  name: cluster
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  {{- if .Values.config_allowed_registries.allowedRegistriesForImport }}
+  allowedRegistriesForImport:
+    {{- range $key, $value :=.Values.config_allowed_registries.allowedRegistriesForImport }}
+    - domainName: {{ $value.domain }}
+      insecure: {{ $value.insecure | default false }}
+    {{- end }}
+  {{- end }}
+  {{- if .Values.config_allowed_registries.registry_sources }}
+  registrySources:
+    {{- if .Values.config_allowed_registries.registry_sources.allowed_registries }}
+    allowedRegistries:
+      {{- range .Values.config_allowed_registries.registry_sources.allowed_registries }}
+      - {{ . | quote }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

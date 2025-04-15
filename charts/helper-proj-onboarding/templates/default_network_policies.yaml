@@ -1,0 +1,158 @@
+{{- range $key, $value := .Values.namespaces }}
+{{ if eq ( .enabled | toString) "true" }}
+
+{{- $default_policies := index $value "default_policies" | default dict }}
+
+{{- /* DEFAULT POLICY: allow-from-ingres*/}}
+{{- $allow_from_ingress := index $default_policies "allow_from_ingress" | toString }}
+{{ if eq ($allow_from_ingress | toString) "true" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-openshift-ingress
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          policy-group.network.openshift.io/ingress: ""
+  podSelector: {}
+  policyTypes:
+  - Ingress
+{{- end }}
+
+{{- /* DEFAULT POLICY: allow-from-monitoring*/}}
+{{- $allow_from_monitoring := index $default_policies "allow_from_monitoring" | toString }}
+{{ if ne ($allow_from_monitoring | toString) "false" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-openshift-monitoring
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          network.openshift.io/policy-group: monitoring
+  podSelector: {}
+  policyTypes:
+  - Ingress
+{{- end }}
+
+{{- /* DEFAULT POLICY: allow-to-openshift-dns */}}
+{{- $allow_to_dns := index $default_policies "allow_to_dns" | toString  | default "true"}}
+{{ if ne ($allow_to_dns | toString) "false" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-to-openshift-dns
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  podSelector: {}
+  egress:
+    - ports:
+        - protocol: TCP
+          port: 5353
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+        - protocol: UDP
+          port: 5353
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-dns
+  policyTypes:
+    - Egress
+{{- end }}
+
+{{- /* DEFAULT POLICY: allow-from-apiserver*/}}
+{{- $allow_kube_apiserver := index $default_policies "allow_kube_apiserver" | toString }}
+{{ if ne ($allow_kube_apiserver | toString) "false" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-kube-apiserver-operator
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-kube-apiserver-operator
+      podSelector:
+        matchLabels:
+          app: kube-apiserver-operator
+  policyTypes:
+  - Ingress
+{{- end }}
+
+{{- /* DEFAULT POLICY: deny-all-engres*/}}
+{{- $deny_all_egress := index $default_policies "deny_all_egress" | toString }}
+{{ if eq ($deny_all_egress | toString) "true" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all-egress
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+{{- end }}
+
+{{- /* DEFAULT POLICY: deny-all-ingress */}}
+{{- $deny_all_ingress := index $default_policies "deny_all_ingress" | toString }}
+{{ if eq ($deny_all_ingress | toString) "true" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all-ingress
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+{{- end }}
+
+{{- /* DEFAULT POLICY: allow-from-same namespace*/}}
+{{- $allow_from_same_namespace := index $default_policies "allow_from_same_namespace" | toString }}
+{{ if ne ($allow_from_same_namespace | toString) "false" }}
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-same-namespace
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  podSelector:
+  ingress:
+  - from:
+    - podSelector: {}
+{{- end }}
+
+{{- end }}
+{{- end }}

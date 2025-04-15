@@ -1,0 +1,66 @@
+{{- if eq (.Values.policySet.enabled | toString) "true" }}
+{{- range .Values.policySet.sets }}
+{{- if .placement }}
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: {{ .name }}-placement
+  namespace: {{ .namespace }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  {{- if .placement.clusterSets }}
+  clusterSets:
+    {{- range .placement.clusterSets }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchExpressions:
+        {{- range .placement.lableSelectors }}
+        - key: {{ .key }}
+          operator: {{ .operator }}
+          values:
+          {{- range .values }}
+          - {{ . }}
+          {{- end }}
+        {{- end }}
+{{- end }}
+{{- end }}
+
+{{- else }}
+{{- range .Values.policies }}
+{{- if eq ( .enabled | toString ) "true" }}
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: {{ .policyname }}-placement
+  namespace: {{ .namespace }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  {{- if .placement.clusterSets }}
+  clusterSets:
+    {{- range .placement.clusterSets }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchExpressions:
+        {{- range .placement.lableSelectors }}
+        - key: {{ .key }}
+          operator: {{ .operator }}
+          values:
+          {{- range .values }}
+          - {{ . }}
+          {{- end }}
+        {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

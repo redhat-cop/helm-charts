@@ -1,0 +1,8 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: "namespacedlink-all-namespaces"
+spec:
+  text: "Report Violations"
+  location: "NamespaceDashboard"
+  href: "https://report"

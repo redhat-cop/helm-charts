@@ -1,0 +1,19 @@
+apiVersion: v2
+name: rhacm-setup
+description: Setup and configure Advanced Cluster Managerment. Replaces the Chart rhacm-full-stack.
+version: 1.0.14
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/rhacm-setup
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+sources:
+  - https://github.com/tjungbauer/helm-charts
+  - https://charts.stderr.at/
+  - https://github.com/tjungbauer/openshift-clusterconfig-gitops
+keywords:
+  - clustermanagement

@@ -1,0 +1,16 @@
+apiVersion: v2
+name: helper-proj-onboarding
+description: This Chart shall deploy namespaces and their depending resources, like NetworkPolicies or Quotas etc.
+version: 1.0.39
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/helper-proj-onboarding
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+keywords:
+  - helper
+  - subchart

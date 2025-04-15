@@ -1,0 +1,40 @@
+apiVersion: v2
+name: openshift-logging
+description: Deploy and configure OpenShift Logging based on LokiStack
+version: 2.0.5
+home: https://github.com/tjungbauer/helm-charts/tree/main/charts/openshift-logging
+icon: https://raw.githubusercontent.com/tjungbauer/helm-charts/gh-pages/images/logging.svg
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://charts.stderr.at/
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+sources:
+  - https://github.com/tjungbauer/helm-charts
+  - https://charts.stderr.at/
+  - https://github.com/tjungbauer/openshift-clusterconfig-gitops
+keywords:
+  - logging
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/signKey: |
+    fingerprint: B677CB52F8358FA091044E375D24D6846DBA8F8A
+    url: https://keys.openpgp.org/vks/v1/by-fingerprint/B677CB52F8358FA091044E375D24D6846DBA8F8A
+  artifacthub.io/changes: |
+    - kind: fixed
+      description: Signing Chart
+    - kind: added
+      description: Optimizing Loki configuration for ClusterLogging object.
+    - kind: added
+      description: updated to helper-status-checker 4.0.0
+    - kind: added
+      description: v2.0 added README and removed Elasticsearch configuration as it is considered as deprecated.
+    - kind: fixed
+      description: moved values.yaml to values-examples.yaml to be sure that not default values interefere with any setting.
+    - kind: added
+      description: added tpl chart
+    - kind: added
+      description: switching some snippets to use global tpl

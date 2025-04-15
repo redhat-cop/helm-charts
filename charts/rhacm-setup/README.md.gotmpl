@@ -1,0 +1,74 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is installing and configuring Advanced Cluster Management (ACM)
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops (for example in the folder clusters/management-cluster/setup-acm)
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+Verify the subcharts for additional settings:
+
+* [helper-operator](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+* [helper-status-checker](https://github.com/tjungbauer/helm-charts/tree/main/charts/helper-operator)
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+---
+# -- Anchor for the operator version
+override-rhacm-operator-version: &rhacmversion release-2.10
+
+# Install Operator RHACM
+# Deploys Operator --> Subscription and Operatorgroup
+# Syncwave: 0
+helper-operator:
+  operators:
+    advanced-cluster-management:
+      enabled: false
+      syncwave: '0'
+      namespace:
+        name: open-cluster-management
+        create: true
+      subscription:
+        channel: *rhacmversion
+        approval: Automatic
+        operatorName: advanced-cluster-management
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+      operatorgroup:
+        create: false
+        notownnamespace: false
+
+# Using sub-chart helper-status-checker
+helper-status-checker:
+  enabled: false
+
+  checks:
+
+    - operatorName: advanced-cluster-management
+      namespace:
+        name: open-cluster-management
+      syncwave: 3
+
+      serviceAccount:
+        name: "sa-acm-status-checker"
+
+rhacm:
+  namespace:
+    name: open-cluster-management
+
+  # Configure MultiClusterHub
+  multiclusterhub:
+    enabled: false
+    availabilityConfig: Basic
+```
+
+{{ template "doc.footer" . }}

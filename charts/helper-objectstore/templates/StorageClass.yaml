@@ -1,0 +1,19 @@
+{{- with .Values }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: {{ .storageclass_name }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "1" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+provisioner: openshift-storage.noobaa.io/obc
+parameters:
+  bucketclass: {{ .backingstore_name }}-class
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+{{- end }}
+{{- end }}

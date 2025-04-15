@@ -1,0 +1,106 @@
+suite: test central
+templates:
+  - rhacs/central.yaml
+values:
+  - ./values-tests.yaml
+tests:
+  - it: Central should not render if enabled != true
+    set:
+      rhacs.central.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: Central should render if enabled == true and should pass all kind of checks
+    set:
+      rhacs.central.enabled: true
+      rhacs.central.monitoring: enabled
+      rhacs.central.defaultsslsecret: secretname
+      rhacs.central.adminPasswordSecret: admin-secretname
+      rhacs.central.resources.requests.cpu: 500m
+      rhacs.central.resources.requests.memory: 50Mi
+      rhacs.central.resources.requests.ephemeral-storage: 50Mi
+      rhacs.central.resources.limits.cpu: 500m
+      rhacs.central.resources.limits.memory: 50Mi
+      rhacs.central.resources.limits.ephemeral-storage: 50Mi
+      rhacs.central.db.passwordSecret: db-admin-secretname
+      rhacs.central.db.resources.requests.cpu: 500m
+      rhacs.central.db.resources.requests.memory: 50Mi
+      rhacs.central.db.resources.requests.ephemeral-storage: 50Mi
+      rhacs.central.db.resources.limits.cpu: 500m
+      rhacs.central.db.resources.limits.memory: 50Mi
+      rhacs.central.db.resources.limits.ephemeral-storage: 50Mi
+    asserts:
+      - isKind:
+          of: Central
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: central
+      - equal:
+          path: metadata.namespace
+          value: stackrox
+      - equal:
+          path: spec.central.persistence.persistentVolumeClaim.claimName
+          value: stackrox-db
+      - equal:
+          path: spec.egress.connectivityPolicy
+          value: Online
+      - equal:
+          path: spec.monitoring.openshift.enabled
+          value: true
+      - equal:
+          path: spec.central.monitoring.exposeEndpoint
+          value: Enabled
+      - equal:
+          path: spec.central.defaultTLSSecret.name
+          value: secretname
+      - equal:
+          path: spec.central.adminPasswordSecret.name
+          value: admin-secretname
+      - equal:
+          path: spec.central.resources.requests.cpu
+          value: 500m
+      - equal:
+          path: spec.central.resources.requests.memory
+          value: 50Mi
+      - equal:
+          path: spec.central.resources.requests.ephemeral-storage
+          value: 50Mi
+      - equal:
+          path: spec.central.resources.requests.cpu
+          value: 500m
+      - equal:
+          path: spec.central.resources.requests.memory
+          value: 50Mi
+      - equal:
+          path: spec.central.resources.requests.ephemeral-storage
+          value: 50Mi
+      - isNotNullOrEmpty:
+          path: spec.egress.connectivityPolicy
+      - equal:
+          path: spec.central.db.passwordSecret.name
+          value: db-admin-secretname
+      - equal:
+          path: spec.central.db.resources.requests.cpu
+          value: 500m
+      - equal:
+          path: spec.central.db.resources.requests.memory
+          value: 50Mi
+      - equal:
+          path: spec.central.db.resources.requests.ephemeral-storage
+          value: 50Mi
+      - equal:
+          path: spec.central.db.resources.requests.cpu
+          value: 500m
+      - equal:
+          path: spec.central.db.resources.requests.memory
+          value: 50Mi
+      - equal:
+          path: spec.central.db.resources.requests.ephemeral-storage
+          value: 50Mi
+
+
+  - it: manifest should match snapshot
+    asserts:
+      - matchSnapshot: {}

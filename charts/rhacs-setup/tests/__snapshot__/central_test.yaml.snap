@@ -1,0 +1,48 @@
+manifest should match snapshot:
+  1: |
+    apiVersion: platform.stackrox.io/v1alpha1
+    kind: Central
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+        argocd.argoproj.io/sync-wave: "3"
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: rhacs-full-stack
+        helm.sh/chart: rhacs-full-stack-1.0.31
+      name: central
+      namespace: stackrox
+    spec:
+      central:
+        db:
+          isEnabled: Default
+          passwordSecret:
+            name: secretname
+          persistence:
+            persistentVolumeClaim:
+              claimName: central-db
+          resources:
+            requests:
+              cpu: 1
+              memory: 1Gi
+        exposure:
+          loadBalancer:
+            enabled: false
+            port: 443
+          nodePort:
+            enabled: false
+          route:
+            enabled: true
+        persistence:
+          persistentVolumeClaim:
+            claimName: stackrox-db
+      egress:
+        connectivityPolicy: Online
+      scanner:
+        db:
+          resources:
+            requests:
+              cpu: 1
+              memory: 1
+        scannerComponent: Enabled

@@ -1,0 +1,17 @@
+apiVersion: v2
+name: helper-objectstore
+description: A helper Chart to create BackingStore, BackingClass, BucketClaim and StorageClass objects, when ODF is used. Currently type PV is supported only (Creating a local Persistent Volume-backed backingstore)!
+version: 1.0.7
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/helper-objectstore
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+keywords:
+  - helper
+  - subchart
+  - storage

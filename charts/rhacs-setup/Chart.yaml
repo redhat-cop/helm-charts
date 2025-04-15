@@ -1,0 +1,16 @@
+apiVersion: v2
+name: rhacs-setup
+description: Master chart to deploy RHACS operator, initialize it and do some configuration using API Calls
+version: 1.0.28
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/rhacs-setup
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+keywords:
+  - acs
+  - security

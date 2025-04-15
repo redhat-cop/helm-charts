@@ -1,0 +1,20 @@
+apiVersion: v2
+name: setup-container-security-operator
+description: Setup the Quay Container Security Operator.
+version: 1.0.9
+dependencies:
+  - name: helper-operator
+    version: ~1.0.14
+    repository: https://redhat-cop.github.io/helm-charts
+  - name: helper-status-checker
+    version: ~4.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+    condition: helper-status-checker.enabled
+home: https://redhat-cop.github.io/helm-charts/tree/main/charts/setup-container-security-operator
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+keywords:
+  - operator
+  - security

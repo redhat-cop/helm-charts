@@ -1,0 +1,50 @@
+{{ template "doc.header" . }}
+
+This Helm Chart is required when LokiStack requires a Secret object with specific keys.
+The bucket in our case is created by OpenShift Data Foundation. ODF will create a Secret and a ConfigMap using the name of the Bucket. The Chart will then create a Job, that mounts the Secret and Configmap and creates a new Secret with the required keys for Loki.
+
+The keys are:
+
+1. access_key_id
+2. access_key_secret
+3. bucketnames
+4. endpoint
+5. region
+
+{{ template "doc.deps" . }}
+
+It is best used with a full GitOps approach such as Argo CD does. For example, https://github.com/tjungbauer/openshift-clusterconfig-gitops (see clusters/management-cluster/setup-openshift-logging)
+
+
+{{ template "doc.maintainer_and_sources" . }}
+
+## Parameters
+
+{{ template "doc.values" . }}
+
+## Example values
+
+```yaml
+---
+---
+# -- Enable Job to create a Secret for LokiStack.
+# @default -- false
+enabled: true
+
+# -- Syncwave for Argo CD.
+# @default -- 3
+syncwave: 3
+
+# -- Namespace where LokiStack is deployed and where the Secret shall be created.
+namespace: namespace-with-lokistack-and-bucket
+
+# -- Name of Secret that shall be created.
+secretname: secretname-to-create
+
+# Bucket Configuration
+bucket:
+  # -- Name of the Bucket shall has been created.
+  name: bucket-name
+```
+
+{{ template "doc.footer" . }}

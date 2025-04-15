@@ -1,0 +1,17 @@
+{{- with .Values.bucket }}
+{{ if eq ( .enabled | toString) "true" }}
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default "2" | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  generateBucketName: {{ .name }}
+  storageClassName: {{ .storageclass | default "openshift-storage.noobaa.io" }}
+{{- end }}
+{{- end }}

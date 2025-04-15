@@ -1,0 +1,162 @@
+{{- range $key, $value := .Values.namespaces }}
+{{- if eq ( .enabled | toString) "true" }}
+{{- if .project_size }}
+{{- if .resourceQuotas }}
+{{- if eq ( .limitRanges.enabled | toString) "true" }}
+{{- /*
+Get global values and find the URL and name of the cluster
+*/}}
+{{- range $sizes_key, $sizes_value := $.Values.global.tshirt_sizes }}
+{{- if eq ($sizes_value.name | toString) ( $value.project_size | toString) }}
+{{- $limitrange_overwrite := $value.limitRanges | default dict }}
+{{- $limitrange := $sizes_value.limitRanges | default dict }}
+{{- if or ($limitrange) ($limitrange_overwrite) }}  
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ $value.name | replace "_" "-" }}-limitrange
+  namespace: {{ $value.name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  limits:
+    {{- /* POD MAX  - set dict for pods if defined in individual values-file */}}
+    {{- $pods_overwrite := $limitrange_overwrite.pod | default dict }}
+    {{- /* POD MAX  - set dict for pods if defined in global values-file */}}
+    {{- $pods := $limitrange.pod | default dict }}
+
+    {{- if or ($pods) ($pods_overwrite) }}  
+    - type: "Pod"
+      {{- /* POD MAX */}}
+      {{- $pods_max_overwrite := $pods_overwrite.max | default dict }}
+      {{- $pods_max := $pods.max | default dict }}
+      {{- if or ($pods_max) ($pods_max_overwrite) }} 
+      max:
+        {{- /* POD MAX  - set value for CPU */}}
+        {{- if or ($pods_max.cpu) ($pods_max_overwrite.cpu) }}
+        cpu: {{ if $pods_max_overwrite.cpu }}{{ $pods_max_overwrite.cpu | quote }}{{- else }}{{ $pods_max.cpu | quote }}{{- end }}
+        {{- end }}
+        {{- /* POD MAX  - set value for Memory */}}
+        {{- if or ($pods_max.memory) ($pods_max_overwrite.memory) }}
+        memory: {{ if $pods_max_overwrite.memory }}{{ $pods_max_overwrite.memory | quote }}{{- else }}{{ $pods_max.memory | quote }}{{- end }}
+        {{- end }}
+      {{- end }}
+
+      {{- /* POD MIN  - set dict for pods if defined in individual values-file */}}
+      {{- $pods_min_overwrite := $pods_overwrite.min | default dict }}
+      {{- /* POD MIN  - set dict for pods if defined in global values-file */}}
+      {{- $pods_min := $pods.min | default dict }}
+      {{- if or ($pods_min) ($pods_min_overwrite) }} 
+      min:
+        {{- /* POD MIN  - set value for CPU */}}
+        {{- if or ($pods_min.cpu) ($pods_min_overwrite.cpu) }}
+        cpu: {{ if $pods_min_overwrite.cpu }}{{ $pods_min_overwrite.cpu | quote }}{{- else }}{{ $pods_min.cpu | quote }}{{- end }}
+        {{- end }}
+        {{- /* POD MIN  - set value for CPU */}}
+        {{- if or ($pods_min.memory) ($pods_min_overwrite.memory) }}
+        memory: {{ if $pods_min_overwrite.memory }}{{ $pods_min_overwrite.memory | quote }}{{- else }}{{ $pods_min.memory | quote }}{{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+
+
+    {{- /* container MAX  - set dict for containers if defined in individual values-file */}}
+    {{- $containers_overwrite := $limitrange_overwrite.container | default dict }}
+    {{- /* container MAX  - set dict for containers if defined in global values-file */}}
+    {{- $containers := $limitrange.container | default dict }}
+
+    {{- if or ($containers) ($containers_overwrite) }}  
+    - type: "Container"
+      {{- /* container MAX */}}
+      {{- $containers_max_overwrite := $containers_overwrite.max | default dict }}
+      {{- $containers_max := $containers.max | default dict }}
+      {{- if or ($containers_max) ($containers_max_overwrite) }} 
+      max:
+        {{- /* container MAX  - set value for CPU */}}
+        {{- if or ($containers_max.cpu) ($containers_max_overwrite.cpu) }}
+        cpu: {{ if $containers_max_overwrite.cpu }}{{ $containers_max_overwrite.cpu | quote }}{{- else }}{{ $containers_max.cpu | quote }}{{- end }}
+        {{- end }}
+        {{- /* container MAX  - set value for Memory */}}
+        {{- if or ($containers_max.memory) ($containers_max_overwrite.memory) }}
+        memory: {{ if $containers_max_overwrite.memory }}{{ $containers_max_overwrite.memory | quote }}{{- else }}{{ $containers_max.memory | quote }}{{- end }}
+        {{- end }}
+      {{- end }}
+
+      {{- /* container MIN  - set dict for containers if defined in individual values-file */}}
+      {{- $containers_min_overwrite := $containers_overwrite.min | default dict }}
+      {{- /* container MIN  - set dict for containers if defined in global values-file */}}
+      {{- $containers_min := $containers.min | default dict }}
+      {{- if or ($containers_min) ($containers_min_overwrite) }} 
+      min:
+        {{- /* container MIN  - set value for CPU */}}
+        {{- if or ($containers_min.cpu) ($containers_min_overwrite.cpu) }}
+        cpu: {{ if $containers_min_overwrite.cpu }}{{ $containers_min_overwrite.cpu | quote }}{{- else }}{{ $containers_min.cpu | quote }}{{- end }}
+        {{- end }}
+        {{- /* container MIN  - set value for CPU */}}
+        {{- if or ($containers_min.memory) ($containers_min_overwrite.memory) }}
+        memory: {{ if $containers_min_overwrite.memory }}{{ $containers_min_overwrite.memory | quote }}{{- else }}{{ $containers_min.memory | quote }}{{- end }}
+        {{- end }}
+      {{- end }}
+
+      {{- /* Container DEFAULT set dict for containers if defined in individual values-file */}}
+      {{- $containers_default_overwrite := $containers_overwrite.default | default dict }}
+      {{- /* container DEFAULT  - set dict for containers if defined in global values-file */}}
+      {{- $containers_default := $containers.default | default dict }}
+      {{- if or ($containers_default) ($containers_default_overwrite) }}
+      default:
+        {{- if or ($containers_default.cpu) ($containers_default_overwrite.cpu) }}
+        cpu: {{ if $containers_default_overwrite.cpu }}{{ $containers_default_overwrite.cpu | quote }}{{- else }}{{ $containers_default.cpu | quote }}{{- end }}
+        {{- end }}
+        {{- if or ($containers_default.memory) ($containers_default_overwrite.memory) }}
+        memory: {{ if $containers_default_overwrite.memory }}{{ $containers_default_overwrite.memory | quote }}{{- else }}{{ $containers_default.memory | quote }}{{- end }}
+        {{- end }}
+      {{- end }}
+      {{- /* Container defaultRequest set dict for containers if defined in individual values-file */}}
+      {{- $containers_defaultRequest_overwrite := $containers_overwrite.defaultRequest | default dict }}
+      {{- /* container defaultRequest  - set dict for containers if defined in global values-file */}}
+      {{- $containers_defaultrequests := $containers.defaultRequest | default dict }}
+      {{- if or ($containers_defaultrequests) ($containers_defaultRequest_overwrite) }} 
+      defaultRequest:
+        {{- if or ($containers_defaultrequests.cpu) ($containers_defaultRequest_overwrite.cpu) }}
+        cpu: {{ if $containers_defaultRequest_overwrite.cpu }}{{ $containers_defaultRequest_overwrite.cpu | quote }}{{- else }}{{ $containers_defaultrequests.cpu | quote }}{{- end }}
+        {{- end }}
+        {{- if or ($containers_defaultrequests.memory) ($containers_defaultRequest_overwrite.memory) }}
+        memory: {{ if $containers_defaultRequest_overwrite.memory }}{{ $containers_defaultRequest_overwrite.memory | quote }}{{- else }}{{ $containers_defaultrequests.memory | quote }}{{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+
+
+    {{- $pvc_overwrite := $limitrange_overwrite.pvc | default dict }}
+    {{- $pvc := $limitrange.pvc | default dict }}
+    {{- if or ($pvc) ($pvc_overwrite) }}  
+    - type: "PersistentVolumeClaim"
+      {{- /* STORAGE MAX */}}
+      {{- $pvc_max_overwrite := $pvc_overwrite.max | default dict }}
+      {{- $pvc_max := $pvc.max | default dict }}
+      {{- if or ($pvc_max) ($pvc_max_overwrite) }} 
+      max:
+        {{- if or ($pvc_max.storage) ($pvc_max_overwrite.storage) }}
+        storage: {{ if $pvc_max_overwrite.storage }}{{ $pvc_max_overwrite.storage | quote }}{{- else }}{{ $pvc_max.storage | quote }}{{- end }}
+        {{- end }}
+      {{- end }}
+      {{- /* STORAGE MIN */}}
+      {{- $pvc_min_overwrite := $pvc_overwrite.min | default dict }}
+      {{- $pvc_min := $pvc.min | default dict }}
+      {{- if or ($pvc_min.min) ($pvc_min_overwrite) }} 
+      min:
+        {{- if or ($pvc_min.storage) ($pvc_min_overwrite.storage) }}
+        storage: {{ if $pvc_min_overwrite.storage }}{{ $pvc_min_overwrite.storage | quote }}{{- else }}{{ $pvc_min.storage | quote }}{{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

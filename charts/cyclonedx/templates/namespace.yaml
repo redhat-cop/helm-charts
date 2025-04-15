@@ -1,0 +1,10 @@
+{{ if eq ( .Values.namespace.create | toString) "true" }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace.name | quote }}
+  labels:
+    openshift.io/cluster-monitoring: "true"
+    {{- include "tpl.labels" $ | nindent 4 }}
+{{- end }}

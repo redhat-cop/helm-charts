@@ -1,0 +1,14 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: consolebanner
+spec:
+  backgroundColor: "#CCCCCC"
+  color: "#000000"
+  link:
+    href: >-
+      {{ printf "https://console.redhat.com/openshift/details/{{fromClusterClaim \"%s\" }}" "id.openshift.io"}}
+    text: RedHat Console
+  location: BannerTop
+  text: >-
+    {{ printf "Name: {{ fromClusterClaim \"%s\" name }}, Version: {{fromClusterClaim \"%s\" }}" "name" "version.openshift.io"}}

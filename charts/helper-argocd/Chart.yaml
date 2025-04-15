@@ -1,0 +1,17 @@
+apiVersion: v2
+name: helper-argocd
+description: Takes care of creation of Applications, Appprojects and ApplicationSets (supporting different generators)
+version: 2.0.34
+home: https://redhat-cop.github.io/helm-chartstree/main/charts/helper-argocd
+maintainers:
+  - name: tjungbauer
+    email: tjungbau@redhat.com
+    url: https://blog.stderr.at/
+dependencies:
+  - name: tpl
+    version: ~1.0.0
+    repository: https://redhat-cop.github.io/helm-charts
+keywords:
+  - helper
+  - subchart
+  - gitops

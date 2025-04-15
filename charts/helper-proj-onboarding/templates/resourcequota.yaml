@@ -1,0 +1,81 @@
+{{- range $key, $value := .Values.namespaces }}
+{{- if eq ( .enabled | toString) "true" }}
+{{- if not .project_size }}
+{{- if .resourceQuotas }}
+{{- if eq ( .resourceQuotas.enabled | toString) "true" }}
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ .name | replace "_" "-" }}-quota
+  namespace: {{ .name | replace "_" "-" | quote }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+{{- with .resourceQuotas }}
+spec:
+  hard:
+    {{- if .pods }}
+    pods: {{ .pods | quote }}
+    {{- end }}
+    {{- if .cpu }}
+    cpu: {{ .cpu | quote }}
+    {{- end }}
+    {{- if .memory }}
+    memory: {{ .memory | replace "gi" "Gi" | replace "mi" "Mi" }}
+    {{- end }}
+    {{- if .ephemeral_storage }}
+    ephemeral-storage: {{ .ephemeral_storage | replace "gi" "Gi" | replace "mi" "Mi" }}
+    {{- end }}
+    {{- if .resourcequotas }}
+    resourcequotas: {{ .resourcequotas | quote }}
+    {{- end }}
+    {{- if .configmaps }}
+    configmaps: {{ .configmaps | quote }}
+    {{- end }}
+    {{- if .persistentvolumeclaims }}
+    persistentvolumeclaims: {{.persistentvolumeclaims | quote }}
+    {{- end }}
+    {{- if .replicationcontrollers }}
+    replicationcontrollers: {{ .replicationcontrollers | quote }}
+    {{- end }}
+    {{- if .secrets }}
+    secrets: {{ .secrets | quote }}
+    {{- end }}
+    {{- if .services }}
+    services: {{ .services | quote }}
+    {{- end }}
+    {{- if .limits }}
+      {{- if .limits.cpu }}
+    limits.cpu: {{ .limits.cpu | quote }}
+      {{- end }}
+      {{- if .limits.memory }}
+    limits.memory: {{ .limits.memory | replace "gi" "Gi" | replace "mi" "Mi" }}
+      {{- end }}
+      {{- if .limits.ephemeral_storage }}
+    limits.ephemeral-storage: {{ .limits.ephemeral_storage | replace "gi" "Gi" | replace "mi" "Mi" }}
+      {{- end }}
+    {{- end }}
+    {{- if .requests }}
+      {{- if .requests.cpu  }}
+    requests.cpu: {{ .requests.cpu | quote }}
+      {{- end }}
+      {{- if .requests.memory  }}
+    requests.memory: {{ .requests.memory | replace "gi" "Gi" | replace "mi" "Mi"  }}
+      {{- end }}
+      {{- if .requests.storage }}
+    requests.storage: {{ .requests.storage | replace "gi" "Gi" | replace "mi" "Mi" }}
+      {{- end }}
+      {{- if .requests.ephemeral_storage  }}
+    requests.ephemeral-storage: {{ .requests.ephemeral_storage | replace "gi" "Gi" | replace "mi" "Mi" }}
+      {{- end }}
+    {{- end }}
+    {{- if .storageclasses -}}
+    {{ toYaml .storageclasses | nindent 4 }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+

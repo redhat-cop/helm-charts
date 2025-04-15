@@ -1,0 +1,120 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  name: {{ include "tpl.serviceAccountName" $ }}-role
+  namespace: {{ .Values.rhacs.namespace.name | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - create
+      - patch
+      - update
+  - apiGroups:
+      - platform.stackrox.io
+    resources:
+      - securedclusters
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+  - verbs:
+      - get
+      - list
+    apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "tpl.serviceAccountName" $ }}-check-operator-status
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+rules:
+  - verbs:
+      - get
+    apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+  - verbs:
+      - create
+      - patch
+      - update
+    apiGroups:
+      - consolelinks.console.openshift.io
+      - console.openshift.io
+    resources:
+      - consolelinks
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "tpl.serviceAccountName" $ }}-rb
+  namespace: {{ .Values.rhacs.namespace.name | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "tpl.serviceAccountName" $ }}-role
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "tpl.serviceAccountName" $ }}
+    namespace: {{ .Values.rhacs.namespace.name | quote }}
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "tpl.serviceAccountName" $ }}-check-operator-status
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "tpl.serviceAccountName" $ }}
+    namespace: {{ .Values.rhacs.namespace.name | quote }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "tpl.serviceAccountName" $ }}-check-operator-status
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "tpl.serviceAccountName" $ }}
+  namespace: {{ .Values.rhacs.namespace.name | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+---
+# required so that stackrox can check if deployment of operator is ready
+# could be removed if the job is running directly in the rhacs-operator namespace
+{{- range $key, $value := .Values.operators }}
+{{ if eq ($value.enabled | toString) "true" }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: view
+  namespace: {{ $value.namespace | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: {{ include "tpl.serviceAccountName" $ }}
+  namespace: {{ $.Values.rhacs.namespace.name | quote }}
+{{- end }}
+{{- end }}

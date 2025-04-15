@@ -1,0 +1,43 @@
+{{ with .Values.rbac }}
+{{ if eq (.enabled | toString) "true" }}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: declarative-configurations
+  namespace: {{ $.Values.rhacs.namespace.name | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+data:
+  permission-set.yaml: |
+    name: restricted
+    description: Restriction permission set that only allows access to Administration and Access resources
+    resources:
+        - resource: Access
+          access: READ_ACCESS
+        - resource: Administration
+          access: READ_WRITE_ACCESS  
+    name: {{ .permissionSet.name }}
+    description: {{ .permissionSet.description }}
+    resources:
+        {{- range .resources }}
+        - {{ .permissionSet.resources.resource }}
+          {{ .permissionSet.resources.access }}
+        {{- end }}
+        - resource: Access
+          access: READ_ACCESS
+        - resource: Administration
+          access: READ_WRITE_ACCESS
+  role.yaml: |
+    name: restricted
+    description: Restricted role that only allows access to Administration and Access
+    accessScope: Unrestricted
+    permissionSet: restricted
+    name: {{ .role.name }}
+    description: {{ .role.description }}
+    accessScope: {{ .role.permissionSet }}
+    permissionSet: {{ .role.accessScope }}
+
+
+{{- end }}
+{{- end }}

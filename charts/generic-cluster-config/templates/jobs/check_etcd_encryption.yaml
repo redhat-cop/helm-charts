@@ -1,0 +1,87 @@
+{{ if eq ( .Values.apiserver.enabled | toString) "true" }}
+{{- with .Values.apiserver.etcd_encryption }}
+{{ if eq ( .enabled | toString) "true" }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: check-status-etcd-encryption
+  namespace: {{ .namespace | quote }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .syncwave | default 0 | quote }}
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+        - image: registry.redhat.io/openshift4/ose-cli
+          command:
+            - /bin/bash
+            - -c
+            - |
+             #!/usr/bin/env bash
+             max_attempts={{ .max_attempts | default 1000 }}
+             sleeper={{ .wait_time | default 60 }}
+             
+             check_apiserver_status() {
+               status=1
+               check=$(oc get $1 -o=jsonpath='{range .items[0].status.conditions[?(@.type=="Encrypted")]}{.reason}{"\n"}{.message}{"\n"}' 2>&1)
+               if [ -z "$check" ]
+               then
+                 echo "%s is currently not encrypted\n" $1
+               else
+                 printf "%s Status is:\n" $1
+                 printf "%s" "$check\n"
+             
+                 if [[ $check =~ "EncryptionInProgress" ]]; then
+                   if [ ${attempt_counter} -eq ${max_attempts} ];then
+                     echo "Max attempts reached"
+                     exit 1
+                   else
+                     printf "\nEncryption is still in progress ... let's wait\n"
+                     attempt_counter=$(($attempt_counter+1))
+                     printf "Attempt $attempt_counter of $max_attempts\n"
+                     status=1
+                     waiting $1
+                   fi
+                 else
+                   printf "\nDone with %s\n\n" $1
+                   status=0
+                 fi
+               fi
+             }
+             
+             waiting() {
+               printf "Waiting %s seconds\n" $sleeper
+               sleep $sleeper
+               check_apiserver_status $1
+             }
+             
+             # wait before start checking
+
+             printf "Waiting 60 seconds before I first check if etcd encryption is finished\n"
+
+             {{ include "tpl.sleeptimer" (dict "sleeptimer" "60" ) | nindent 14 }}
+
+             attempt_counter=0
+             check_apiserver_status "openshiftapiserver"
+             attempt_counter=0
+             check_apiserver_status "kubeapiserver"
+             
+             if [ $status -eq 0 ]; then
+               echo "Cluster etcd has been encrypted"
+             else
+               echo "ERROR: encryption failed"
+               exit 1
+             fi
+          name: check-etcd-encryption
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: {{ include "tpl.serviceAccount" .serviceAccount }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,58 @@
+{{ if eq (.Values.rhacs.secured_cluster.enabled | toString) "true" }}
+---
+apiVersion: platform.stackrox.io/v1alpha1
+kind: SecuredCluster
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.rhacs.secured_cluster.syncwave | quote }}
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: {{ .Values.rhacs.secured_cluster.clustername | default "local-cluster" | replace "_" "-" | replace "." "-" }}
+  namespace: {{ .Values.rhacs.namespace.name | quote }}
+  labels:
+    {{- include "tpl.labels" $ | nindent 4 }}
+spec:
+  clusterName: {{ .Values.rhacs.secured_cluster.clustername | default "local-cluster" }}
+  {{ if .Values.rhacs.secured_cluster.centralEndpoint }}
+  centralEndpoint: {{ .Values.rhacs.secured_cluster.centralEndpoint }}
+  {{- end }}
+  admissionControl:
+    {{- if .Values.rhacs.secured_cluster.admissioncontrol.listenOn }}
+    {{- with .Values.rhacs.secured_cluster.admissioncontrol.listenOn }}
+    {{- if .creates }}
+    {{- if eq (.creates | toString) "true" }}
+    listenOnCreates: true
+    {{- else }}
+    listenOnCreates: false
+    {{- end }}
+    {{- if eq (.events | toString) "true" }}
+    listenOnEvents: true
+    {{- else }}
+    listenOnEvents: false
+    {{- end }}
+    {{- if eq (.updates | toString) "true" }}
+    listenOnUpdates: true
+    {{- else }}
+    listenOnUpdates: false
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+
+{{- if .Values.rhacs.secured_cluster.admissioncontrol.tolerations }}
+{{ include "tpl.tolerations" .Values.rhacs.secured_cluster.admissioncontrol.tolerations | indent 4 }}
+{{- end }}
+
+  {{- if .Values.rhacs.secured_cluster.sensor }}
+  sensor:
+
+{{- if .Values.rhacs.secured_cluster.sensor.tolerations }}
+{{ include "tpl.tolerations" .Values.rhacs.secured_cluster.sensor.tolerations | indent 4 }}
+{{- end }}
+
+  {{- end }}
+  perNode:
+    collector:
+      collection: EBPF
+      imageFlavor: Regular
+    taintToleration: TolerateTaints
+{{- end }}
