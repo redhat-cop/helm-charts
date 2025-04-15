@@ -949,6 +949,31 @@ entries:
     urls:
     - https://github.com/rht-labs/charts/releases/download/bootstrap-project-0.0.1/bootstrap-project-0.0.1.tgz
     version: 0.0.1
+  botpress:
+  - annotations:
+      charts.openshift.io/name: Botpress Server v12
+    apiVersion: v2
+    appVersion: botpress-server-v12
+    created: "2025-04-15T15:41:39.522027021Z"
+    description: A Botpress Community Helm chart for OpenShift
+    digest: 9ca454649003abf242fac55325b5765c8768bb8f4bf82aa00fb6e3100c417aa7
+    home: https://maximilianopizarro.github.io/botpress-helm-chart/
+    icon: https://raw.githubusercontent.com/maximilianoPizarro/botpress-helm-chart/main/botpress_fabicon.png
+    keywords:
+    - botpress
+    - nodejs
+    kubeVersion: '>=1.20.0'
+    maintainers:
+    - email: maximiliano.pizarro.5@gmail.com
+      name: maximilianoPizarro
+      url: http://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it
+    name: botpress
+    sources:
+    - https://github.com/maximilianoPizarro/botpress-helm-chart
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/botpress-0.1.1/botpress-0.1.1.tgz
+    version: 0.1.1
   cert-manager-configs:
   - apiVersion: v1
     appVersion: v0.1.1
@@ -3336,6 +3361,23 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/operatorhub-0.0.1/operatorhub-0.0.1.tgz
     version: 0.0.1
   operators-installer:
+  - apiVersion: v2
+    created: "2025-04-15T15:41:39.702852982Z"
+    description: Installs a given list of operators either using Automatic or Manual
+      InstallPlans. If Manual then version of operator can be controlled declarativly.
+    digest: 52b42d9cd5ea3eb1ab51014a336ed0be25ff4c61571a82d2cb0452f0f08e1310
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/operator-framework/olm-docs/ea9cd734aa7a6bf2d24f273322ed9aec3ffcb02a/content/en/images/logo-sm.svg
+    keywords:
+    - olm
+    - operators
+    maintainers:
+    - name: itewk
+    name: operators-installer
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operators-installer-3.2.2/operators-installer-3.2.2.tgz
+    version: 3.2.2
   - apiVersion: v2
     created: "2025-04-15T13:35:31.130258506Z"
     description: Installs a given list of operators either using Automatic or Manual
@@ -5753,4 +5795,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2025-04-15T13:35:31.304010153Z"
+generated: "2025-04-15T15:41:39.703853463Z"
