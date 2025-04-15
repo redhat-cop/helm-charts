@@ -33,4 +33,5 @@ excluded-charts:
 - sonatype-nexus
 - stackrox
 - static-site
+- update-clusterversion
 - tekton-demo
