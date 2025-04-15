@@ -6,7 +6,7 @@ kubeVersion: ">=1.20.0"
 
 type: application
 
-version: 0.1.1
+version: 0.1.1  # Chart version
 
 sources:
   - https://github.com/maximilianoPizarro/botpress-helm-chart
@@ -28,3 +28,4 @@ icon: https://raw.githubusercontent.com/maximilianoPizarro/botpress-helm-chart/m
 
 annotations:
   charts.openshift.io/name: Botpress Server v12
+
