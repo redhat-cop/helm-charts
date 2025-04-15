@@ -4,7 +4,7 @@ description: This is an example of a pipeline developed in Tekton, the peaceful 
   It contains the main steps of a continuous software delivery process. It enforces
   a strict semantic version validation strategy, managing tag increments for you.
   Develop, Features, releases, patches and hotfixes flows are supported.
-version: 0.0.15
+version: 0.0.16
 appVersion: latest
 home: https://github.com/redhat-cop/helm-charts
 keywords:
