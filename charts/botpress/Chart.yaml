@@ -28,4 +28,3 @@ icon: https://raw.githubusercontent.com/maximilianoPizarro/botpress-helm-chart/m
 
 annotations:
   charts.openshift.io/name: Botpress Server v12
-
