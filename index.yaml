@@ -3046,6 +3046,21 @@ entries:
   kopf:
   - apiVersion: v2
     appVersion: 1.29.2
+    created: "2025-04-15T13:35:30.980139826Z"
+    description: A Helm chart to deploy CustomResourceDefinitions required for the
+      Kopf framework
+    digest: aeeba0b995faed8ab4ddc406b14db1eb24317764661b205c93c10164836944b2
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: tylerauerbeck
+    - name: jkupferer
+    name: kopf
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/kopf-0.1.1/kopf-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.29.2
     created: "2021-04-16T18:57:43.824280707Z"
     description: A Helm chart to deploy CustomResourceDefinitions required for the
       Kopf framework
@@ -3321,6 +3336,23 @@ entries:
     - https://github.com/rht-labs/charts/releases/download/operatorhub-0.0.1/operatorhub-0.0.1.tgz
     version: 0.0.1
   operators-installer:
+  - apiVersion: v2
+    created: "2025-04-15T13:35:31.130258506Z"
+    description: Installs a given list of operators either using Automatic or Manual
+      InstallPlans. If Manual then version of operator can be controlled declarativly.
+    digest: dea204c1c4f1d329d318128e00fdbe48782626905f43108b371397d4933fcb85
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/operator-framework/olm-docs/ea9cd734aa7a6bf2d24f273322ed9aec3ffcb02a/content/en/images/logo-sm.svg
+    keywords:
+    - olm
+    - operators
+    maintainers:
+    - name: itewk
+    name: operators-installer
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operators-installer-3.2.1/operators-installer-3.2.1.tgz
+    version: 3.2.1
   - apiVersion: v2
     created: "2025-04-15T08:44:53.628803906Z"
     description: Installs a given list of operators either using Automatic or Manual
@@ -3696,6 +3728,20 @@ entries:
     - https://github.com/redhat-cop/helm-charts/releases/download/operators-installer-1.0.0/operators-installer-1.0.0.tgz
     version: 1.0.0
   owncloud:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2025-04-15T13:35:31.30260666Z"
+    description: A Helm chart for Owncloud
+    digest: 76da992fb4f53028c0f914f9367fbc902fc1217abbbcce2a3a9c1f212190f973
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://alternative.me/media/256/owncloud-icon-ge0uksoxjjfyflu8-c.png
+    maintainers:
+    - name: eformat
+    name: owncloud
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/owncloud-0.0.22/owncloud-0.0.22.tgz
+    version: 0.0.22
   - apiVersion: v2
     appVersion: latest
     created: "2024-11-22T09:46:32.531890967Z"
@@ -5707,4 +5753,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2025-04-15T08:44:53.629954893Z"
+generated: "2025-04-15T13:35:31.304010153Z"
