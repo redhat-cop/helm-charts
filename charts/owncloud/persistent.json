@@ -118,20 +118,7 @@
                                 "initialDelaySeconds": 60,
                                 "failureThreshold": 60,
                                 "exec": {
-                                    "command": [
-                                        serviceaccount / owncloud created
-                                        route.route.openshift.io / owncloud created
-                                        persistentvolumeclaim / owncloud created
-                                        service / owncloud created
-                                        deploymentconfig.apps.openshift.io / owncloud created
-                                        persistentvolumeclaim / mariadb created
-                                        service / mariadb created
-                                        deploymentconfig.apps.openshift.io / mariadb created
-                                        persistentvolumeclaim / redis created
-                                        service / redis created
-                                        deploymentconfig.apps.openshift.io / redis created
-                                        cronjob.batch / webcron created "/usr/bin/healthcheck"
-                                    ]
+                                    "command": ["/usr/bin/healthcheck"]
                                 }
                             },
                             "livenessProbe": {

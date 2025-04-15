@@ -75,3 +75,15 @@ For more info on each chart checkout these!
 * [static-site](/charts/static-site)
 * [tekton-demo](/charts/tekton-demo)
 * [operators-installer](/charts/operators-installer)
+
+## [pre-commit](.pre-commit-config.yaml)
+
+Pre-commit is enabled which will lint and cleanup any files automatically.
+Token and secret checking via [Red Hat Security tooling](https://source.redhat.com/departments/it/it-information-security/leaktk/leaktk_components/rh_pre_commit) is enabled
+but requires being connected to the Red Hat VPN on the setup.
+
+The pre-commit hooks can be run manually via:
+
+```bash
+pre-commit run --all
+```
