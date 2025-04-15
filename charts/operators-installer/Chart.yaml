@@ -17,7 +17,7 @@ type: application
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 
-version: 3.2.2
+version: 3.2.3
 
 home: https://github.com/redhat-cop/helm-charts
 
