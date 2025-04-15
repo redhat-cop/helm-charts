@@ -1,0 +1,153 @@
+# Default values for botpress.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: quay.io/maximilianopizarro/botpress-server-v12  # botpress/server is oficial image
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+containerSecurityContext:
+  enabled: true
+  seLinuxOptions: null
+  runAsUser: 1001
+  runAsNonRoot: true
+  privileged: false
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+  seccompProfile:
+    type: "RuntimeDefault"
+
+env:
+  BP_CONFIG_HTTPSERVER_HOST: 0.0.0.0
+  BP_MODULE_NLU_DUCKLINGURL: http://localhost:8000
+  EXTERNAL_URL: https://botpress-server-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+  BP_PRODUCTION: true
+
+service:
+  type: ClusterIP
+  port: 3000
+
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: botpress-server-maximilianopizarro5-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+persistence:
+  #  # @param persistence.enabled Enable persistence using PVC
+  #  #
+  enabled: true
+  #  # @param persistence.customStorageClass Create a custom storage class
+  #  # Requires persistence.enabled: true
+  #  # Requires persistence.storageClass: name
+  #  # ref: https://kubernetes.io/docs/concepts/storage/storage-classes/
+  #  # E.g.
+  #  # provisioner: efs.csi.aws.com
+  #  #   parameters:
+  #  #     provisioningMode: efs-ap
+  #  #     fileSystemId: fs-12345678
+  #  #     directoryPerms: "700"
+  #  #     gidRangeStart: "1000"  # optional
+  #  #     gidRangeEnd: "2000"  # optional
+  #  #
+  customStorageClass: {}
+  #  # @param persistence.storageClass PVC Storage Class for Moodle
+  #  # If defined, storageClassName: <storageClass>
+  #  # If set to "-", storageClassName: "", which disables dynamic provisioning
+  #  # If undefined (the default) or set to null, no storageClassName spec is
+  #  #   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  #  #   GKE, AWS & OpenStack)
+  #  #
+  storageClass: ""
+  #  # @param persistence.accessModes PVC Access Mode for Moodle
+  #  # Requires persistence.enabled: true
+  #  # If defined, and no customStorageClass is defined, then
+  #  # PVC must be created manually before volume will be bound
+  #  #
+  accessModes:
+    - ReadWriteOnce
+  #  # @param persistence.size PVC Storage Request for Moodle
+  #  #
+  size: 1Gi
+  #  # @param persistence.existingClaim An Existing PVC name
+  #  # Requires persistence.enabled: true
+  #  # If defined, PVC must be created manually before volume will be bound
+  #  #
+  existingClaim: ""
+  #  # @param persistence.hostPath Host mount path for Moodle
+  #  # Requires persistence.enabled: true
+  #  # Requires persistence.existingClaim: nil|false
+  #  # Default: nil.
+  #  #
+  hostPath: ""
+  #  # @param persistence.annotations Persistent Volume Claim annotations
+  #  #
+  annotations: {}
