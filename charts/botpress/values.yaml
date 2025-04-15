@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: quay.io/maximilianopizarro/botpress-server-v12 # botpress/server is oficial image
+  repository: quay.io/maximilianopizarro/botpress-server-v12  # botpress/server is oficial image
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
@@ -102,52 +102,52 @@ tolerations: []
 affinity: {}
 
 persistence:
-  ## @param persistence.enabled Enable persistence using PVC
-  ##
+  #  # @param persistence.enabled Enable persistence using PVC
+  #  #
   enabled: true
-  ## @param persistence.customStorageClass Create a custom storage class
-  ## Requires persistence.enabled: true
-  ## Requires persistence.storageClass: name
-  ## ref: https://kubernetes.io/docs/concepts/storage/storage-classes/
-  ## E.g.
-  ## provisioner: efs.csi.aws.com
-  ##   parameters:
-  ##     provisioningMode: efs-ap
-  ##     fileSystemId: fs-12345678
-  ##     directoryPerms: "700"
-  ##     gidRangeStart: "1000" # optional
-  ##     gidRangeEnd: "2000" # optional
-  ##
+  #  # @param persistence.customStorageClass Create a custom storage class
+  #  # Requires persistence.enabled: true
+  #  # Requires persistence.storageClass: name
+  #  # ref: https://kubernetes.io/docs/concepts/storage/storage-classes/
+  #  # E.g.
+  #  # provisioner: efs.csi.aws.com
+  #  #   parameters:
+  #  #     provisioningMode: efs-ap
+  #  #     fileSystemId: fs-12345678
+  #  #     directoryPerms: "700"
+  #  #     gidRangeStart: "1000"  # optional
+  #  #     gidRangeEnd: "2000"  # optional
+  #  #
   customStorageClass: {}
-  ## @param persistence.storageClass PVC Storage Class for Moodle
-  ## If defined, storageClassName: <storageClass>
-  ## If set to "-", storageClassName: "", which disables dynamic provisioning
-  ## If undefined (the default) or set to null, no storageClassName spec is
-  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-  ##   GKE, AWS & OpenStack)
-  ##
+  #  # @param persistence.storageClass PVC Storage Class for Moodle
+  #  # If defined, storageClassName: <storageClass>
+  #  # If set to "-", storageClassName: "", which disables dynamic provisioning
+  #  # If undefined (the default) or set to null, no storageClassName spec is
+  #  #   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  #  #   GKE, AWS & OpenStack)
+  #  #
   storageClass: ""
-  ## @param persistence.accessModes PVC Access Mode for Moodle
-  ## Requires persistence.enabled: true
-  ## If defined, and no customStorageClass is defined, then
-  ## PVC must be created manually before volume will be bound
-  ##
+  #  # @param persistence.accessModes PVC Access Mode for Moodle
+  #  # Requires persistence.enabled: true
+  #  # If defined, and no customStorageClass is defined, then
+  #  # PVC must be created manually before volume will be bound
+  #  #
   accessModes:
     - ReadWriteOnce
-  ## @param persistence.size PVC Storage Request for Moodle
-  ##
+  #  # @param persistence.size PVC Storage Request for Moodle
+  #  #
   size: 1Gi
-  ## @param persistence.existingClaim An Existing PVC name
-  ## Requires persistence.enabled: true
-  ## If defined, PVC must be created manually before volume will be bound
-  ##
+  #  # @param persistence.existingClaim An Existing PVC name
+  #  # Requires persistence.enabled: true
+  #  # If defined, PVC must be created manually before volume will be bound
+  #  #
   existingClaim: ""
-  ## @param persistence.hostPath Host mount path for Moodle
-  ## Requires persistence.enabled: true
-  ## Requires persistence.existingClaim: nil|false
-  ## Default: nil.
-  ##
+  #  # @param persistence.hostPath Host mount path for Moodle
+  #  # Requires persistence.enabled: true
+  #  # Requires persistence.existingClaim: nil|false
+  #  # Default: nil.
+  #  #
   hostPath: ""
-  ## @param persistence.annotations Persistent Volume Claim annotations
-  ##
+  #  # @param persistence.annotations Persistent Volume Claim annotations
+  #  #
   annotations: {}
