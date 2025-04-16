@@ -23,7 +23,7 @@ spec:
       volumes:
         - name: bp-storage
           persistentVolumeClaim:
-            claimName: {{ include "botpress.fullname" . }}     
+            claimName: {{ include "botpress.fullname" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -50,7 +50,7 @@ spec:
             - name: bp-storage
               mountPath: /botpress/stop-words
             - name: bp-storage
-              mountPath: /botpress/log                         
+              mountPath: /botpress/log
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

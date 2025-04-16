@@ -58,7 +58,7 @@ jobs:
           for chart in ${packaged_charts}; do
             cosign sign-blob --yes ${chart}
           done
-          
+
           echo "hashes=$(sha256sum ${packaged_charts} | base64 -w0)" >> "$GITHUB_OUTPUT"
 
     outputs:

@@ -86,7 +86,7 @@ spec:
             appname={{ .Values.application.name }}-$revisionName
             # overwrite hostname
             hostname=$revisionName-{{ .Values.application.environments.development }}.{{ .Values.cluster }}
-            
+
             # documentation development route
             documentation={{ .Values.application.name }}-documentation-{{ .Values.application.environments.development }}.{{ .Values.cluster }}
             oc get route/{{ .Values.application.name }}-documentation -n {{ .Values.application.environments.development }}
@@ -136,14 +136,14 @@ spec:
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
 
           replace=$(inputs.params.revision-name)
-          revisionName=${replace//./-} # replace . to / 
+          revisionName=${replace//./-} # replace . to /
           appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
 
           if [ "$(inputs.params.revision-type)" == "develop" ]; then
             # overwrite appname structure
             appname={{ .Values.application.name }}-$revisionName
           fi
-        
+
 
         else
           echo "Branch type $(inputs.params.revision-type) does not deploy to development"
@@ -158,7 +158,7 @@ spec:
         revisionName=${replace//./-}
         appname={{ .Values.application.name }}-$(inputs.params.revision-type)-$revisionName
         environment={{ .Values.application.environments.development }}
-        
+
         if [ "$(inputs.params.revision-type)" == "feature" ] || [ "$(inputs.params.revision-type)" == "develop" ]; then
 
           if [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -169,7 +169,7 @@ spec:
             oc set env deployment/$appname --overwrite revision-id=$(inputs.params.revision-short) -n $environment
             oc set env deployment/$appname --overwrite revision-name=$revisionName -n $environment
           fi
-          
+
           oc set env deployment/$appname --overwrite environment=development -n $environment
           oc set env deployment/$appname --overwrite revision-type=$(inputs.params.revision-type) -n $environment
           oc set env deployment/$appname --list -n $environment

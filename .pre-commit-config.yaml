@@ -5,8 +5,8 @@ repos:
       - id: check-case-conflict
       - id: check-shebang-scripts-are-executable
       - id: check-json
-      #- id: end-of-file-fixer
-      #- id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
   - repo: https://gitlab.cee.redhat.com/infosec-public/developer-workbench/tools.git
     rev: rh-pre-commit-2.3.2
     hooks:

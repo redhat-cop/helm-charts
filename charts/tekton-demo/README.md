@@ -1,4 +1,4 @@
-# Tekton-demo 
+# Tekton-demo
 ![](https://img.shields.io/badge/tekton-0.14.3-blue)
 
 This is an example of a pipeline developed in Tekton, the peaceful cat 🐈. It contains the main steps of a continuous software delivery process and it enforces a strict semantic version validation strategy, managing tag increments automatically for you.
@@ -51,11 +51,11 @@ Currently supporting for the following branches, environment and and routes.
 
 | Branch type | Upgrade | Docs | Dev | Prod | Hostname
 | --- | --- | --- | --- | --- |  --- |
-| `develop` |  | ✅ | ✅ | ⭕ | develop-myapp-development.apps.host.com | 
-| `feature/login` |  | ⭕ | ✅ | ⭕ | feature-login-myapp-development.apps.s45.core.rht-labs.com | 
-| `release/1.0.0` | minor* | ✅ | ⭕ | ✅ | v1-0-0-myapp-production.apps.s45.core.rht-labs.com | 
-| `hotfix/1.0.1` | patch | ✅ | ⭕ | ✅ | v1-0-1-myapp-production.apps.s45.core.rht-labs.com | 
-| `patch/1.0.2` | patch | ✅ | ⭕ | ✅ | v1-0-2-myapp-production.apps.s45.core.rht-labs.com | 
+| `develop` |  | ✅ | ✅ | ⭕ | develop-myapp-development.apps.host.com |
+| `feature/login` |  | ⭕ | ✅ | ⭕ | feature-login-myapp-development.apps.s45.core.rht-labs.com |
+| `release/1.0.0` | minor* | ✅ | ⭕ | ✅ | v1-0-0-myapp-production.apps.s45.core.rht-labs.com |
+| `hotfix/1.0.1` | patch | ✅ | ⭕ | ✅ | v1-0-1-myapp-production.apps.s45.core.rht-labs.com |
+| `patch/1.0.2` | patch | ✅ | ⭕ | ✅ | v1-0-2-myapp-production.apps.s45.core.rht-labs.com |
 
 *Obs: The first version `0.0.0` exceptionally will use a major upgrade to `1.0.0`.
 
@@ -90,9 +90,9 @@ To configure your own application and send it through the pipeline you must upda
 
 It will be in this repository that the webhook will be automatically created and will trigger, on each new commit, a new PipelineRun on Tekton. You can create a new token on Github by [clicking here](https://github.com/settings/tokens), make sure to tick the `admin:repo_hook`, `repo` and `user` permissions.
 
-### Secrets 
+### Secrets
 
-The Github token will only be shown once, be sure to save it somewhere safe. 
+The Github token will only be shown once, be sure to save it somewhere safe.
 Then copy the token and replace it in the command below, replacing also your username. Please make sure you also update the namespace accordingly.
 
 ```
@@ -111,7 +111,7 @@ stringData:
 EOF
 ```
 
-In order to avoid using passwords to publish new content on Github, we will use a keypair. 
+In order to avoid using passwords to publish new content on Github, we will use a keypair.
 [Here's](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) how to create one if you don't already have one available on your machine.
 
 Assuming your private key was created in the default location `$HOME/.ssh/id_rsa`, you can run the command below to create a generic secret. Please note the secret metadata name here should match with the one provided in the `values.yaml`. Also, some more content is provided by Tekton regarding [secrets and authentication](https://github.com/tektoncd/pipeline/blob/master/docs/auth.md#configuring-ssh-auth-authentication-for-git).
@@ -132,9 +132,9 @@ stringData:
 EOF
 ```
 
-To configure access to `registry.redhat.io` you need to create a new registry service account. Registry service accounts are named tokens that can be used in environments where credentials will be shared, such as deployment systems. 
+To configure access to `registry.redhat.io` you need to create a new registry service account. Registry service accounts are named tokens that can be used in environments where credentials will be shared, such as deployment systems.
 
-[Click here to create a new one](https://access.redhat.com/terms-based-registry), give it a name and fill in the description if you think it is necessary. Please save the username and token for further use. 
+[Click here to create a new one](https://access.redhat.com/terms-based-registry), give it a name and fill in the description if you think it is necessary. Please save the username and token for further use.
 
 Then copy the token and paste it into the snippet below
 
@@ -196,7 +196,7 @@ Something failed? See troubleshooting.
 2. Define policies
 
 
-<!-- 
+<!--
 
 ### Deploying to development environment
 

@@ -11,7 +11,7 @@ Example for resources in the values-file:
           cpu: 8
           memory: 16Gi
           ephemeral-storage: 500Mi
-     
+
 {{ include "tpl.resources" . -}}
 */}}
 
@@ -63,4 +63,3 @@ Append the unit Gi if it is not set for memory or storage
     {{ $val -}}
   {{- end -}}
 {{- end -}}
-

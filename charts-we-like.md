@@ -2,7 +2,7 @@
 Below is a collection of charts we've used in the past that run on OpenShift with examples and the values to get up and going:
 
 #### 🕵️‍♀️ Sealed Secrets
-[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets/tree/main/helm/sealed-secrets) 
+[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets/tree/main/helm/sealed-secrets)
 allows you to encrypt your K8s Secret into a SealedSecret, which is safe to store - even to a public repository:
 
 ```yaml
@@ -31,7 +31,7 @@ mysql:
 ```
 
 #### 🧪 Zalenium
-[Zalenium](https://github.com/zalando/zalenium/tree/master/charts/zalenium) 
+[Zalenium](https://github.com/zalando/zalenium/tree/master/charts/zalenium)
 is a Selenium Grid deployment with on demand provisioning of the browsers for running your tests:
 
 ```yaml
@@ -71,7 +71,7 @@ route:
 ```
 
 #### 🦟 Hoverfly
-[Hoverfly](https://github.com/helm/charts/tree/master/incubator/hoverfly) 
+[Hoverfly](https://github.com/helm/charts/tree/master/incubator/hoverfly)
 is a lightweight, open source API simulation tool. Using Hoverfly, you can create realistic simulations of the APIs your application depends on:
 
 ```yaml
@@ -87,7 +87,7 @@ openshift:
 ```
 
 #### 🗝 Vault
-[Vault](https://github.com/hashicorp/vault-helm.git) 
+[Vault](https://github.com/hashicorp/vault-helm.git)
 helps you to store and control access to your tokens, passwords, certificates, API keys and other secrets.
 
 ```yaml
@@ -121,7 +121,7 @@ server:
 ```
 
 ### 🚉 EAP
-[EAP](https://github.com/jbossas/eap-charts.git) 
+[EAP](https://github.com/jbossas/eap-charts.git)
 is Red Hat's [Jakarta EE offering](https://www.redhat.com/en/technologies/jboss-middleware/application-platform)
 
 ```yaml

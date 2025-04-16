@@ -94,7 +94,7 @@ spec:
 
         if [ ! -f $package ]; then
             echo "Missing package.json"
-            exit 1 
+            exit 1
         fi
 
         # verify if it's not a tag webhook event

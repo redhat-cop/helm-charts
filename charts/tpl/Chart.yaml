@@ -1,7 +1,7 @@
 apiVersion: v2
 name: tpl
 description: A library that shall collect certain templates to reuse them among different charts.
-version: 1.0.7
+version: 1.0.8
 home: https://github.com/redhat-cop/helm-charts/tree/main/charts/tpl
 maintainers:
   - name: tjungbauer

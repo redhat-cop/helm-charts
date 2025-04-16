@@ -15,4 +15,3 @@ spec:
             name: registry
             port:
               number: 5000
-

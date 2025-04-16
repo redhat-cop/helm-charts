@@ -2,7 +2,7 @@ apiVersion: v2
 name: stackrox-chart
 description: Install and Configure Stackrox
 type: application
-version: 0.0.9
+version: 0.0.10
 home: https://github.com/redhat-cop/helm-charts
 icon: https://avatars.githubusercontent.com/u/40638982?s=200&v=4
 maintainers:

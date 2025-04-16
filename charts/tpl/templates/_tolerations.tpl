@@ -11,7 +11,7 @@ Example for infrastructure nodes in the values-file:
           key: infra
           operator: Equal
           value: reserved
-     
+
 {{ include "tpl.tolerations" . -}}
 */}}
 

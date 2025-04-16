@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: v2.10.5
 description: A Helm chart for customising the deployment of the Red Hat GitOps Operator 🔫
 name: gitops-operator
-version: 0.10.5
+version: 0.10.6
 home: https://github.com/redhat-cop/helm-charts
 icon: https://raw.githubusercontent.com/eformat/openshift-gitops/main/rh-gitops.png
 maintainers:

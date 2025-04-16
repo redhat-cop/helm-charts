@@ -115,7 +115,7 @@ spec:
              oc get clusterserviceversion -n {{ .namespace.name }} $get_exact_name
 
              echo "Falling to sleep"
-            
+
              SLEEPER_TMP=0
 
              while [[ $SLEEPER_TMP -le "10" ]]; do
