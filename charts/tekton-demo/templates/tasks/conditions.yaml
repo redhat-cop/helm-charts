@@ -8,7 +8,7 @@ spec:
   params:
     - name: revision-type
   check:
-    image: registry.redhat.io/openshift4/ose-cli:latest@sha256:bc35a9fc663baf0d6493cc57e89e77a240a36c43cf38fb78d8e61d3b87cf5cc5
+    image: registry.redhat.io/openshift4/ose-cli:latest@sha256:bc9cd600ac77eb75457bcf5dd4282235c16f8461cad4d253bb95151883026702
     script: |
       #!/bin/sh
       if [ "$(params.revision-type)" == "feature" ] || [ "$(params.revision-type)" == "develop" ]; then
@@ -26,7 +26,7 @@ spec:
   params:
     - name: revision-type
   check:
-    image: registry.redhat.io/openshift4/ose-cli:latest@sha256:bc35a9fc663baf0d6493cc57e89e77a240a36c43cf38fb78d8e61d3b87cf5cc5
+    image: registry.redhat.io/openshift4/ose-cli:latest@sha256:bc9cd600ac77eb75457bcf5dd4282235c16f8461cad4d253bb95151883026702
     script: |
       #!/bin/sh
       if [ "$(params.revision-type)" == "release" ] || [ "$(params.revision-type)" == "hotfix" ] || [ "$(params.revision-type)" == "patch" ]; then
