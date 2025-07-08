@@ -7,6 +7,9 @@ metadata:
   name: {{ .name | default $.Release.Namespace }}
   labels:
     {{- include "operators-installer.labels" $ | nindent 4 }}
+    {{- if $operatorGroup.namespaceLabels }}
+{{ toYaml $operatorGroup.namespaceLabels | indent 4 }}
+    {{- end }}
   annotations:
     argocd.argoproj.io/sync-wave: "-60"
 {{- end }}
