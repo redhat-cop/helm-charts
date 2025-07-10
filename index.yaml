@@ -3,6 +3,26 @@ entries:
   ansible-automation-platform:
   - apiVersion: v2
     appVersion: v2.0.2
+    created: "2025-07-10T15:21:29.599621457Z"
+    dependencies:
+    - condition: operatorhub.enabled
+      name: operatorhub
+      repository: https://redhat-cop.github.io/helm-charts
+      version: 0.0.12
+    description: A Helm chart for customizing the deployment of the Ansible Automation
+      Platform Operator
+    digest: 508108913863e58717c684580fc15e1e23ec1b0bff7abd7e71d0a69b679cc2cc
+    home: https://github.com/redhat-cop/helm-charts
+    maintainers:
+    - name: paulbarfuss
+    - name: ecda909
+    - name: jfilipcz
+    name: ansible-automation-platform
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/ansible-automation-platform-0.0.9/ansible-automation-platform-0.0.9.tgz
+    version: 0.0.9
+  - apiVersion: v2
+    appVersion: v2.0.2
     created: "2025-04-16T08:39:13.259374037Z"
     dependencies:
     - condition: operatorhub.enabled
@@ -3644,6 +3664,23 @@ entries:
     version: 0.0.1
   operators-installer:
   - apiVersion: v2
+    created: "2025-07-10T15:21:29.798304608Z"
+    description: Installs a given list of operators either using Automatic or Manual
+      InstallPlans. If Manual then version of operator can be controlled declarativly.
+    digest: 357188503c171866963913af1a23f9c415ac76f8cbee1533f15b1417aad12898
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/operator-framework/olm-docs/ea9cd734aa7a6bf2d24f273322ed9aec3ffcb02a/content/en/images/logo-sm.svg
+    keywords:
+    - olm
+    - operators
+    maintainers:
+    - name: itewk
+    name: operators-installer
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operators-installer-3.3.0/operators-installer-3.3.0.tgz
+    version: 3.3.0
+  - apiVersion: v2
     created: "2025-04-16T08:39:15.667973445Z"
     description: Installs a given list of operators either using Automatic or Manual
       InstallPlans. If Manual then version of operator can be controlled declarativly.
@@ -6279,4 +6316,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2025-04-16T08:39:17.260339425Z"
+generated: "2025-07-10T15:21:29.799615326Z"
