@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-# Use environment variables first, then positional parameters as fallback
-PYTHON_INDEX_URL=${PYTHON_INDEX_URL:-${1:-https://pypi.org/simple/}}
-PYTHON_EXTRA_INDEX_URL=${PYTHON_EXTRA_INDEX_URL:-${2:-https://pypi.org/simple/}}
+# Use environment variables instead of positional parameters
+PYTHON_INDEX_URL=${PYTHON_INDEX_URL:-https://pypi.org/simple/}
+PYTHON_EXTRA_INDEX_URL=${PYTHON_EXTRA_INDEX_URL:-https://pypi.org/simple/}
 
 # Extract hostnames
 INDEX_HOST=$(echo $PYTHON_INDEX_URL | sed 's|https\?://||' | cut -d'/' -f1)
