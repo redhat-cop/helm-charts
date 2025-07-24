@@ -42,6 +42,8 @@ spec:
           value: "{{ $.Values.pythonIndexURL }}"
         - name: PYTHON_EXTRA_INDEX_URL
           value: "{{ $.Values.pythonExtraIndexURL }}"
+        - name: TRUST_HOSTS
+          value: "{{ $.Values.pipTrustHosts | default false }}"
         volumeMounts:
         - name: shared-venv
           mountPath: /tmp
