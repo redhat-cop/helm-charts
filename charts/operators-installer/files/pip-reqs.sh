@@ -16,13 +16,18 @@ echo "TRUST_HOSTS: $TRUST_HOSTS"
 
 # Build trusted-host arguments conditionally
 if [ "$TRUST_HOSTS" = "true" ]; then
-    TRUSTED_HOST_ARGS="--trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --trusted-host $INDEX_HOST --trusted-host $EXTRA_INDEX_HOST"
+    TRUSTED_HOST_ARGS="--trusted-host pypi.org \
+    --trusted-host pypi.python.org \
+    --trusted-host files.pythonhosted.org \
+    --trusted-host $INDEX_HOST \
+    --trusted-host $EXTRA_INDEX_HOST"
     echo "SSL verification disabled for pip"
 else
     TRUSTED_HOST_ARGS=""
     echo "SSL verification enabled for pip"
 fi
 
+# Using a virtual environment to share pip packages with the main container.
 echo "Creating virtual environment..."
 python3 -m venv /tmp/venv
 
