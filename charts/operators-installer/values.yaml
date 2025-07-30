@@ -37,6 +37,9 @@ pythonIndexURL: https://pypi.org/simple/
 # If `installRequiredPythonLibraries` is `true` then use this python extra index to pull required library dependencies
 pythonExtraIndexURL: https://pypi.org/simple/
 
+# In some disconnected environments, you may need to set this to true because the `pip` command will not trust the default pypi.org index.
+pipTrustHosts: false
+
 # EXAMPLE: declaratively controlled operator version
 operators:
 # - channel: stable
