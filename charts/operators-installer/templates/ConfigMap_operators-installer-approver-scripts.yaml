@@ -24,5 +24,7 @@ data:
 {{ tpl ( $.Files.Get "_scripts/installplan-incremental-approver.py" ) $ | indent 4 }}
   installplan-verifier.py: |-
 {{ tpl ( $.Files.Get "_scripts/installplan-verifier.py" ) $ | indent 4 }}
+  pip-requirements.sh: |-
+{{ tpl ( $.Files.Get "_scripts/pip-requirements.sh" ) $ | indent 4 }}
 {{- end }}
 {{- end }}

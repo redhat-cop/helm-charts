@@ -29,6 +29,24 @@ spec:
       imagePullSecrets:
         - name: {{ $.Values.installPlanApproverAndVerifyJobsImagePullSecret }}
       {{- end }}
+      {{- if $.Values.installRequiredPythonLibraries }}
+      initContainers:
+      - name: setup-pip-requirements
+        image: {{ $.Values.installPlanApproverAndVerifyJobsImage }}
+        command: ["/bin/sh", "/scripts/pip-requirements.sh"]
+        env:
+        - name: PYTHON_INDEX_URL
+          value: "{{ $.Values.pythonIndexURL }}"
+        - name: PYTHON_EXTRA_INDEX_URL
+          value: "{{ $.Values.pythonExtraIndexURL }}"
+        - name: TRUST_HOSTS
+          value: "{{ $.Values.pipTrustHosts }}"
+        volumeMounts:
+        - name: shared-venv
+          mountPath: /tmp
+        - name: operators-installer-approver-scripts
+          mountPath: /scripts
+      {{- end }}
       containers:
       - name: installplan-approver
         image: {{ $.Values.installPlanApproverAndVerifyJobsImage }}
@@ -36,9 +54,7 @@ spec:
         args:
           - >-
               {{- if $.Values.installRequiredPythonLibraries }}
-              python3 -m venv /tmp/venv &&
               source /tmp/venv/bin/activate &&
-              python3 -m pip install openshift-client semver==2.13.0 --index-url {{ $.Values.pythonIndexURL }} --extra-index-url {{ $.Values.pythonExtraIndexURL }} &&
               {{- end }}
               {{- if .automaticIntermediateManualUpgrades }}
               python3 /scripts/installplan-incremental-approver.py
@@ -64,11 +80,15 @@ spec:
         volumeMounts:
         - name: operators-installer-approver-scripts
           mountPath: /scripts
+        - name: shared-venv
+          mountPath: /tmp
       volumes:
       - name: operators-installer-approver-scripts
         configMap:
           name: {{ include "operators-installer.scriptsName" . }}
           defaultMode: 0777
+      - name: shared-venv
+        emptyDir: {}
       dnsPolicy: ClusterFirst
       restartPolicy: Never
       serviceAccount: {{ include "operators-installer.approverName" . }}
