@@ -33,10 +33,7 @@ spec:
       initContainers:
       - name: setup-pip-requirements
         image: {{ $.Values.installPlanApproverAndVerifyJobsImage }}
-        command: ["/bin/sh", "-c"]
-        args:
-          - |
-{{ .Files.Get "files/pip-reqs.sh" | indent 12 }}
+        command: ["/bin/sh", "/scripts/pip-requirements.sh"]
         env:
         - name: PYTHON_INDEX_URL
           value: "{{ $.Values.pythonIndexURL }}"
@@ -47,6 +44,8 @@ spec:
         volumeMounts:
         - name: shared-venv
           mountPath: /tmp
+        - name: operators-installer-approver-scripts
+          mountPath: /scripts
       {{- end }}
       containers:
       - name: installplan-approver
