@@ -63,6 +63,7 @@ For more info on each chart checkout these!
 * [jenkins](/charts/jenkins)
 * [kopf](/charts/kopf)
 * [network-policy](/charts/network-policy)
+* [olmv1](/charts/olmv1)
 * [openshift-logforwarding-splunk](/charts/openshift-logforwarding-splunk)
 * [operatorhub](/charts/operatorhub)
 * [operators-installer](/charts/operators-installer)
@@ -74,7 +75,6 @@ For more info on each chart checkout these!
 * [stackrox](/charts/stackrox)
 * [static-site](/charts/static-site)
 * [tekton-demo](/charts/tekton-demo)
-* [operators-installer](/charts/operators-installer)
 
 ## [pre-commit](.pre-commit-config.yaml)
 

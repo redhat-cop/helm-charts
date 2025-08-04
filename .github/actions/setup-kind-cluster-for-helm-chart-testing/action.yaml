@@ -25,6 +25,12 @@ inputs:
     required: true
     default: 'v0.41.0'
 
+  # renovate: datasource=github-releases depName=operator-framework/operator-controller
+  olmv1-version:
+    description: olmv1 version to install
+    required: true
+    default: 'latest'
+
   local-registry-enabled:
     description: whether to enable local authenticated registry
     required: true
@@ -79,6 +85,14 @@ runs:
       curl -L https://github.com/operator-framework/operator-lifecycle-manager/releases/download/${OLM_VERSION}/install.sh -o install.sh
       chmod +x install.sh
         ./install.sh ${OLM_VERSION}
+
+  # for helm charts we are testing that require installing OLMv1 Cluster Extensions
+  - name: Setup kind cluster - Install OLMv1 🧰
+    env:
+      OLMV1_VERSION: ${{ inputs.olmv1-version }}
+    shell: bash
+    run: |
+      curl -L -s https://github.com/operator-framework/operator-controller/releases/${OLMV1_VERSION}/download/install.sh | bash -s
 
   # for helm charts we are testing that require ingress
   - name: Setup kind cluster - Install ingress controller 🧰
