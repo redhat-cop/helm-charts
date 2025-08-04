@@ -1,0 +1,37 @@
+extensions:
+
+# Define operator name and namespace (required)
+#- name: openshift-cert-manager-operator
+#  namespace: openshift-cert-manager-operator
+
+# Define the ClusterCatalog selector (optional)
+#  catalogSelector:
+#    matchLabels:
+#      olm.operatorframework.io/openshift-certified-operators
+#    matchExpressions:
+#      - { key: mykey, operator: In, values: [myvalue] }
+#      - { key: mykey1, operator: NotIn, values: [myvalue1] }
+
+# Define the upgradeConstraintPolicy (optional)
+#  upgradeConstraintPolicy: 
+
+# Define the package name (required)
+#  packageName: 
+
+# Define the version and list of channels (optional)
+#  version: 
+#  channels:
+#  - 
+
+# Define either a cluster role or custom cluster and namespace scoped rbac 
+# rules to bind to the service account (required)
+#  clusterRole: cluster-admin
+#  rbac: 
+#    cluster:
+#    - apiGroups: ["apiextensions.k8s.io"]
+#      resources: ["customresourcedefinitions"]
+#      verbs: ["get", "list", "watch"]
+#    namespace:
+#    - apiGroups: [""]
+#      resources: ["pods"]
+#      verbs: ["get", "watch", "list"]

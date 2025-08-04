@@ -1,0 +1,17 @@
+apiVersion: v2
+name: olmv1
+description: Installs operators or cluster extensions in a declarative, GitOps friendly way using olmv1
+type: application
+version: 1.0.0
+
+home: https://github.com/redhat-cop/helm-charts
+icon: https://raw.githubusercontent.com/operator-framework/olm-docs/ea9cd734aa7a6bf2d24f273322ed9aec3ffcb02a/content/en/images/logo-sm.svg
+
+keywords:
+- olm
+- olmv1
+- operators
+- extensions
+
+maintainers:
+- name: marpears
