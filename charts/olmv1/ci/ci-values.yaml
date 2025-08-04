@@ -1,0 +1,17 @@
+extensions:
+- name: openshift-cert-manager-operator
+  namespace: openshift-cert-manager-operator
+  upgradeConstraintPolicy: CatalogProvided
+  packageName: openshift-cert-manager-operator
+  version: 1.16.1
+  channels:
+  - stable-v1.16
+  rbac:
+    cluster:
+    - apiGroups: ["apiextensions.k8s.io"]
+      resources: ["customresourcedefinitions"]
+      verbs: ["get", "list", "watch"]
+    namespace:
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["get", "watch", "list"]
