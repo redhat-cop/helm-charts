@@ -1,0 +1,13 @@
+{{- $_ := required ".Values.extensions is required" .Values.extensions }}
+{{- range .Values.extensions }}
+{{- $_ := required "name is required" .name }}
+{{- $_ := required "namespace is required" .namespace }}
+{{- $_ := required "packageName is required" .packageName }}
+
+{{- $clusterRole := .clusterRole }}
+{{- $rbacRules := .rbac }}
+
+{{- if not (or $clusterRole $rbacRules) }}
+{{- $_ := required "Either a cluster role or rbac rules must be defined" nil }}
+{{- end }}
+{{- end }}

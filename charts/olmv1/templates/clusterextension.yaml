@@ -1,0 +1,32 @@
+{{- range .Values.extensions }}
+---
+apiVersion: olm.operatorframework.io/v1
+kind: ClusterExtension
+metadata:
+  name: {{ .name }}
+spec:
+  namespace: {{ .namespace }}
+  serviceAccount:
+    name: {{ .packageName }}-installer
+  source:
+    sourceType: Catalog
+    catalog:
+      packageName: {{ .packageName }}
+{{- if .catalogSelector }}
+      selector:
+{{- toYaml .catalogSelector | nindent 8 }}
+{{- end }}
+{{- if .upgradeConstraintPolicy }}
+      upgradeConstraintPolicy: {{ .upgradeConstraintPolicy }}
+{{- end }}
+{{- if .channels }}
+      channels:
+{{- range .channels }}
+        - {{ . }}
+{{- end }}
+{{- end }}
+{{- if .version }}
+      version: {{ .version | toString }}
+{{- end }}
+
+{{- end }}
