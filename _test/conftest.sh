@@ -250,3 +250,14 @@ setup_file() {
   print_info "${status}" "${output}" "${cmd}" "${tmp}"
   [ "$status" -eq 0 ]
 }
+
+@test "charts/olmv1" {
+  tmp=$(helm_template "charts/olmv1" "-f charts/olmv1/_test/values.yaml")
+
+  namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
+  cmd="conftest test ${tmp} --output tap ${namespaces}"
+  run ${cmd}
+
+  print_info "${status}" "${output}" "${cmd}" "${tmp}"
+  [ "$status" -eq 0 ]
+}

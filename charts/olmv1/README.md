@@ -19,9 +19,9 @@ Here are the values used by this chart
 | channels                  | list    | no        | Populates `clusterextension.spec.source.catalog.channels`                                                   |
 | catalogSelector           | map     | no        | Populates `clusterextension.spec.source.catalog.selector`                                                   |
 | upgradeConstraintPolicy   | string  | no        | Populates `clusterextension.spec.source.catalog.upgradeConstraintPolicy`                                    |
-| packageName               | string  | no        | Populates `clusterextension.spec.source.catalog.packageName`                                                |   
-| clusterRole               | string  | yes *     | Specify a cluster role to assign to the ServiceAccount used to install the operator                         |  
-| rbac                      | map     | yes *     | Specify cluster and/or namespace rbac rules to assign to the ServiceAccount used to install the operator    |  
+| packageName               | string  | no        | Populates `clusterextension.spec.source.catalog.packageName`                                                |
+| clusterRole               | string  | yes *     | Specify a cluster role to assign to the ServiceAccount used to install the operator                         |
+| rbac                      | map     | yes *     | Specify cluster and/or namespace rbac rules to assign to the ServiceAccount used to install the operator    |
 
 \* One of `clusterRole` or `rbac` is required.
 
@@ -37,7 +37,7 @@ Here are the values used by this chart
   version: 1.16.1
   channels:
   - stable-v1.16
-  rbac: 
+  rbac:
     cluster:
     - apiGroups: ["apiextensions.k8s.io"]
       resources: ["customresourcedefinitions"]
