@@ -63,5 +63,9 @@ spec:
       serviceAccount: {{ include "operators-installer.approverName" . }}
       serviceAccountName: {{ include "operators-installer.approverName" . }}
       terminationGracePeriodSeconds: 30
+      {{- if $.Values.installPlanApproverAndVerifyJobsTolerations }}
+      tolerations:
+      {{- $.Values.installPlanApproverAndVerifyJobsTolerations | toYaml | nindent 6 }}
+      {{- end }}
 {{- end }}
 {{- end }}
