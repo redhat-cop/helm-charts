@@ -8,7 +8,7 @@ image:
   repository: quay.io/maximilianopizarro/botpress-server-v12  # botpress/server is oficial image
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "latest@sha256:52456b2499aabf116bf52a36395e15d143c8475eff2fabd16b51d420566c2cf3"
 
 imagePullSecrets: []
 nameOverride: ""
