@@ -51,9 +51,22 @@ tolerations: []
 affinity: {}
 
 persistence:
+  # use DirtyDB
   enabled: true
   annotations: {}
   storageClass:
   accessMode: ReadWriteOnce
   size: 1Gi
   mountPath: /opt/etherpad-lite/var
+
+database:
+  enabled: false
+  # a database supported by https://www.npmjs.com/package/ueberdb2
+  # https://github.com/ether/etherpad-lite/blob/develop/doc/docker.adoc#database
+  db_type: mysql
+  db_host: mysql.svc
+  db_port: 3306
+  db_name: etherpad
+  db_user: etherpad
+  db_pass: password
+  db_charset: utf8mb4

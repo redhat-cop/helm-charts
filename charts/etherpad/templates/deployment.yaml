@@ -26,6 +26,22 @@ spec:
             value: {{ .Values.defaultTitle }}
           - name: DEFAULT_PAD_TEXT
             value: {{ .Values.defaultText }}
+          {{- if .Values.database.enabled }}
+          - name: DB_TYPE
+            value: {{ .Values.database.db_type }}
+          - name: DB_HOST
+            value: {{ .Values.database.db_host }}
+          - name: DB_PORT
+            value: "{{ .Values.database.db_port }}"
+          - name: DB_NAME
+            value: {{ .Values.database.db_name }}
+          - name: DB_USER
+            value: {{ .Values.database.db_user }}
+          - name: DB_PASS
+            value: {{ .Values.database.db_pass }}
+          - name: DB_CHARSET
+            value: {{ .Values.database.db_charset }}
+          {{- end }}
           name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
