@@ -35,5 +35,4 @@ excluded-charts:
 - static-site
 - update-clusterversion
 - tekton-demo
-# Needs olm.operatorframework.io/v1
 - olmv1
