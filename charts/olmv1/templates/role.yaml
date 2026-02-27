@@ -1,0 +1,13 @@
+{{- range .Values.extensions }}
+{{- if and .rbac .rbac.namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .packageName }}-installer
+  namespace: {{ .namespace }}
+rules:
+{{ toYaml .rbac.namespace }}
+{{- end }}
+
+{{- end }}

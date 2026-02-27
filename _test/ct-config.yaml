@@ -35,3 +35,4 @@ excluded-charts:
 - static-site
 - update-clusterversion
 - tekton-demo
+- olmv1
