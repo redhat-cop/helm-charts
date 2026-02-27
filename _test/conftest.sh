@@ -252,7 +252,7 @@ setup_file() {
 }
 
 @test "charts/olmv1" {
-  tmp=$(helm_template "charts/olmv1" "-f charts/olmv1/_test/values.yaml")
+  tmp=$(helm_template "charts/olmv1" "-f charts/olmv1/ci/values.yaml")
 
   namespaces=$(get_rego_namespaces "ocp\.deprecated\.*")
   cmd="conftest test ${tmp} --output tap ${namespaces}"
