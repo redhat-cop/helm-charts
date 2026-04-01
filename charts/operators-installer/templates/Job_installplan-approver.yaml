@@ -61,6 +61,9 @@ spec:
         - name: INCREMENTAL_INSTALL_DELAY_INCREMENT
           value: "{{ .automaticIntermediateManualUpgradesIncrementalInstallDelayIncrement | default 5 }}"
         {{- end }}
+        {{- if $.Values.installPlanApproverAndVerifyJobsExtraEnv }}
+        {{- $.Values.installPlanApproverAndVerifyJobsExtraEnv | toYaml | nindent 8 }}
+        {{- end }}
         volumeMounts:
         - name: operators-installer-approver-scripts
           mountPath: /scripts
