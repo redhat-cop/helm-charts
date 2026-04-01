@@ -17,6 +17,20 @@ installPlanApproverAndVerifyJobsImage: registry.redhat.io/openshift4/ose-cli:v4.
 # Accepts a single string which is the name of an existing secret. (This chart does not create or manage the secret.)
 installPlanApproverAndVerifyJobsImagePullSecret:
 
+# Extra environment variables to add to the InstallPlan Approver and Verify Job containers.
+# Useful for injecting proxy configuration (HTTP_PROXY, HTTPS_PROXY, NO_PROXY) in environments
+# where internet access requires an HTTP proxy.
+#
+# Example:
+#   installPlanApproverAndVerifyJobsExtraEnv:
+#     - name: HTTP_PROXY
+#       value: "http://proxy.example.com:3128"
+#     - name: HTTPS_PROXY
+#       value: "http://proxy.example.com:3128"
+#     - name: NO_PROXY
+#       value: ".cluster.local,10.0.0.0/8"
+installPlanApproverAndVerifyJobsExtraEnv: []
+
 # If `true`, install the required Python libraries (openshift-client, semver==2.13.0) dynamically
 # from the given `pythonIndexURL` and `pythonExtraIndexURL` into the `installPlanApproverAndVerifyJobsImage` at run time
 #

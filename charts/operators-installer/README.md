@@ -45,7 +45,8 @@ For all of the Subscription parameters see
 | installPlanApproverAndVerifyJobsImage        | `registry.redhat.io/openshift4/ose-cli:v4.10` | Yes | Image to use for the InstallPlan Approver and Verify Jobs
 | installPlanApproverAndVerifyJobsImagePullSecret   | `''` | No | Name of existing secret for pulling `installPlanApproverAndVerifyJobsImage` from a private registry
 | approveManualInstallPlanViaHook              | `true`        | No        | `true` to create (and clean up) manual InstallPlan approval resources as part of post-install,post-upgrade helm hook<br>`false` to create  manual InstallPlan approval resources as part of normal install<br><br>The hook method is nice to not have lingering resources needed for the manual InstallPlan approval but has the downside that no CustomResources using CustomResourceDefinitions installed by the operator can be used in the same chart because the operator InstallPlan wont be approved, and therefor the operator wont be installed, until the post-install,post-upgrade phase which means you will never get to that phase because your CustomResources wont be able to apply because the Operator isn't installed.<br><br>This is is ultimately a trade off between cleaning up these resources or being able to install and configure the operator in the same helm chart that has a dependency on this helm chart.
-| installPlanApproverAndVerifyJobsTolerations. | []            | No.       | Tolerations to apply to the approver and verify Jobs. See Kubernetes documentation on tolerations.
+| installPlanApproverAndVerifyJobsTolerations  | `[]`          | No        | Tolerations to apply to the approver and verify Jobs. See Kubernetes documentation on tolerations.
+| installPlanApproverAndVerifyJobsExtraEnv     | `[]`          | No        | Extra environment variables to add to the InstallPlan Approver and Verify Job containers. Useful for injecting proxy configuration. Each entry should have `name` and `value` (or `valueFrom`) fields.
 | installRequiredPythonLibraries               | `true`        | No        | If `true`, install the required Python libraries (openshift-client, semver==2.13.0) dynamically from the given `pythonIndexURL` and `pythonExtraIndexURL` into the `installPlanApproverAndVerifyJobsImage` at run time
 | pythonIndexURL                               | https://pypi.org/simple/ | No | If `installRequiredPythonLibraries` is `true` then use this python index to pull required libraries
 | pythonExtraIndexURL                          | https://pypi.org/simple/ | No | If `installRequiredPythonLibraries` is `true` then use this python extra index to pull required library dependencies
@@ -71,6 +72,21 @@ Build a custom container image with:
 Suggestion is to build such an image on top of the latest `registry.redhat.io/openshift4/ose-cli` image
 
 Then provide that custom image to `installPlanApproverAndVerifyJobsImage` and set `installRequiredPythonLibraries` to false.
+
+#### HTTP Proxy
+If your environment requires an HTTP proxy for internet access, use `installPlanApproverAndVerifyJobsExtraEnv` to inject proxy environment variables into the approver and verifier Job containers:
+
+```yaml
+installPlanApproverAndVerifyJobsExtraEnv:
+  - name: HTTP_PROXY
+    value: "http://proxy.example.com:3128"
+  - name: HTTPS_PROXY
+    value: "http://proxy.example.com:3128"
+  - name: NO_PROXY
+    value: ".cluster.local,10.0.0.0/8"
+```
+
+This is needed when `installRequiredPythonLibraries` is `true` (the default), as `pip install` requires network access to download Python packages from `pythonIndexURL`.
 
 ### Can not install / upgrade different operators in same namespace independently
 As documented in [How can Operators be updated independently from each other?](https://access.redhat.com/solutions/6389681) when more then one operator install or update is pending in the same namespace the Operator Lifecycle Manager (OLM) will combine those installs/updates into a single InstallPlan and there is no way to separate them. Therefor if you use this helm chart in namespace ZZZ to install operator A at v1.0 and it has a pending update to v1.1 and then update the configuration to also install operator B at v42.0 in namespace ZZZ the ZZZ v42.0 InstallPlan and the A v1.1 InstallPlan will get merged (by OLM) and this helm chart will then approve that InstallPlan as it will match on the ZZZ v42.0 pending install, which will incidentally install the A v1.1 update.
