@@ -2,21 +2,22 @@ approveManualInstallPlanViaHook: true
 
 installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
-operators:
-- name: argocd-operator
-  channel: alpha
-  csv: argocd-operator.v0.6.0
-  installPlanApproval: Manual
-  source: operatorhubio-catalog
-  sourceNamespace: olm
-  namespace: argocd-operator-with-namespace-labels
-  installPlanVerifierActiveDeadlineSeconds: 1200
 operatorGroups:
-- name: argocd-operator-with-namespace-labels
+- name: argocd-operator-8
   createNamespace: true
-  targetOwnNamespace: true
+  targetOwnNamespace: false
   otherTargetNamespaces:
   namespaceLabels:
     pod-security.kubernetes.io/audit: privileged
     pod-security.kubernetes.io/enforce: privileged
     pod-security.kubernetes.io/warn: privileged
+
+operators:
+- name: argocd-operator
+  channel: alpha
+  csv: argocd-operator.v0.16.0
+  installPlanApproval: Manual
+  source: operatorhubio-catalog
+  sourceNamespace: olm
+  namespace: argocd-operator-8
+  installPlanVerifierActiveDeadlineSeconds: 1200

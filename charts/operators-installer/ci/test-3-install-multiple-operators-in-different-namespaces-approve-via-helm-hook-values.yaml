@@ -7,9 +7,9 @@ operatorGroups:
   createNamespace: true
   targetOwnNamespace: false
   otherTargetNamespaces:
-- name: argocd-operator
+- name: argocd-operator-3
   createNamespace: true
-  targetOwnNamespace: true
+  targetOwnNamespace: false
   otherTargetNamespaces:
 
 operators:
@@ -23,11 +23,11 @@ operators:
   installPlanVerifierActiveDeadlineSeconds: 1200
 - name: argocd-operator
   channel: alpha
-  csv: argocd-operator.v0.6.0
+  csv: argocd-operator.v0.16.0
   installPlanApproval: Manual
   source: operatorhubio-catalog
   sourceNamespace: olm
-  namespace: argocd-operator
+  namespace: argocd-operator-3
   installPlanVerifierActiveDeadlineSeconds: 1200
 commonLabels:
   test-label: xyz123
