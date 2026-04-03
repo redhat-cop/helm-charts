@@ -3,13 +3,15 @@ name: Validate
 on:
   workflow_dispatch:
   push:
-    paths-ignore:
-      - '.github/**'
-      - 'README.md'
+    paths:
+      - '!README.md'
+      - '!.github/**'
+      - '.github/workflows/conftest.yaml'
   pull_request:
-    paths-ignore:
-      - '.github/**'
-      - 'README.md'
+    paths:
+      - '!README.md'
+      - '!.github/**'
+      - '.github/workflows/conftest.yaml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
