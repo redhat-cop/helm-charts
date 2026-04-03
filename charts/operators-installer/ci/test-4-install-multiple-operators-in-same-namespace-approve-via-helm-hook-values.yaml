@@ -4,9 +4,9 @@ installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
 operatorGroups:
   community:
-    name: community-operators
+    name: community-operators-4
     createNamespace: true
-    targetOwnNamespace: true
+    targetOwnNamespace: false
     otherTargetNamespaces:
 
 operators:
@@ -17,7 +17,7 @@ operators:
     source: operatorhubio-catalog
     sourceNamespace: olm
     csv: external-secrets-operator.v0.8.1
-    namespace: community-operators
+    namespace: community-operators-4
     installPlanVerifierActiveDeadlineSeconds: 1200
   argocd:
     channel: alpha
@@ -25,8 +25,8 @@ operators:
     name: argocd-operator
     source: operatorhubio-catalog
     sourceNamespace: olm
-    csv: argocd-operator.v0.6.0
-    namespace: community-operators
+    csv: argocd-operator.v0.16.0
+    namespace: community-operators-4
     installPlanVerifierActiveDeadlineSeconds: 1200
 commonLabels:
   test-label: xyz123

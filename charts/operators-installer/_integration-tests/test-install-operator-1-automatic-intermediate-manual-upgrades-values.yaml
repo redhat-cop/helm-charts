@@ -11,7 +11,7 @@ operatorGroups:
 operators:
 - name: argocd-operator
   channel: alpha
-  csv: argocd-operator.v0.10.1
+  csv: argocd-operator.v0.17.0
   installPlanApproval: Manual
   source: operatorhubio-catalog
   sourceNamespace: olm
