@@ -1,14 +1,17 @@
 name: Validate
 
 on:
+  workflow_dispatch:
   push:
-    paths-ignore:
-      - '.github/**'
-      - 'README.md'
+    paths:
+      - '!README.md'
+      - '!.github/**'
+      - '.github/workflows/conftest.yaml'
   pull_request:
-    paths-ignore:
-      - '.github/**'
-      - 'README.md'
+    paths:
+      - '!README.md'
+      - '!.github/**'
+      - '.github/workflows/conftest.yaml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,6 +25,6 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Conftest
-        uses: redhat-cop/github-actions/confbatstest@561af5e610560aef3210ca7a08fe73b2add97648 # v4.5
+        uses: redhat-cop/github-actions/confbatstest@cc45c69b6655161f278271cd0c68ddcc1444a3f8 # v4.6
         with:
           tests: _test/conftest.sh
