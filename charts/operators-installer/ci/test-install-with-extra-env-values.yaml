@@ -1,0 +1,27 @@
+approveManualInstallPlanViaHook: true
+
+installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
+
+installPlanApproverAndVerifyJobsExtraEnv:
+- name: HTTP_PROXY
+  value: "http://proxy.example.com:3128"
+- name: HTTPS_PROXY
+  value: "http://proxy.example.com:3128"
+- name: NO_PROXY
+  value: ".cluster.local,10.0.0.0/8"
+
+operatorGroups:
+- name: argocd-operator-2
+  createNamespace: true
+  targetOwnNamespace: true
+  otherTargetNamespaces:
+
+operators:
+- name: argocd-operator
+  channel: alpha
+  csv: argocd-operator.v0.6.0
+  installPlanApproval: Manual
+  source: operatorhubio-catalog
+  sourceNamespace: olm
+  namespace: argocd-operator-2
+  installPlanVerifierActiveDeadlineSeconds: 1200
