@@ -5,6 +5,7 @@ bin/*
 .project
 /.bin
 /_test/secrets/*.json
+_test/olm-install.sh
 
 # OSX leaves these everywhere on SMB shares
 ._*
@@ -44,3 +45,5 @@ policy/
 
 # BATS
 _test/test_helper/
+/_test/jobs.csv
+/_test/pods.csv

@@ -2,24 +2,18 @@ approveManualInstallPlanViaHook: true
 
 installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
-installPlanApproverAndVerifyJobsTolerations:
-- key: "infra"
-  operator: "Equal"
-  value: "true"
-  effect: "NoSchedule"
-
 operatorGroups:
-- name: argocd-operator-2
+- name: aqua-operator-6
   createNamespace: true
-  targetOwnNamespace: true
+  targetOwnNamespace: false
   otherTargetNamespaces:
 
 operators:
-- name: argocd-operator
-  channel: alpha
-  csv: argocd-operator.v0.6.0
+- name: aqua
+  channel: 2022.4.0
+  csv: aqua-operator.2022.4.14
   installPlanApproval: Manual
   source: operatorhubio-catalog
   sourceNamespace: olm
-  namespace: argocd-operator-2
+  namespace: aqua-operator-6
   installPlanVerifierActiveDeadlineSeconds: 1200
