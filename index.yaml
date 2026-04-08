@@ -3664,6 +3664,23 @@ entries:
     version: 0.0.1
   operators-installer:
   - apiVersion: v2
+    created: "2026-04-08T17:19:23.254737177Z"
+    description: Installs a given list of operators either using Automatic or Manual
+      InstallPlans. If Manual then version of operator can be controlled declarativly.
+    digest: 9c79cd8f77f5e772c4cfa2018b67901af1f0ccd72b6c949e46c2784681ecfe1b
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/operator-framework/olm-docs/ea9cd734aa7a6bf2d24f273322ed9aec3ffcb02a/content/en/images/logo-sm.svg
+    keywords:
+    - olm
+    - operators
+    maintainers:
+    - name: itewk
+    name: operators-installer
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/operators-installer-3.5.0/operators-installer-3.5.0.tgz
+    version: 3.5.0
+  - apiVersion: v2
     created: "2026-04-08T08:27:23.279390499Z"
     description: Installs a given list of operators either using Automatic or Manual
       InstallPlans. If Manual then version of operator can be controlled declarativly.
@@ -6350,4 +6367,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2026-04-08T08:27:23.28033637Z"
+generated: "2026-04-08T17:19:23.255713415Z"
