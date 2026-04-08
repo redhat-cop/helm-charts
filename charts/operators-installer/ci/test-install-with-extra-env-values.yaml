@@ -2,13 +2,12 @@ approveManualInstallPlanViaHook: true
 
 installPlanApproverAndVerifyJobsImage: quay.io/openshift/origin-cli:4.15
 
+# Test extraEnv injection with a harmless env var.
+# Proxy-specific values (HTTP_PROXY, etc.) can't be tested here
+# because the kind cluster has no real proxy.
 installPlanApproverAndVerifyJobsExtraEnv:
-- name: HTTP_PROXY
-  value: "http://proxy.example.com:3128"
-- name: HTTPS_PROXY
-  value: "http://proxy.example.com:3128"
-- name: NO_PROXY
-  value: ".cluster.local,10.0.0.0/8"
+- name: OPERATORS_INSTALLER_TEST_ENV
+  value: "extra-env-works"
 
 operatorGroups:
 - name: argocd-operator-2
