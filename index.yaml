@@ -4159,6 +4159,20 @@ entries:
   owncloud:
   - apiVersion: v2
     appVersion: latest
+    created: "2026-04-11T14:15:10.694766925Z"
+    description: A Helm chart for Owncloud
+    digest: 1baccbe020ea3df57c95140c884abae84ca8c499f1bf00520da68e75cefd8711
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://alternative.me/media/256/owncloud-icon-ge0uksoxjjfyflu8-c.png
+    maintainers:
+    - name: eformat
+    name: owncloud
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/owncloud-0.0.24/owncloud-0.0.24.tgz
+    version: 0.0.24
+  - apiVersion: v2
+    appVersion: latest
     created: "2025-04-16T08:39:15.81330231Z"
     description: A Helm chart for Owncloud
     digest: 1f35d91ab2b8d675efbdf1e24facfe5d3e757cddd82f4f4b626337798f95884a
@@ -6367,4 +6381,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2026-04-08T17:19:23.255713415Z"
+generated: "2026-04-11T14:15:10.696007878Z"
