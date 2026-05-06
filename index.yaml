@@ -3417,6 +3417,26 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/network-policy-1.0.0/network-policy-1.0.0.tgz
     version: 1.0.0
+  olmv1:
+  - apiVersion: v2
+    created: "2026-05-06T13:05:27.562829902Z"
+    description: Installs operators or cluster extensions in a declarative, GitOps
+      friendly way using olmv1
+    digest: 7a911c3dc35c9e91839c28b12b907442cbf2eede9ae341085772dd15ab2ce9dd
+    home: https://github.com/redhat-cop/helm-charts
+    icon: https://raw.githubusercontent.com/operator-framework/olm-docs/ea9cd734aa7a6bf2d24f273322ed9aec3ffcb02a/content/en/images/logo-sm.svg
+    keywords:
+    - olm
+    - olmv1
+    - operators
+    - extensions
+    maintainers:
+    - name: marpears
+    name: olmv1
+    type: application
+    urls:
+    - https://github.com/redhat-cop/helm-charts/releases/download/olmv1-1.0.0/olmv1-1.0.0.tgz
+    version: 1.0.0
   openshift-logforwarding-splunk:
   - apiVersion: v2
     created: "2025-04-16T08:39:15.416664293Z"
@@ -6430,4 +6450,4 @@ entries:
     urls:
     - https://github.com/redhat-cop/helm-charts/releases/download/update-clusterversion-1.0.0/update-clusterversion-1.0.0.tgz
     version: 1.0.0
-generated: "2026-04-11T17:31:30.164018264Z"
+generated: "2026-05-06T13:05:27.563722069Z"
