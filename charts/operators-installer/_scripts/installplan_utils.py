@@ -105,6 +105,29 @@ def get_next_installplan(
 
     return latest_installplan
 
+def wait_for_installplan(
+    installplan_getter,
+    retries: int,
+    delay_seconds: int,
+):
+    """Retry an InstallPlan lookup until one is found or retries are exhausted."""
+    for attempt in range(1, retries + 1):
+        installplan = installplan_getter()
+
+        if installplan:
+            print(f"\t- Found InstallPlan on attempt ({attempt} of {retries})")
+            return installplan
+
+        if attempt < retries:
+            print(
+                f"\t- InstallPlan not available yet. "
+                f"Attempt ({attempt} of {retries}). "
+                f"Waiting ({delay_seconds} seconds) before trying again."
+            )
+            sys.stdout.flush()
+            time.sleep(delay_seconds)
+
+    return None
 
 def approve_installplan(installplan: oc.APIObject):
     """Approves a given install plan"""
