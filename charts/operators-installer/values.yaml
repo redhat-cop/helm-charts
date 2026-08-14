@@ -66,6 +66,8 @@ operators:
 #   sourceNamespace: openshift-marketplace
 #   csv: openshift-gitops-operator.v1.10.1
 #   namespace: openshift-gitops-operator
+#   installPlanApproverSearchRetries: 20
+#   installPlanApproverSearchDelaySeconds: 10
 #   config:
 #     env:
 #     - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
