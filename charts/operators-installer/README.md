@@ -152,7 +152,7 @@ metadata:
   name: openshift-gitops
   namespace: openshift-gitops
 spec:
-## SNIP . . . 
+## SNIP . . .
   resourceHealthChecks:
     - check: |
         hs = {}
