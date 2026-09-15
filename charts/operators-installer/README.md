@@ -104,43 +104,131 @@ report there is a pending update, even though you don't wan't to update, and Arg
 
 Here is a sample updated health check to use which if the InstallPlan is set to Manual then will ignore pending plan approvals with a detailed message. How you patch ArgoCD with this health check depends on your version of ArgoCD so see the docs for your version.
 
-```lua
-health_status = {}
-if obj.status ~= nil then
-    if obj.status.conditions ~= nil then
-        numDegraded = 0
-        numPending = 0
-        msg = ""
-        for i, condition in pairs(obj.status.conditions) do
-            msg = msg .. i .. ": " .. condition.type .. " | " .. condition.status .. "\n"
-            if condition.type == "InstallPlanPending" and condition.status == "True" then
-                numPending = numPending + 1
-            elseif (condition.type == "InstallPlanMissing" and condition.reason ~= "ReferencedInstallPlanNotFound") then
-                numDegraded = numDegraded + 1
-            elseif (condition.type == "CatalogSourcesUnhealthy" or condition.type == "InstallPlanFailed" or condition.type == "ResolutionFailed") and condition.status == "True" then
-                numDegraded = numDegraded + 1
-            end
+**NOTE**: This is a tested and working configuration for ArgoCD version 1.21.4 & OpenShift 4.22
+
+```yaml
+apiVersion: argoproj.io/v1beta1
+kind: ArgoCD
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+spec:
+## SNIP . . .
+  resourceHealthChecks:
+    - check: |
+        hs = {}
+        hs.status = "Progressing"
+        hs.message = ""
+        if obj.status ~= nil then
+          if obj.status.health ~= nil then
+            hs.status = obj.status.health.status
+            hs.message = obj.status.health.message
+          end
         end
-    end
-    if numDegraded == 0 and numPending == 0 then
-        health_status.status = "Healthy"
-        health_status.message = msg
-        return health_status
-    elseif numPending > 0 and numDegraded == 0 and obj.spec.installPlanApproval == "Manual" then
-        health_status.status = "Healthy"
-        health_status.message = "An install plan for a subscription is pending installation but install plan approval is set to manual so considering this as healthy: " .. msg
-        return health_status
-    elseif numPending > 0 and numDegraded == 0 then
+        return hs
+      group: argoproj.io
+      kind: Application
+    - check: |
+        hs = {}
+        if obj.status ~= nil then
+          if obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              hs.message = condition.message
+              break
+            end
+          end
+          if obj.status.phase ~= nil then
+            if obj.status.phase == "Failure" then
+              hs.status = "Degraded"
+              return hs
+            elseif obj.status.phase == "Available" then
+              hs.status = "Healthy"
+              return hs
+            elseif obj.status.phase == "Pending" then
+              hs.status = "Progressing"
+              return hs
+            end
+          end
+          hs.status = "Progressing"
+          hs.message = "Waiting for operator to update status"
+          return hs
+        end
+      group: argoproj.io
+      kind: RolloutManager
+    - check: |
+        health_status = {}
+        if obj.status ~= nil then
+          if obj.status.conditions ~= nil then
+            numDegraded = 0
+            numPending = 0
+            numSuspended = 0
+            msg = ""
+            for i, condition in pairs(obj.status.conditions) do
+              msg = msg .. i .. ": " .. condition.type .. " | " .. condition.status .. " | " .. condition.reason .. "\n"
+              if condition.type == "InstallPlanPending" and condition.status == "True" then
+                if condition.reason == "RequiresApproval" then
+                  numSuspended = numSuspended + 1
+                else
+                  numPending = numPending + 1
+                end
+              elseif (condition.type == "InstallPlanMissing" and condition.reason ~= "ReferencedInstallPlanNotFound") then
+                numDegraded = numDegraded + 1
+              elseif (condition.type == "CatalogSourcesUnhealthy" or condition.type == "InstallPlanFailed") and condition.status == "True" then
+                numDegraded = numDegraded + 1
+              elseif (condition.type == "ResolutionFailed" and condition.reason ~= "ConstraintsNotSatisfiable") then
+                numDegraded = numDegraded + 1
+              end
+            end
+            if numDegraded > 0 then
+              health_status.status = "Degraded"
+              health_status.message = msg
+              return health_status
+            elseif numSuspended > 0 then
+              health_status.status = "Suspended"
+              health_status.message = "Requires Approval"
+              return health_status
+            elseif numPending > 0 then
+              health_status.status = "Progressing"
+              health_status.message = "An install plan for a subscription is pending installation"
+              return health_status
+            else
+              health_status.status = "Healthy"
+              health_status.message = msg
+              return health_status
+            end
+          end
+        end
         health_status.status = "Progressing"
         health_status.message = "An install plan for a subscription is pending installation"
         return health_status
-    else
-        health_status.status = "Degraded"
-        health_status.message = msg
-        return health_status
-    end
-end
-return health_status
+      group: operators.coreos.com
+      kind: Subscription
+    - check: |
+        hs = {}
+        if obj.status ~= nil then
+          if obj.status.phase ~= nil then
+            if obj.status.phase == "Complete" then
+              hs.status = "Healthy"
+              hs.message = obj.status.phase
+              return hs
+            elseif obj.status.phase == "RequiresApproval" then
+              hs.status = "Suspended"
+              hs.message = obj.status.phase
+              return hs
+            else
+              hs.status = "Progressing"
+              hs.message = obj.status.phase
+              return hs
+            end
+          end
+        end
+        hs.status = "Progressing"
+        hs.message = "Waiting for InstallPlan to complete"
+        return hs
+      group: operators.coreos.com
+      kind: InstallPlan
+## SNIP . . .
+
 ```
 
 ## Caveats
