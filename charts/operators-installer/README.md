@@ -104,46 +104,7 @@ report there is a pending update, even though you don't wan't to update, and Arg
 
 Here is a sample updated health check to use which if the InstallPlan is set to Manual then will ignore pending plan approvals with a detailed message. How you patch ArgoCD with this health check depends on your version of ArgoCD so see the docs for your version.
 
-```lua
-health_status = {}
-if obj.status ~= nil then
-    if obj.status.conditions ~= nil then
-        numDegraded = 0
-        numPending = 0
-        msg = ""
-        for i, condition in pairs(obj.status.conditions) do
-            msg = msg .. i .. ": " .. condition.type .. " | " .. condition.status .. "\n"
-            if condition.type == "InstallPlanPending" and condition.status == "True" then
-                numPending = numPending + 1
-            elseif (condition.type == "InstallPlanMissing" and condition.reason ~= "ReferencedInstallPlanNotFound") then
-                numDegraded = numDegraded + 1
-            elseif (condition.type == "CatalogSourcesUnhealthy" or condition.type == "InstallPlanFailed" or condition.type == "ResolutionFailed") and condition.status == "True" then
-                numDegraded = numDegraded + 1
-            end
-        end
-    end
-    if numDegraded == 0 and numPending == 0 then
-        health_status.status = "Healthy"
-        health_status.message = msg
-        return health_status
-    elseif numPending > 0 and numDegraded == 0 and obj.spec.installPlanApproval == "Manual" then
-        health_status.status = "Healthy"
-        health_status.message = "An install plan for a subscription is pending installation but install plan approval is set to manual so considering this as healthy: " .. msg
-        return health_status
-    elseif numPending > 0 and numDegraded == 0 then
-        health_status.status = "Progressing"
-        health_status.message = "An install plan for a subscription is pending installation"
-        return health_status
-    else
-        health_status.status = "Degraded"
-        health_status.message = msg
-        return health_status
-    end
-end
-return health_status
-```
-
-**NOTE**: This is a tested and working configuration for ArgoCD version 1.21.4
+**NOTE**: This is a tested and working configuration for ArgoCD version 1.21.4 & OpenShift 4.22
 
 ```yaml
 apiVersion: argoproj.io/v1beta1
