@@ -105,6 +105,45 @@ def get_next_installplan(
 
     return latest_installplan
 
+def wait_for_installplan(
+    installplan_getter,
+    retries: int,
+    active_deadline_seconds: int,
+):
+    """Retry an InstallPlan lookup within the configured active deadline."""
+
+    if retries <= 0:
+        return None
+
+    if retries == 1:
+        delay_seconds = 0
+    elif active_deadline_seconds > 0:
+        # Leave a small margin so the Job can finish before Kubernetes
+        # enforces activeDeadlineSeconds.
+        available_wait_seconds = max(active_deadline_seconds - 5, 0)
+        delay_seconds = available_wait_seconds / (retries - 1)
+    else:
+        # No active deadline was configured. Fall back to a small delay
+        # so retries do not hammer the Kubernetes API.
+        delay_seconds = 5
+
+    for attempt in range(1, retries + 1):
+        installplan = installplan_getter()
+
+        if installplan:
+            print(f"\t- Found InstallPlan on attempt ({attempt} of {retries})")
+            return installplan
+
+        if attempt < retries:
+            print(
+                f"\t- InstallPlan not available yet. "
+                f"Attempt ({attempt} of {retries}). "
+                f"Waiting ({delay_seconds:.1f} seconds) before trying again."
+            )
+            sys.stdout.flush()
+            time.sleep(delay_seconds)
+
+    return None
 
 def approve_installplan(installplan: oc.APIObject):
     """Approves a given install plan"""

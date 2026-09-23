@@ -20,7 +20,15 @@ INCREMENTAL_INSTALL_BACKOFF_LIMIT = (
 INCREMENTAL_INSTALL_DELAY_INCREMENT = (
     int(os.getenv("INCREMENTAL_INSTALL_DELAY_INCREMENT")) or 5
 )
-
+INSTALLPLAN_WAIT_LOOP_INSIDE_JOB = (
+    os.getenv("INSTALLPLAN_WAIT_LOOP_INSIDE_JOB", "false").lower() == "true"
+)
+INSTALLPLAN_RETRIES = int(
+    os.getenv("INSTALLPLAN_RETRIES", "10")
+)
+INSTALLPLAN_ACTIVE_DEADLINE_SECONDS = int(
+    os.getenv("INSTALLPLAN_ACTIVE_DEADLINE_SECONDS", "0")
+)
 
 print()
 print("********************************************************************")
@@ -28,6 +36,16 @@ print("* START InstallPlan approver including intermediates")
 print(f"*\t- NAMESPACE_NAME: {NAMESPACE_NAME}")
 print(f"*\t- SUBSCRIPTION_NAME: {SUBSCRIPTION_NAME}")
 print(f"*\t- CSV: {CSV}")
+print(
+    f"*\t- INSTALLPLAN_WAIT_LOOP_INSIDE_JOB: "
+    f"{INSTALLPLAN_WAIT_LOOP_INSIDE_JOB}"
+)
+if INSTALLPLAN_WAIT_LOOP_INSIDE_JOB:
+    print(f"*\t- INSTALLPLAN_RETRIES: {INSTALLPLAN_RETRIES}")
+    print(
+        f"*\t- INSTALLPLAN_ACTIVE_DEADLINE_SECONDS: "
+        f"{INSTALLPLAN_ACTIVE_DEADLINE_SECONDS}"
+    )
 print(f"*\t- INCREMENTAL_INSTALL_BACKOFF_LIMIT: {INCREMENTAL_INSTALL_BACKOFF_LIMIT}")
 print(
     f"*\t- INCREMENTAL_INSTALL_DELAY_INCREMENT: {INCREMENTAL_INSTALL_DELAY_INCREMENT}"
@@ -57,9 +75,22 @@ if subscription_uid:
         print(
             f"\nFind next InstallPlan in Namespace ({NAMESPACE_NAME}) for CSV ({CSV}) with Subscription ({subscription_uid}) owner"
         )
-        target_installplan = installplan_utils.get_next_installplan(
-            NAMESPACE_NAME, CSV, subscription_uid
-        )
+        if INSTALLPLAN_WAIT_LOOP_INSIDE_JOB:
+            target_installplan = installplan_utils.wait_for_installplan(
+                lambda: installplan_utils.get_next_installplan(
+                    NAMESPACE_NAME,
+                    CSV,
+                    subscription_uid,
+                ),
+                INSTALLPLAN_RETRIES,
+                INSTALLPLAN_ACTIVE_DEADLINE_SECONDS,
+            )
+        else:
+            target_installplan = installplan_utils.get_next_installplan(
+                NAMESPACE_NAME,
+                CSV,
+                subscription_uid,
+            )
 
         # if found next InstallPlan, approve it
         # else fail
@@ -137,9 +168,12 @@ if subscription_uid:
                     )
         else:
             installplan_utils.error_and_exit(
-                f"Could not find next InstallPlan to reach CSV {CSV}) with Subscription ({SUBSCRIPTION_NAME}) ({subscription_uid}) owner."
-                + "\nThis can happen if InstallPlan isn't created yet or no valid upgrade path between current CSV and target CSV."
-                + "\nTry again.",
+                f"Could not find InstallPlan for CSV ({CSV}) "
+                f"with Subscription ({SUBSCRIPTION_NAME}) "
+                f"({subscription_uid}) owner."
+                + "\nThis can happen if the InstallPlan wasn't created yet "
+                "or no valid upgrade path exists between the current CSV "
+                "and target CSV.",
                 1,
             )
 

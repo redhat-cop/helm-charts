@@ -12,6 +12,15 @@ SUBSCRIPTION_NAME = os.getenv("SUBSCRIPTION") or installplan_utils.error_and_exi
 CSV = os.getenv("CSV") or installplan_utils.error_and_exit(
     "env is missing expected value: CSV", 2
 )
+INSTALLPLAN_WAIT_LOOP_INSIDE_JOB = (
+    os.getenv("INSTALLPLAN_WAIT_LOOP_INSIDE_JOB", "false").lower() == "true"
+)
+INSTALLPLAN_RETRIES = int(
+    os.getenv("INSTALLPLAN_RETRIES", "10")
+)
+INSTALLPLAN_ACTIVE_DEADLINE_SECONDS = int(
+    os.getenv("INSTALLPLAN_ACTIVE_DEADLINE_SECONDS", "0")
+)
 
 print()
 print("********************************************************************")
@@ -19,6 +28,16 @@ print("* START InstallPlan approver")
 print(f"*\t- NAMESPACE_NAME: {NAMESPACE_NAME}")
 print(f"*\t- SUBSCRIPTION_NAME: {SUBSCRIPTION_NAME}")
 print(f"*\t- CSV: {CSV}")
+print(
+    f"*\t- INSTALLPLAN_WAIT_LOOP_INSIDE_JOB: "
+    f"{INSTALLPLAN_WAIT_LOOP_INSIDE_JOB}"
+)
+if INSTALLPLAN_WAIT_LOOP_INSIDE_JOB:
+    print(f"*\t- INSTALLPLAN_RETRIES: {INSTALLPLAN_RETRIES}")
+    print(
+        f"*\t- INSTALLPLAN_ACTIVE_DEADLINE_SECONDS: "
+        f"{INSTALLPLAN_ACTIVE_DEADLINE_SECONDS}"
+    )
 print("********************************************************************")
 
 # find the subscription uid
@@ -35,9 +54,22 @@ if subscription_uid:
     print(
         f"Find InstallPlan in Namespace ({NAMESPACE_NAME}) for CSV ({CSV}) with Subscription ({subscription_uid}) owner"
     )
-    target_installplan = installplan_utils.get_installplan(
-        NAMESPACE_NAME, CSV, subscription_uid
-    )
+    if INSTALLPLAN_WAIT_LOOP_INSIDE_JOB:
+        target_installplan = installplan_utils.wait_for_installplan(
+            lambda: installplan_utils.get_installplan(
+                NAMESPACE_NAME,
+                CSV,
+                subscription_uid,
+            ),
+            INSTALLPLAN_RETRIES,
+            INSTALLPLAN_ACTIVE_DEADLINE_SECONDS,
+        )
+    else:
+        target_installplan = installplan_utils.get_installplan(
+            NAMESPACE_NAME,
+            CSV,
+            subscription_uid,
+        )
 
     # if found target InstallPlan, approve it, and success exit
     # else fail
@@ -56,9 +88,13 @@ if subscription_uid:
             )
     else:
         installplan_utils.error_and_exit(
-            f"ERROR: Could not find next InstallPlan to reach CSV {CSV}) with Subscription ({SUBSCRIPTION_NAME}) ({subscription_uid}) owner."
-            + "\nThis can happen if InstallPlan isn't created yet or no valid upgrade path between current CSV and target CSV."
-            + "\nTry again."
+            f"Could not find InstallPlan for CSV ({CSV}) "
+            f"with Subscription ({SUBSCRIPTION_NAME}) "
+            f"({subscription_uid}) owner."
+            + "\nThis can happen if the InstallPlan wasn't created yet "
+            "or no valid upgrade path exists between the current CSV "
+            "and target CSV.",
+            1,
         )
 else:
     installplan_utils.error_and_exit(

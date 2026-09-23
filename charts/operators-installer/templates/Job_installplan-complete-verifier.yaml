@@ -20,7 +20,11 @@ metadata:
 spec:
   completions: 1
   parallelism: 1
+  {{- if .installPlanVerifierWaitLoopInsideJob }}
+  backoffLimit: 1
+  {{- else }}
   backoffLimit: {{ .installPlanVerifierRetries | default 10 }}
+  {{- end }}
   activeDeadlineSeconds: {{ .installPlanVerifierActiveDeadlineSeconds }}
   template:
     spec:
@@ -50,6 +54,12 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: INSTALLPLAN_WAIT_LOOP_INSIDE_JOB
+          value: "{{ .installPlanVerifierWaitLoopInsideJob | default false }}"
+        - name: INSTALLPLAN_RETRIES
+          value: "{{ .installPlanVerifierRetries | default 10 }}"
+        - name: INSTALLPLAN_ACTIVE_DEADLINE_SECONDS
+          value: "{{ .installPlanVerifierActiveDeadlineSeconds | default 0 }}"
         {{- if $.Values.installPlanApproverAndVerifyJobsExtraEnv }}
         {{- $.Values.installPlanApproverAndVerifyJobsExtraEnv | toYaml | nindent 8 }}
         {{- end }}
