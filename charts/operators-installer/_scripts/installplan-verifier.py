@@ -12,6 +12,15 @@ SUBSCRIPTION_NAME = os.getenv("SUBSCRIPTION") or installplan_utils.error_and_exi
 CSV = os.getenv("CSV") or installplan_utils.error_and_exit(
     "env is missing expected value: CSV", 2
 )
+INSTALLPLAN_WAIT_LOOP_INSIDE_JOB = (
+    os.getenv("INSTALLPLAN_WAIT_LOOP_INSIDE_JOB", "false").lower() == "true"
+)
+INSTALLPLAN_RETRIES = int(
+    os.getenv("INSTALLPLAN_RETRIES", "10")
+)
+INSTALLPLAN_ACTIVE_DEADLINE_SECONDS = int(
+    os.getenv("INSTALLPLAN_ACTIVE_DEADLINE_SECONDS", "0")
+)
 
 print()
 print("********************************************************************")
@@ -19,6 +28,10 @@ print("* START InstallPlan Approver *")
 print(f"*\t- NAMESPACE_NAME: {NAMESPACE_NAME}")
 print(f"*\t- SUBSCRIPTION_NAME: {SUBSCRIPTION_NAME}")
 print(f"*\t- CSV: {CSV}")
+print(f"*\t- INSTALLPLAN_WAIT_LOOP_INSIDE_JOB: {INSTALLPLAN_WAIT_LOOP_INSIDE_JOB}")
+if INSTALLPLAN_WAIT_LOOP_INSIDE_JOB:
+    print(f"*\t- INSTALLPLAN_RETRIES: {INSTALLPLAN_RETRIES}")
+    print(f"*\t- INSTALLPLAN_ACTIVE_DEADLINE_SECONDS: {INSTALLPLAN_ACTIVE_DEADLINE_SECONDS}")
 print("********************************************************************")
 
 
@@ -36,9 +49,22 @@ if subscription_uid:
     print(
         f"\tFind InstallPlan in Namespace ({NAMESPACE_NAME}) for CSV ({CSV}) with Subscription ({subscription_uid}) owner"
     )
-    target_installplan = installplan_utils.get_installplan(
-        NAMESPACE_NAME, CSV, subscription_uid
-    )
+    if INSTALLPLAN_WAIT_LOOP_INSIDE_JOB:
+        target_installplan = installplan_utils.wait_for_installplan(
+            lambda: installplan_utils.get_installplan(
+                NAMESPACE_NAME,
+                CSV,
+                subscription_uid,
+            ),
+            INSTALLPLAN_RETRIES,
+            INSTALLPLAN_ACTIVE_DEADLINE_SECONDS,
+        )
+    else:
+        target_installplan = installplan_utils.get_installplan(
+            NAMESPACE_NAME,
+            CSV,
+            subscription_uid,
+        )
 
     # if found target InstallPlan, check if its installed
     # else fail
