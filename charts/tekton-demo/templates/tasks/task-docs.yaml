@@ -44,7 +44,7 @@ spec:
   steps:
 
     - name: image-build
-      image: registry.redhat.io/rhel8/buildah@sha256:6036e56aad7b5ca87de0df46f3a0564a5fe523d51720f76094f95ffb2f8fef24
+      image: registry.redhat.io/rhel8/buildah@sha256:ca102ef307cd4d07c1ce1d58859c5003ffe3494b4d30ba0a4e66a347d2daba03
       workingDir: /workspace/source/{{ .Values.pipeline.build.s2i.context }}/docs
       resources: {}
       script: |
@@ -61,7 +61,7 @@ spec:
         privileged: true
 
     - name: image-push
-      image: registry.redhat.io/rhel8/buildah@sha256:6036e56aad7b5ca87de0df46f3a0564a5fe523d51720f76094f95ffb2f8fef24
+      image: registry.redhat.io/rhel8/buildah@sha256:ca102ef307cd4d07c1ce1d58859c5003ffe3494b4d30ba0a4e66a347d2daba03
       script: |
         #!/bin/sh
         if [ "$(inputs.params.revision-type)" == "develop" ]; then
@@ -75,7 +75,7 @@ spec:
         privileged: true
 
     - name: image-digest
-      image: registry.redhat.io/rhel8/buildah@sha256:6036e56aad7b5ca87de0df46f3a0564a5fe523d51720f76094f95ffb2f8fef24
+      image: registry.redhat.io/rhel8/buildah@sha256:ca102ef307cd4d07c1ce1d58859c5003ffe3494b4d30ba0a4e66a347d2daba03
       script: |
         #!/bin/sh
         printf %s "null" >> /tekton/results/digest
